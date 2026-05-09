@@ -27,3 +27,4 @@ dist-ssr
 .env
 server/.env
 mcp_config.json
+history/
