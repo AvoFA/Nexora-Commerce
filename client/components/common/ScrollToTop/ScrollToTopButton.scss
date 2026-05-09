@@ -1,0 +1,51 @@
+// src/components/common/ScrollToTop/ScrollToTopButton.scss
+@import '../../../styles/_variables';
+
+// Стилізація кнопки "Наверх" під дизайн сайту
+
+.scroll-to-top-btn {
+    // Градієнтний фон як у основних кнопок проекту
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+
+    // Білий текст для контрасту
+    color: hsl(0, 0%, 100%);
+
+    // Ефект світіння як у проекту
+    box-shadow: $glow-primary;
+
+    // Плавні переходи для всіх властивостей
+    transition: all 0.3s ease;
+
+    &:hover {
+        // Яскравіший градієнт при наведенні
+        background: linear-gradient(135deg, lighten($primary-color, 10%), lighten($secondary-color, 10%));
+
+        // Більша інтенсивність світіння
+        box-shadow: 0 0 40px rgba($primary-color, 0.4);
+
+        // Масштабування для інтерактивності
+        transform: scale(1.05);
+    }
+
+    // Збільшена іконка для кращої помітності
+    .MuiSvgIcon-root {
+        font-size: 1.7rem;
+        font-weight: 600;
+    }
+}
+
+// Responsive поведінка для мобільних
+@media (max-width: 768px) {
+    .scroll-to-top-btn {
+
+        // Менший розмір на мобільних
+        &.MuiFab-root {
+            width: 56px;
+            height: 56px;
+        }
+
+        .MuiSvgIcon-root {
+            font-size: 1.5rem;
+        }
+    }
+}

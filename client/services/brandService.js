@@ -1,0 +1,68 @@
+// Сервіс для роботи з брендами
+const API_BASE_URL = 'http://localhost:5000/api';
+
+const normalizeBrand = (brand) => ({
+  ...brand,
+  id: brand._id,
+  _id: undefined,
+  createdAt: undefined,
+  updatedAt: undefined,
+  __v: undefined
+});
+
+export const getBrands = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/brands`);
+    if (!response.ok) throw new Error('Не вдалося завантажити бренди');
+    const data = await response.json();
+    return data.data.map(normalizeBrand);
+  } catch (error) {
+    console.error("Помилка при завантаженні брендів:", error);
+    return [];
+  }
+};
+
+export const createBrand = async (brandData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/brands`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(brandData)
+    });
+    if (!response.ok) throw new Error('Не вдалося створити бренд');
+    const data = await response.json();
+    return normalizeBrand(data.data);
+  } catch (error) {
+    console.error("Помилка при створенні бренду:", error);
+    throw error;
+  }
+};
+
+export const updateBrand = async (id, brandData) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/brands/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(brandData)
+    });
+    if (!response.ok) throw new Error('Не вдалося оновити бренд');
+    const data = await response.json();
+    return normalizeBrand(data.data);
+  } catch (error) {
+    console.error("Помилка при оновленні бренду:", error);
+    throw error;
+  }
+};
+
+export const deleteBrand = async (id) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/brands/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('Не вдалося видалити бренд');
+    return true;
+  } catch (error) {
+    console.error("Помилка при видаленні бренду:", error);
+    throw error;
+  }
+};

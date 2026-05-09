@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html lang="uk"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Xiaomi Redmi Note 14 Pro - ElectroLux</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              900: '#111827',
+              800: '#1f2937',
+              700: '#374151',
+              600: '#4b5563',
+              500: '#6b7280',
+              primary: '#3b82f6',
+              primaryHover: '#2563eb',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="base-styles">
+    body {
+      background-color: #0f172a; /* Slate 900 */
+      color: #f8fafc; /* Slate 50 */
+    }
+  </style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col">
+<!-- BEGIN: Header -->
+<header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50">
+<div class="container mx-auto px-4 h-16 flex items-center justify-between">
+<!-- Logo -->
+<a class="flex items-center gap-2 text-xl font-bold text-white" href="#">
+<div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+<i class="fa-solid fa-bolt text-white"></i>
+</div>
+        ElectroLux
+      </a>
+<!-- Navigation -->
+<nav class="hidden md:flex gap-8 h-full">
+<a class="text-slate-300 hover:text-white flex items-center h-full border-b-2 border-transparent hover:border-slate-300 transition-colors" href="#">Головна</a>
+<a class="text-white flex items-center h-full border-b-2 border-blue-500 font-medium" href="#">Каталог</a>
+<a class="text-slate-300 hover:text-white flex items-center h-full border-b-2 border-transparent hover:border-slate-300 transition-colors" href="#">Про нас</a>
+</nav>
+<!-- Icons -->
+<div class="flex items-center gap-4 text-slate-300">
+<button aria-label="User Profile" class="hover:text-white transition-colors">
+<i class="fa-regular fa-user text-xl"></i>
+</button>
+<button aria-label="Cart" class="hover:text-white transition-colors relative">
+<i class="fa-solid fa-cart-shopping text-xl"></i>
+<span class="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">2</span>
+</button>
+</div>
+</div>
+</header>
+<!-- END: Header -->
+<!-- BEGIN: Main Content -->
+<main class="flex-grow container mx-auto px-4 py-8">
+<!-- Breadcrumbs -->
+<nav aria-label="Breadcrumb" class="text-sm text-slate-400 mb-8">
+<ol class="list-none p-0 inline-flex">
+<li class="flex items-center">
+<a class="hover:text-white" href="#">Головна</a>
+<i class="fa-solid fa-chevron-right text-xs mx-2"></i>
+</li>
+<li class="flex items-center">
+<a class="hover:text-white" href="#">Каталог</a>
+<i class="fa-solid fa-chevron-right text-xs mx-2"></i>
+</li>
+<li class="flex items-center">
+<a class="hover:text-white" href="#">Смартфони</a>
+<i class="fa-solid fa-chevron-right text-xs mx-2"></i>
+</li>
+<li aria-current="page" class="flex items-center text-slate-200">
+          Xiaomi Redmi Note 14 Pro
+        </li>
+</ol>
+</nav>
+<!-- Product Overview Section -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16" data-purpose="product-overview">
+<!-- Product Gallery -->
+<div class="flex flex-col-reverse md:flex-row gap-4" data-purpose="product-gallery">
+<!-- Thumbnails -->
+<div class="flex md:flex-col gap-4 overflow-x-auto md:overflow-visible w-full md:w-20 flex-shrink-0">
+<button class="w-16 h-16 md:w-20 md:h-20 bg-slate-800 rounded-lg border-2 border-blue-500 overflow-hidden flex-shrink-0">
+<img alt="Thumbnail 1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXx_XAm5V94yT1qHwsNbCAbndhHA31eLfz7UVJqQkjDQZvnogPLmpEGQ_vL4-_Fa8MLHGnSL9uNN8_ParrSMG7wKLUvlD9gEJYJHZ2LIWKTUAJ24G_EX_Je7HPLpBmjYGYak-EeXz8_v1XyGrlDMwjInrBUbxHlMi9rU5-rfmMtn6q6uNY9TOhfdj3fVq9Njh4y_1JVGUFwUCBXlAJwivgYcnQzYpVUCMfXGI7IW_Ld8IiCAOOE65iM9nq9Woc1hxJBFXmiKHNtmA"/>
+</button>
+<button class="w-16 h-16 md:w-20 md:h-20 bg-slate-800 rounded-lg border-2 border-transparent hover:border-slate-600 overflow-hidden flex-shrink-0 transition-colors">
+<img alt="Thumbnail 2" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANo-6Ns-7GdG9GpBYPsUMWFQj7aiiXPB4bfq-Lj7jB60WURp1YRJsm4IdWILD_z6uNJnUBzzw7GZlaqWHmNGxBVpSQZWIPmpdmE-NMrSgYl0SDO4cDWzkOwOx8-j-_sTv9v3jB83kRmmkKIY6En3yORy7kgz0_90u0Y4sgWOu7yAsYJzW9TO7hVWls57LlrJfJKAaO_tPko7tDseyuC8mliwOhI8Kfb7Vs6KZMBRHJJxzw2jIeY8XfYKfiPAQAYw2xOLNSI95GlkM"/>
+</button>
+<button class="w-16 h-16 md:w-20 md:h-20 bg-slate-800 rounded-lg border-2 border-transparent hover:border-slate-600 overflow-hidden flex-shrink-0 transition-colors">
+<img alt="Thumbnail 3" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0PNmLF_eloqwF8Ww_APZSEHqkBJo9wXriLnNalVv4grw_et0Yux0cUSralxkWQzKMHQZo66UvmZTxvot-GX3lzHxGndZyvzh8oqskE7bsv5OkuZp9cf3J4L_GMtnHM-u8SChk6DtYV4WQsBjtVqZGzH21Pr115GUxz5FXPk8gu7XDsP8G3TUE5a039LPrMksZrZLevaP39k0e4L8dkQTACPrzmgA9J5T7ZCAYthOMeNHbf1qNzafJ8RoE3vu11uCPZ21GYnxK3XY"/>
+</button>
+</div>
+<!-- Main Image -->
+<div class="bg-slate-800 rounded-xl flex-grow flex items-center justify-center p-8 min-h-[400px]">
+<img alt="Xiaomi Redmi Note 14 Pro" class="max-w-full max-h-[500px] object-contain" src="https://lh3.googleusercontent.com/aida/ADBb0ujCFKqmaLkMzLDXd80beolaRXr3PHtg0-xfKqLLDvY5lrFHI-8xJWPGOE9ssl6NvvI_t_H1ZlQ0gB7ZWKx6GKGCpMJQXSo_O0FIBU_n0RSSZ3XDmiZ1iDBPIiPlPuiW7gQCB-h4izfmtVdTKb6DfPUwBkfYBRHcWQyyRc1CCAoEzCEa5EaPiMcpK-RRkmFAM5bb2Fsq6qFIaqLFZRPsrZ36n9OsjjXpPWbgijnaLSdFW2e9xLOKhXn7xEs"/>
+</div>
+</div>
+<!-- Product Info -->
+<div class="flex flex-col" data-purpose="product-details">
+<h1 class="text-3xl md:text-4xl font-bold mb-4">Xiaomi Redmi Note 14 Pro 8/256GB</h1>
+<!-- Rating -->
+<div class="flex items-center gap-2 mb-6">
+<div class="flex text-yellow-400 text-sm">
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star-half-stroke"></i>
+</div>
+<span class="text-slate-300 font-medium">4.8</span>
+<span class="text-slate-500 text-sm">(150 відгуків)</span>
+</div>
+<!-- Price -->
+<div class="text-4xl font-bold mb-6">10999 грн</div>
+<!-- Tags -->
+<div class="flex gap-2 mb-6 text-sm">
+<span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">Xiaomi</span>
+<span class="bg-slate-800 px-3 py-1 rounded-full text-slate-300">Phones</span>
+<span class="bg-emerald-900/50 text-emerald-400 px-3 py-1 rounded-full border border-emerald-800/50">В Наявності</span>
+</div>
+<!-- Short Description -->
+<p class="text-slate-300 mb-8 leading-relaxed">
+          Оптимальний бюджетний смартфон з камерою 200МР та дисплеєм 6.67". Ідеальний вибір для щоденних завдань та фотографії.
+        </p>
+<!-- Actions -->
+<div class="flex flex-col gap-3 mb-8">
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+<i class="fa-solid fa-cart-plus"></i>
+            Додати в кошик
+          </button>
+<button class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+<i class="fa-regular fa-hand-pointer"></i>
+            Купити в 1 клік
+          </button>
+</div>
+<!-- Info Badges -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-slate-800/50 p-4 rounded-lg flex items-center gap-3 border border-slate-800">
+<i class="fa-solid fa-truck text-slate-400 text-xl"></i>
+<span class="text-sm text-slate-300">Безкоштовна доставка</span>
+</div>
+<div class="bg-slate-800/50 p-4 rounded-lg flex items-center gap-3 border border-slate-800">
+<i class="fa-solid fa-shield-check text-slate-400 text-xl"></i>
+<span class="text-sm text-slate-300">24-місячна гарантія</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Detailed Content Area -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+<!-- Left Column: Description & Specs -->
+<div class="lg:col-span-2 space-y-12">
+<!-- Description -->
+<section data-purpose="detailed-description">
+<h2 class="text-2xl font-bold mb-6 border-b border-slate-800 pb-2">Опис товару</h2>
+<div class="prose prose-invert max-w-none text-slate-300 leading-relaxed">
+<p class="mb-4">
+              Зустрічайте новий Xiaomi Redmi Note 14 Pro – смартфон, який встановлює нові стандарти у своєму класі. Поєднуючи преміальний дизайн та потужні характеристики, він створений для тих, хто не звик йти на компроміси.
+            </p>
+<h3 class="text-xl font-semibold text-white mt-6 mb-3">Ключові особливості:</h3>
+<ul class="list-disc pl-5 space-y-2 mb-6">
+<li><strong class="text-white">Революційна камера 200МП:</strong> Створюйте неймовірно деталізовані знімки завдяки сенсору нового покоління з оптичною стабілізацією (OIS).</li>
+<li><strong class="text-white">120Hz AMOLED дисплей:</strong> Насолоджуйтесь плавною картинкою та яскравими кольорами на великому 6.67-дюймовому екрані.</li>
+<li><strong class="text-white">Потужний процесор:</strong> Snapdragon 7 Gen 2 забезпечує високу продуктивність в іграх та швидку роботу додатків.</li>
+<li><strong class="text-white">Швидка зарядка:</strong> Акумулятор ємністю 5100 мАг з підтримкою турбозарядки дозволить вам завжди залишатися на зв'язку.</li>
+</ul>
+</div>
+</section>
+<!-- Technical Specifications Table -->
+<section data-purpose="technical-specifications">
+<h2 class="text-2xl font-bold mb-6 border-b border-slate-800 pb-2">Характеристики</h2>
+<div class="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
+<!-- Category: Дисплей -->
+<div class="border-b border-slate-700">
+<div class="bg-slate-800 px-6 py-3 font-semibold text-white">Дисплей</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-700/50">
+<div class="text-slate-400">Діагональ екрану</div>
+<div class="md:col-span-2 text-slate-200">6.67"</div>
+</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-700/50">
+<div class="text-slate-400">Тип матриці</div>
+<div class="md:col-span-2 text-slate-200">AMOLED, 120Hz</div>
+</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="text-slate-400">Роздільна здатність</div>
+<div class="md:col-span-2 text-slate-200">2712x1220 (1.5K)</div>
+</div>
+</div>
+<!-- Category: Процесор та Пам'ять -->
+<div class="border-b border-slate-700">
+<div class="bg-slate-800 px-6 py-3 font-semibold text-white">Процесор та Пам'ять</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-700/50">
+<div class="text-slate-400">Процесор</div>
+<div class="md:col-span-2 text-slate-200">Qualcomm Snapdragon 7s Gen 2</div>
+</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-700/50">
+<div class="text-slate-400">Оперативна пам'ять</div>
+<div class="md:col-span-2 text-slate-200">8 ГБ</div>
+</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="text-slate-400">Вбудована пам'ять</div>
+<div class="md:col-span-2 text-slate-200">256 ГБ</div>
+</div>
+</div>
+<!-- Category: Камера -->
+<div>
+<div class="bg-slate-800 px-6 py-3 font-semibold text-white">Камера</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-slate-700/50">
+<div class="text-slate-400">Основна камера</div>
+<div class="md:col-span-2 text-slate-200">200 Мп + 8 Мп + 2 Мп, OIS</div>
+</div>
+<div class="px-6 py-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="text-slate-400">Фронтальна камера</div>
+<div class="md:col-span-2 text-slate-200">16 Мп</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Reviews -->
+<div class="lg:col-span-1">
+<section class="bg-slate-800/30 p-6 rounded-xl border border-slate-800 sticky top-24" data-purpose="reviews-summary">
+<h2 class="text-xl font-bold mb-6">Відгуки клієнтів</h2>
+<!-- Rating Summary -->
+<div class="flex items-center gap-4 mb-8">
+<div class="text-5xl font-bold text-white">4.8</div>
+<div>
+<div class="flex text-yellow-400 text-lg mb-1">
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star-half-stroke"></i>
+</div>
+<div class="text-sm text-slate-400">На основі 150 відгуків</div>
+</div>
+</div>
+<!-- Progress Bars -->
+<div class="space-y-3 mb-8">
+<div class="flex items-center text-sm">
+<div class="w-12 text-slate-400 flex items-center gap-1">5 <i class="fa-solid fa-star text-xs"></i></div>
+<div class="flex-grow bg-slate-700 h-2 rounded-full mx-3 overflow-hidden">
+<div class="bg-yellow-400 h-full rounded-full" style="width: 85%"></div>
+</div>
+<div class="w-8 text-right text-slate-400">85%</div>
+</div>
+<div class="flex items-center text-sm">
+<div class="w-12 text-slate-400 flex items-center gap-1">4 <i class="fa-solid fa-star text-xs"></i></div>
+<div class="flex-grow bg-slate-700 h-2 rounded-full mx-3 overflow-hidden">
+<div class="bg-yellow-400 h-full rounded-full" style="width: 10%"></div>
+</div>
+<div class="w-8 text-right text-slate-400">10%</div>
+</div>
+<div class="flex items-center text-sm">
+<div class="w-12 text-slate-400 flex items-center gap-1">3 <i class="fa-solid fa-star text-xs"></i></div>
+<div class="flex-grow bg-slate-700 h-2 rounded-full mx-3 overflow-hidden">
+<div class="bg-yellow-400 h-full rounded-full" style="width: 3%"></div>
+</div>
+<div class="w-8 text-right text-slate-400">3%</div>
+</div>
+<div class="flex items-center text-sm">
+<div class="w-12 text-slate-400 flex items-center gap-1">2 <i class="fa-solid fa-star text-xs"></i></div>
+<div class="flex-grow bg-slate-700 h-2 rounded-full mx-3 overflow-hidden">
+<div class="bg-yellow-400 h-full rounded-full" style="width: 1%"></div>
+</div>
+<div class="w-8 text-right text-slate-400">1%</div>
+</div>
+<div class="flex items-center text-sm">
+<div class="w-12 text-slate-400 flex items-center gap-1">1 <i class="fa-solid fa-star text-xs"></i></div>
+<div class="flex-grow bg-slate-700 h-2 rounded-full mx-3 overflow-hidden">
+<div class="bg-yellow-400 h-full rounded-full" style="width: 1%"></div>
+</div>
+<div class="w-8 text-right text-slate-400">1%</div>
+</div>
+</div>
+<button class="w-full border border-slate-600 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+            Написати відгук
+          </button>
+<!-- Review List -->
+<div class="mt-8 space-y-6">
+<!-- Single Review -->
+<div class="border-t border-slate-700/50 pt-6">
+<div class="flex justify-between items-start mb-2">
+<div class="font-medium text-slate-200">Олександр К.</div>
+<div class="text-xs text-slate-500">12 Травня 2024</div>
+</div>
+<div class="flex text-yellow-400 text-xs mb-2">
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+</div>
+<p class="text-sm text-slate-400 line-clamp-3">
+                Відмінний телефон за свої гроші. Камера дійсно вражає, особливо при хорошому освітленні. Екран яскравий, 120 герц відчуваються. Батареї вистачає на півтора дні активного використання. Рекомендую!
+              </p>
+</div>
+<!-- Single Review -->
+<div class="border-t border-slate-700/50 pt-6">
+<div class="flex justify-between items-start mb-2">
+<div class="font-medium text-slate-200">Марія В.</div>
+<div class="text-xs text-slate-500">05 Травня 2024</div>
+</div>
+<div class="flex text-yellow-400 text-xs mb-2">
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-solid fa-star"></i>
+<i class="fa-regular fa-star text-slate-600"></i>
+</div>
+<p class="text-sm text-slate-400 line-clamp-3">
+                Гарний дизайн, приємно лежить в руці. Заряджається дуже швидко, це великий плюс. Трохи багато попередньо встановлених програм, але їх можна видалити. Загалом покупкою задоволена.
+              </p>
+</div>
+</div>
+<a class="block text-center text-blue-500 hover:text-blue-400 text-sm font-medium mt-6" href="#">
+            Всі відгуки (150)
+          </a>
+</section>
+</div>
+</div>
+<!-- Similar Products Section -->
+<section class="mt-16 border-t border-slate-800 pt-12" data-purpose="similar-products">
+<h2 class="text-2xl font-bold mb-8">Схожі товари</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Product Card 1 -->
+<div class="bg-slate-800 rounded-xl p-6 flex flex-col border border-slate-700 hover:border-blue-500 transition-colors">
+<div class="h-48 mb-4 flex items-center justify-center">
+<img alt="Nokia XR20" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCj7nJv3R-BNJ0j2ElXPaUXcvPoZg5D40OPYQqLAIkZSjzLLKaWWm9pKBm3Rcki3z4YYD81qnjSzPiooGIxFQ9tvgiNtntwJxAnm7QXD4PFKMR4saddmUeTjUygRv0an2e3V2BGosuzSxcVOybhZQdd-t_1odKj9IJdON0E2tgxEB2pDHtp0CsP_NC258SCVQJEjuRRviCO6n8UEBFK9UWUGSpWrSwqC3zSzPLfpGmBq91BryO9vMrPEVWkw9TBFFYtNz3CUMg0CW8"/>
+</div>
+<h3 class="text-lg font-bold mb-2">Nokia XR20</h3>
+<div class="flex items-center gap-1 text-yellow-400 text-xs mb-4">
+<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+<span class="text-slate-400 ml-1">4.8</span>
+</div>
+<div class="mt-auto">
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors font-medium">Детальніше</button>
+</div>
+</div>
+<!-- Product Card 2 (Active/Highlighted state based on original image) -->
+<div class="bg-slate-700/50 rounded-xl p-6 flex flex-col border-2 border-slate-500 relative transform -translate-y-2 shadow-lg shadow-black/20">
+<div class="absolute inset-0 bg-gradient-to-b from-transparent to-slate-800/80 rounded-xl pointer-events-none"></div>
+<div class="h-48 mb-4 flex items-center justify-center relative z-10">
+<img alt="Samsung Galaxy S24" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzYnHwnHR8tE-5fpW6BMF2usVSSbetfRxIm8fYifiPyvQFZpxDzNMgZH740Si_6yoK0CMnDQwcSjtp7aVyHw6O-YWjhVJmBatB2o8JrHXHE2vjr-8mfwKtbd7hHZ_lyiwD_Fr1hNOcNCHE_CDgftMjAiyR7Yqk3Y5FvQ5PSWRLxxMsmsppdF8VFRxRIbiNN6-DtfwsdRB34sIPz3wdbS3sC8DFfgcCMDa87i3XJmtFzHUTbGeM1ZEngsOszkn9v4t0gVvAdY_2czY"/>
+</div>
+<h3 class="text-lg font-bold mb-2 relative z-10">Samsung Galaxy S24</h3>
+<div class="flex items-center gap-1 text-yellow-400 text-xs mb-4 relative z-10">
+<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+<span class="text-slate-400 ml-1">4.8</span>
+</div>
+<div class="mt-auto relative z-10">
+<button class="w-full bg-slate-500 hover:bg-slate-400 text-white py-2 rounded-lg transition-colors font-medium flex justify-center items-center gap-2">
+              Детальніше
+              <i class="fa-solid fa-hand-pointer text-sm"></i>
+</button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-slate-800 rounded-xl p-6 flex flex-col border border-slate-700 hover:border-blue-500 transition-colors">
+<div class="h-48 mb-4 flex items-center justify-center">
+<img alt="Vivo V27 Pro" class="max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVv7GqqPVDvwf7GWq8Q1eKIlOJp79HCWYSvT402MiZw7B6gd1upoGJ2pZVNCSrhfy_yHyW0wBOx8tk88pnRmssZx54kk9TrGOpNd-vic8MfB6jLufHXwJ4zGB5NuOjcAcdHGbsCizxJovQeOwenesRVYAB5t-12FfrVcAyAy9GHXNdBAZGvOAqRfDgQlihQ8E6nIh_-o4nEo277rOnjuF8pkAzV8HZGyXKbyD3G2MYM-5g5ZCJXDcH90K_FN7Bim67_xMrNdhBD20"/>
+</div>
+<h3 class="text-lg font-bold mb-2">Vivo V27 Pro</h3>
+<div class="flex items-center gap-1 text-yellow-400 text-xs mb-4">
+<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+<span class="text-slate-400 ml-1">4.8</span>
+</div>
+<div class="mt-auto">
+<button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition-colors font-medium">Детальніше</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- END: Main Content -->
+<!-- BEGIN: Footer -->
+<footer class="bg-slate-900 border-t border-slate-800 py-12 mt-auto">
+<div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+<!-- Brand Info -->
+<div>
+<a class="flex items-center gap-2 text-xl font-bold text-white mb-4" href="#">
+          ElectroLux
+        </a>
+</div>
+<!-- Links Column 1 -->
+<div>
+<h4 class="font-bold text-white mb-4">Головна</h4>
+<ul class="space-y-2 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#">Каталог</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Смартфони</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Про нас</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Посмішеник</a></li>
+</ul>
+</div>
+<!-- Links Column 2 -->
+<div>
+<h4 class="font-bold text-white mb-4">Про нас</h4>
+<ul class="space-y-2 text-slate-400 text-sm">
+<li><a class="hover:text-white transition-colors" href="#">Xiaomi</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Phones</a></li>
+<li><a class="hover:text-white transition-colors" href="#">В Наявності</a></li>
+</ul>
+</div>
+<!-- Contact / Social -->
+<div>
+<h4 class="font-bold text-white mb-4">Коррания</h4>
+<ul class="space-y-2 text-slate-400 text-sm mb-4">
+<li>Картант водин</li>
+</ul>
+<div class="flex gap-4">
+<a class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors" href="#">
+<i class="fa-brands fa-facebook-f"></i>
+</a>
+<a class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors" href="#">
+<i class="fa-brands fa-instagram"></i>
+</a>
+<a class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-colors" href="#">
+<i class="fa-brands fa-vk"></i>
+</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: Footer -->
+</body></html>

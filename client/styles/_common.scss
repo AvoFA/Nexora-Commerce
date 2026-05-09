@@ -1,0 +1,97 @@
+// Загальні стилі та міксіни
+
+@import './variables';
+
+// Основна кнопка для дій
+.btn-primary {
+  display: inline-block;
+  background: linear-gradient(to bottom right, $primary-color, $secondary-color);
+  color: hsl(0, 0%, 100%);
+  border: none;
+  box-shadow: $glow-primary;
+  border-radius: $border-radius / 1.5;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-transform: none;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: linear-gradient(to bottom right, $primary-color, $secondary-color);
+    transform: scale(1.05);
+    box-shadow: 0 0 30px hsl(216 100% 61% / 0.4);
+  }
+}
+
+// Допоміжна кнопка
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: transparent;
+  color: $text-secondary;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  border-radius: $border-radius / 1.5;
+  font-weight: 600;
+  border: 1px solid $border-color;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  font-family: inherit;
+  font-size: 0.95rem;
+
+  .MuiSvgIcon-root {
+    color: $text-secondary;
+    transition: color 0.2s ease;
+  }
+
+  &:hover {
+    background-color: rgba($primary-color, 0.15);
+    color: $primary-color;
+    border-color: $primary-color;
+
+    .MuiSvgIcon-root {
+      color: $primary-color;
+    }
+  }
+}
+
+// Міксіни для градієнтного тексту
+@mixin apply-gradient-text {
+  background: linear-gradient(90deg, $primary-color, $secondary-color);
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+// Клас для градієнтного тексту
+.gradient-text {
+  @include apply-gradient-text;
+}
+
+.glow-secondary {
+  box-shadow: 0 0 40px rgba($primary-color, 0.3),
+    0 0 20px rgba($primary-color, 0.2);
+  border-color: rgba($primary-color, 0.3);
+}
+
+// Кнопки з іконками
+.btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  .MuiSvgIcon-root {
+    color: hsl(0, 0%, 100%);
+  }
+}

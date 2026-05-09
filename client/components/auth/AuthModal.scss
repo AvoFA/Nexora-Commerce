@@ -1,0 +1,252 @@
+// src/pages/AuthModal.scss
+@import "../../styles/variables";
+@import "../../styles/common";
+
+/* Оверлей з розмитим фоном */
+.auth-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 10, 20, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 9999;
+  padding: 50px 20px;
+  overflow-y: auto;
+
+  /* Плавна поява */
+  animation: fadeIn 0.25s ease-out;
+  will-change: opacity;
+}
+
+/* Оптимізовані анімації для плавності */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Контейнер модалки */
+.auth-modal {
+  width: 100%;
+  max-width: 448px;
+  margin-top: 10px;
+  position: relative;
+
+  /* Анімація появи знизу */
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation-fill-mode: both;
+  will-change: transform;
+}
+
+/* Основна картка модалки */
+.auth-card {
+  background: $glass-gradient,rgba($card-bg, 0.95);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(white, 0.1);
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+/* Кнопка закриття в правому верхньому куті */
+.auth-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: $text-secondary;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+}
+
+/* Вкладки для перемикання між входом та реєстрацією */
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: rgba($bg-color, 0.8);
+  border-radius: $border-radius;
+  padding: 4px;
+  margin-bottom: 24px;
+  border: 1px solid $border-color;
+
+  button {
+    background: none;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-secondary;
+    cursor: pointer;
+    border-radius: $border-radius / 1.5;
+    transition: all 0.2s ease;
+
+    &.active {
+      color: $primary-color;
+      border-bottom: 2px solid $primary-color;
+    }
+
+    &:hover:not(.active) {
+      color: $text-color;
+      background-color: rgba($primary-color, 0.1);
+    }
+  }
+}
+
+/* Заголовок та опис модалки */
+.auth-card-header {
+  padding: 24px;
+  padding-bottom: 0;
+}
+
+/* Градієнтний заголовок */
+.auth-card-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(90deg, $primary-color, $secondary-color);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.auth-card-description {
+  font-size: 0.95rem;
+  color: $text-secondary;
+  margin-top: 8px;
+}
+
+/* Контент з формами */
+.auth-card-content {
+  padding: 24px;
+}
+
+/* Форми входу/реєстрації */
+.auth-form {
+  &.active { display: block; }
+  &:not(.active) { display: none; }
+}
+
+/* Група полів з іконками */
+.form-group {
+  margin-bottom: 20px;
+  position: relative;
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: $text-color;
+    font-size: 0.9rem;
+  }
+
+  .form-icon {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    color: $text-secondary;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .password-toggle {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    color: $text-secondary;
+    z-index: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $text-color;
+    }
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 12px 12px 44px;
+    font-size: 1rem;
+    border: none;
+    border-radius: $border-radius / 2;
+    border-bottom: 2px solid $border-color;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: $text-color;
+    transition: all 0.2s ease;
+
+    &[type="password"] {
+      padding-right: 44px;
+    }
+
+    &::placeholder {
+      color: $text-secondary;
+    }
+
+    &:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.08);
+      border-bottom-color: $primary-color;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+    }
+  }
+}
+
+/* Кнопка відправки форми */
+.auth-button {
+  @extend .btn-primary;
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Посилання на відновлення пароля */
+.forgot-password-link {
+  display: block;
+  text-align: left;
+  margin-top: -8px;
+  margin-bottom: 20px;
+  font-size: 0.875rem;
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 500;
+  transition: text-decoration 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

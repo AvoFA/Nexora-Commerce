@@ -1,0 +1,38 @@
+// src/pages/HomePage.scss
+@import '../../styles/variables';
+@import '../../styles/common';
+
+.product-section {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid $border-color;
+
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 16px;
+
+  // Модифікатор для центрування
+  &.centered {
+    justify-content: center;
+    border-bottom: none;
+  }
+}
+
+.section-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+
+  span {
+    background: linear-gradient(90deg, $primary-color, $secondary-color);
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}

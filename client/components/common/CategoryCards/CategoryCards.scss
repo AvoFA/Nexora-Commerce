@@ -1,0 +1,59 @@
+// Картки категорій
+@import '../../../styles/variables';
+
+.category-cards-section {
+    margin-bottom: 40px;
+}
+
+.category-cards-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+    }
+}
+
+.category-card {
+    position: relative;
+    height: 200px;
+    border-radius: $border-radius;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid $border-color;
+
+    .category-card-title {
+        color: white;
+        font-size: 2rem;
+        font-weight: 700;
+        z-index: 2;
+        transition: transform 0.3s ease;
+    }
+
+    .category-card-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1;
+        transition: background-color 0.3s ease;
+    }
+
+    // Ефект при наведенні
+    &:hover {
+        .category-card-title {
+            transform: scale(1.1);
+        }
+
+        .category-card-overlay {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    // Фонове зображення задається через inline-стилі
+}

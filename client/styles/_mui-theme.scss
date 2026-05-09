@@ -1,0 +1,76 @@
+// Стилі для Material-UI компонентів
+
+@import "./variables";
+
+// Стилі для полів вводу
+.mui-form-control {
+  width: 100%;
+
+  .MuiInputBase-root {
+    background: $bg-color;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    color: $text-color;
+    font-size: 0.9rem;
+
+    &:not(.MuiInputBase-multiline) {
+      height: 45px;
+    }
+
+    .MuiSvgIcon-root {
+      color: $text-secondary;
+    }
+  }
+
+  .MuiInputLabel-root {
+    color: $text-secondary;
+
+    &.Mui-focused {
+      color: $primary-color;
+    }
+  }
+}
+
+// Стилі для випадаючих меню
+.mui-select-menu {
+  .MuiPaper-root {
+    background-color: $bg-color;
+    color: $text-color;
+    border: 1px solid $border-color;
+    backdrop-filter: blur(10px);
+    border-radius: $border-radius;
+
+    .MuiMenuItem-root {
+      &:hover {
+        background-color: rgba($primary-color, 0.1);
+      }
+
+      &.Mui-selected {
+        background-color: rgba($primary-color, 0.2);
+
+        &:hover {
+          background-color: rgba($primary-color, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Стилі для іконок у полях вводу
+.mui-form-control {
+  .MuiInputAdornment-root {
+    .MuiSvgIcon-root {
+      color: $text-secondary;
+    }
+  }
+
+  .MuiIconButton-root {
+    .MuiSvgIcon-root {
+      color: $text-secondary;
+    }
+
+    &:hover .MuiSvgIcon-root {
+      color: $text-color;
+    }
+  }
+}

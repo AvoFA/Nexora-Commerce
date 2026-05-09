@@ -1,0 +1,295 @@
+@import '../../../styles/variables';
+@import '../../../styles/_mui-theme.scss';
+@import '../../../styles/_common.scss';
+@import '../../../styles/_admin.scss';
+
+// Статистичні картки (міні)
+.products-stats-mini {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+}
+
+.stat-mini-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(58, 86, 255, 0.1), rgba(33, 77, 138, 0.1));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(58, 86, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(58, 86, 255, 0.1);
+  transition: all 0.3s ease;
+  min-width: 200px;
+  flex: 1;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(58, 86, 255, 0.2);
+  }
+
+  .stat-icon-wrapper {
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+
+    .MuiSvgIcon-root {
+      color: white !important;
+    }
+  }
+
+  .stat-content {
+    flex-grow: 1;
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      color: var(--text-color, #333);
+      @include apply-gradient-text;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary, #666);
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+}
+
+.category-stats-overview {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+}
+
+
+
+// Сітка категорій
+
+.category-list-grid {
+  margin-bottom: 32px;
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+// Картки категорій
+
+.admin-category-card {
+  padding: 24px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  &:hover {
+    transform: scale(1.05);
+    border-color: rgba($primary-color, 0.3);
+    box-shadow: 0 0 30px rgba($primary-color, 0.3);
+  }
+
+  .category-card-header-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .category-card-avatar {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    flex-shrink: 0;
+    padding: 20px;
+    border-radius: $border-radius * 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .category-card-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover .category-card-actions {
+    opacity: 1;
+  }
+
+  .category-card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    @include apply-gradient-text;
+  }
+
+  .category-card-count {
+    color: $text-secondary;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .actions-cell-button {
+    color: $text-secondary;
+    border-radius: $border-radius / 2;
+    padding: 4px;
+
+    &:hover {
+      color: $primary-color;
+      background-color: rgba($primary-color, 0.1);
+    }
+
+    &.danger {
+      &:hover {
+        color: #e74c3c;
+        background-color: rgba(231, 76, 60, 0.1);
+      }
+    }
+  }
+}
+
+// Огляд категорій
+
+.category-overview-card {
+  @extend .glow-secondary;
+  padding: 32px;
+  margin-top: 32px;
+
+  .category-overview-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    @include apply-gradient-text;
+  }
+}
+
+.overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// Статистика категорій
+
+.admin-category-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-radius: $border-radius;
+  background-color: rgba($border-color, 0.3);
+  border: 1px solid rgba($border-color, 0.5);
+  transition: all 0.2s ease;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.3);
+  }
+
+  .category-stat-details {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-grow: 1;
+    min-width: 150px;
+
+    .stat-icon-wrapper {
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: $border-radius / 2;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+
+      .MuiSvgIcon-root {
+        color: white;
+      }
+    }
+
+    .stat-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: $text-color;
+    }
+  }
+
+  .category-stat-progress {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-shrink: 0;
+
+    @media (max-width: 640px) {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .stat-count-info {
+      text-align: right;
+      flex-shrink: 0;
+      width: 90px;
+
+      .stat-count-value {
+        font-weight: 700;
+        color: $text-color ;
+        font-size: 0.95rem;
+        margin: 0;
+      }
+
+      .stat-count-percent {
+        font-size: 0.75rem;
+        color: $text-secondary ;
+        margin: 0;
+      }
+    }
+
+    .stat-progress-bar-container {
+      width: 160px;
+      height: 12px;
+      background-color: $border-color;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba($border-color, 0.5);
+      flex-shrink: 0;
+    }
+
+    .stat-progress-bar {
+      height: 100%;
+      transition: width 0.5s ease-out;
+      border-radius: 999px;
+    }
+  }
+}

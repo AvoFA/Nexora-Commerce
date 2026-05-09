@@ -1,0 +1,131 @@
+// src/components/layout/Footer.scss
+@import "../../../styles/variables";
+
+.footer {
+    background: $glass-gradient;
+    border-top: 1px solid $border-color;
+    margin-top: 40px;
+    padding: 30px 0 0 0;
+
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr; // 1 колонка на мобільних
+    gap: 32px;
+    margin-bottom: 32px;
+
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(4, 1fr); // 4 колонки
+    }
+}
+
+.footer-logo-section {
+    h3 {
+        // Логотип з градієнтом
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        background: linear-gradient(90deg, $primary-color, $secondary-color);
+        background-clip: text;
+        color: transparent;
+    }
+
+    p {
+        font-size: 0.9rem; // text-sm
+        color: $text-secondary; // text-muted-foreground
+        margin: 0;
+        line-height: 1.5;
+    }
+}
+
+.footer-links {
+    h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 16px 0;
+        color: $text-color;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px; // space-y-2
+
+        li a {
+            color: $text-secondary;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            display: inline-block;
+
+            &:hover {
+                color: $primary-color;
+                transform: translateX(4px);
+            }
+
+            // Анімація підкреслення
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 0;
+                height: 1px;
+                background: linear-gradient(90deg, $primary-color, $secondary-color);
+                transition: width 0.3s ease;
+            }
+
+            &:hover::after {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.footer-social {
+    h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 16px 0;
+        color: $text-color;
+    }
+
+    .social-icons {
+        display: flex;
+        gap: 16px;
+
+        .social-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($secondary-color, 0.1));
+            border: 1px solid rgba($primary-color, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $text-secondary;
+            transition: background 0.4s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            transform-origin: center;
+            text-decoration: none;
+
+            &:hover {
+                background: linear-gradient(135deg, $primary-color, $secondary-color);
+                color: white;
+                transform: scale(1.05);
+                box-shadow: 0 8px 20px rgba(56, 134, 255, 0.3);
+            }
+        }
+    }
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid $border-color;
+    font-size: 0.9rem;
+    color: $text-secondary;
+}

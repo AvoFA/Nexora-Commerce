@@ -1,0 +1,52 @@
+// Основні стилі додатку
+
+@import './variables';
+@import './_mui-theme.scss';
+@import './_admin.scss';
+
+// Загальні стилі для всіх елементів
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: $bg-color;
+  color: $text-color;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Клас для заголовків сторінок
+.page-title {
+  margin-bottom: 24px;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+// Основний контейнер
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 5px;
+}
+
+// Стилі скролбару
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: $bg-color;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $primary-color;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: $secondary-color;
+}

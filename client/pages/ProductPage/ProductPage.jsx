@@ -1,0 +1,181 @@
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { getProductById, getSimilarProducts } from "../../services/productService.js";
+import { useCart } from "../../hooks/useCart.js";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import { ArrowBack, Favorite, FavoriteBorder } from '@mui/icons-material';
+import { ShoppingCartOutlined, VisibilityOutlined } from '@mui/icons-material';
+import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
+import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
+import "./ProductPage.scss";
+
+const ProductPage = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const { dispatch } = useCart();
+  const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } = useAuth();
+
+  // Завантажуємо дані товару по ID з URL
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getProductById(id);
+        setProduct(data);
+      } catch (err) {
+        setError(err.message || String(err));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  // Завантажуємо схожі товари (якщо основний товар знайдено)
+  useEffect(() => {
+    const fetchSimilarProducts = async () => {
+      if (!id || !product) return;
+      try {
+        const similar = await getSimilarProducts(id);
+        setSimilarProducts(similar);
+      } catch (err) {
+        console.warn("Помилка завантаження схожих товарів:", err);
+        setSimilarProducts([]);
+      }
+    };
+    fetchSimilarProducts();
+  }, [id, product]);
+
+  // Додавання товару в кошик
+  const handleAddToCart = () => {
+    if (!product) return;
+    dispatch({ type: "ADD_ITEM", payload: product });
+    toast.success(`${product.name} додано в кошик!`);
+  };
+
+  // Перемикач улюблених (Додати/Видалити)
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated) {
+      toast.error('Увійдіть щоб додати в улюблені');
+      return;
+    }
+
+    const favorite = isFavorite(product._id || product.id);
+    if (favorite) {
+      await removeFromFavorites(product._id || product.id);
+      toast.success('Видалено з улюблених');
+    } else {
+      await addToFavorites(product._id || product.id);
+      toast.success('Додано в улюблені');
+    }
+  };
+
+  if (isLoading) return <ProductPageSkeleton />;
+  if (error) return <div>Помилка: {error}</div>;
+  if (!product) return <div>Товар не знайдено.</div>;
+
+
+
+  const imgSrc = product.image || product.imageUrl || null;
+
+  return (
+    <div>
+      <Link to="/catalog" className="btn-back">
+        <ArrowBack sx={{ fontSize: '20px' }} />
+        <span>Назад до каталогу</span>
+      </Link>
+      <div className="product-page-container">
+        <div className="product-image-gallery">
+          {imgSrc ? (
+            <img src={imgSrc} alt={product.name} />
+          ) : (
+            <div className="product-image-placeholder">No image</div>
+          )}
+        </div>
+
+        <div className="product-details">
+          <div className="product-header">
+            <div className="product-title-section">
+              <h1>{product.name}</h1>
+              {/* Сердечко улюблені */}
+              <button
+                className="product-favorite-button"
+                onClick={handleToggleFavorite}
+                title={isFavorite(product._id || product.id) ? "Видалити з улюблених" : "Додати в улюблені"}
+              >
+                {isFavorite(product._id || product.id) ? (
+                  <Favorite sx={{ fontSize: "28px" }} />
+                ) : (
+                  <FavoriteBorder sx={{ fontSize: "28px" }} />
+                )}
+              </button>
+            </div>
+            <div className="product-badges">
+              <span className="badge brand-badge">{product.brand}</span>
+              <span className="badge category-badge">
+                {product.category === 'phones' ? 'Phones' :
+                 product.category === 'laptops' ? 'Laptops' :
+                 product.category === 'tablets' ? 'Tablets' :
+                 product.category}
+              </span>
+              <span className="badge stock-badge in-stock">В наявності</span>
+            </div>
+          </div>
+          <div className="price">{product.price} грн</div>
+          <p className="description">{product.description}</p>
+
+          {/* Блок кнопок */}
+          <div className="product-actions-wrapper">
+            {/* 1. "Додати в кошик" */}
+            <button
+              className="btn-primary btn-with-icon"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCartOutlined sx={{ fontSize: "20px" }} />
+              Додати в кошик
+            </button>
+
+            {/* 2. "Перейти до кошика" */}
+            <Link to="/cart" className="btn-secondary">
+              <VisibilityOutlined sx={{ fontSize: "20px" }} />
+              Перейти до кошика
+            </Link>
+          </div>
+          {/* /Блок кнопок */}
+
+          <div className="attributes-list">
+            <h3>Характеристики</h3>
+            <ul className="attributes-simple-list">
+              {product.attributes?.map((attr) => (
+                <li key={attr.key}>
+                  <strong>{attr.key}:</strong> {attr.value}
+                </li>
+              )) ?? <li>Немає характеристик</li>}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Схожі товари */}
+      {similarProducts.length > 0 && (
+        <div className="similar-products-section">
+          <h2>Схожі товари</h2>
+          <p>Вам також можуть сподобатися</p>
+          <div className="similar-products-grid">
+            {similarProducts.map((similarProduct) => (
+              <ProductCard key={similarProduct.id} product={similarProduct} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProductPage;

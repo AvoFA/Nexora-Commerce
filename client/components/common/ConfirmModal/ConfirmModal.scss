@@ -1,0 +1,169 @@
+// Базові стилі для всіх типів діалогів підтверждення
+@import "../../../styles/variables";
+@import "../../../styles/common";
+
+.confirm-modal {
+  .MuiBackdrop-root {
+    background-color: rgba(10, 10, 20, 0.7);
+  }
+
+  .MuiPaper-root {
+    background: $glass-gradient, rgba($card-bg, 0.95);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(white, 0.1);
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    overflow: hidden;
+  }
+
+  &.clear-favorites-modal {
+    .confirm-modal-icon {
+      color: hsl(0, 70%, 50%);
+    }
+    .confirm-modal-warning {
+      color: hsl(0, 70%, 40%);
+      background: rgba(hsl(0, 70%, 50%), 0.1);
+      border-left: 3px solid hsl(0, 70%, 50%);
+    }
+  }
+
+  &.clear-cart-modal {
+    .confirm-modal-icon {
+      color: hsl(0, 70%, 50%);
+    }
+    .confirm-modal-warning {
+      color: hsl(0, 70%, 40%);
+      background: rgba(hsl(0, 70%, 50%), 0.1);
+      border-left: 3px solid hsl(0, 70%, 50%);
+    }
+  }
+
+  &.logout-modal {
+    .confirm-modal-icon {
+      color: hsl(38, 100%, 58%);
+    }
+    .confirm-modal-warning {
+      color: $text-secondary;
+      background: rgba($primary-color, 0.1);
+      border-left: 3px solid $primary-color;
+    }
+    .confirm-modal-confirm-btn {
+      background: linear-gradient(135deg, hsl(0, 70%, 50%), hsl(0, 70%, 40%));
+    }
+  }
+
+  &.delete-modal {
+    .confirm-modal-icon {
+      color: hsl(38, 100%, 58%);
+    }
+    .confirm-modal-warning {
+      font-size: 0.9rem;
+      color: $text-secondary;
+    }
+  }
+
+  .confirm-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: $text-color;
+    border-bottom: 1px solid $border-color;
+
+    .confirm-modal-icon {
+      filter: drop-shadow(0 2px 8px hsla(0, 70%, 50%, 0.3));
+      font-size: 32px;
+    }
+  }
+
+  .confirm-modal-content {
+    padding: 24px;
+    background: rgba($bg-color, 0.3);
+
+    p {
+      font-size: 1.05rem;
+      color: $text-color;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .confirm-modal-warning {
+      font-size: 0.9rem;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: $border-radius / 2;
+    }
+  }
+
+  .confirm-modal-actions {
+    padding: 20px 24px;
+    gap: 12px;
+    background: rgba($bg-color, 0.5);
+
+    .confirm-modal-cancel-btn {
+      @extend .btn-secondary;
+      padding: 12px 24px;
+    }
+
+    .confirm-modal-confirm-btn {
+      display: inline-block;
+      border: none;
+      border-radius: $border-radius / 1.5;
+      padding: 12px 24px;
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px hsla(0, 70%, 50%, 0.3);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 6px 16px hsla(0, 70%, 50%, 0.4);
+        transform: translateY(-2px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// Адаптивність
+@media (max-width: 600px) {
+  .confirm-modal {
+    .confirm-modal-title {
+      font-size: 1.2rem;
+      padding: 20px;
+
+      .confirm-modal-icon {
+        font-size: 28px;
+      }
+    }
+
+    .confirm-modal-content {
+      padding: 20px;
+
+      p {
+        font-size: 1rem;
+      }
+
+      .confirm-modal-warning {
+        font-size: 0.85rem;
+        padding: 10px;
+      }
+    }
+
+    .confirm-modal-actions {
+      padding: 16px 20px;
+
+      .confirm-modal-cancel-btn,
+      .confirm-modal-confirm-btn {
+        padding: 10px 20px;
+      }
+    }
+  }
+}

@@ -1,0 +1,144 @@
+// Стилі для бокового фільтра
+
+@import "../../../styles/variables";
+@import "../../../styles/common";
+@import "../../../styles/mui-theme";
+
+// Основний контейнер фільтрів
+
+.filter-sidebar {
+    background: $glass-gradient;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    padding: 24px;
+    height: fit-content;
+}
+
+// Блоки фільтрів
+
+.filter-block {
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+
+    &:last-of-type {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+}
+
+.filter-title {
+    color: $text-color;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 0;
+}
+
+// Інпути ціни
+
+.mui-price-inputs {
+    display: flex;
+    gap: 12px;
+
+    .mui-form-control {
+        flex: 1;
+    }
+}
+
+// Список брендів зі скролом
+
+.mui-filter-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+
+    // Згортстий стан
+    max-height: none;
+    overflow-y: hidden;
+    padding-right: 0;
+
+    // Розгорнутий стан
+    &.scrollable {
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 4px;
+
+        // Стилі скролбару
+        &::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: rgba($border-color, 0.3);
+            border-radius: 4px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background-color: $primary-color;
+            border-radius: 4px;
+        }
+    }
+
+    .MuiFormGroup-root {
+        width: 100%;
+    }
+
+    .MuiFormControlLabel-root {
+        margin: 0;
+        width: 100%;
+        padding: 4px 0;
+        border-radius: 6px;
+        flex-shrink: 0;
+        max-width: 100%;
+        overflow: hidden;
+
+        &:hover {
+            background-color: rgba($primary-color, 0.1);
+        }
+
+        .MuiTypography-root {
+            font-size: 0.95rem;
+            color: $text-secondary;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .MuiCheckbox-root {
+            color: $text-secondary;
+            padding: 6px 8px;
+
+            &.Mui-checked {
+                color: $primary-color;
+            }
+        }
+    }
+}
+
+// Кнопки дій
+
+.mui-filter-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .MuiButton-root {
+        width: 100%;
+
+        &.MuiButton-containedPrimary {
+            @extend .btn-primary;
+        }
+
+        &.MuiButton-outlined {
+            @extend .btn-secondary;
+            border-color: $border-color;
+
+            &:hover {
+                border-color: $primary-color;
+            }
+        }
+    }
+}
