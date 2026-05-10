@@ -20,6 +20,7 @@ import AboutPage from "./pages/AboutPage/AboutPage.jsx";
 import CatalogPage from "./pages/CatalogPage/CatalogPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.jsx";
 import FavoritesPage from "./pages/FavoritesPage/FavoritesPage.jsx";
+import ComparePage from "./pages/ComparePage/ComparePage.jsx";
 
 // сторінки адмінки
 import ProductListPage from "./pages/admin/ProductListPage/ProductListPage.jsx";
@@ -109,6 +110,7 @@ export const router = createBrowserRouter([
       { path: "/catalog/:categoryName", element: <CatalogPage /> },
       { path: "/search", element: <CatalogPage /> },
       { path: "/favorites", element: <FavoritesPage /> },
+      { path: "/compare", element: <ComparePage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "*", element: <NotFoundPage /> }, // 404 для всіх інших сторінок
     ],

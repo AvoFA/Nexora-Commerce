@@ -38,13 +38,9 @@
         transition: transform 0.3s ease;
     }
 
-    // Кнопка улюблені
-    .favorite-button {
+    @mixin action-button {
         position: absolute;
-        top: 8px;
         right: 8px;
-        background: rgba($primary-color, 0.9);
-        border: 2px solid rgba($primary-color, 0.7);
         border-radius: 50%;
         width: 36px;
         height: 36px;
@@ -52,26 +48,12 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 8px rgba($primary-color, 0.3);
-        backdrop-filter: blur(8px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 10;
-
-        &:hover {
-            background: rgba($secondary-color, 0.9);
-            border-color: rgba($secondary-color, 0.7);
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba($secondary-color, 0.4);
-        }
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
         .MuiSvgIcon-root {
-            color: #ffffff; // Білий колір замість червоного
-            font-size: 20px;
-
-            &:hover {
-                color: #ffffff;
-                filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
-            }
+            transition: all 0.3s ease;
         }
 
         &:hover .MuiSvgIcon-root {
@@ -79,16 +61,63 @@
         }
 
         @keyframes heartbeat {
+            0%, 50%, 100% { transform: scale(1); }
+            25%, 75% { transform: scale(1.1); }
+        }
+    }
 
-            0%,
-            50%,
-            100% {
-                transform: scale(1);
+    // Кнопка улюблені
+    .favorite-button {
+        @include action-button;
+        top: 8px;
+        background: #ffffff; // Повністю непрозорий білий фон
+        border: 2px solid $primary-color; // Яскрава синя обводка
+        
+        .MuiSvgIcon-root {
+            color: $primary-color; // Синя іконка
+        }
+
+        &:hover {
+            box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+            transform: scale(1.05);
+            background: #ffffff; // Залишаємо непрозорим білим
+        }
+
+        &.active {
+            background: $primary-color;
+            border-color: $primary-color;
+            box-shadow: 0 4px 15px rgba($primary-color, 0.4);
+            
+            .MuiSvgIcon-root {
+                color: #ffffff;
             }
+        }
+    }
 
-            25%,
-            75% {
-                transform: scale(1.1);
+    // Кнопка «До порівняння»
+    .compare-button {
+        @include action-button;
+        top: 52px;
+        background: #ffffff; // Повністю непрозорий білий фон
+        border: 2px solid $secondary-color; // Яскрава фіолетова обводка
+
+        .MuiSvgIcon-root {
+            color: $secondary-color; // Фіолетова іконка
+        }
+
+        &:hover {
+            box-shadow: 0 4px 15px rgba($secondary-color, 0.3);
+            transform: scale(1.05);
+            background: #ffffff; // Залишаємо непрозорим білим
+        }
+
+        &.active {
+            background: $secondary-color;
+            border-color: $secondary-color;
+            box-shadow: 0 4px 15px rgba($secondary-color, 0.4);
+            
+            .MuiSvgIcon-root {
+                color: #ffffff;
             }
         }
     }

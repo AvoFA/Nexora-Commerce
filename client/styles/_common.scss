@@ -21,9 +21,44 @@
   transition: all 0.3s ease;
 
   &:hover {
-    background: linear-gradient(to bottom right, $primary-color, $secondary-color);
-    transform: scale(1.05);
-    box-shadow: 0 0 30px hsl(216 100% 61% / 0.4);
+    background: linear-gradient(to bottom right, lighten($primary-color, 5%), lighten($secondary-color, 5%));
+    // ❌ Без transform:scale — інакше кнопки у картках роздуваються
+    box-shadow: 0 0 24px hsl(216 100% 61% / 0.4);
+    opacity: 0.95;
+  }
+}
+
+// Кнопка «Назад» — glassmorphism, використовується на декількох сторінках
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  margin: 12px 0;
+  background: $glass-gradient;
+  backdrop-filter: $glass-blur;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  color: $text-color;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  width: fit-content;
+
+  .MuiSvgIcon-root {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.2);
+
+    .MuiSvgIcon-root {
+      transform: translateX(-4px);
+      color: $primary-color;
+    }
   }
 }
 

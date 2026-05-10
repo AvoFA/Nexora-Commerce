@@ -1,0 +1,498 @@
+@import "../../styles/variables.scss";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Сторінка порівняння товарів
+// ─────────────────────────────────────────────────────────────────────────────
+
+.cmp-page {
+  padding: 2rem 0 5rem;
+  animation: cmpFadeIn 0.35s ease-out;
+}
+
+// ── Шапка ────────────────────────────────────────────────────────────────────
+.cmp-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $text-color;
+    margin: 0;
+
+    .MuiSvgIcon-root { color: $primary-color; }
+  }
+}
+
+// ── Тулбар ────────────────────────────────────────────────────────────────────
+.cmp-toolbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.85rem;
+  padding: 0.65rem 1rem;
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+  }
+}
+
+.cmp-toolbar-add {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 36px;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  background: $primary-color;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: lighten($primary-color, 10%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+  }
+}
+
+// ── Toggle ────────────────────────────────────────────────────────────────────
+.cmp-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  &__track {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 38px;
+    height: 20px;
+    background: $border-color;
+    border-radius: 999px;
+    transition: background 0.25s ease;
+    flex-shrink: 0;
+
+    &:has(.cmp-toggle__input:checked) {
+      background: $primary-color;
+    }
+  }
+
+  &__thumb {
+    position: absolute;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    .cmp-toggle__input:checked ~ & {
+      transform: translateX(18px);
+    }
+  }
+
+  &__label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: $text-secondary;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+  }
+
+  &:hover &__label { color: $text-color; }
+}
+
+// ── Кнопка «Очистити» ─────────────────────────────────────────────────────────
+.cmp-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 36px;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  background: hsl(0, 70%, 55%);
+  border: 1px solid transparent;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: hsl(0, 70%, 45%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(220, 80, 80, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 0.6rem;
+    
+    span {
+      display: none;
+    }
+  }
+}
+
+// ── Порожній стан ─────────────────────────────────────────────────────────────
+.cmp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: 16px;
+  text-align: center;
+  gap: 0.75rem;
+
+  &__icon {
+    font-size: 3.5rem;
+    animation: cmpBounce 2.5s ease-in-out infinite;
+  }
+
+  h2 { font-size: 1.3rem; color: $text-color; margin: 0; }
+
+  p { color: $text-secondary; font-size: 0.9rem; margin: 0 0 0.5rem; line-height: 1.5; }
+}
+
+// ── Обгортка таблиці ──────────────────────────────────────────────────────────
+.cmp-table-wrap {
+  border: 1px solid $border-color;
+  border-radius: 14px;
+  overflow: hidden;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar        { height: 5px; }
+  &::-webkit-scrollbar-track  { background: $bg-color; }
+  &::-webkit-scrollbar-thumb  {
+    background: rgba($primary-color, 0.3);
+    border-radius: 3px;
+    &:hover { background: rgba($primary-color, 0.55); }
+  }
+}
+
+// ── Таблиця ──────────────────────────────────────────────────────────────────
+.cmp-table {
+  width: 100%;          // ← Розтягуємо на всю доступну ширину
+  max-width: 1000px;    // ← Максимальна ширина, щоб не було занадто широким на великих екранах
+  margin: 0 auto;       // ← Центруємо таблицю
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  td, th {
+    border-right: 1px solid $border-color;
+    &:last-child { border-right: none; }
+  }
+}
+
+// ── Рядок із картками ─────────────────────────────────────────────────────────
+.cmp-products-row {
+  background: $card-bg;
+}
+
+.cmp-product-cell {
+  padding: 1rem 1rem 1.1rem;
+  text-align: left;
+  vertical-align: top;
+  position: relative;
+  border-bottom: 2px solid $border-color;
+  font-weight: normal;
+
+  // ── Кнопка × — помітна ───────────────────────────────────────────────────
+  &__remove {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    width: 26px;
+    height: 26px;
+    background: rgba($bg-color, 0.85);
+    border: 1px solid $border-color;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $text-color;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s ease;
+    z-index: 2;
+
+    &:hover {
+      background: hsl(0, 65%, 42%);
+      border-color: hsl(0, 65%, 42%);
+      color: #fff;
+      transform: scale(1.1);
+    }
+  }
+
+  // ── Зображення ───────────────────────────────────────────────────────────
+  &__img-link {
+    display: block;
+    width: 100%;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid $border-color;
+    margin-bottom: 0.85rem;
+    transition: border-color 0.2s ease;
+
+    &:hover { border-color: rgba($primary-color, 0.5); }
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.75rem;
+  }
+
+  &__no-img {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+    font-size: 0.8rem;
+    opacity: 0.5;
+  }
+
+  // ── Назва ────────────────────────────────────────────────────────────────
+  &__name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-color;
+    text-decoration: none;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s ease;
+
+    &:hover { color: $primary-color; }
+  }
+
+  // ── Рядок: ціна зліва + кошик справа ────────────────────────────────────
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+
+  &__price {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $primary-color;
+    line-height: 1;
+  }
+
+  // Кнопка-іконка «В кошик» — кругла
+  &__cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    background: rgba($primary-color, 0.1);
+    border: 1.5px solid rgba($primary-color, 0.4);
+    border-radius: 50%;
+    color: $primary-color;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+
+    .MuiSvgIcon-root { color: $primary-color; transition: color 0.2s ease; }
+
+    &:hover {
+      background: $primary-color;
+      border-color: $primary-color;
+      transform: scale(1.1);
+      box-shadow: 0 3px 10px rgba($primary-color, 0.4);
+
+      .MuiSvgIcon-root { color: #ffffff; }
+    }
+  }
+
+  // ── Плейсхолдер ─────────────────────────────────────────────────────────
+  &--placeholder {
+    padding: 1rem;
+  }
+}
+
+.cmp-placeholder-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  background: rgba($bg-color, 0.3);
+  border: 2px dashed rgba($border-color, 0.5);
+  border-radius: 12px;
+  text-decoration: none;
+  color: $text-secondary;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.05);
+    border-color: rgba($primary-color, 0.4);
+    color: $primary-color;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+
+    .cmp-placeholder-icon {
+      transform: scale(1.1);
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.2);
+    }
+  }
+}
+
+.cmp-placeholder-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: $card-bg;
+  border-radius: 50%;
+  margin-bottom: 1.25rem;
+  color: $text-secondary;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.cmp-placeholder-text {
+  font-size: 1rem;
+  font-weight: 500;
+  max-width: 220px;
+  text-align: center;
+  line-height: 1.4;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Рядки характеристик: назва по центру (БІЛИМ) / значення під товарами
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Заголовок характеристики — по центру, білий текст, нейтральний фон
+.cmp-spec-header {
+  td {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.45rem 1rem;
+    border-bottom: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+// Значення характеристики
+.cmp-spec-values {
+  td {
+    text-align: center;
+    font-size: 0.9rem;
+    color: $text-secondary;
+    padding: 0.65rem 1rem 0.75rem;
+    border-bottom: 1px solid $border-color;
+    background: $bg-color;
+  }
+}
+
+.cmp-spec-values__empty {
+  background: rgba($bg-color, 0.7) !important;
+}
+
+// Усі характеристики однакові
+.cmp-no-diff {
+  text-align: center;
+  padding: 2.5rem 1rem !important;
+  color: $text-secondary !important;
+  font-style: italic;
+  font-size: 0.9rem;
+  border-right: none !important;
+}
+
+// ── Анімації ──────────────────────────────────────────────────────────────────
+@keyframes cmpFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cmpBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+// ── Адаптив ───────────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .cmp-header {
+    flex-direction: column;
+    align-items: flex-start;
+
+    &__title { font-size: 1.4rem; }
+  }
+
+  .cmp-toolbar { flex-wrap: wrap; }
+
+  .cmp-product-cell {
+    min-width: 140px;
+    padding: 0.75rem;
+
+    &__name   { font-size: 0.78rem; }
+    &__price  { font-size: 0.95rem; }
+    &__cart   { width: 30px; height: 30px; }
+  }
+
+  .cmp-spec-header td,
+  .cmp-spec-values td { font-size: 0.82rem; padding: 0.5rem 0.6rem; }
+}

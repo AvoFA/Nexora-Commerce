@@ -5,10 +5,11 @@ import { useCart } from "../../hooks/useCart.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowBack, Favorite, FavoriteBorder } from '@mui/icons-material';
+import { ArrowBack, Favorite, FavoriteBorder, Balance } from '@mui/icons-material';
 import { ShoppingCartOutlined, VisibilityOutlined } from '@mui/icons-material';
 import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
+import { useCompare } from "../../hooks/useCompare.js";
 import "./ProductPage.scss";
 
 const ProductPage = () => {
@@ -19,6 +20,7 @@ const ProductPage = () => {
   const [error, setError] = useState(null);
 
   const { dispatch } = useCart();
+  const { addToCompare, removeFromCompare, isCompared } = useCompare();
   const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } = useAuth();
 
   // Завантажуємо дані товару по ID з URL
@@ -76,6 +78,18 @@ const ProductPage = () => {
     }
   };
 
+  // Перемикач порівняння
+  const handleToggleCompare = () => {
+    if (!product) return;
+    const productId = product._id || product.id;
+    if (isCompared(productId)) {
+      removeFromCompare(productId);
+      toast.success("Видалено з порівняння");
+    } else {
+      addToCompare(product);
+    }
+  };
+
   if (isLoading) return <ProductPageSkeleton />;
   if (error) return <div>Помилка: {error}</div>;
   if (!product) return <div>Товар не знайдено.</div>;
@@ -105,7 +119,7 @@ const ProductPage = () => {
               <h1>{product.name}</h1>
               {/* Сердечко улюблені */}
               <button
-                className="product-favorite-button"
+                className={`product-favorite-button${isFavorite(product._id || product.id) ? ' active' : ''}`}
                 onClick={handleToggleFavorite}
                 title={isFavorite(product._id || product.id) ? "Видалити з улюблених" : "Додати в улюблені"}
               >
@@ -114,6 +128,14 @@ const ProductPage = () => {
                 ) : (
                   <FavoriteBorder sx={{ fontSize: "28px" }} />
                 )}
+              </button>
+              {/* Ваги порівняння — власний клас для чіткого візуального стану */}
+              <button
+                className={`product-compare-button${isCompared(product._id || product.id) ? ' active' : ''}`}
+                onClick={handleToggleCompare}
+                title={isCompared(product._id || product.id) ? 'Видалити з порівняння' : 'Додати до порівняння'}
+              >
+                <Balance sx={{ fontSize: '28px' }} />
               </button>
             </div>
             <div className="product-badges">

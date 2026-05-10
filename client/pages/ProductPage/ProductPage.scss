@@ -1,40 +1,6 @@
 @import '../../styles/variables';
 @import '../../styles/_common';
 
-// Кнопка назад
-
-.btn-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  margin: 12px 0;
-  background: $glass-gradient;
-  backdrop-filter: $glass-blur;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  color: $text-color;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  width: fit-content;
-
-  .MuiSvgIcon-root {
-    transition: transform 0.3s ease;
-  }
-
-  &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.2);
-
-    .MuiSvgIcon-root {
-      transform: translateX(-4px);
-      color: $primary-color;
-    }
-  }
-}
 
 // Основний контейнер сторінки
 
@@ -88,9 +54,7 @@
         flex: 1;
       }
 
-      .product-favorite-button {
-        background: rgba($primary-color, 0.9);
-        border: 2px solid rgba($primary-color, 0.7);
+      @mixin action-button-large {
         border-radius: 12px;
         width: 50px;
         height: 50px;
@@ -98,25 +62,13 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba($primary-color, 0.3);
-        backdrop-filter: blur(8px);
-
-        &:hover {
-          background: rgba($secondary-color, 0.9);
-          border-color: rgba($secondary-color, 0.7);
-          transform: scale(1.1);
-          box-shadow: 0 4px 12px rgba($secondary-color, 0.4);
-        }
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
         .MuiSvgIcon-root {
-          color: #ffffff;
-          font-size: 24px;
-
-          &:hover {
-            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
-          }
+          font-size: 28px;
+          transition: all 0.3s ease;
         }
 
         &:hover .MuiSvgIcon-root {
@@ -124,19 +76,64 @@
         }
 
         @keyframes heartbeat {
+          0%, 50%, 100% { transform: scale(1); }
+          25%, 75% { transform: scale(1.1); }
+        }
+      }
 
-          0%,
-          50%,
-          100% {
-            transform: scale(1);
-          }
+      .product-favorite-button {
+        @include action-button-large;
+        background: #ffffff; // Повністю непрозорий білий фон
+        border: 2px solid $primary-color; // Яскрава синя обводка
 
-          25%,
-          75% {
-            transform: scale(1.05);
+        .MuiSvgIcon-root {
+            color: $primary-color; // Синя іконка
+        }
+
+        &:hover {
+          box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+          transform: scale(1.05);
+          background: #ffffff; // Залишаємо непрозорим білим
+        }
+
+        &.active {
+          background: $primary-color;
+          border-color: $primary-color;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.4);
+
+          .MuiSvgIcon-root {
+            color: #ffffff;
           }
         }
       }
+
+      .product-compare-button {
+        @include action-button-large;
+        margin-left: 10px;
+        background: #ffffff; // Повністю непрозорий білий фон
+        border: 2px solid $secondary-color; // Яскрава фіолетова обводка
+
+        .MuiSvgIcon-root {
+            color: $secondary-color; // Фіолетова іконка
+        }
+
+        &:hover {
+          box-shadow: 0 4px 15px rgba($secondary-color, 0.3);
+          transform: scale(1.05);
+          background: #ffffff; // Залишаємо непрозорим білим
+        }
+
+        &.active {
+          background: $secondary-color;
+          border-color: $secondary-color;
+          box-shadow: 0 4px 15px rgba($secondary-color, 0.4);
+
+          .MuiSvgIcon-root {
+            color: #ffffff;
+          }
+        }
+      }
+
     }
 
     .product-badges {

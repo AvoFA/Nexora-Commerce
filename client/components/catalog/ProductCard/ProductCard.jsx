@@ -6,12 +6,15 @@ import {
   ShoppingCartOutlined,
   Favorite,
   FavoriteBorder,
+  Balance,
 } from "@mui/icons-material";
+import { useCompare } from "../../../hooks/useCompare.js";
 import "./ProductCard.scss";
 
 // Картка товару: відображає основну інфо та кнопки дій
 const ProductCard = ({ product, onFavoriteChange }) => {
   const { dispatch } = useCart();
+  const { addToCompare, removeFromCompare, isCompared } = useCompare();
   const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } =
     useAuth();
 
@@ -56,6 +59,18 @@ const ProductCard = ({ product, onFavoriteChange }) => {
     }
   };
 
+  const handleToggleCompare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isCompared(productId)) {
+      removeFromCompare(productId);
+      toast.success("Видалено з порівняння");
+    } else {
+      addToCompare(product);
+    }
+  };
+
   return (
     <div className="product-card-link">
       <div className="product-card-image">
@@ -69,17 +84,28 @@ const ProductCard = ({ product, onFavoriteChange }) => {
 
         {/* Сердечко улюблені*/}
         <button
-          className="favorite-button"
+          className={`favorite-button${isFavorite(productId) ? ' active' : ''}`}
           onClick={handleToggleFavorite}
           title={
             isFavorite(productId) ? "Видалити з улюблених" : "Додати в улюблені"
           }
+          aria-pressed={isFavorite(productId)}
         >
           {isFavorite(productId) ? (
             <Favorite sx={{ fontSize: "24px" }} />
           ) : (
             <FavoriteBorder sx={{ fontSize: "24px" }} />
           )}
+        </button>
+
+        {/* Ваги порівняння: outline коли не додано, заповнена коли додано */}
+        <button
+          className={`compare-button${isCompared(productId) ? ' active' : ''}`}
+          onClick={handleToggleCompare}
+          title={isCompared(productId) ? "Видалити з порівняння" : "Додати до порівняння"}
+          aria-pressed={isCompared(productId)}
+        >
+          <Balance sx={{ fontSize: "24px" }} />
         </button>
       </div>
 

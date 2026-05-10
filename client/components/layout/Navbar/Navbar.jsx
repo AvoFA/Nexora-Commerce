@@ -8,13 +8,16 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import BalanceIcon from '@mui/icons-material/Balance';
 import CloseIcon from '@mui/icons-material/Close';
 import LogoutConfirmModal from '../../common/LogoutConfirmModal/LogoutConfirmModal';
+import { useCompare } from '../../../hooks/useCompare';
 import './Navbar.scss';
 
 // Головна навігаційна панель
 const Navbar = ({ openAuth }) => {
   const { state } = useCart();
+  const { compareCount } = useCompare();
   const { isAuthenticated, user, logout } = useAuth();
   // Підраховуємо загальну кількість товарів у шапці
   const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
@@ -88,6 +91,11 @@ const Navbar = ({ openAuth }) => {
                   <PersonOutlineIcon />
                 </button>
               )}
+              {/* Кнопка порівняння — для всіх */}
+              <Link to="/compare" className="action-button compare-link" title="Порівняння товарів">
+                <BalanceIcon />
+                {compareCount > 0 && <span className="cart-count">{compareCount}</span>}
+              </Link>
               <Link to="/cart" className="action-button cart-link">
                 <ShoppingCartIcon />
                 {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
@@ -116,6 +124,12 @@ const Navbar = ({ openAuth }) => {
               </Link>
             </nav>
             <div className="mobile-menu-actions">
+              {/* Кнопка порівняння в мобільному меню — для всіх */}
+              <Link to="/compare" className="mobile-menu-action" onClick={() => setIsMenuOpen(false)}>
+                <BalanceIcon />
+                <span>Порівняння</span>
+                {compareCount > 0 && <span className="mobile-cart-count">{compareCount}</span>}
+              </Link>
               {isAuthenticated ? (
                 <>
                   <div className="mobile-user-info">
