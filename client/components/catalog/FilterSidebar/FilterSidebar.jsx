@@ -1,99 +1,211 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
-  TextField,
   Checkbox,
   FormControlLabel,
   FormGroup,
-  Button,
-  Box
+  Box,
+  Slider,
+  InputBase,
 } from '@mui/material';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import SearchIcon from '@mui/icons-material/Search';
 import './FilterSidebar.scss';
 
-// Налаштування лімітів відображення
-const FILTER_CONFIG = {
-  initialBrandVisible: 5,     // Скільки брендів показувати одразу
-  minPrice: 0,
-  maxPrice: Infinity,
-  debounceDelay: 300
+// Кількість продуктів по пам'яті (заглушка)
+const MEMORY_OPTIONS = [
+  { label: '64 ГБ',  count: 7  },
+  { label: '128 ГБ', count: 29 },
+  { label: '256 ГБ', count: 58 },
+  { label: '512 ГБ', count: 35 },
+  { label: '1 ТБ',   count: 12 },
+];
+
+const PRICE_MAX = 100000;
+const BRAND_SEARCH_THRESHOLD = 5; // показувати пошук якщо брендів > 5
+
+// Accordion-секція з заголовком і стрілкою
+const FilterSection = ({ title, children, defaultOpen = true }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="filter-block">
+      <button
+        className="filter-section-header"
+        onClick={() => setIsOpen(prev => !prev)}
+        aria-expanded={isOpen}
+      >
+        <span className="filter-title">{title}</span>
+        {isOpen
+          ? <KeyboardArrowUpIcon className="section-arrow" />
+          : <KeyboardArrowDownIcon className="section-arrow" />
+        }
+      </button>
+      {isOpen && <div className="filter-section-body">{children}</div>}
+    </div>
+  );
 };
 
-// Сайдбар фільтрації: Ціна і Бренди
-const FilterSidebar = ({ brands = [], categories = [], onApply, onReset }) => {
-  // Локальний стан фільтрів
-  const [localMinPrice, setLocalMinPrice] = useState('');
-  const [localMaxPrice, setLocalMaxPrice] = useState('');
+// ─── Основний компонент ────────────────────────────────────────────────────
+const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
+  const [priceRange, setPriceRange] = useState([0, PRICE_MAX]);
   const [localSelectedBrands, setLocalSelectedBrands] = useState([]);
-
-  // Стан для розгортання списку брендів
+  const [localMemory, setLocalMemory] = useState([]);
+  const [brandSearch, setBrandSearch] = useState('');
   const [showAllBrands, setShowAllBrands] = useState(false);
 
-  // Мульти-вибір брендів (toggle)
-  const handleBrandChange = (brandName) => {
-    setLocalSelectedBrands(prev =>
-      prev.includes(brandName)
-        ? prev.filter(b => b !== brandName)
-        : [...prev, brandName]
-    );
-  };
-
-  // Повне очищення форми
-  const handleResetClick = () => {
-    setLocalMinPrice('');
-    setLocalMaxPrice('');
-    setLocalSelectedBrands([]);
-    setShowAllBrands(false);
-    onApply(null);
-  };
-
-  // Авто-застосування фільтрів при зміні будь-якого поля
+  // Синхронізація ззовні (при видаленні chips)
   useEffect(() => {
-    const filters = {
-      minPrice: Number(localMinPrice) || 0,
-      maxPrice: Number(localMaxPrice) || Infinity,
-      brands: localSelectedBrands,
-      categories: [],
-    };
-    onApply(filters);
-  }, [localMinPrice, localMaxPrice, localSelectedBrands]);
+    if (activeFilters) {
+      setPriceRange([
+        activeFilters.minPrice || 0,
+        activeFilters.maxPrice && activeFilters.maxPrice !== Infinity
+          ? activeFilters.maxPrice
+          : PRICE_MAX,
+      ]);
+      setLocalSelectedBrands(activeFilters.brands || []);
+      setLocalMemory(activeFilters.memory || []);
+    } else {
+      setPriceRange([0, PRICE_MAX]);
+      setLocalSelectedBrands([]);
+      setLocalMemory([]);
+    }
+  }, [activeFilters]);
 
-  // Якщо список розгорнуто — показуємо все, інакше — ліміт
-  const visibleBrands = showAllBrands
-    ? brands
-    : brands.slice(0, FILTER_CONFIG.initialBrandVisible);
+  // Відфільтровані бренди по пошуку
+  const filteredBrands = useMemo(() => {
+    const query = brandSearch.trim().toLowerCase();
+    return query ? brands.filter(b => b.toLowerCase().includes(query)) : brands;
+  }, [brands, brandSearch]);
+
+  const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 5);
+
+  // Хелпер відправки фільтрів
+  const triggerApply = useCallback((range, brands, memory) => {
+    onApply({
+      minPrice: range[0],
+      maxPrice: range[1] >= PRICE_MAX ? Infinity : range[1],
+      brands,
+      memory,
+      categories: [],
+    });
+  }, [onApply]);
+
+  // Слайдер — оновлює тільки локальний стан
+  const handleSliderChange = useCallback((_, newValue) => {
+    setPriceRange(newValue);
+  }, []);
+
+  // Відпускання слайдера — застосовує фільтр
+  const handleSliderCommit = useCallback((_, newValue) => {
+    triggerApply(newValue, localSelectedBrands, localMemory);
+  }, [triggerApply, localSelectedBrands, localMemory]);
+
+  // Ручне введення ціни
+  const handlePriceInput = useCallback((idx, raw) => {
+    const val = Math.min(Math.max(Number(raw) || 0, 0), PRICE_MAX);
+    setPriceRange(prev => {
+      const next = [...prev];
+      next[idx] = val;
+      return next;
+    });
+    const next = [...priceRange];
+    next[idx] = val;
+    triggerApply(next, localSelectedBrands, localMemory);
+  }, [priceRange, triggerApply, localSelectedBrands, localMemory]);
+
+  const handleBrandChange = useCallback((brand) => {
+    const next = localSelectedBrands.includes(brand)
+      ? localSelectedBrands.filter(b => b !== brand)
+      : [...localSelectedBrands, brand];
+    setLocalSelectedBrands(next);
+    triggerApply(priceRange, next, localMemory);
+  }, [localSelectedBrands, priceRange, localMemory, triggerApply]);
+
+  const handleMemoryToggle = useCallback((mem) => {
+    const next = localMemory.includes(mem)
+      ? localMemory.filter(m => m !== mem)
+      : [...localMemory, mem];
+    setLocalMemory(next);
+    triggerApply(priceRange, localSelectedBrands, next);
+  }, [localMemory, priceRange, localSelectedBrands, triggerApply]);
+
+  const handleReset = () => {
+    setPriceRange([0, PRICE_MAX]);
+    setLocalSelectedBrands([]);
+    setLocalMemory([]);
+    setBrandSearch('');
+    onReset();
+  };
 
   return (
     <aside className="filter-sidebar">
-      {/* Блок ціни */}
+
+      {/* ── Ціна (завжди відкрита) ────────────────────── */}
       <div className="filter-block">
-        <h3 className="filter-title">Ціна</h3>
-        <Box className="mui-price-inputs">
-          <TextField
-            label="Від"
-            variant="outlined"
-            size="small"
-            type="number"
-            value={localMinPrice}
-            onChange={(e) => setLocalMinPrice(e.target.value)}
-            className="mui-form-control"
-          />
-          <TextField
-            label="До"
-            variant="outlined"
-            size="small"
-            type="number"
-            value={localMaxPrice}
-            onChange={(e) => setLocalMaxPrice(e.target.value)}
-            className="mui-form-control"
+        <div className="filter-section-header no-toggle">
+          <span className="filter-title">Ціна</span>
+        </div>
+        <div className="filter-section-body">
+        <div className="price-inputs-row">
+          <div className="price-input-wrapper">
+            <span className="price-input-label">від</span>
+            <input
+              className="price-input"
+              type="number"
+              min={0}
+              max={PRICE_MAX}
+              value={priceRange[0]}
+              onChange={e => handlePriceInput(0, e.target.value)}
+            />
+            <span className="price-currency">₴</span>
+          </div>
+          <span className="price-divider">—</span>
+          <div className="price-input-wrapper">
+            <span className="price-input-label">до</span>
+            <input
+              className="price-input"
+              type="number"
+              min={0}
+              max={PRICE_MAX}
+              value={priceRange[1]}
+              onChange={e => handlePriceInput(1, e.target.value)}
+            />
+            <span className="price-currency">₴</span>
+          </div>
+        </div>
+        <Box sx={{ px: 1, mt: 1.5 }}>
+          <Slider
+            value={priceRange}
+            onChange={handleSliderChange}
+            onChangeCommitted={handleSliderCommit}
+            valueLabelDisplay="auto"
+            valueLabelFormat={v => `${v.toLocaleString()} ₴`}
+            min={0}
+            max={PRICE_MAX}
+            step={1000}
+            disableSwap
           />
         </Box>
+        </div>
       </div>
 
-      {/* Блок брендів */}
+      {/* ── Бренди ──────────────────────────────────────── */}
       {brands.length > 0 && (
-        <div className="filter-block">
-          <h3 className="filter-title">Бренд</h3>
+        <FilterSection title="Бренд">
+          {/* Пошук по брендам */}
+          {brands.length > BRAND_SEARCH_THRESHOLD && (
+            <div className="brand-search-wrapper">
+              <SearchIcon className="brand-search-icon" />
+              <InputBase
+                className="brand-search-input"
+                placeholder="Пошук бренду..."
+                value={brandSearch}
+                onChange={e => setBrandSearch(e.target.value)}
+                inputProps={{ 'aria-label': 'Пошук бренду' }}
+              />
+            </div>
+          )}
 
-          {/* Контейнер для скролінгу */}
           <div className={`mui-filter-list ${showAllBrands ? 'scrollable' : ''}`}>
             <FormGroup>
               {visibleBrands.map(brand => (
@@ -103,38 +215,52 @@ const FilterSidebar = ({ brands = [], categories = [], onApply, onReset }) => {
                     <Checkbox
                       checked={localSelectedBrands.includes(brand)}
                       onChange={() => handleBrandChange(brand)}
+                      size="small"
                     />
                   }
                   label={brand}
                 />
               ))}
+              {filteredBrands.length === 0 && (
+                <p className="brand-not-found">Не знайдено</p>
+              )}
             </FormGroup>
           </div>
 
-          {/* Кнопка показу всіх брендів */}
-          {brands.length > FILTER_CONFIG.initialBrandVisible && (
-            <Button
-              variant="text"
-              onClick={() => setShowAllBrands(!showAllBrands)}
-              sx={{ mt: 1, textTransform: 'none', padding: 0, minWidth: 'auto', justifyContent: 'flex-start' }}
+          {filteredBrands.length > 5 && (
+            <button
+              className="show-more-btn"
+              onClick={() => setShowAllBrands(prev => !prev)}
             >
-              {showAllBrands ? 'Згорнути' : `Показати всі (${brands.length})`}
-            </Button>
+              {showAllBrands ? 'Згорнути' : `Показати всі (${filteredBrands.length})`}
+            </button>
           )}
-        </div>
+        </FilterSection>
       )}
 
-      {/* Блок кнопок дій */}
-      <div className="filter-block">
-        <Box className="mui-filter-actions">
-          <Button
-            variant="contained"
-            onClick={handleResetClick}
-          >
-            Скинути
-          </Button>
-        </Box>
+      {/* ── Пам'ять ─────────────────────────────────────── */}
+      <FilterSection title="Вбудована пам'ять" defaultOpen={false}>
+        <div className="memory-grid">
+          {MEMORY_OPTIONS.map(({ label, count }) => (
+            <button
+              key={label}
+              className={`memory-tag ${localMemory.includes(label) ? 'active' : ''}`}
+              onClick={() => handleMemoryToggle(label)}
+            >
+              <span className="memory-tag-label">{label}</span>
+              <span className="memory-tag-count">{count}</span>
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* ── Скинути ─────────────────────────────────────── */}
+      <div className="filter-reset-block">
+        <button className="filter-reset-btn" onClick={handleReset}>
+          Скинути фільтри
+        </button>
       </div>
+
     </aside>
   );
 };

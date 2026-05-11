@@ -18,6 +18,14 @@ export const useCatalogFilters = () => {
       filtered = filtered.filter(p => p.price >= filters.minPrice && p.price <= filters.maxPrice);
     }
 
+    // фільтруємо за пам'яттю (заглушка — шукаємо в назві/описі/specs)
+    if (filters.memory && filters.memory.length > 0) {
+      filtered = filtered.filter(p => {
+        const text = `${p.name} ${p.description} ${p.specs ? JSON.stringify(p.specs) : ''}`.toLowerCase();
+        return filters.memory.some(mem => text.includes(mem.toLowerCase()));
+      });
+    }
+
     return filtered;
   };
 

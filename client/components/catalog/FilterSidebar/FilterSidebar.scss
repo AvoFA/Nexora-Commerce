@@ -1,144 +1,347 @@
-// Стилі для бокового фільтра
-
 @import "../../../styles/variables";
-@import "../../../styles/common";
+@import "../../../styles/_common.scss";
 @import "../../../styles/mui-theme";
 
-// Основний контейнер фільтрів
-
+// ─── Основний контейнер ────────────────────────────────────────────────────
 .filter-sidebar {
-    background: $glass-gradient;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    padding: 24px;
-    height: fit-content;
+  background: rgba($surface-color, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: $border-radius;
+  padding: 8px 0;
+  height: fit-content;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
-// Блоки фільтрів
-
+// ─── Блок (секція) ─────────────────────────────────────────────────────────
 .filter-block {
-    border-bottom: 1px solid $border-color;
-    padding-bottom: 24px;
-    margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 
-    &:last-of-type {
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-bottom: 0;
-    }
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
-.filter-title {
-    color: $text-color;
-    font-size: 1.25rem;
+// ─── Заголовок акордеону ───────────────────────────────────────────────────
+.filter-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 20px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  &.no-toggle {
+    cursor: default;
+    pointer-events: none;
+    padding-bottom: 8px;
+
+    &:hover { background: transparent; }
+  }
+
+  .filter-title {
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-top: 0;
+    color: $text-color;
+  }
+
+  // Використовуємо каскад замість !important
+  svg.section-arrow {
+    color: $text-secondary;
+    font-size: 20px;
+    opacity: 0.6;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
 }
 
-// Інпути ціни
+.filter-section-body {
+  padding: 4px 20px 16px;
+}
 
-.mui-price-inputs {
-    display: flex;
-    gap: 12px;
+// ─── Ціна: компактні інпути ────────────────────────────────────────────────
+.price-inputs-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
 
-    .mui-form-control {
-        flex: 1;
+.price-input-wrapper {
+  width: calc(50% - 4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 5px 6px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+
+  &:focus-within {
+    border-color: $primary-color;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.price-input-label,
+.price-currency {
+  font-size: 0.8rem;
+  color: $text-secondary;
+  opacity: 0.9;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.price-input {
+  width: 50px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $text-color;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0;
+  text-align: center;
+  line-height: 1;
+  height: auto;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.price-divider {
+  color: $text-secondary;
+  opacity: 0.3;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+// ─── MUI Slider: Чисте перекриття без !important ───────────────────────────
+.filter-sidebar {
+  .MuiSlider-root {
+    color: $primary-color;
+    
+    .MuiSlider-thumb {
+      &:hover, &.Mui-focusVisible {
+        box-shadow: 0 0 0 8px rgba($primary-color, 0.16);
+      }
     }
+  }
 }
 
-// Список брендів зі скролом
+// ─── Пошук по брендах ──────────────────────────────────────────────────────
+.brand-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s ease;
 
-.mui-filter-list {
-    display: flex;
-    flex-direction: column;
+  &:focus-within {
+    border-color: rgba($primary-color, 0.4);
+  }
+
+  .brand-search-icon {
+    color: $text-secondary;
+    opacity: 0.4;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+}
+
+// Націлюємося на внутрішній інпут MUI для уникнення !important
+.brand-search-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+
+  // Посилюємо селектор для перебиття MUI без !important
+  &.MuiInputBase-root {
     width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-
-    // Згортстий стан
-    max-height: none;
-    overflow-y: hidden;
-    padding-right: 0;
-
-    // Розгорнутий стан
-    &.scrollable {
-        max-height: 400px;
-        overflow-y: auto;
-        padding-right: 4px;
-
-        // Стилі скролбару
-        &::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        &::-webkit-scrollbar-track {
-            background: rgba($border-color, 0.3);
-            border-radius: 4px;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            background-color: $primary-color;
-            border-radius: 4px;
-        }
+    
+    .MuiInputBase-input {
+      padding: 0;
+      color: $text-color; // Колір введеного тексту
+      font-size: 0.88rem;
+      font-family: inherit;
+      
+      &::placeholder {
+        color: $text-secondary;
+        opacity: 0.5;
+        font-weight: 400;
+      }
     }
-
-    .MuiFormGroup-root {
-        width: 100%;
-    }
-
-    .MuiFormControlLabel-root {
-        margin: 0;
-        width: 100%;
-        padding: 4px 0;
-        border-radius: 6px;
-        flex-shrink: 0;
-        max-width: 100%;
-        overflow: hidden;
-
-        &:hover {
-            background-color: rgba($primary-color, 0.1);
-        }
-
-        .MuiTypography-root {
-            font-size: 0.95rem;
-            color: $text-secondary;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .MuiCheckbox-root {
-            color: $text-secondary;
-            padding: 6px 8px;
-
-            &.Mui-checked {
-                color: $primary-color;
-            }
-        }
-    }
+  }
 }
 
-// Кнопки дій
+// ─── Список брендів ────────────────────────────────────────────────────────
+.mui-filter-list {
+  max-height: 240px;
+  margin-top: 4px;
 
-.mui-filter-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+  &.scrollable {
+    overflow-y: auto;
+    padding-right: 8px;
 
-    .MuiButton-root {
-        width: 100%;
-
-        &.MuiButton-containedPrimary {
-            @extend .btn-primary;
-        }
-
-        &.MuiButton-outlined {
-            @extend .btn-secondary;
-            border-color: $border-color;
-
-            &:hover {
-                border-color: $primary-color;
-            }
-        }
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 10px; }
+    &::-webkit-scrollbar-thumb { 
+      background: rgba($primary-color, 0.3); 
+      border-radius: 10px;
+      &:hover { background: $primary-color; }
     }
+  }
+
+  .MuiFormControlLabel-root {
+    margin: 0;
+    width: 100%;
+    padding: 3px 0;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+
+    &:hover { background: rgba($primary-color, 0.06); }
+
+    .MuiTypography-root {
+      font-size: 0.9rem;
+      color: $text-secondary;
+    }
+
+    .MuiCheckbox-root {
+      color: rgba(255, 255, 255, 0.25);
+      padding: 5px 8px;
+
+      &.Mui-checked { color: $primary-color; }
+    }
+  }
+}
+
+.brand-not-found {
+  font-size: 0.85rem;
+  color: $text-secondary;
+  opacity: 0.5;
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+.show-more-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 0 0;
+  margin-top: 4px;
+  color: $primary-color;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  position: relative;
+  width: fit-content;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: currentColor;
+    transition: width 0.2s ease;
+    opacity: 0.5;
+  }
+
+  &:hover {
+    color: lighten($primary-color, 10%);
+    transform: translateX(2px);
+    &::after { width: 100%; }
+  }
+
+  &:active { transform: translateX(0) scale(0.98); }
+}
+
+// ─── Пам'ять: grid 2 колонки ───────────────────────────────────────────────
+.memory-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.memory-tag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.4);
+    background: rgba($primary-color, 0.06);
+  }
+
+  &.active {
+    background: rgba($primary-color, 0.15);
+    border-color: $primary-color;
+    box-shadow: 0 0 10px rgba($primary-color, 0.15);
+
+    .memory-tag-label { color: $primary-color; }
+    .memory-tag-count { color: rgba($primary-color, 0.7); }
+  }
+}
+
+.memory-tag-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $text-color;
+}
+
+.memory-tag-count {
+  font-size: 0.75rem;
+  color: $text-secondary;
+  opacity: 0.5;
+}
+
+// ─── Кнопка скидання ──────────────────────────────────────────────────────
+.filter-reset-block {
+  padding: 14px 20px;
+}
+
+.filter-reset-btn {
+  width: 100%;
+  padding: 9px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: $text-secondary;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+  }
 }

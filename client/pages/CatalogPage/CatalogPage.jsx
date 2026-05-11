@@ -1,24 +1,35 @@
 // інтелектуальний каталог товарів із пошуком та фільтрацією
 
-import { useState, useEffect } from 'react';
-import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import ProductList from '../../components/catalog/ProductList/ProductList.jsx';
-import FilterSidebar from '../../components/catalog/FilterSidebar/FilterSidebar.jsx';
-import { Select, MenuItem, FormControl, InputAdornment, Button, Box, Pagination, Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-import SearchOffIcon from '@mui/icons-material/SearchOff';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import './CatalogPage.scss';
+import { useState, useEffect } from "react";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
+import ProductList from "../../components/catalog/ProductList/ProductList.jsx";
+import FilterSidebar from "../../components/catalog/FilterSidebar/FilterSidebar.jsx";
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputAdornment,
+  Button,
+  Box,
+  Pagination,
+  Typography,
+  Chip,
+} from "@mui/material";
+import TextField from "@mui/material/TextField";
+import SearchIcon from "@mui/icons-material/Search";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
+import "./CatalogPage.scss";
 
 // Спеціальні хуки для логіки каталогу
-import { useCatalogData } from '../../components/catalog/hooks/useCatalogData.js';
-import { useCatalogSearch } from '../../components/catalog/hooks/useCatalogSearch.js';
-import { useCatalogFilters } from '../../components/catalog/hooks/useCatalogFilters.js';
+import { useCatalogData } from "../../components/catalog/hooks/useCatalogData.js";
+import { useCatalogSearch } from "../../components/catalog/hooks/useCatalogSearch.js";
+import { useCatalogFilters } from "../../components/catalog/hooks/useCatalogFilters.js";
 
 const UI_CONFIG = {
   initialVisibleCategories: 5,
-  loadingMessage: 'Завантаження товарів...'
+  loadingMessage: "Завантаження товарів...",
 };
 
 const CatalogPage = () => {
@@ -26,22 +37,24 @@ const CatalogPage = () => {
   const { categoryName } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const navbarSearchQuery = searchParams.get('q');
+  const navbarSearchQuery = searchParams.get("q");
 
   // Управління станом та хуки
-  const { allProducts, availableCategories, isLoading, error } = useCatalogData();
-  const { performIntelligentSearch, shouldAutoSwitchCategory } = useCatalogSearch();
+  const { allProducts, availableCategories, isLoading, error } =
+    useCatalogData();
+  const { performIntelligentSearch, shouldAutoSwitchCategory } =
+    useCatalogSearch();
   const { applySidebarFilters, calculateAvailableBrands } = useCatalogFilters();
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [availableBrands, setAvailableBrands] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [activeSidebarFilters, setActiveSidebarFilters] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [pageSearchQuery, setPageSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('priceAsc');
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [pageSearchQuery, setPageSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("priceAsc");
 
-  const [pageTitle, setPageTitle] = useState('Каталог товарів');
+  const [pageTitle, setPageTitle] = useState("Каталог товарів");
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // State для пагинації
@@ -52,19 +65,21 @@ const CatalogPage = () => {
   useEffect(() => {
     if (categoryName) {
       setSelectedCategory(categoryName);
-      const currentCategory = availableCategories.find(cat => cat.value === categoryName);
+      const currentCategory = availableCategories.find(
+        (cat) => cat.value === categoryName,
+      );
       if (currentCategory) {
         setPageTitle(currentCategory.label);
       } else {
-        setPageTitle('Каталог товарів');
+        setPageTitle("Каталог товарів");
       }
     } else if (navbarSearchQuery) {
       setPageSearchQuery(navbarSearchQuery);
       setPageTitle(`Результати пошуку: "${navbarSearchQuery}"`);
     } else {
-      setPageTitle('Каталог товарів');
-      setSelectedCategory('all');
-      setPageSearchQuery('');
+      setPageTitle("Каталог товарів");
+      setSelectedCategory("all");
+      setPageSearchQuery("");
     }
   }, [categoryName, navbarSearchQuery, availableCategories]);
 
@@ -75,7 +90,7 @@ const CatalogPage = () => {
       selectedCategory,
       pageSearchQuery,
       activeSidebarFilters,
-      sortOrder
+      sortOrder,
     );
 
     const brands = calculateAvailableBrands(allProducts, selectedCategory);
@@ -94,7 +109,7 @@ const CatalogPage = () => {
     pageSearchQuery,
     activeSidebarFilters,
     sortOrder,
-    availableCategories
+    availableCategories,
   ]);
 
   // Скидання сторінки на першу при зміні фільтрів
@@ -103,7 +118,13 @@ const CatalogPage = () => {
   }, [pageSearchQuery, selectedCategory, activeSidebarFilters, sortOrder]);
 
   // Універсальна функція обробки даних (Пошук -> Фільтр -> Сортування)
-  const processProducts = (products, category, searchQuery, filters, sorting) => {
+  const processProducts = (
+    products,
+    category,
+    searchQuery,
+    filters,
+    sorting,
+  ) => {
     let processed = [...products];
 
     if (searchQuery) {
@@ -117,13 +138,13 @@ const CatalogPage = () => {
         return {
           products: processed,
           autoSwitch: true,
-          targetCategory: autoSwitch.targetCategory
+          targetCategory: autoSwitch.targetCategory,
         };
       }
     } else {
       // Стандартний режим (без пошуку)
-      if (category !== 'all') {
-        processed = processed.filter(p => p.category === category);
+      if (category !== "all") {
+        processed = processed.filter((p) => p.category === category);
       }
 
       if (filters) {
@@ -136,7 +157,7 @@ const CatalogPage = () => {
     return {
       products: processed,
       autoSwitch: false,
-      targetCategory: null
+      targetCategory: null,
     };
   };
 
@@ -145,9 +166,9 @@ const CatalogPage = () => {
     const sorted = [...products];
 
     switch (sortOrder) {
-      case 'priceAsc':
+      case "priceAsc":
         return sorted.sort((a, b) => a.price - b.price);
-      case 'priceDesc':
+      case "priceDesc":
         return sorted.sort((a, b) => b.price - a.price);
       default:
         return sorted.sort((a, b) => a.price - b.price);
@@ -164,12 +185,27 @@ const CatalogPage = () => {
     setIsFiltersOpen(false);
   };
 
+  const handleRemoveFilter = (type, value) => {
+    if (!activeSidebarFilters) return;
+    const updated = { ...activeSidebarFilters };
+    if (type === "brand") {
+      updated.brands = updated.brands.filter((b) => b !== value);
+    } else if (type === "memory") {
+      updated.memory = updated.memory.filter((m) => m !== value);
+    } else if (type === "price") {
+      updated.minPrice = 0;
+      updated.maxPrice = Infinity;
+    }
+    setActiveSidebarFilters(updated);
+  };
+
   // Розрахунки пагинації
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const startIndex = (page - 1) * perPage;
-  const currentProducts = filteredProducts.slice(startIndex, startIndex + perPage);
-
-
+  const currentProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + perPage,
+  );
 
   // СТАН - помилка
   if (error) {
@@ -181,9 +217,38 @@ const CatalogPage = () => {
     );
   }
 
+  // Генерація хлібних крихт
+  const breadcrumbItems = [{ label: "Каталог товарів", path: "/catalog" }];
+
+  if (categoryName && categoryName !== "all") {
+    const currentCategory = availableCategories.find(
+      (cat) => cat.value === categoryName,
+    );
+    breadcrumbItems.push({
+      label: currentCategory ? currentCategory.label : categoryName,
+      path: `/catalog/${categoryName}`,
+    });
+  }
+
+  if (
+    activeSidebarFilters &&
+    activeSidebarFilters.brands &&
+    activeSidebarFilters.brands.length === 1
+  ) {
+    breadcrumbItems.push({ label: activeSidebarFilters.brands[0], path: null });
+  } else if (pageSearchQuery) {
+    breadcrumbItems.push({ label: `Пошук: "${pageSearchQuery}"`, path: null });
+  }
+
+  if (breadcrumbItems.length > 0) {
+    breadcrumbItems[breadcrumbItems.length - 1].path = null;
+  }
+
   // ГОЛОВНИЙ РЕНДЕР
   return (
     <div className="catalog-page">
+      <Breadcrumbs items={breadcrumbItems} />
+
       {isFiltersOpen && (
         <Box
           className="filters-overlay"
@@ -200,7 +265,10 @@ const CatalogPage = () => {
             className="filters-toggle-button"
             startIcon={<FilterListIcon />}
             onClick={() => setIsFiltersOpen(true)}
-            sx={{ display: "inline-flex", "@media (min-width: 992px)": { display: "none" } }}
+            sx={{
+              display: "inline-flex",
+              "@media (min-width: 992px)": { display: "none" },
+            }}
             aria-label="Open filters"
           >
             Фільтри
@@ -210,7 +278,11 @@ const CatalogPage = () => {
             <label className="sort-label" htmlFor="sort-select">
               Сортувати:
             </label>
-            <FormControl variant="outlined" size="small" className="mui-form-control">
+            <FormControl
+              variant="outlined"
+              size="small"
+              className="mui-form-control sort-control"
+            >
               <Select
                 id="sort-select"
                 value={sortOrder}
@@ -230,14 +302,19 @@ const CatalogPage = () => {
         <aside className={`catalog-sidebar ${isFiltersOpen ? "is-open" : ""}`}>
           <FilterSidebar
             brands={availableBrands}
-            categories={availableCategories.filter(category => category.value !== "all")}
+            categories={availableCategories.filter(
+              (category) => category.value !== "all",
+            )}
+            activeFilters={activeSidebarFilters}
             onApply={handleApplyFilters}
             onReset={handleResetFilters}
           />
         </aside>
 
         <main className="catalog-right">
+          {/* активні чіпси перенесено всередину контрольного блоку */}
           <div className="catalog-controls">
+            {/* Пошук */}
             <div className="catalog-search">
               <TextField
                 variant="outlined"
@@ -257,9 +334,58 @@ const CatalogPage = () => {
               />
             </div>
 
+            {/* Активні фільтри (chips) — тепер одразу під пошуком */}
+            {activeSidebarFilters && (
+              <div className="active-filters-container">
+                {(activeSidebarFilters.minPrice > 0 ||
+                  (activeSidebarFilters.maxPrice < Infinity &&
+                    activeSidebarFilters.maxPrice)) && (
+                  <Chip
+                    label={`Ціна: ${activeSidebarFilters.minPrice?.toLocaleString() || 0} – ${activeSidebarFilters.maxPrice !== Infinity ? activeSidebarFilters.maxPrice?.toLocaleString() : "∞"} ₴`}
+                    onDelete={() => handleRemoveFilter("price")}
+                    className="filter-chip"
+                  />
+                )}
+                {activeSidebarFilters.brands?.map((brand) => (
+                  <Chip
+                    key={`brand-${brand}`}
+                    label={brand}
+                    onDelete={() => handleRemoveFilter("brand", brand)}
+                    className="filter-chip"
+                  />
+                ))}
+                {activeSidebarFilters.memory?.map((mem) => (
+                  <Chip
+                    key={`mem-${mem}`}
+                    label={mem}
+                    onDelete={() => handleRemoveFilter("memory", mem)}
+                    className="filter-chip"
+                  />
+                ))}
+                {(activeSidebarFilters.minPrice > 0 ||
+                  (activeSidebarFilters.maxPrice < Infinity &&
+                    activeSidebarFilters.maxPrice) ||
+                  activeSidebarFilters.brands?.length > 0 ||
+                  activeSidebarFilters.memory?.length > 0) && (
+                  <button
+                    className="chips-clear-btn"
+                    onClick={handleResetFilters}
+                  >
+                    Очистити все
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Категорії (чіпси категорій) — нижче */}
             <div className="category-buttons">
               {availableCategories
-                .slice(0, showAllCategories ? availableCategories.length : UI_CONFIG.initialVisibleCategories)
+                .slice(
+                  0,
+                  showAllCategories
+                    ? availableCategories.length
+                    : UI_CONFIG.initialVisibleCategories,
+                )
                 .map((category) => (
                   <button
                     key={category.value}
@@ -277,7 +403,8 @@ const CatalogPage = () => {
                   </button>
                 ))}
 
-              {availableCategories.length > UI_CONFIG.initialVisibleCategories && (
+              {availableCategories.length >
+                UI_CONFIG.initialVisibleCategories && (
                 <Button
                   className="btn btn-secondary"
                   onClick={() => setShowAllCategories(!showAllCategories)}
@@ -285,7 +412,11 @@ const CatalogPage = () => {
                     display: "inline-flex",
                     "@media (max-width: 991px)": { display: "none" },
                   }}
-                  aria-label={showAllCategories ? "Show fewer categories" : "Show more categories"}
+                  aria-label={
+                    showAllCategories
+                      ? "Show fewer categories"
+                      : "Show more categories"
+                  }
                 >
                   {showAllCategories ? "Згорнути" : "Показати ще"}
                 </Button>
@@ -299,24 +430,28 @@ const CatalogPage = () => {
 
               {/* Пагінація */}
               {totalPages > 1 && (
-                <Box sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  mt: 4,
-                  mb: 2
-                }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    mt: 4,
+                    mb: 2,
+                  }}
+                >
                   {/* Текст зліва */}
                   <Typography
                     variant="body2"
-                    color="text.secondary"
                     sx={{
-                      position: 'absolute',
-                      left: 16,
-                      display: { xs: 'none', md: 'block' }
+                      position: "absolute",
+                      left: 0,
+                      display: { xs: "none", md: "block" },
+                      color: "rgba(255, 255, 255, 0.6)",
                     }}
                   >
-                    Показано {startIndex + 1}-{Math.min(startIndex + perPage, filteredProducts.length)} із {filteredProducts.length}
+                    Показано {startIndex + 1}-
+                    {Math.min(startIndex + perPage, filteredProducts.length)} із{" "}
+                    {filteredProducts.length}
                   </Typography>
 
                   {/* Пагинація по центру */}
@@ -332,7 +467,7 @@ const CatalogPage = () => {
                     showFirstButton
                     showLastButton
                     sx={{
-                      mx: 'auto'
+                      mx: "auto",
                     }}
                     aria-label="Catalog pagination"
                   />
@@ -341,21 +476,25 @@ const CatalogPage = () => {
             </>
           ) : (
             <>
-            {isLoading ? (
-               <ProductList isLoading={true} />
-            ) : (
-              <div className="catalog-empty-state" role="status">
-                <div className="empty-icon-wrapper">
-                  <SearchOffIcon className="empty-icon" />
+              {isLoading ? (
+                <ProductList isLoading={true} />
+              ) : (
+                <div className="catalog-empty-state" role="status">
+                  <div className="empty-icon-wrapper">
+                    <SearchOffIcon className="empty-icon" />
+                  </div>
+                  <h2>
+                    {error
+                      ? "Сервер тимчасово недоступний"
+                      : "Нічого не знайдено"}
+                  </h2>
+                  <p>
+                    {error
+                      ? "Перевірте підключення до інтернету та спробуйте пізніше."
+                      : "На жаль, за вашим запитом нічого не знайдено. Спробуйте скинути фільтри."}
+                  </p>
                 </div>
-                <h2>{error ? "Сервер тимчасово недоступний" : "Нічого не знайдено"}</h2>
-                <p>
-                  {error
-                    ? "Перевірте підключення до інтернету та спробуйте пізніше."
-                    : "На жаль, за вашим запитом нічого не знайдено. Спробуйте скинути фільтри."}
-                </p>
-              </div>
-            )}
+              )}
             </>
           )}
         </main>

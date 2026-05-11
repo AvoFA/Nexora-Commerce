@@ -9,9 +9,10 @@ $text-color: hsla(0, 0%, 100%, 0.900);
 $text-secondary: hsl(0, 0%, 90%);
 $text-modal: rgba(255, 255, 255, 0.8);
 
-// Колір фону
-$bg-color: hsl(224, 46%, 8%);
-$card-bg: hsl(224, 46%, 12%);
+// Колір фону (Luminous Slate)
+$bg-color: hsl(222, 47%, 11%); // Slate 900
+$card-bg: hsl(217, 33%, 17%);  // Slate 800 (legacy, use surface-color)
+$surface-color: hsl(217, 33%, 17%); // Slate 800 (new surface color)
 
 // Колір рамок
 $border-color: hsl(224, 46%, 20%);

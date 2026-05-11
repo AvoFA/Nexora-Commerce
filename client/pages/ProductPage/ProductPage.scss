@@ -2,6 +2,13 @@
 @import '../../styles/_common';
 
 
+// Основний обгортковий контейнер для всієї сторінки (включаючи крихти)
+.product-page-wrapper {
+  padding-top: 10px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
 // Основний контейнер сторінки
 
 .product-page-container {
@@ -55,51 +62,43 @@
       }
 
       @mixin action-button-large {
-        border-radius: 12px;
-        width: 50px;
-        height: 50px;
+        background: transparent;
+        border: none;
+        width: 48px;
+        height: 48px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 50%;
+        position: relative;
 
         .MuiSvgIcon-root {
           font-size: 28px;
-          transition: all 0.3s ease;
+          stroke: currentColor;
+          stroke-width: 0.8;
+          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        &:hover .MuiSvgIcon-root {
-          animation: heartbeat 1.5s ease-in-out infinite;
-        }
-
-        @keyframes heartbeat {
-          0%, 50%, 100% { transform: scale(1); }
-          25%, 75% { transform: scale(1.1); }
+        &:hover {
+          transform: translateY(-4px) scale(1.1);
         }
       }
 
       .product-favorite-button {
         @include action-button-large;
-        background: #ffffff; // Повністю непрозорий білий фон
-        border: 2px solid $primary-color; // Яскрава синя обводка
 
         .MuiSvgIcon-root {
-            color: $primary-color; // Синя іконка
+          color: $primary-color;
         }
 
         &:hover {
-          box-shadow: 0 4px 15px rgba($primary-color, 0.3);
-          transform: scale(1.05);
-          background: #ffffff; // Залишаємо непрозорим білим
+          background: rgba($primary-color, 0.08); // Ніжний синій відблиск
         }
 
         &.active {
           background: $primary-color;
-          border-color: $primary-color;
-          box-shadow: 0 4px 15px rgba($primary-color, 0.4);
 
           .MuiSvgIcon-root {
             color: #ffffff;
@@ -109,24 +108,18 @@
 
       .product-compare-button {
         @include action-button-large;
-        margin-left: 10px;
-        background: #ffffff; // Повністю непрозорий білий фон
-        border: 2px solid $secondary-color; // Яскрава фіолетова обводка
+        margin-left: 8px;
 
         .MuiSvgIcon-root {
-            color: $secondary-color; // Фіолетова іконка
+          color: $secondary-color;
         }
 
         &:hover {
-          box-shadow: 0 4px 15px rgba($secondary-color, 0.3);
-          transform: scale(1.05);
-          background: #ffffff; // Залишаємо непрозорим білим
+          background: rgba($secondary-color, 0.08); // Ніжний фіолетовий відблиск
         }
 
         &.active {
           background: $secondary-color;
-          border-color: $secondary-color;
-          box-shadow: 0 4px 15px rgba($secondary-color, 0.4);
 
           .MuiSvgIcon-root {
             color: #ffffff;

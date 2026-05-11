@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ArrowBack, Favorite, FavoriteBorder, Balance } from '@mui/icons-material';
 import { ShoppingCartOutlined, VisibilityOutlined } from '@mui/icons-material';
 import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
+import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
 import { useCompare } from "../../hooks/useCompare.js";
 import "./ProductPage.scss";
@@ -98,12 +99,22 @@ const ProductPage = () => {
 
   const imgSrc = product.image || product.imageUrl || null;
 
+  // Формуємо масив для хлібних крихт
+  const breadcrumbItems = [
+    { label: "Каталог", path: "/catalog" },
+    { 
+      label: product.category === 'phones' ? 'Смартфони' :
+             product.category === 'laptops' ? 'Ноутбуки' :
+             product.category === 'tablets' ? 'Планшети' :
+             product.category,
+      path: `/catalog?category=${product.category}` 
+    },
+    { label: product.name }
+  ];
+
   return (
-    <div>
-      <Link to="/catalog" className="btn-back">
-        <ArrowBack sx={{ fontSize: '20px' }} />
-        <span>Назад до каталогу</span>
-      </Link>
+    <div className="product-page-wrapper">
+      <Breadcrumbs items={breadcrumbItems} />
       <div className="product-page-container">
         <div className="product-image-gallery">
           {imgSrc ? (
@@ -141,9 +152,9 @@ const ProductPage = () => {
             <div className="product-badges">
               <span className="badge brand-badge">{product.brand}</span>
               <span className="badge category-badge">
-                {product.category === 'phones' ? 'Phones' :
-                 product.category === 'laptops' ? 'Laptops' :
-                 product.category === 'tablets' ? 'Tablets' :
+                {product.category === 'phones' ? 'Смартфони' :
+                 product.category === 'laptops' ? 'Ноутбуки' :
+                 product.category === 'tablets' ? 'Планшети' :
                  product.category}
               </span>
               <span className="badge stock-badge in-stock">В наявності</span>

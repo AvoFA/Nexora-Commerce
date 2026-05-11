@@ -1,182 +1,316 @@
 @import "../../../styles/variables";
 @import "../../../styles/_common.scss";
 
-// Основний контейнер картки
+// ─── Основний контейнер картки ─────────────────────────────────────────────
 
 .product-card-link {
-    text-decoration: none;
-    color: $text-color;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    border-radius: $border-radius;
-    overflow: hidden;
-    background-color: $bg-color;
-    border: 1px solid $border-color;
-    transition: all 0.3s ease;
+  text-decoration: none;
+  color: $text-color;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-radius: $border-radius;
+  overflow: hidden;
+  background: rgba($surface-color, 0.45);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 
-    &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 12px rgba($primary-color, 0.1);
-        border-color: rgba($primary-color, 0.5);
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba($primary-color, 0.3);
+    border-color: rgba($primary-color, 0.4);
+
+    .product-card-image img {
+      transform: scale(1.06);
     }
+
+    .action-btn {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 }
 
-// Зображення продукту
+// ─── Зображення та кнопки-іконки ───────────────────────────────────────────
 
 .product-card-image {
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background: #ffffff; // ← Белый вместо черного
-    border-radius: 4px; // ← Скругление углов
-    position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: $border-radius $border-radius 0 0;
+  position: relative;
 
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain; // ← Полное фото вместо обрезанного
-        transition: transform 0.3s ease;
-    }
+  a {
+    display: block;
+    height: 100%;
+  }
 
-    @mixin action-button {
-        position: absolute;
-        right: 8px;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        z-index: 10;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.35s ease;
+  }
 
-        .MuiSvgIcon-root {
-            transition: all 0.3s ease;
-        }
-
-        &:hover .MuiSvgIcon-root {
-            animation: heartbeat 1.5s ease-in-out infinite;
-        }
-
-        @keyframes heartbeat {
-            0%, 50%, 100% { transform: scale(1); }
-            25%, 75% { transform: scale(1.1); }
-        }
-    }
-
-    // Кнопка улюблені
-    .favorite-button {
-        @include action-button;
-        top: 8px;
-        background: #ffffff; // Повністю непрозорий білий фон
-        border: 2px solid $primary-color; // Яскрава синя обводка
-        
-        .MuiSvgIcon-root {
-            color: $primary-color; // Синя іконка
-        }
-
-        &:hover {
-            box-shadow: 0 4px 15px rgba($primary-color, 0.3);
-            transform: scale(1.05);
-            background: #ffffff; // Залишаємо непрозорим білим
-        }
-
-        &.active {
-            background: $primary-color;
-            border-color: $primary-color;
-            box-shadow: 0 4px 15px rgba($primary-color, 0.4);
-            
-            .MuiSvgIcon-root {
-                color: #ffffff;
-            }
-        }
-    }
-
-    // Кнопка «До порівняння»
-    .compare-button {
-        @include action-button;
-        top: 52px;
-        background: #ffffff; // Повністю непрозорий білий фон
-        border: 2px solid $secondary-color; // Яскрава фіолетова обводка
-
-        .MuiSvgIcon-root {
-            color: $secondary-color; // Фіолетова іконка
-        }
-
-        &:hover {
-            box-shadow: 0 4px 15px rgba($secondary-color, 0.3);
-            transform: scale(1.05);
-            background: #ffffff; // Залишаємо непрозорим білим
-        }
-
-        &.active {
-            background: $secondary-color;
-            border-color: $secondary-color;
-            box-shadow: 0 4px 15px rgba($secondary-color, 0.4);
-            
-            .MuiSvgIcon-root {
-                color: #ffffff;
-            }
-        }
-    }
+  .product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 0.85rem;
+  }
 }
 
-.product-card-link:hover .product-card-image img {
-    transform: scale(1.05);
+// ─── Кнопки дій (Улюблені / Порівняння) ────────────────────────────────────
+
+.action-btn {
+  position: absolute;
+  right: 10px;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  opacity: 1;
+  transform: translateX(0);
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+
+  @media (hover: none) {
+    width: 44px;
+    height: 44px;
+    right: 12px;
+
+    &.favorite-button {
+      top: 12px;
+    }
+
+    &.compare-button {
+      top: 64px;
+    }
+  }
 }
 
-// Текстові елементи
+.favorite-button {
+  top: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+  .MuiSvgIcon-root {
+    color: $primary-color;
+    stroke: currentColor;
+    stroke-width: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    background: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+    .MuiSvgIcon-root {
+      transform: scale(1.1);
+    }
+  }
+
+  &.active {
+    background: $primary-color;
+    border-color: $primary-color;
+    backdrop-filter: none;
+    opacity: 1;
+    .MuiSvgIcon-root {
+      color: #ffffff;
+    }
+  }
+}
+
+.compare-button {
+  top: 54px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+
+  .MuiSvgIcon-root {
+    color: $secondary-color;
+    stroke: currentColor;
+    stroke-width: 0.8;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    background: #ffffff;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+
+    .MuiSvgIcon-root {
+      transform: scale(1.1);
+    }
+  }
+
+  &.active {
+    background: $secondary-color;
+    border-color: $secondary-color;
+    backdrop-filter: none;
+    opacity: 1;
+    .MuiSvgIcon-root {
+      color: #ffffff;
+    }
+  }
+}
+
+// ─── Контент ───────────────────────────────────────────────────────────────
 
 .card-content {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-
-
-    h3 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 8px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: $text-color;
-    }
-
-    .card-description {
-        font-size: 0.9rem;
-        color: $text-secondary;
-        margin-bottom: 12px;
-        flex-grow: 1;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .card-price {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: $primary-color;
-        margin-bottom: 16px;
-    }
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 6px;
 }
 
-// Кнопки дій
+.card-name-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: $text-color;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+  transition: color 0.2s;
+
+  .card-name-link:hover & {
+    color: $primary-color;
+  }
+}
+
+// ─── Рейтинг (Smart Stub) ──────────────────────────────────────────────────
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+
+  .rating-star {
+    color: #fbbf24;
+    font-size: 16px !important;
+  }
+
+  .rating-value {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text-color;
+  }
+
+  .rating-count {
+    font-size: 0.78rem;
+    color: $text-secondary;
+    opacity: 0.6;
+  }
+}
+
+// ─── Футер: ціна + кнопки ──────────────────────────────────────────────────
 
 .card-footer {
-    display: flex;
-    gap: 10px;
-    margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-    .btn-secondary,
-    .btn-primary {
-        flex: 1;
-        width: 100%;
-        padding: 10px;
-    }
+.price-block {
+  .card-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $primary-color; // Повернув блакитний колір для акценту
+    letter-spacing: -0.3px;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Кнопка "Детальніше"
+.btn-details {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: $text-secondary;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: $text-color;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Кругла кнопка «В кошик»
+.btn-cart-round {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: darken($primary-color, 2%); // Зробив трохи насиченішим
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); // Більш чітка тінь
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Мінімальна тач-зона 48px
+  @media (hover: none) {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  }
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+    background: $primary-color; // Не освітлюємо при наведенні
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary-color;
+    outline-offset: 3px;
+  }
 }
