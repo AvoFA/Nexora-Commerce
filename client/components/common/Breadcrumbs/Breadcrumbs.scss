@@ -18,6 +18,7 @@
 .breadcrumbs-item {
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 
   .breadcrumbs-link {
     color: $text-secondary;

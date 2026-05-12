@@ -21,6 +21,11 @@
   padding: 32px;
   border-radius: $border-radius;
 
+  @media (max-width: 479px) {
+    padding: 16px;
+    gap: 20px;
+  }
+
   @media (min-width: 768px) {
     grid-template-columns: 2fr 3fr;
   }
@@ -46,11 +51,7 @@
     margin-bottom: 20px;
 
     .product-title-section {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
       margin-bottom: 16px;
-      gap: 16px;
 
       h1 {
         font-size: 2.2rem;
@@ -58,8 +59,69 @@
         margin: 0;
         color: $text-color;
         line-height: 1.2;
-        flex: 1;
+        width: 100%;
       }
+    }
+
+    .product-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+
+      .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: capitalize;
+
+        &.brand-badge {
+          background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
+          color: white;
+        }
+
+        &.category-badge {
+          background: rgba($primary-color, 0.1);
+          color: $primary-color;
+          border: 1px solid rgba($primary-color, 0.2);
+        }
+
+        &.stock-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+
+          &.in-stock {
+            background: rgba($success-color, 0.1);
+            color: $success-color;
+            border: 1px solid rgba($success-color, 0.2);
+
+            .MuiSvgIcon-root {
+              color: $success-color;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    .price {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $primary-color;
+      margin: 0;
+    }
+
+    .product-actions-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
 
       @mixin action-button-large {
         background: transparent;
@@ -94,7 +156,7 @@
         }
 
         &:hover {
-          background: rgba($primary-color, 0.08); // Ніжний синій відблиск
+          background: rgba($primary-color, 0.08);
         }
 
         &.active {
@@ -108,14 +170,13 @@
 
       .product-compare-button {
         @include action-button-large;
-        margin-left: 8px;
 
         .MuiSvgIcon-root {
           color: $secondary-color;
         }
 
         &:hover {
-          background: rgba($secondary-color, 0.08); // Ніжний фіолетовий відблиск
+          background: rgba($secondary-color, 0.08);
         }
 
         &.active {
@@ -126,49 +187,7 @@
           }
         }
       }
-
     }
-
-    .product-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-
-      .badge {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        text-transform: capitalize;
-
-        &.brand-badge {
-          background: linear-gradient(135deg, $primary-color, lighten($primary-color, 10%));
-          color: white;
-        }
-
-        &.category-badge {
-          background: rgba($primary-color, 0.1);
-          color: $primary-color;
-          border: 1px solid rgba($primary-color, 0.2);
-        }
-
-        &.stock-badge {
-          &.in-stock {
-            background: rgba(46, 204, 113, 0.1);
-            color: #2ecc71;
-            border: 1px solid rgba(46, 204, 113, 0.2);
-          }
-        }
-      }
-    }
-  }
-
-  .price {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: $primary-color;
-    margin-bottom: 20px;
-    display: block;
   }
 
   .description {

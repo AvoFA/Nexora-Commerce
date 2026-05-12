@@ -10,6 +10,10 @@
   padding: 12px 16px 48px; // Зменшив до 12px
   box-sizing: border-box;
 
+  @media (max-width: 479px) {
+    padding: 12px 12px 32px;
+  }
+
   @media (min-width: 1280px) {
     padding: 16px 24px 64px; // Зменшив до 16px для десктопа
   }
@@ -67,12 +71,20 @@
 
 .category-buttons {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   gap: 10px;
+  padding-bottom: 4px;
 
   button {
     padding: 8px 16px;
     font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &.btn-secondary {
       box-shadow: none;
@@ -194,7 +206,7 @@
         color: rgba(255, 255, 255, 0.5);
         transition: color 0.2s;
         &:hover {
-          color: #ef4444;
+          color: $danger-color;
         }
       }
     }
@@ -324,3 +336,5 @@
     }
   }
 }
+
+

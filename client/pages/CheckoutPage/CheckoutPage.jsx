@@ -236,14 +236,14 @@ const CheckoutPage = () => {
                   <span>
                     {item.name} x {item.quantity}
                   </span>
-                  <strong>{item.price * item.quantity} грн</strong>
+                  <strong>{item.price * item.quantity} ₴</strong>
                 </div>
               ))}
             </div>
 
             <div className="summary-total">
               <strong>Всього до сплати:</strong>
-              <strong>{totalPrice.toLocaleString("uk-UA")} грн</strong>
+              <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
             </div>
 
             {/* --- Кнопка оформлення --- */}

@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getProductById, getSimilarProducts } from "../../services/productService.js";
+import {
+  getProductById,
+  getSimilarProducts,
+} from "../../services/productService.js";
 import { useCart } from "../../hooks/useCart.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { ArrowBack, Favorite, FavoriteBorder, Balance } from '@mui/icons-material';
-import { ShoppingCartOutlined, VisibilityOutlined } from '@mui/icons-material';
+import {
+  ArrowBack,
+  Favorite,
+  FavoriteBorder,
+  Balance,
+} from "@mui/icons-material";
+import { ShoppingCartOutlined, VisibilityOutlined, CheckCircle } from "@mui/icons-material";
 import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
@@ -22,7 +30,8 @@ const ProductPage = () => {
 
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
-  const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } = useAuth();
+  const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } =
+    useAuth();
 
   // Завантажуємо дані товару по ID з URL
   useEffect(() => {
@@ -65,17 +74,17 @@ const ProductPage = () => {
   // Перемикач улюблених (Додати/Видалити)
   const handleToggleFavorite = async () => {
     if (!isAuthenticated) {
-      toast.error('Увійдіть щоб додати в улюблені');
+      toast.error("Увійдіть щоб додати в улюблені");
       return;
     }
 
     const favorite = isFavorite(product._id || product.id);
     if (favorite) {
       await removeFromFavorites(product._id || product.id);
-      toast.success('Видалено з улюблених');
+      toast.success("Видалено з улюблених");
     } else {
       await addToFavorites(product._id || product.id);
-      toast.success('Додано в улюблені');
+      toast.success("Додано в улюблені");
     }
   };
 
@@ -95,21 +104,23 @@ const ProductPage = () => {
   if (error) return <div>Помилка: {error}</div>;
   if (!product) return <div>Товар не знайдено.</div>;
 
-
-
   const imgSrc = product.image || product.imageUrl || null;
 
   // Формуємо масив для хлібних крихт
   const breadcrumbItems = [
     { label: "Каталог", path: "/catalog" },
-    { 
-      label: product.category === 'phones' ? 'Смартфони' :
-             product.category === 'laptops' ? 'Ноутбуки' :
-             product.category === 'tablets' ? 'Планшети' :
-             product.category,
-      path: `/catalog?category=${product.category}` 
+    {
+      label:
+        product.category === "phones"
+          ? "Смартфони"
+          : product.category === "laptops"
+            ? "Ноутбуки"
+            : product.category === "tablets"
+              ? "Планшети"
+              : product.category,
+      path: `/catalog?category=${product.category}`,
     },
-    { label: product.name }
+    { label: product.name },
   ];
 
   return (
@@ -128,11 +139,36 @@ const ProductPage = () => {
           <div className="product-header">
             <div className="product-title-section">
               <h1>{product.name}</h1>
+            </div>
+            <div className="product-badges">
+              <span className="badge brand-badge">{product.brand}</span>
+              <span className="badge category-badge">
+                {product.category === "phones"
+                  ? "Смартфони"
+                  : product.category === "laptops"
+                    ? "Ноутбуки"
+                    : product.category === "tablets"
+                      ? "Планшети"
+                      : product.category}
+              </span>
+              <span className="badge stock-badge in-stock">
+                <CheckCircle sx={{ fontSize: "16px" }} />
+                В наявності
+              </span>
+            </div>
+          </div>
+          <div className="price-row">
+            <div className="price">{product.price.toLocaleString("uk-UA")} ₴</div>
+            <div className="product-actions-icons">
               {/* Сердечко улюблені */}
               <button
-                className={`product-favorite-button${isFavorite(product._id || product.id) ? ' active' : ''}`}
+                className={`product-favorite-button${isFavorite(product._id || product.id) ? " active" : ""}`}
                 onClick={handleToggleFavorite}
-                title={isFavorite(product._id || product.id) ? "Видалити з улюблених" : "Додати в улюблені"}
+                title={
+                  isFavorite(product._id || product.id)
+                    ? "Видалити з улюблених"
+                    : "Додати в улюблені"
+                }
               >
                 {isFavorite(product._id || product.id) ? (
                   <Favorite sx={{ fontSize: "28px" }} />
@@ -140,27 +176,20 @@ const ProductPage = () => {
                   <FavoriteBorder sx={{ fontSize: "28px" }} />
                 )}
               </button>
-              {/* Ваги порівняння — власний клас для чіткого візуального стану */}
+              {/* Ваги порівняння */}
               <button
-                className={`product-compare-button${isCompared(product._id || product.id) ? ' active' : ''}`}
+                className={`product-compare-button${isCompared(product._id || product.id) ? " active" : ""}`}
                 onClick={handleToggleCompare}
-                title={isCompared(product._id || product.id) ? 'Видалити з порівняння' : 'Додати до порівняння'}
+                title={
+                  isCompared(product._id || product.id)
+                    ? "Видалити з порівняння"
+                    : "Додати до порівняння"
+                }
               >
-                <Balance sx={{ fontSize: '28px' }} />
+                <Balance sx={{ fontSize: "28px" }} />
               </button>
             </div>
-            <div className="product-badges">
-              <span className="badge brand-badge">{product.brand}</span>
-              <span className="badge category-badge">
-                {product.category === 'phones' ? 'Смартфони' :
-                 product.category === 'laptops' ? 'Ноутбуки' :
-                 product.category === 'tablets' ? 'Планшети' :
-                 product.category}
-              </span>
-              <span className="badge stock-badge in-stock">В наявності</span>
-            </div>
           </div>
-          <div className="price">{product.price} грн</div>
           <p className="description">{product.description}</p>
 
           {/* Блок кнопок */}

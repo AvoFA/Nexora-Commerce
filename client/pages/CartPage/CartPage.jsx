@@ -43,7 +43,7 @@ const CartPage = () => {
   // Підтвердити очищення кошика
   const confirmClearAllCart = () => {
     dispatch({ type: "CLEAR_CART" });
-    toast.success('Кошик очищено!');
+    toast.success("Кошик очищено!");
     setIsClearModalOpen(false);
   };
 
@@ -83,7 +83,8 @@ const CartPage = () => {
       <h1 className="page-title">Ваш кошик</h1>
       <div className="cart-header">
         <p className="cart-items-count">
-           Товарів у кошику <span className="cart-count-number">{totalItems}</span>
+          Товарів у кошику{" "}
+          <span className="cart-count-number">{totalItems}</span>
         </p>
         <button
           className="btn-danger btn-clear-cart"
@@ -108,7 +109,7 @@ const CartPage = () => {
                 <Link to={`/product/${item.id}`} className="cart-item-title">
                   {item.name}
                 </Link>
-                <p className="cart-item-price">{item.price} грн</p>
+                <p className="cart-item-price">{item.price} ₴</p>
               </div>
 
               <div className="cart-item-controls">
@@ -146,7 +147,7 @@ const CartPage = () => {
           <div className="card-content">
             <div className="summary-row">
               <span>Вартість товарів:</span>
-              <span>{totalPrice.toLocaleString("uk-UA")} грн</span>
+              <span>{totalPrice.toLocaleString("uk-UA")} ₴</span>
             </div>
             <div className="summary-row">
               <span>Доставка:</span>
@@ -155,7 +156,7 @@ const CartPage = () => {
 
             <div className="summary-total">
               <strong>Всього до сплати:</strong>
-              <strong>{totalPrice.toLocaleString("uk-UA")} грн</strong>
+              <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
             </div>
 
             <Link to="/checkout" className="btn-checkout">
