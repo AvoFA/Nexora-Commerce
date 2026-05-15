@@ -27,17 +27,13 @@ import { useCatalogData } from "../../components/catalog/hooks/useCatalogData.js
 import { useCatalogSearch } from "../../components/catalog/hooks/useCatalogSearch.js";
 import { useCatalogFilters } from "../../components/catalog/hooks/useCatalogFilters.js";
 
-const UI_CONFIG = {
-  initialVisibleCategories: 5,
-  loadingMessage: "Завантаження товарів...",
-};
-
 const CatalogPage = () => {
   // Параметри маршруту
   const { categoryName } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const navbarSearchQuery = searchParams.get("q");
+  const brandQuery = searchParams.get("brand");
 
   // Управління станом та хуки
   const { allProducts, availableCategories, isLoading, error } =
@@ -45,7 +41,6 @@ const CatalogPage = () => {
   const { performIntelligentSearch, shouldAutoSwitchCategory } =
     useCatalogSearch();
   const { applySidebarFilters, calculateAvailableBrands } = useCatalogFilters();
-  const [showAllCategories, setShowAllCategories] = useState(false);
   const [availableBrands, setAvailableBrands] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -82,6 +77,24 @@ const CatalogPage = () => {
       setPageSearchQuery("");
     }
   }, [categoryName, navbarSearchQuery, availableCategories]);
+
+  useEffect(() => {
+    if (brandQuery) {
+      setActiveSidebarFilters((current) => ({
+        ...(current || {}),
+        brands: [brandQuery],
+      }));
+      return;
+    }
+
+    setActiveSidebarFilters((current) => {
+      if (!current?.brands?.length) return current;
+      return {
+        ...current,
+        brands: [],
+      };
+    });
+  }, [brandQuery]);
 
   // Основна логіка фільтрації та сортування
   useEffect(() => {
@@ -377,51 +390,6 @@ const CatalogPage = () => {
               </div>
             )}
 
-            {/* Категорії (чіпси категорій) — нижче */}
-            <div className="category-buttons">
-              {availableCategories
-                .slice(
-                  0,
-                  showAllCategories
-                    ? availableCategories.length
-                    : UI_CONFIG.initialVisibleCategories,
-                )
-                .map((category) => (
-                  <button
-                    key={category.value}
-                    className={`btn ${selectedCategory === category.value ? "btn-primary" : "btn-secondary"}`}
-                    onClick={() => {
-                      if (category.value === "all") {
-                        navigate("/catalog");
-                      } else {
-                        navigate(`/catalog/${category.value}`);
-                      }
-                    }}
-                    aria-label={`Filter by ${category.label}`}
-                  >
-                    {category.label}
-                  </button>
-                ))}
-
-              {availableCategories.length >
-                UI_CONFIG.initialVisibleCategories && (
-                <Button
-                  className="btn btn-secondary"
-                  onClick={() => setShowAllCategories(!showAllCategories)}
-                  sx={{
-                    display: "inline-flex",
-                    "@media (max-width: 991px)": { display: "none" },
-                  }}
-                  aria-label={
-                    showAllCategories
-                      ? "Show fewer categories"
-                      : "Show more categories"
-                  }
-                >
-                  {showAllCategories ? "Згорнути" : "Показати ще"}
-                </Button>
-              )}
-            </div>
           </div>
 
           {filteredProducts.length > 0 ? (

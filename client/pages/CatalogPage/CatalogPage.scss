@@ -69,29 +69,6 @@
   }
 }
 
-.category-buttons {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  gap: 10px;
-  padding-bottom: 4px;
-
-  button {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    flex-shrink: 0;
-
-    &.btn-secondary {
-      box-shadow: none;
-    }
-  }
-}
-
 .catalog-header {
   display: flex;
   justify-content: space-between;
