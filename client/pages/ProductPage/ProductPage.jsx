@@ -19,9 +19,11 @@ import {
   VerifiedUserOutlined,
   Star,
   CheckCircle,
-  RateReview
+  RateReview,
+  Close,
+  InfoOutlined,
 } from "@mui/icons-material";
-import { Rating } from "@mui/material";
+import { Rating, TextField, FormControl, FormHelperText, Tooltip } from "@mui/material";
 import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
@@ -62,12 +64,32 @@ const ProductPage = () => {
 
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
-  const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } =
-    useAuth();
+  const {
+    isAuthenticated,
+    user,
+    isFavorite,
+    addToFavorites,
+    removeFromFavorites,
+  } = useAuth();
 
   const [reviews, setReviews] = useState(MOCK_REVIEWS);
   const [showForm, setShowForm] = useState(false);
-  const [newReview, setNewReview] = useState({ stars: 0, text: "", pros: "", cons: "" });
+  const [newReview, setNewReview] = useState({
+    name: "",
+    stars: 0,
+    text: "",
+    pros: "",
+    cons: "",
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [ratingFilter, setRatingFilter] = useState(null);
+
+  useEffect(() => {
+    if (user?.name) {
+      setNewReview((prev) => ({ ...prev, name: user.name }));
+    }
+  }, [user]);
+
 
   const getCategoryDisplay = (cat) => {
     const mapping = {
@@ -80,15 +102,15 @@ const ProductPage = () => {
 
   const { avgRating, stats } = useMemo(() => {
     if (!reviews.length) return { avgRating: "—", stats: {} };
-    
+
     const sum = reviews.reduce((s, r) => s + r.stars, 0);
     const avg = (sum / reviews.length).toFixed(1);
-    
+
     const counts = [5, 4, 3, 2, 1].reduce((acc, star) => {
-      const count = reviews.filter(r => r.stars === star).length;
+      const count = reviews.filter((r) => r.stars === star).length;
       acc[star] = {
         count,
-        percent: Math.round((count / reviews.length) * 100)
+        percent: Math.round((count / reviews.length) * 100),
       };
       return acc;
     }, {});
@@ -98,14 +120,28 @@ const ProductPage = () => {
 
   const handleSubmitReview = (e) => {
     e.preventDefault();
-    if (!newReview.stars) return toast.error("Оберіть оцінку");
-    if (!newReview.text.trim()) return toast.error("Напишіть відгук");
+    const errors = {};
+    if (!newReview.stars) errors.stars = "Необхідно виставити оцінку.";
+    if (!newReview.name.trim()) errors.name = "Поле обов'язкове для заповнення";
+    if (!newReview.text.trim()) {
+      errors.text = "Поле обов'язкове для заповнення";
+    } else if (newReview.text.trim().length < 10) {
+      errors.text = "Введіть не менш ніж 10 символів";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
 
     const review = {
       id: Date.now(),
-      name: isAuthenticated ? "Ви" : "Анонім",
+      name: newReview.name,
       date: new Date().toLocaleDateString("uk-UA", {
-        day: "numeric", month: "long", year: "numeric"
+        day: "numeric",
+        month: "long",
+        year: "numeric",
       }),
       stars: newReview.stars,
       text: newReview.text,
@@ -115,8 +151,15 @@ const ProductPage = () => {
       verified: isAuthenticated,
     };
 
-    setReviews(prev => [review, ...prev]);
-    setNewReview({ stars: 0, text: "", pros: "", cons: "" });
+    setReviews((prev) => [review, ...prev]);
+    setFormErrors({});
+    setNewReview({
+      name: user?.name || "",
+      stars: 0,
+      text: "",
+      pros: "",
+      cons: "",
+    });
     setShowForm(false);
     toast.success("Відгук додано!");
   };
@@ -212,15 +255,24 @@ const ProductPage = () => {
               <h1>{product.name}</h1>
               <div
                 className="product-rating-link"
-                onClick={() => document.querySelector('.reviews-section')?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() =>
+                  document
+                    .querySelector(".reviews-section")
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
               >
                 <div className="stars">
-                  <Rating 
-                    value={Number(avgRating) || 0} 
-                    precision={0.5} 
-                    readOnly 
+                  <Rating
+                    value={Number(avgRating) || 0}
+                    precision={0.5}
+                    readOnly
                     emptyIcon={<Star fontSize="inherit" />}
-                    className="custom-rating"
+                    sx={{
+                      fontSize: "1.15rem",
+                      color: "#fbbf24",
+                      "& .MuiRating-iconEmpty": { color: "#475569" },
+                      "& .MuiSvgIcon-root": { fontSize: "inherit" },
+                    }}
                   />
                 </div>
 
@@ -437,158 +489,300 @@ const ProductPage = () => {
             </div>
           </section>
         </div>
+      </div>
 
-        </div>
+      {/* Секція відгуків на всю ширину внизу */}
+      <section className="reviews-section bottom-layout">
+        <h2 className="section-title">Відгуки клієнтів</h2>
 
-        {/* Секція відгуків на всю ширину внизу */}
-        <section className="reviews-section bottom-layout">
-          <h2 className="section-title">Відгуки клієнтів</h2>
-
-          <div className="reviews-layout-grid">
-
-            {/* Левый sidebar */}
-            <div className="reviews-summary-side">
-              <div className="reviews-summary">
-                <div className="rating-big">{avgRating}</div>
-                <div className="rating-info">
-                  <div className="stars">
-                    <Rating
-                      value={Number(avgRating) || 0}
-                      precision={0.5}
-                      readOnly
-                      emptyIcon={<Star fontSize="inherit" />}
-                      className="custom-rating big"
-                    />
-                  </div>
-                  <div className="total-reviews">На основі {reviews.length} відгуків</div>
+        <div className="reviews-layout-grid">
+          {/* Левый sidebar */}
+          <div className="reviews-summary-side">
+            <div className="reviews-summary">
+              <div className="rating-big">{avgRating}</div>
+              <div className="rating-info">
+                <div className="stars">
+                  <Rating
+                    value={Number(avgRating) || 0}
+                    precision={0.5}
+                    readOnly
+                    emptyIcon={<Star fontSize="inherit" />}
+                    sx={{
+                      fontSize: "1.8rem",
+                      color: "#fbbf24",
+                      "& .MuiRating-iconEmpty": { color: "#475569" },
+                      "& .MuiSvgIcon-root": { fontSize: "inherit" },
+                    }}
+                  />
+                </div>                <div className="total-reviews">
+                  На основі {reviews.length} відгуків
                 </div>
               </div>
-
-              <div className="rating-bars">
-                {[5, 4, 3, 2, 1].map((star) => (
-                  <div key={star} className="rating-bar-row">
-                    <span className="star-num">{star}★</span>
-                    <div className="bar-bg">
-                      <div className="bar-fill" style={{ width: (stats[star]?.percent || 0) + "%" }} />
-                    </div>
-                    <span className="bar-percent">{stats[star]?.percent || 0}%</span>
-                  </div>
-                ))}
-              </div>
-
-              <button className="btn-write-review" onClick={() => setShowForm(v => !v)}>
-                {showForm ? "Скасувати" : "Написати відгук"}
-              </button>
             </div>
 
-            {/* Правая зона */}
-            <div className="reviews-content-side">
+            <div className="rating-bars">
+              {[5, 4, 3, 2, 1].map((star) => (
+                <div key={star} className="rating-bar-row">
+                  <span className="star-num">{star}★</span>
+                  <div className="bar-bg">
+                    <div
+                      className="bar-fill"
+                      style={{ width: (stats[star]?.percent || 0) + "%" }}
+                    />
+                  </div>
+                  <span className="bar-percent">
+                    {stats[star]?.percent || 0}%
+                  </span>
+                </div>
+              ))}
+            </div>
 
-              {/* Форма (показывается по кнопке) */}
-              {showForm && (
-                <form className="review-form" onSubmit={handleSubmitReview}>
-                  <div className="form-field">
-                    <label>Оцінка</label>
+            <button
+              className="btn-write-review"
+              onClick={() => setShowForm((v) => !v)}
+            >
+              {showForm ? "Скасувати" : "Написати відгук"}
+            </button>
+          </div>
+
+          {/* Правая зона */}
+          <div className="reviews-content-side">
+            {/* Форма (показывается по кнопке) */}
+            {showForm && (
+              <form className="review-form" onSubmit={handleSubmitReview}>
+                <button
+                  type="button"
+                  className="close-form"
+                  onClick={() => setShowForm(false)}
+                >
+                  <Close />
+                </button>
+
+                <div className="review-form-header">
+                  <h3>Залиште свій відгук про цей товар</h3>
+                  <Tooltip
+                    title={
+                      <div style={{ padding: "8px", fontSize: "13px", lineHeight: "1.6" }}>
+                        <b style={{ display: "block", marginBottom: "6px", color: "#fbbf24" }}>
+                          Що містить відгук, який точно НЕ опублікують?
+                        </b>
+                        <ul style={{ margin: 0, paddingLeft: "16px", listStyleType: "disc" }}>
+                          <li>Нецензурну лексику</li>
+                          <li>Посилання на сторонні ресурси або згадки про інші магазини</li>
+                          <li>Спам та відкриту рекламу</li>
+                          <li>Відгуки про обслуговування</li>
+                        </ul>
+                      </div>
+                    }
+                    arrow
+                    placement="top"
+                  >
+                    <div className="moderation-notice">
+                      <InfoOutlined sx={{ fontSize: "18px" }} />
+                      <span>Перед публікацією відгук проходить модерацію.</span>
+                    </div>
+                  </Tooltip>
+
+                </div>
+
+                <div className="review-form-fields">
+                  <div className="form-field rating-field">
+                    <label>Оцінити товар*</label>
                     <div className="star-picker">
                       <Rating
                         name="review-stars"
                         value={newReview.stars}
                         onChange={(event, newValue) => {
-                          setNewReview(p => ({ ...p, stars: newValue || 0 }));
+                          setNewReview((p) => ({ ...p, stars: newValue || 0 }));
+                          if (newValue) setFormErrors(prev => ({ ...prev, stars: null }));
                         }}
                         emptyIcon={<Star fontSize="inherit" />}
-                        className="custom-rating interactive"
+                        sx={{
+                          fontSize: "2.5rem",
+                          color: "#fbbf24",
+                          "& .MuiRating-iconFilled, & .MuiRating-iconHover": {
+                            color: "#fbbf24",
+                          },
+                          "& .MuiRating-iconEmpty": { color: "#475569" },
+                          "& .MuiRating-icon": {
+                            marginRight: "8px",
+                            transition: "transform 0.2s ease-in-out",
+                          },
+                          "& .MuiRating-icon:hover": {
+                            transform: "scale(1.1)",
+                          },
+                        }}
                       />
                     </div>
+                    {formErrors.stars && (
+                      <FormHelperText error sx={{ fontSize: "0.85rem", fontWeight: 500, mt: 0, mb: 1 }}>
+                        {formErrors.stars}
+                      </FormHelperText>
+                    )}
                   </div>
 
-                  <div className="form-field">
-                    <label>Відгук</label>
-                    <textarea
-                      placeholder="Розкажіть про товар..."
-                      value={newReview.text}
-                      onChange={e => setNewReview(p => ({ ...p, text: e.target.value }))}
-                      rows={4}
+                  <div className="form-group">
+                    <label htmlFor="review-name">Ім'я*</label>
+                    <input
+                      id="review-name"
+                      type="text"
+                      className={`form-input ${formErrors.name ? "has-error" : ""}`}
+                      placeholder="Ваше ім'я"
+                      value={newReview.name}
+                      onChange={(e) => {
+                        setNewReview((p) => ({ ...p, name: e.target.value }));
+                        if (e.target.value.trim()) setFormErrors(prev => ({ ...prev, name: null }));
+                      }}
                     />
+                    {formErrors.name && <div className="error-message">{formErrors.name}</div>}
                   </div>
 
+                  <div className="form-group">
+                    <label htmlFor="review-text">Ваш коментар*</label>
+                    <textarea
+                      id="review-text"
+                      className={`form-input ${formErrors.text ? "has-error" : ""}`}
+                      placeholder="Розкажіть про товар..."
+                      rows={4}
+                      value={newReview.text}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setNewReview((p) => ({ ...p, text: val }));
+                        
+                        // Жива валідація: показуємо помилку відразу при введенні
+                        if (val.length > 0 && val.trim().length < 10) {
+                          setFormErrors((prev) => ({ 
+                            ...prev, 
+                            text: "Введіть не менш ніж 10 символів" 
+                          }));
+                        } else {
+                          setFormErrors((prev) => ({ ...prev, text: null }));
+                        }
+                      }}
+
+
+                    />
+                    {formErrors.text && <div className="error-message">{formErrors.text}</div>}
+                  </div>
                   <div className="form-row">
-                    <div className="form-field">
-                      <label>Переваги</label>
+                    <div className="form-group">
+                      <label htmlFor="review-pros">Переваги</label>
                       <input
+                        id="review-pros"
+                        type="text"
+                        className="form-input"
                         placeholder="Що сподобалось?"
                         value={newReview.pros}
-                        onChange={e => setNewReview(p => ({ ...p, pros: e.target.value }))}
+                        onChange={(e) =>
+                          setNewReview((p) => ({ ...p, pros: e.target.value }))
+                        }
                       />
                     </div>
-                    <div className="form-field">
-                      <label>Недоліки</label>
+                    <div className="form-group">
+                      <label htmlFor="review-cons">Недоліки</label>
                       <input
+                        id="review-cons"
+                        type="text"
+                        className="form-input"
                         placeholder="Що не сподобалось?"
                         value={newReview.cons}
-                        onChange={e => setNewReview(p => ({ ...p, cons: e.target.value }))}
+                        onChange={(e) =>
+                          setNewReview((p) => ({ ...p, cons: e.target.value }))
+                        }
                       />
                     </div>
                   </div>
+                </div>
 
-                  <button type="submit" className="btn-primary btn-with-icon">
-                    Надіслати відгук
+
+
+                <button type="submit" className="btn-primary btn-with-icon">
+                  Надіслати відгук
+                </button>
+              </form>
+            )}
+
+            <div className="reviews-list-header">
+              <div className="rating-filters">
+                {[5, 4, 3, 2, 1].map((star) => (
+                  <button
+                    key={star}
+                    className={`filter-chip ${ratingFilter === star ? "active" : ""}`}
+                    onClick={() =>
+                      setRatingFilter(ratingFilter === star ? null : star)
+                    }
+                  >
+                    <Star sx={{ fontSize: "14px", mr: "2px" }} /> {star}
                   </button>
-                </form>
-              )}
-
-              {/* Список отзывов */}
-              <div className="reviews-list">
-                {reviews.map((review) => (
-                  <div key={review.id} className="review-item">
-                    <div className="review-header">
-                      <div className="review-author-block">
-                        <span className="user-name">{review.name}</span>
-                        {review.verified && (
-                          <span className="verified-badge">
-                            <CheckCircle sx={{ fontSize: "13px" }} />
-                            Підтверджена покупка
-                          </span>
-                        )}
-                      </div>
-                      <span className="review-date">{review.date}</span>
-                    </div>
-
-                    {review.model && (
-                      <span className="review-model-tag">{review.model}</span>
-                    )}
-
-                    <div className="review-stars">
-                      <Rating
-                        value={review.stars}
-                        readOnly
-                        emptyIcon={<Star fontSize="inherit" />}
-                        className="custom-rating small"
-                      />
-                    </div>
-
-                    <p className="review-text">{review.text}</p>
-
-                    {review.pros && (
-                      <div className="review-pros">
-                        <span className="pros-label">Переваги: </span>{review.pros}
-                      </div>
-                    )}
-                    {review.cons && (
-                      <div className="review-cons">
-                        <span className="cons-label">Недоліки: </span>{review.cons}
-                      </div>
-                    )}
-                  </div>
                 ))}
               </div>
 
-              {reviews.length > 0 && (
-                <button className="btn-all-reviews">Всі відгуки ({reviews.length})</button>
-              )}
             </div>
+
+            {/* Список отзывов */}
+            <div className="reviews-list">
+              {reviews
+                .filter((r) => (ratingFilter ? r.stars === ratingFilter : true))
+                .map((review) => (
+                  <div key={review.id} className="review-item">
+
+                  <div className="review-header">
+                    <div className="review-author-block">
+                      <span className="user-name">{review.name}</span>
+                      {review.verified && (
+                        <span className="verified-badge">
+                          <CheckCircle sx={{ fontSize: "13px" }} />
+                          Підтверджена покупка
+                        </span>
+                      )}
+                    </div>
+                    <span className="review-date">{review.date}</span>
+                  </div>
+
+                  {review.model && (
+                    <span className="review-model-tag">{review.model}</span>
+                  )}
+
+                  <div className="review-stars">
+                    <Rating
+                      value={review.stars}
+                      readOnly
+                      emptyIcon={<Star fontSize="inherit" />}
+                      sx={{
+                        fontSize: "1rem",
+                        color: "#fbbf24",
+                        "& .MuiRating-iconEmpty": { color: "#475569" },
+                        "& .MuiSvgIcon-root": { fontSize: "inherit" },
+                      }}
+                    />
+                  </div>
+
+                  <p className="review-text">{review.text}</p>
+
+                  {review.pros && (
+                    <div className="review-pros">
+                      <span className="pros-label">Переваги: </span>
+                      {review.pros}
+                    </div>
+                  )}
+                  {review.cons && (
+                    <div className="review-cons">
+                      <span className="cons-label">Недоліки: </span>
+                      {review.cons}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {reviews.length > 0 && (
+              <button className="btn-all-reviews">
+                Всі відгуки ({reviews.length})
+              </button>
+            )}
           </div>
-        </section>
+        </div>
+      </section>
 
       {/* Схожі товари */}
       {similarProducts.length > 0 && (

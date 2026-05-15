@@ -6,8 +6,6 @@ import { toast } from 'sonner';
 // Створюємо контекст порівняння
 export const CompareContext = createContext();
 
-// Обмеження на кількість товарів для порівняння
-const MAX_COMPARE_ITEMS = 6;
 const STORAGE_KEY = 'compare_items';
 
 // Завантажуємо початковий стан з localStorage один раз
@@ -39,12 +37,6 @@ const compareReducer = (state, action) => {
 
       if (alreadyExists) {
         toast.info('Цей товар вже додано до порівняння');
-        return state;
-      }
-
-      // Перевіряємо ліміт
-      if (state.items.length >= MAX_COMPARE_ITEMS) {
-        toast.error(`Можна порівнювати не більше ${MAX_COMPARE_ITEMS} товарів`);
         return state;
       }
 
