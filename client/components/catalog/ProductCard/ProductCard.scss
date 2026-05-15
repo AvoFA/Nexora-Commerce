@@ -289,18 +289,7 @@
 
 // Кругла кнопка «В кошик»
 .btn-cart-round {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  background: darken($primary-color, 2%); // Зробив трохи насиченішим
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); // Більш чітка тінь
+  @extend .btn-icon-round;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   // Мінімальна тач-зона 48px

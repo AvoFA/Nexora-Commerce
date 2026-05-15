@@ -4,63 +4,44 @@
 
 // Основна кнопка для дій
 .btn-primary {
-  display: inline-block;
-  background: linear-gradient(to bottom right, $primary-color, $secondary-color);
-  color: hsl(0, 0%, 100%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: $primary-color;
+  color: #ffffff;
   border: none;
-  box-shadow: $glow-primary;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   border-radius: $border-radius / 1.5;
   padding: 12px 24px;
   font-weight: 600;
   font-family: inherit;
   font-size: 0.95rem;
   cursor: pointer;
-  text-transform: none;
   text-decoration: none;
-  text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    background: linear-gradient(to bottom right, lighten($primary-color, 5%), lighten($secondary-color, 5%));
-    // ❌ Без transform:scale — інакше кнопки у картках роздуваються
-    box-shadow: 0 0 24px hsl(216 100% 61% / 0.4);
-    opacity: 0.95;
+    background-color: darken($primary-color, 4%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
   }
 }
 
-// Кнопка «Назад» — glassmorphism, використовується на декількох сторінках
-.btn-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  margin: 12px 0;
-  background: $glass-gradient;
-  backdrop-filter: $glass-blur;
-  border: 1px solid $border-color;
-  border-radius: $border-radius;
-  color: $text-color;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  width: fit-content;
-
-  .MuiSvgIcon-root {
-    transition: transform 0.3s ease;
-  }
-
-  &:hover {
-    border-color: $primary-color;
-    box-shadow: 0 4px 12px rgba($primary-color, 0.2);
-
-    .MuiSvgIcon-root {
-      transform: translateX(-4px);
-      color: $primary-color;
-    }
-  }
+// Кругла кнопка-іконка (на основі btn-primary)
+.btn-icon-round {
+  @extend .btn-primary;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  border-radius: 50%;
 }
+
 
 // Допоміжна кнопка
 .btn-secondary {
@@ -84,7 +65,7 @@
   font-size: 0.95rem;
 
   .MuiSvgIcon-root {
-    color: $text-secondary;
+
     transition: color 0.2s ease;
   }
 
@@ -92,10 +73,6 @@
     background-color: rgba($primary-color, 0.15);
     color: $primary-color;
     border-color: $primary-color;
-
-    .MuiSvgIcon-root {
-      color: $primary-color;
-    }
   }
 }
 
@@ -119,14 +96,40 @@
   border-color: rgba($primary-color, 0.3);
 }
 
-// Кнопки з іконками
-.btn-with-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 
-  .MuiSvgIcon-root {
-    color: hsl(0, 0%, 100%);
+// Уніфікований стиль для полів вводу (як в Checkout та Auth)
+@mixin shared-input-style {
+  width: 100%;
+  font-size: 1rem;
+  border: none;
+  border-radius: $border-radius / 2; // Всі кути скруглені, як було в чекауті
+  border-bottom: 2px solid $border-color;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: $text-color;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  // Фокус
+  &:focus,
+  &.Mui-focused {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-bottom-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.1);
+  }
+
+  // Помилка
+  &.Mui-error,
+  &.has-error {
+    border-bottom-color: #ef4444;
   }
 }
