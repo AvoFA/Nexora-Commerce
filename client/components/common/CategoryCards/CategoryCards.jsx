@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCategories } from '../../../services/categoryService';
+import { getCategoryDisplay } from '../../../utils/categories';
 import CategoryCardsSkeleton from './CategoryCardsSkeleton';
 import './CategoryCards.scss';
 
@@ -36,15 +37,6 @@ const CategoryCards = () => {
     return null;
   }
 
-  const getDisplayName = (category) => {
-    const nameMap = {
-      'phones': 'Смартфони',
-      'laptops': 'Ноутбуки',
-      'tablets': 'Планшети'
-    };
-    return nameMap[category.name] || category.description;
-  };
-
   return (
     <section className="category-cards-section">
       <div className="category-cards-container">
@@ -56,7 +48,9 @@ const CategoryCards = () => {
             style={{ backgroundImage: `url(${category.image})` }}
           >
             <div className="category-card-overlay"></div>
-            <h3 className="category-card-title">{getDisplayName(category)}</h3>
+            <h3 className="category-card-title">
+              {category.description || getCategoryDisplay(category.name)}
+            </h3>
           </Link>
         ))}
       </div>

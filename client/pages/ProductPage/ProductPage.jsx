@@ -28,6 +28,7 @@ import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
 import { useCompare } from "../../hooks/useCompare.js";
+import { getCategoryDisplay } from "../../utils/categories.js";
 import "./ProductPage.scss";
 
 const MOCK_REVIEWS = [
@@ -89,16 +90,6 @@ const ProductPage = () => {
       setNewReview((prev) => ({ ...prev, name: user.name }));
     }
   }, [user]);
-
-
-  const getCategoryDisplay = (cat) => {
-    const mapping = {
-      phones: "Смартфони",
-      laptops: "Ноутбуки",
-      tablets: "Планшети",
-    };
-    return mapping[cat] || cat;
-  };
 
   const { avgRating, stats } = useMemo(() => {
     if (!reviews.length) return { avgRating: "—", stats: {} };
