@@ -115,7 +115,9 @@ const ProductCard = memo(({ product, onFavoriteChange }) => {
       {/* Контент */}
       <div className="card-content">
         <Link to={`/product/${productId}`} className="card-name-link">
-          <h3 className="card-name">{product.name}</h3>
+          <h3 className="card-name" title={product.name}>
+            {product.name}
+          </h3>
         </Link>
 
         {/* Рейтинг (Smart Stub) */}

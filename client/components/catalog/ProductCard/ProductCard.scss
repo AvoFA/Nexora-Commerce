@@ -30,6 +30,21 @@
       transform: translateX(0);
     }
   }
+
+  @media (max-width: 768px) {
+    border-radius: 10px;
+    backdrop-filter: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      border-color: rgba(255, 255, 255, 0.08);
+
+      .product-card-image img {
+        transform: none;
+      }
+    }
+  }
 }
 
 // ─── Зображення та кнопки-іконки ───────────────────────────────────────────
@@ -61,6 +76,11 @@
     justify-content: center;
     color: #aaa;
     font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    aspect-ratio: 1 / 1;
+    border-radius: 10px 10px 0 0;
   }
 }
 
@@ -99,16 +119,16 @@
   }
 
   @media (hover: none) {
-    width: 44px;
-    height: 44px;
-    right: 12px;
+    width: 34px;
+    height: 34px;
+    right: 8px;
 
     &.favorite-button {
-      top: 12px;
+      top: 8px;
     }
 
     &.compare-button {
-      top: 64px;
+      top: 48px;
     }
   }
 }
@@ -189,6 +209,11 @@
   flex-direction: column;
   flex-grow: 1;
   gap: 6px;
+
+  @media (max-width: 768px) {
+    padding: 9px 8px 10px;
+    gap: 5px;
+  }
 }
 
 .card-name-link {
@@ -198,9 +223,12 @@
 
 .card-name {
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 400; // Regular weight as in Comfy
   margin: 0;
   color: $text-color;
+  line-height: 1.4;
+
+
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -211,6 +239,11 @@
 
   .card-name-link:hover & {
     color: $primary-color;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.78rem;
+    line-height: 1.35;
   }
 }
 
@@ -224,7 +257,7 @@
 
   .rating-star {
     color: $warning-color;
-    font-size: 16px !important;
+    font-size: 16px;
   }
 
   .rating-value {
@@ -238,6 +271,23 @@
     color: $text-secondary;
     opacity: 0.6;
   }
+
+  @media (max-width: 768px) {
+    gap: 4px;
+    margin-top: 0;
+
+    .rating-star {
+      font-size: 14px;
+    }
+
+    .rating-value {
+      font-size: 0.76rem;
+    }
+
+    .rating-count {
+      font-size: 0.7rem;
+    }
+  }
 }
 
 // ─── Футер: ціна + кнопки ──────────────────────────────────────────────────
@@ -249,6 +299,10 @@
   margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+
+  @media (max-width: 768px) {
+    padding-top: 7px;
+  }
 }
 
 .price-block {
@@ -257,6 +311,13 @@
     font-weight: 700;
     color: $primary-color; // Повернув блакитний колір для акценту
     letter-spacing: -0.3px;
+  }
+
+  @media (max-width: 768px) {
+    .card-price {
+      font-size: 1rem;
+      letter-spacing: -0.2px;
+    }
   }
 }
 
@@ -294,9 +355,9 @@
 
   // Мінімальна тач-зона 48px
   @media (hover: none) {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
   }
 
   &:hover {
