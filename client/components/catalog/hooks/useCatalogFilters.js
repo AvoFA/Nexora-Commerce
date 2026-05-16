@@ -29,13 +29,23 @@ export const useCatalogFilters = () => {
     return filtered;
   };
 
-  // розраховуємо доступні бренди для поточного контексту
+  // розраховуємо доступні бренди та їх кількість для поточного контексту
   const calculateAvailableBrands = (products, category) => {
-    const brands = category === 'all'
-      ? products.map(p => p.brand)
-      : products.filter(p => p.category === category).map(p => p.brand);
+    const targetProducts = category === 'all'
+      ? products
+      : products.filter(p => p.category === category);
+    
+    const counts = {};
+    targetProducts.forEach(p => {
+      if (p.brand) {
+        counts[p.brand] = (counts[p.brand] || 0) + 1;
+      }
+    });
 
-    return [...new Set(brands)].filter(Boolean);
+    // Повертаємо масив об'єктів { name, count }
+    return Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   };
 
   return {

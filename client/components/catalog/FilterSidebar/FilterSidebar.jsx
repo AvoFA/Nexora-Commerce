@@ -74,7 +74,7 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
   // Відфільтровані бренди по пошуку
   const filteredBrands = useMemo(() => {
     const query = brandSearch.trim().toLowerCase();
-    return query ? brands.filter(b => b.toLowerCase().includes(query)) : brands;
+    return query ? brands.filter(b => b.name.toLowerCase().includes(query)) : brands;
   }, [brands, brandSearch]);
 
   const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 5);
@@ -210,15 +210,20 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
             <FormGroup>
               {visibleBrands.map(brand => (
                 <FormControlLabel
-                  key={brand}
+                  key={brand.name}
                   control={
                     <Checkbox
-                      checked={localSelectedBrands.includes(brand)}
-                      onChange={() => handleBrandChange(brand)}
+                      checked={localSelectedBrands.includes(brand.name)}
+                      onChange={() => handleBrandChange(brand.name)}
                       size="small"
                     />
                   }
-                  label={brand}
+                  label={
+                    <div className="brand-label-content">
+                      <span className="brand-name">{brand.name}</span>
+                      <span className="brand-count">{brand.count}</span>
+                    </div>
+                  }
                 />
               ))}
               {filteredBrands.length === 0 && (
@@ -232,7 +237,7 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
               className="show-more-btn"
               onClick={() => setShowAllBrands(prev => !prev)}
             >
-              {showAllBrands ? 'Згорнути' : `Показати всі (${filteredBrands.length})`}
+              {showAllBrands ? 'Згорнути' : `Показати ще (${filteredBrands.length - 5})`}
             </button>
           )}
         </FilterSection>
