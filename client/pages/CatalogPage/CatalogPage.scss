@@ -5,17 +5,18 @@
 // Основний контейнер сторінки
 .catalog-page {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1560px;
   margin: 0 auto;
-  padding: 12px 16px 48px; // Зменшив до 12px
+  padding: 12px 16px 48px;
   box-sizing: border-box;
 
-  @media (max-width: 479px) {
-    padding: 12px 12px 32px;
+  // Стабільна ширина для великих екранів (як у першому коміті)
+  @media (min-width: 1280px) {
+    padding: 16px 24px 64px;
   }
 
-  @media (min-width: 1280px) {
-    padding: 16px 24px 64px; // Зменшив до 16px для десктопа
+  @media (max-width: 479px) {
+    padding: 8px 8px 32px;
   }
 }
 
@@ -51,21 +52,125 @@
   }
 }
 
-.sort-select-wrapper {
+// Custom Sort Picker styles
+.catalog-sort-picker {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
+  gap: 12px;
+  position: relative;
 
   .sort-label {
-    color: $text-secondary;
+    color: $text-color;
     font-size: 0.88rem;
     font-weight: 500;
     white-space: nowrap;
   }
 
-  .sort-control {
+  .sort-trigger-wrapper {
+    position: relative;
+  }
+
+  .sort-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    background: rgba($surface-color, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: $text-color;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
     min-width: 220px;
+    justify-content: flex-start;
+    font-family: inherit;
+
+    .sort-icon {
+      color: $primary-color;
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: rgba($surface-color, 0.6);
+      border-color: rgba($primary-color, 0.4);
+    }
+
+    &.is-active {
+      border-color: $primary-color;
+      background: rgba($surface-color, 0.8);
+      box-shadow: 0 0 15px rgba($primary-color, 0.2);
+    }
+  }
+
+    .sort-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 100%;
+      min-width: 240px;
+      background: #1a1f2e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 50;
+      overflow: hidden;
+      animation: slideUp 0.2s ease-out;
+
+      &.mobile-menu {
+        display: none;
+      }
+
+    .sort-item {
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      .sort-item-content {
+        display: flex;
+        align-items: center;
+        gap: 4px; // Small gap between check and text
+        min-height: 24px;
+      }
+
+      .check-placeholder {
+        width: 20px; // Fixed width for the checkmark area
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .sort-item-text {
+        color: rgba($text-color, 0.8);
+        font-size: 0.9rem;
+        white-space: nowrap;
+        transition: color 0.2s ease;
+      }
+
+      .selected-check {
+        font-size: 1rem; // Slightly smaller to fit better
+        color: $primary-color;
+        flex-shrink: 0;
+      }
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+        .sort-item-text {
+          color: $primary-color;
+        }
+      }
+
+      &.is-selected {
+        background: rgba($primary-color, 0.15);
+        .sort-item-text {
+          color: $primary-color;
+          font-weight: 600;
+        }
+      }
+    }
   }
 }
 
@@ -73,7 +178,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
   flex-wrap: wrap;
   gap: 16px;
   padding: 12px 0;
@@ -88,24 +193,36 @@
     margin: 0;
     letter-spacing: -0.3px;
   }
+
+  @media (max-width: 767px) {
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom-width: 1px;
+
+    .page-title {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.catalog-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.catalog-summary {
+  margin: 0;
+  color: $text-secondary;
+  font-size: 0.9rem;
+
+  @media (max-width: 767px) {
+    font-size: 0.8rem;
+  }
 }
 
 .catalog-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.sort-select-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  .sort-label {
-    color: $text-secondary;
-    font-weight: 600;
-  }
+  display: none;
 }
 
 // Головний layout - Grid
@@ -119,7 +236,7 @@
   // На десктопі переключаємося в 1/4 + 3/4
   @media (min-width: 992px) {
     grid-template-columns: 280px 1fr;
-    gap: 32px;
+    gap: 24px;
     align-items: flex-start;
   }
 }
@@ -131,17 +248,206 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 320px;
+    width: 100%;
     height: 100%;
     background-color: $surface-color; // Luminous Slate surface
-    z-index: 100;
+    z-index: 1000; // Above everything
     transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
-    overflow-y: auto;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: hidden; // Dialog content will handle its own scroll
+    box-shadow: none;
 
     &.is-open {
       transform: translateX(0);
+    }
+  }
+
+  // Обгортка для фільтрів (мобільна та десктопна)
+  .filter-mobile__dialog {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    @media (max-width: 991px) {
+      height: 100%;
+      background-color: $surface-color;
+    }
+
+    &-header {
+      display: none; // Скрыто на десктопе
+
+      @media (max-width: 991px) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        background: $surface-color;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      &-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        &-label {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: $text-color;
+        }
+
+        &-badge {
+          background: $primary-color;
+          color: white;
+          font-size: 0.75rem;
+          font-weight: 700;
+          min-width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          padding: 0 6px;
+          box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+        }
+      }
+
+      &-close {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: $text-secondary;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        svg {
+          font-size: 1.4rem;
+        }
+
+        &:active {
+          background: rgba($primary-color, 0.15);
+          color: $primary-color;
+          transform: scale(0.9);
+        }
+      }
+    }
+
+    &-content {
+      // На десктопе это просто контейнер, на мобилке - скроллящаяся область
+      @media (max-width: 991px) {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+      }
+
+      .filter-mobile__dialog-selected-filters {
+        display: none; // Скрыто на десктопе (там есть чипсы под поиском)
+
+        @media (max-width: 991px) {
+          display: flex;
+          padding: 16px 20px;
+          flex-wrap: wrap;
+          gap: 8px;
+          background: rgba(255, 255, 255, 0.02);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .selected-filters__item {
+          font-size: 0.85rem;
+          color: $text-secondary;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 4px 12px;
+          border-radius: 50px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          &-value {
+            color: $primary-color;
+            font-weight: 600;
+            margin-left: 4px;
+          }
+
+          &--clear {
+            color: $danger-color;
+            border-color: rgba($danger-color, 0.2);
+            background: rgba($danger-color, 0.05);
+            cursor: pointer;
+
+            &:active {
+              background: rgba($danger-color, 0.1);
+            }
+          }
+        }
+      }
+
+      .filter-sidebar {
+        @media (max-width: 991px) {
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          box-shadow: none;
+          border-radius: 0;
+
+          .filter-reset-block {
+            display: none;
+          }
+        }
+      }
+    }
+
+    &-footer {
+      display: none; // Скрыто на десктопе
+
+      @media (max-width: 991px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 20px;
+        background: $surface-color;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      &-button {
+        height: 48px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        outline: none;
+
+        &--reset {
+          background: rgba(255, 255, 255, 0.05);
+          color: $text-secondary;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          &:active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(1px);
+          }
+        }
+
+        &--apply {
+          background: $primary-color;
+          color: white;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+
+          &:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba($primary-color, 0.2);
+          }
+        }
+      }
     }
   }
 
@@ -155,9 +461,320 @@
 // Контейнер керування (пошук, чіпси, категорії)
 .catalog-controls {
   margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 12px;
+  background: rgba($surface-color, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: $border-radius;
+
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    gap: 16px; // Increased gap
+    margin-bottom: 20px;
+    padding: 0; // Remove padding to let children take full width if needed
+    background: transparent; // Clean mobile look
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.catalog-toolbar-actions {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    display: block; // Let children take full width
+  }
+
+  .toolbar-desktop-only {
+    display: flex;
+    align-items: center;
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
+  .toolbar-mobile-capsules {
+    display: none;
+
+    @media (max-width: 767px) {
+      display: grid;
+      grid-template-columns: 1fr 1fr; // Strict 50/50
+      gap: 10px;
+      width: 100%;
+      align-items: center;
+
+      .sort-mobile-capsule-wrapper,
+      .filter-mobile-capsule-wrapper {
+        width: 100%;
+        min-width: 0; // Crucial for grid item behavior
+        position: relative;
+      }
+
+      .sort-mobile-capsule,
+      .filter-mobile-capsule {
+        height: 40px;
+        width: 100%;
+        overflow: hidden; // Keep content inside
+        background-color: rgba($surface-color, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center; // Center text in 50/50 layout
+        padding: 0 5px; // Reduced padding
+        color: $text-color;
+        font-weight: 600; // Increased weight
+        gap: 8px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+
+        .capsule-icon {
+          color: $primary-color;
+          font-size: 1.2rem;
+        }
+
+        &:active {
+          transform: translateY(1px) scale(0.98);
+          background: rgba($surface-color, 1);
+        }
+      }
+
+      .sort-mobile-capsule {
+        font-size: 0.75rem; // 12px for long text
+
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        &.is-active {
+          border-color: $primary-color;
+          box-shadow: 0 0 15px rgba($primary-color, 0.15);
+        }
+      }
+
+      .filter-mobile-capsule {
+        font-size: 0.875rem; // 14px for short text
+        position: relative;
+
+        .filter-counter {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: $primary-color;
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 700;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4px;
+          border-radius: 10px;
+          box-shadow: 0 2px 5px rgba($primary-color, 0.3);
+          border: 1.5px solid $surface-color;
+        }
+      }
+    }
+  }
+}
+
+  // Backdrop for mobile menus
+  .sort-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+  }
+
+  // Comfy-style Bottom Sheet
+  .mobile-sort-wrapper {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px 24px;
+    animation: slideUpModal 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    .mobile-sort-close-btn {
+      width: 48px;
+      height: 48px;
+      background: rgba($surface-color, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: $text-color;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      margin-bottom: -24px; // Maintain overlap as it's Comfy-style but with our colors
+      cursor: pointer;
+      flex-shrink: 0;
+      z-index: 1001;
+      transition: all 0.2s ease;
+
+      svg {
+        font-size: 1.6rem;
+      }
+
+      &:active {
+        background: rgba($surface-color, 1);
+        border-color: $primary-color;
+        color: $primary-color;
+        transform: scale(0.95);
+      }
+    }
+
+    .mobile-sort-body {
+      width: 100%;
+      max-width: 500px;
+      background: #1a1f2e; // Slate theme
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      padding: 36px 16px 16px; // Extra top padding for the overlapping button
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .sort-item.mobile-capsule {
+      position: relative;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: all 0.2s ease;
+      min-height: 56px;
+
+      .sort-item-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      &.is-selected {
+        background: rgba($primary-color, 0.08); // Greenish/Primary glow
+        border-color: $primary-color;
+
+        .sort-item-text {
+          color: $primary-color;
+          font-weight: 600;
+        }
+      }
+
+      .corner-check-wrapper {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        width: 22px;
+        height: 22px;
+        background: $primary-color;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        border: 2px solid #1a1f2e; // Border same as body background for overlapping effect
+
+        .corner-check-icon {
+          font-size: 1rem;
+          color: white;
+        }
+      }
+
+      &:active {
+        transform: scale(0.98);
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+// Активні фільтри (Chips)
+.active-filters-container {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+
+  @media (max-width: 991px) {
+    display: none; // Скрываем на мобилках, так как они теперь внутри диалога фильтров
+  }
+
+  .filter-chip {
+    background: rgba($surface-color, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: $text-secondary;
+    border-radius: 16px;
+
+    .MuiChip-deleteIcon {
+      color: rgba(255, 255, 255, 0.5);
+      transition: color 0.2s;
+      &:hover {
+        color: $danger-color;
+      }
+    }
+  }
+
+  .chips-clear-btn {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
 }
 
 // Права колонка - основний контент
@@ -166,54 +783,8 @@
   min-width: 0;
   box-sizing: border-box;
 
-  // Активні фільтри (Chips)
-  .active-filters-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-
-    .filter-chip {
-      background: rgba($surface-color, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: $text-secondary;
-      border-radius: 16px;
-
-      .MuiChip-deleteIcon {
-        color: rgba(255, 255, 255, 0.5);
-        transition: color 0.2s;
-        &:hover {
-          color: $danger-color;
-        }
-      }
-    }
-
-    .chips-clear-btn {
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-      font-size: 0.78rem;
-      font-weight: 500;
-      padding: 6px 14px;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      align-self: center;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-
-      &:hover {
-        background: rgba(239, 68, 68, 0.15);
-        border-color: rgba(239, 68, 68, 0.4);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
-      }
-
-      &:active {
-        transform: translateY(0);
-      }
-    }
+  @media (min-width: 992px) {
+    min-width: 800px; // Відновлено для стабільності на десктопі
   }
 }
 
@@ -226,7 +797,7 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
-  z-index: 99;
+  z-index: 999;
   display: none;
 
   @media (max-width: 991px) {
@@ -242,6 +813,22 @@
   }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalZoomIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 // Стан "нічого не знайдено"
 .catalog-empty-state {
   display: flex;
@@ -252,6 +839,7 @@
   width: 100%;
   min-height: 400px;
   margin: 0;
+  flex-shrink: 0; // Запобігає стисканню
 
   background-color: transparent;
   border: 2px dashed $border-color;
@@ -313,5 +901,13 @@
     }
   }
 }
-
-
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
