@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { toast } from 'sonner';
-import DeleteConfirmModal from '../../../components/admin/common/DeleteConfirmModal/DeleteConfirmModal.jsx';
+import ConfirmModal from '../../../components/common/ConfirmModal/ConfirmModal.jsx';
+import { WarningAmber } from '@mui/icons-material';
 
 
 import ProductStats from '../../../components/admin/products/ProductStats.jsx';
@@ -199,11 +200,21 @@ const ProductListPage = () => {
       />
 
       {/* --- МОДАЛКА ПІДТВЕРДЖЕННЯ ВИДАЛЕННЯ --- */}
-      <DeleteConfirmModal
+      <ConfirmModal
         isOpen={showDeleteModal}
+        onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-        productName={productToDelete?.name || ''}
+        type="danger"
+        className="delete-modal"
+        icon={WarningAmber}
+        title="Видалити товар?"
+        message={
+          productToDelete?.name
+            ? <><strong>{productToDelete.name}</strong> буде видалено назавжди.</>
+            : 'Товар буде видалено назавжди.'
+        }
+        confirmText="Видалити"
+        cancelText="Скасувати"
       />
     </Box>
   );

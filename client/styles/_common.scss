@@ -32,6 +32,25 @@
   }
 }
 
+// Кнопка небезпечної дії (видалення, скасування)
+.btn-danger {
+  @extend .btn-primary;
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  border-color: rgba(231, 76, 60, 0.3);
+  box-shadow: none;
+
+  &:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    box-shadow: none;
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+}
+
+
 // Кругла кнопка-іконка (на основі btn-primary)
 .btn-icon-round {
   @extend .btn-primary;
