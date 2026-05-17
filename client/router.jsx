@@ -19,8 +19,12 @@ import CheckoutPage from "./pages/CheckoutPage/CheckoutPage.jsx";
 import AboutPage from "./pages/AboutPage/AboutPage.jsx";
 import CatalogPage from "./pages/CatalogPage/CatalogPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage.jsx";
-import FavoritesPage from "./pages/FavoritesPage/FavoritesPage.jsx";
 import ComparePage from "./pages/ComparePage/ComparePage.jsx";
+import AccountPage from "./pages/AccountPage/AccountPage.jsx";
+import OrdersTab from "./pages/AccountPage/tabs/OrdersTab.jsx";
+import WishlistTab from "./pages/AccountPage/tabs/WishlistTab.jsx";
+import ProfileTab from "./pages/AccountPage/tabs/ProfileTab.jsx";
+import AccountPlaceholderTab from "./pages/AccountPage/tabs/AccountPlaceholderTab.jsx";
 
 // сторінки адмінки
 import ProductListPage from "./pages/admin/ProductListPage/ProductListPage.jsx";
@@ -109,7 +113,40 @@ export const router = createBrowserRouter([
       { path: "/catalog", element: <CatalogPage /> },
       { path: "/catalog/:categoryName", element: <CatalogPage /> },
       { path: "/search", element: <CatalogPage /> },
-      { path: "/favorites", element: <FavoritesPage /> },
+      {
+        path: "/account",
+        element: <AccountPage />,
+        children: [
+          { index: true, element: <Navigate to="/account/orders" replace /> },
+          {
+            path: "orders",
+            element: <OrdersTab />,
+          },
+          { path: "wishlist", element: <WishlistTab /> },
+          {
+            path: "viewed",
+            element: (
+              <AccountPlaceholderTab
+                title="Переглянуті товари"
+                description="Тут з'являться товари, які ви нещодавно переглядали."
+              />
+            ),
+          },
+          {
+            path: "reviews",
+            element: (
+              <AccountPlaceholderTab
+                title="Мої відгуки"
+                description="Тут буде список ваших відгуків та їхній статус."
+              />
+            ),
+          },
+          {
+            path: "profile",
+            element: <ProfileTab />,
+          },
+        ],
+      },
       { path: "/compare", element: <ComparePage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "*", element: <NotFoundPage /> }, // 404 для всіх інших сторінок

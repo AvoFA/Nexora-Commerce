@@ -6,9 +6,13 @@ import MenuIcon from "@mui/icons-material/Menu";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BalanceIcon from "@mui/icons-material/Balance";
 import CloseIcon from "@mui/icons-material/Close";
+import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import HistoryIcon from "@mui/icons-material/History";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import LogoutConfirmModal from "../../common/LogoutConfirmModal/LogoutConfirmModal";
 import { useCart } from "../../../hooks/useCart";
 import { useAuth } from "../../../context/AuthContext";
@@ -16,11 +20,40 @@ import { useCompare } from "../../../hooks/useCompare";
 import MegaMenu from "./MegaMenu.jsx";
 import "./Navbar.scss";
 
+const accountLinks = [
+  {
+    to: "/account/orders",
+    label: "Мої замовлення",
+    icon: Inventory2OutlinedIcon,
+  },
+  {
+    to: "/account/wishlist",
+    label: "Обрані товари",
+    icon: FavoriteIcon,
+  },
+  {
+    to: "/account/viewed",
+    label: "Переглянуті товари",
+    icon: HistoryIcon,
+  },
+  {
+    to: "/account/reviews",
+    label: "Мої відгуки",
+    icon: RateReviewOutlinedIcon,
+  },
+  {
+    to: "/account/profile",
+    label: "Персональні дані",
+    icon: PersonOutlineIcon,
+  },
+];
+
 const Navbar = ({ openAuth }) => {
   const { state } = useCart();
   const { compareCount } = useCompare();
   const { isAuthenticated, user, logout } = useAuth();
   const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
+  const totalPrice = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -98,29 +131,60 @@ const Navbar = ({ openAuth }) => {
             <div className="desktop-actions desktop-only">
               {isAuthenticated ? (
                 <>
-                  <div className="desktop-user-info">
-                    <PersonOutlineIcon className="desktop-user-icon" />
-                    <span className="desktop-user-name">{user?.name || user?.email}</span>
+                  <div className="account-menu-wrapper">
+                    <Link to="/account/orders" className="desktop-user-info" title="Мій кабінет">
+                      <AccountCircleIcon className="desktop-user-icon" />
+                      <span>Кабінет</span>
+                    </Link>
+                    <div className="account-dropdown" aria-label="Швидкі переходи кабінету">
+                      <div className="account-dropdown-user">
+                        <AccountCircleIcon />
+                        <div>
+                          <strong>{user?.name || "Користувач"}</strong>
+                          <span>{user?.email}</span>
+                        </div>
+                      </div>
+                      {accountLinks.map(({ to, label, icon: Icon }) => (
+                        <Link key={to} to={to} className="account-dropdown-link">
+                          <Icon />
+                          <span>{label}</span>
+                        </Link>
+                      ))}
+                      <button
+                        type="button"
+                        className="account-dropdown-link account-dropdown-logout"
+                        onClick={handleLogoutClick}
+                      >
+                        <ExitToAppIcon />
+                        <span>Вийти</span>
+                      </button>
+                    </div>
                   </div>
-                  <Link to="/favorites" className="action-button" title="Мої улюблені">
+                  <Link to="/account/wishlist" className="action-button" title="Мої улюблені">
                     <FavoriteIcon />
+                    <span className="action-button-label">Обране</span>
                   </Link>
-                  <button
-                    onClick={handleLogoutClick}
-                    className="action-button logout-button"
-                    title="Вийти"
-                  >
-                    <ExitToAppIcon />
-                  </button>
                 </>
               ) : (
-                <button
-                  onClick={openAuth}
-                  className="action-button"
-                  aria-label="Відкрити форму входу"
-                >
-                  <PersonOutlineIcon />
-                </button>
+                <>
+                  <button
+                    onClick={openAuth}
+                    className="action-button"
+                    aria-label="Відкрити форму входу"
+                  >
+                    <AccountCircleIcon />
+                    <span className="action-button-label">Кабінет</span>
+                  </button>
+                  <button
+                    onClick={openAuth}
+                    className="action-button"
+                    aria-label="Увійдіть, щоб переглянути улюблені"
+                    title="Мої улюблені"
+                  >
+                    <FavoriteIcon />
+                    <span className="action-button-label">Обране</span>
+                  </button>
+                </>
               )}
 
               <Link
@@ -130,10 +194,23 @@ const Navbar = ({ openAuth }) => {
                 onClick={closeMegaMenu}
               >
                 <BalanceIcon />
+                <span className="action-button-label">Порівняння</span>
                 {compareCount > 0 && <span className="cart-count">{compareCount}</span>}
               </Link>
-              <Link to="/cart" className="action-button cart-link" onClick={closeMegaMenu}>
+              <Link
+                to="/cart"
+                className={`cart-cta${totalItems > 0 ? " cart-cta-filled" : ""}`}
+                onClick={closeMegaMenu}
+              >
                 <ShoppingCartIcon />
+                {totalItems > 0 ? (
+                  <span className="cart-cta-text">
+                    <small>Сума:</small>
+                    <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
+                  </span>
+                ) : (
+                  <span>Кошик</span>
+                )}
                 {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
               </Link>
             </div>
@@ -174,19 +251,26 @@ const Navbar = ({ openAuth }) => {
               </Link>
               {isAuthenticated ? (
                 <>
-                  <div className="mobile-user-info">
+                  <Link
+                    to="/account/orders"
+                    className="mobile-user-info"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     <span className="mobile-user-name">
                       Привіт, {user?.name || user?.email}
                     </span>
-                  </div>
-                  <Link
-                    to="/favorites"
-                    className="mobile-menu-action"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <FavoriteIcon />
-                    <span>Мої улюблені</span>
                   </Link>
+                  {accountLinks.map(({ to, label, icon: Icon }) => (
+                    <Link
+                      key={to}
+                      to={to}
+                      className="mobile-menu-action"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <Icon />
+                      <span>{label}</span>
+                    </Link>
+                  ))}
                   <button
                     className="mobile-menu-action logout-btn"
                     onClick={() => {
@@ -199,16 +283,28 @@ const Navbar = ({ openAuth }) => {
                   </button>
                 </>
               ) : (
-                <button
-                  className="mobile-menu-action"
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    openAuth();
-                  }}
-                >
-                  <PersonOutlineIcon />
-                  <span>Вхід / Реєстрація</span>
-                </button>
+                <>
+                  <button
+                    className="mobile-menu-action"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      openAuth();
+                    }}
+                  >
+                    <AccountCircleIcon />
+                    <span>Вхід / Реєстрація</span>
+                  </button>
+                  <button
+                    className="mobile-menu-action"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      openAuth();
+                    }}
+                  >
+                    <FavoriteIcon />
+                    <span>Мої улюблені</span>
+                  </button>
+                </>
               )}
               <Link
                 to="/cart"

@@ -19,7 +19,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 64px;
+    height: 72px;
 }
 
 // Логотип
@@ -126,20 +126,53 @@
     gap: 16px;
 }
 
+.desktop-actions {
+    align-items: center;
+    gap: 8px;
+}
+
 .action-button {
+    position: relative;
     background: none;
     border: none;
     color: $text-color;
     cursor: pointer;
-    padding: 8px;
+    min-width: 72px;
+    min-height: 46px;
+    padding: 5px 8px;
     border-radius: $border-radius;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 2px;
     transition: all 0.2s ease;
+    text-decoration: none;
 
     &:hover {
         background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+    }
+
+    .MuiSvgIcon-root {
+        font-size: 23px;
+    }
+}
+
+.action-button-label {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    color: rgba($text-secondary, 0.86);
+    transition: color 0.2s ease;
+}
+
+.action-button:hover {
+    .action-button-label {
         color: $primary-color;
     }
 }
@@ -148,24 +181,93 @@
     position: relative;
 }
 
+.cart-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 112px;
+    min-height: 46px;
+    padding: 6px 13px;
+    border: 1px solid rgba($primary-color, 0.34);
+    border-radius: $border-radius;
+    background: rgba($primary-color, 0.1);
+    color: $text-color;
+    text-decoration: none;
+    font-weight: 800;
+    line-height: 1;
+    transition: all 0.2s ease;
+
+    .MuiSvgIcon-root {
+        font-size: 23px;
+        flex-shrink: 0;
+    }
+
+    &:hover {
+        background: rgba($primary-color, 0.16);
+        border-color: rgba($primary-color, 0.56);
+        color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.08);
+    }
+}
+
+.cart-cta-filled {
+    justify-content: flex-start;
+    min-width: 122px;
+    padding-right: 16px;
+    background: rgba($primary-color, 0.12);
+}
+
+.cart-cta-text {
+    display: grid;
+    gap: 2px;
+
+    small {
+        color: rgba($text-secondary, 0.86);
+        font-size: 0.66rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    strong {
+        color: $primary-color;
+        font-size: 0.9rem;
+        line-height: 1;
+        white-space: nowrap;
+    }
+}
+
 .compare-link {
     position: relative;
+    min-width: 88px;
 }
 
 .cart-count {
     position: absolute;
     top: 0;
-    right: 0;
+    right: 7px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
     background-color: $primary-color;
     color: white;
-    font-size: 0.75rem;
-    width: 20px;
-    height: 20px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    line-height: 1;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: translate(30%, -30%);
+    transform: none;
+    pointer-events: none;
+}
+
+.cart-cta {
+    .cart-count {
+        top: -5px;
+        right: -5px;
+    }
 }
 
 // Інформація про користувача
@@ -182,36 +284,177 @@
 
 // Інформація про користувача (desktop)
 
-.desktop-user-info {
-    margin-right: 6px;
-    padding: 6px 12px;
-    background-color: rgba($primary-color, 0.05);
-    border-radius: 20px;
-    border: 1px solid rgba($primary-color, 0.15);
+.account-menu-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 6px;
+    padding: 8px 0 10px;
 
-    .desktop-user-icon {
-        font-size: 1rem;
-        color: $primary-color;
-    }
-
-    .desktop-user-name {
-        font-size: 0.85rem;
-        color: $primary-color;
-        font-weight: 600;
-        white-space: nowrap;
-        max-width: 110px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    &:hover,
+    &:focus-within {
+        .account-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
     }
 }
 
-.logout-button {
-    &.nav-link-button:hover {
-        background-color: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
+.desktop-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 72px;
+    min-height: 48px;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    border-radius: $border-radius;
+    background: none;
+    color: $text-color;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: rgba($primary-color, 0.1);
+        border-color: rgba($primary-color, 0.18);
+        color: $primary-color;
+    }
+
+    .desktop-user-icon {
+        font-size: 24px;
+        color: currentColor;
+    }
+
+    span {
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: nowrap;
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1;
+        color: rgba($text-secondary, 0.86);
+        transition: color 0.2s ease;
+    }
+
+    &:hover span {
+        color: $primary-color;
+    }
+}
+
+.account-dropdown {
+    position: absolute;
+    top: 100%;
+    left: -8px;
+    width: 280px;
+    padding: 10px;
+    background: $glass-gradient;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.38);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    z-index: 80;
+}
+
+.account-dropdown-user {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 10px 10px 12px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .MuiSvgIcon-root {
+        width: 38px;
+        height: 38px;
+        padding: 7px;
+        border-radius: 50%;
+        color: #fff;
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
+    }
+
+    strong,
+    span {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    strong {
+        color: $text-color;
+        font-size: 0.92rem;
+        line-height: 1.25;
+    }
+
+    span {
+        margin-top: 2px;
+        color: rgba($text-secondary, 0.72);
+        font-size: 0.78rem;
+    }
+}
+
+.account-dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba($text-secondary, 0.82);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 650;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+    .MuiSvgIcon-root {
+        color: rgba($text-secondary, 0.64);
+        font-size: 20px;
+        transition: color 0.2s ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
+        border-color: rgba($primary-color, 0.18);
+        outline: none;
+
+        .MuiSvgIcon-root {
+            color: $primary-color;
+        }
+    }
+}
+
+.account-dropdown-logout {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top-color: rgba(255, 255, 255, 0.08);
+    color: rgba($danger-color, 0.9);
+
+    .MuiSvgIcon-root {
+        color: currentColor;
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: $danger-color;
+        background: rgba($danger-color, 0.1);
+        border-color: rgba($danger-color, 0.24);
     }
 }
 
@@ -326,11 +569,13 @@
 // Інформація про користувача (мобільна)
 
 .mobile-user-info {
+    display: block;
     margin-bottom: 16px;
     padding: 16px;
     background-color: rgba($primary-color, 0.05);
     border-radius: 12px;
     border: 1px solid rgba($primary-color, 0.2);
+    text-decoration: none;
 
     .mobile-user-name {
         font-size: 1.1rem;
