@@ -8,6 +8,8 @@ const mongoose = require('mongoose');
 const productRoutes = require('./routes/products');
 const categoryRoutes = require('./routes/categories');
 const brandRoutes = require('./routes/brands');
+const orderRoutes = require('./routes/orders');
+const wishlistRoutes = require('./routes/wishlist');
 
 const app = express();
 
@@ -15,15 +17,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Import favorites routes
-const favoritesRoutes = require('./routes/favorites');
-
 // Routes
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/favorites', favoritesRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

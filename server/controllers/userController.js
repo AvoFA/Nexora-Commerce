@@ -2,6 +2,18 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
+const getWishlistProductIds = (wishlistLists = []) => {
+  const ids = new Set();
+
+  wishlistLists.forEach((list) => {
+    (list.products || []).forEach((productId) => {
+      if (productId) ids.add(productId.toString());
+    });
+  });
+
+  return Array.from(ids);
+};
+
 class UserController {
   // Функція для хешування паролю
   static async hashPassword(password) {
@@ -97,7 +109,8 @@ class UserController {
         email,
         name,
         password: hashedPassword,
-        role: 'user'
+        role: 'user',
+        wishlistLists: [{ name: 'Обране', products: [] }]
       });
 
       await newUser.save();
@@ -105,6 +118,8 @@ class UserController {
         id: newUser._id,
         email: newUser.email,
         name: newUser.name,
+        phone: newUser.phone || '',
+        wishlistProductIds: [],
         role: newUser.role,
         createdAt: newUser.createdAt
       };
@@ -132,11 +147,17 @@ class UserController {
         throw new Error('Це не клієнтський акаунт');
       }
 
+      if (!user.wishlistLists || user.wishlistLists.length === 0) {
+        user.wishlistLists = [{ name: 'Обране', products: [] }];
+        await user.save();
+      }
+
       return {
         id: user._id,
         email: user.email,
         name: user.name,
-        favorites: user.favorites,
+        phone: user.phone || '',
+        wishlistProductIds: getWishlistProductIds(user.wishlistLists),
         role: user.role,
         createdAt: user.createdAt
       };
@@ -148,7 +169,7 @@ class UserController {
   // Функція для отримання користувача по ID (для профілю)
   static async getUserById(id) {
     try {
-      const user = await User.findById(id).populate('favorites', 'name price image brand category');
+      const user = await User.findById(id).populate('wishlistLists.products', 'name price image brand category');
       if (!user) {
         throw new Error('Користувача не знайдено');
       }
@@ -157,8 +178,42 @@ class UserController {
         id: user._id,
         email: user.email,
         name: user.name,
+        phone: user.phone || '',
         username: user.username,
-        favorites: user.favorites,
+        wishlistLists: user.wishlistLists,
+        wishlistProductIds: getWishlistProductIds(user.wishlistLists),
+        role: user.role,
+        createdAt: user.createdAt
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async updateClientProfile(id, updates = {}) {
+    try {
+      const name = (updates.name || '').trim();
+      const phone = (updates.phone || '').trim();
+
+      if (name.length < 2) {
+        throw new Error('Імʼя має бути мінімум 2 символи');
+      }
+
+      const user = await User.findById(id);
+      if (!user) {
+        throw new Error('Користувача не знайдено');
+      }
+
+      user.name = name;
+      user.phone = phone;
+      await user.save();
+
+      return {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        phone: user.phone || '',
+        wishlistProductIds: getWishlistProductIds(user.wishlistLists),
         role: user.role,
         createdAt: user.createdAt
       };

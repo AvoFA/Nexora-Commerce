@@ -3,6 +3,30 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const UserController = require('../controllers/userController');
 
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: 'Токен відсутній'
+    });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET || 'super-secret-key-for-course-work', (err, user) => {
+    if (err) {
+      return res.status(403).json({
+        success: false,
+        message: 'Невалідний токен'
+      });
+    }
+
+    req.user = user;
+    next();
+  });
+};
+
 // Логін для адмінів (username)
 router.post('/admin/login', async (req, res) => {
   try {
@@ -79,6 +103,7 @@ router.post('/login', async (req, res) => {
           id: user.id,
           email: user.email,
           name: user.name,
+          phone: user.phone || '',
           role: user.role
         },
         process.env.JWT_SECRET || 'super-secret-key-for-course-work',
@@ -92,8 +117,9 @@ router.post('/login', async (req, res) => {
           id: user.id,
           email: user.email,
           name: user.name,
+          phone: user.phone || '',
           role: user.role,
-          favorites: user.favorites
+          wishlistProductIds: user.wishlistProductIds || []
         },
         message: 'Успішний вхід'
       });
@@ -159,7 +185,9 @@ router.post('/register', async (req, res) => {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
-        role: newUser.role
+        phone: newUser.phone || '',
+        role: newUser.role,
+        wishlistProductIds: newUser.wishlistProductIds || []
       },
       process.env.JWT_SECRET || 'super-secret-key-for-course-work',
       { expiresIn: '24h' }
@@ -172,7 +200,9 @@ router.post('/register', async (req, res) => {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
-        role: newUser.role
+        phone: newUser.phone || '',
+        role: newUser.role,
+        wishlistProductIds: newUser.wishlistProductIds || []
       },
       message: 'Користувача успішно зареєстровано'
     });
@@ -182,6 +212,26 @@ router.post('/register', async (req, res) => {
     res.status(500).json({
       success: false,
       message: error.message || 'Помилка створення користувача'
+    });
+  }
+});
+
+router.patch('/profile', authenticateToken, async (req, res) => {
+  try {
+    const updatedUser = await UserController.updateClientProfile(req.user.id, {
+      name: req.body.name,
+      phone: req.body.phone
+    });
+
+    res.json({
+      success: true,
+      user: updatedUser,
+      message: 'Профіль оновлено'
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message || 'Не вдалося оновити профіль'
     });
   }
 });
