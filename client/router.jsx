@@ -29,6 +29,8 @@ import AccountPlaceholderTab from "./pages/AccountPage/tabs/AccountPlaceholderTa
 // сторінки адмінки
 import ProductListPage from "./pages/admin/ProductListPage/ProductListPage.jsx";
 import CategoryListPage from "./pages/admin/CategoryListPage/CategoryListPage.jsx";
+import ReviewListPage from "./pages/admin/ReviewListPage/ReviewListPage.jsx";
+import OrderListPage from "./pages/admin/OrderListPage/OrderListPage.jsx";
 import AdminLoginPage from "./components/admin/auth/AdminLoginPage/AdminLoginPage.jsx";
 
 // компоненти захисту
@@ -168,6 +170,8 @@ export const router = createBrowserRouter([
       },
       { path: "/admin/products", element: <ProductListPage /> },
       { path: "/admin/categories", element: <CategoryListPage /> },
+      { path: "/admin/reviews", element: <ReviewListPage /> },
+      { path: "/admin/orders", element: <OrderListPage /> },
     ],
   },
 ]);

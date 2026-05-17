@@ -9,11 +9,15 @@ import {
   Menu as MenuIcon,
   Close as X,
   Store, // Иконка логотипа
+  Reviews as ReviewsIcon,
+  ReceiptLong as OrdersIcon,
 } from "@mui/icons-material";
 
 const navigation = [
   { name: "Товари", href: "/admin", icon: Package },
   { name: "Категорії", href: "/admin/categories", icon: Category },
+  { name: "Замовлення", href: "/admin/orders", icon: OrdersIcon },
+  { name: "Відгуки", href: "/admin/reviews", icon: ReviewsIcon },
 ];
 
 export const AdminLayout = () => {
@@ -138,6 +142,10 @@ export const AdminLayout = () => {
           <h2 className="admin-header-title">
             {isActive("/admin/categories")
               ? "Categories Management"
+              : isActive("/admin/reviews")
+              ? "Reviews Management"
+              : isActive("/admin/orders")
+              ? "Orders Management"
               : "Products Management"}
           </h2>
 

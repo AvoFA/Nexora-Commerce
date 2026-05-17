@@ -127,4 +127,64 @@ router.get('/my', authenticateToken, async (req, res) => {
   }
 });
 
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({
+      success: false,
+      message: 'Доступ заборонено. Потрібні права адміністратора.'
+    });
+  }
+};
+
+router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('user', 'name email')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({
+      success: true,
+      orders
+    });
+  } catch (error) {
+    console.error('Помилка отримання замовлень (адмін):', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка отримання замовлень'
+    });
+  }
+});
+
+router.patch('/:id/status', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = ['new', 'confirmed', 'packing', 'ready_for_pickup', 'received', 'cancelled'];
+    
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Недопустимий статус' });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Замовлення не знайдено' });
+    }
+
+    order.status = status;
+    order.history.push({ status, timestamp: new Date() });
+    await order.save();
+
+    res.json({
+      success: true,
+      order,
+      message: 'Статус замовлення оновлено'
+    });
+  } catch (error) {
+    console.error('Помилка оновлення статусу замовлення:', error.message);
+    res.status(500).json({ success: false, message: 'Помилка оновлення статусу' });
+  }
+});
+
 module.exports = router;

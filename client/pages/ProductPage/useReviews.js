@@ -1,9 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { MOCK_REVIEWS } from "./productPage.constants.js";
+import { getProductReviews, createReview } from "../../services/reviewService.js";
 
-export const useReviews = (user, isAuthenticated) => {
-  const [reviews, setReviews] = useState(MOCK_REVIEWS);
+export const useReviews = (productId, user, isAuthenticated) => {
+  const [reviews, setReviews] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [newReview, setNewReview] = useState({
     name: "",
@@ -20,6 +20,36 @@ export const useReviews = (user, isAuthenticated) => {
       setNewReview((prev) => ({ ...prev, name: user.name }));
     }
   }, [user]);
+
+  useEffect(() => {
+    if (productId) {
+      fetchReviews();
+    }
+  }, [productId]);
+
+  const fetchReviews = async () => {
+    try {
+      const data = await getProductReviews(productId);
+      const mappedReviews = (data.reviews || []).map(r => ({
+        id: r._id,
+        name: r.name,
+        date: new Date(r.createdAt).toLocaleDateString("uk-UA", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }),
+        stars: r.rating,
+        text: r.text,
+        pros: r.pros || "",
+        cons: r.cons || "",
+        verified: true 
+      }));
+      setReviews(mappedReviews);
+    } catch (error) {
+      console.error("Failed to fetch reviews:", error);
+      setReviews([]);
+    }
+  };
 
   const { avgRating, stats } = useMemo(() => {
     if (!reviews.length) return { avgRating: "—", stats: {} };
@@ -39,7 +69,7 @@ export const useReviews = (user, isAuthenticated) => {
     return { avgRating: avg, stats: counts };
   }, [reviews]);
 
-  const handleSubmitReview = (e) => {
+  const handleSubmitReview = async (e) => {
     e.preventDefault();
     const errors = {};
     if (!newReview.stars) errors.stars = "Необхідно виставити оцінку.";
@@ -55,33 +85,29 @@ export const useReviews = (user, isAuthenticated) => {
       return;
     }
 
-    const review = {
-      id: Date.now(),
-      name: newReview.name,
-      date: new Date().toLocaleDateString("uk-UA", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      stars: newReview.stars,
-      text: newReview.text,
-      pros: newReview.pros,
-      cons: newReview.cons,
-      model: "",
-      verified: isAuthenticated,
-    };
+    try {
+      const token = localStorage.getItem("token");
+      await createReview({
+        productId,
+        rating: newReview.stars,
+        text: newReview.text,
+        pros: newReview.pros,
+        cons: newReview.cons
+      }, token);
 
-    setReviews((prev) => [review, ...prev]);
-    setFormErrors({});
-    setNewReview({
-      name: user?.name || "",
-      stars: 0,
-      text: "",
-      pros: "",
-      cons: "",
-    });
-    setShowForm(false);
-    toast.success("Відгук додано!");
+      setFormErrors({});
+      setNewReview({
+        name: user?.name || "",
+        stars: 0,
+        text: "",
+        pros: "",
+        cons: "",
+      });
+      setShowForm(false);
+      toast.success("Ваш відгук відправлено на модерацію");
+    } catch (error) {
+      toast.error(error.message || "Помилка відправки відгуку");
+    }
   };
 
   return {

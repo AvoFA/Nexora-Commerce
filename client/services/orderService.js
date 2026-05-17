@@ -46,3 +46,33 @@ export const getMyOrders = async (token) => {
 
   return data;
 };
+
+export const getAdminOrders = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/orders/admin`, {
+    headers: getAuthHeaders(token)
+  });
+
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося завантажити замовлення');
+  }
+
+  return data;
+};
+
+export const updateOrderStatus = async (id, status, token) => {
+  const response = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(token),
+    body: JSON.stringify({ status })
+  });
+
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося оновити статус замовлення');
+  }
+
+  return data;
+};

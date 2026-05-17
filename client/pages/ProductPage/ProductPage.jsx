@@ -59,7 +59,7 @@ const ProductPage = () => {
     avgRating,
     stats,
     handleSubmitReview,
-  } = useReviews(user, isAuthenticated);
+  } = useReviews(id, user, isAuthenticated);
 
   const handleAddToCart = () => {
     if (!product) return;
