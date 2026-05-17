@@ -1,9 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  getProductById,
-  getSimilarProducts,
-} from "../../services/productService.js";
 import { useCart } from "../../hooks/useCart.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
@@ -32,15 +28,12 @@ import { getCategoryDisplay } from "../../utils/categories.js";
 import { formatPrice } from "../../utils/formatPrice.js";
 import WishlistPickerModal from "../../components/common/WishlistPickerModal/WishlistPickerModal.jsx";
 import "./ProductPage.scss";
-import { MOCK_REVIEWS } from "./productPage.constants.js";
-
+import { useProductData } from "./useProductData.js";
+import { useReviews } from "./useReviews.js";
 
 const ProductPage = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [similarProducts, setSimilarProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { product, similarProducts, isLoading, error } = useProductData(id);
 
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
@@ -51,115 +44,20 @@ const ProductPage = () => {
   } = useAuth();
   const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
 
-  const [reviews, setReviews] = useState(MOCK_REVIEWS);
-  const [showForm, setShowForm] = useState(false);
-  const [newReview, setNewReview] = useState({
-    name: "",
-    stars: 0,
-    text: "",
-    pros: "",
-    cons: "",
-  });
-  const [formErrors, setFormErrors] = useState({});
-  const [ratingFilter, setRatingFilter] = useState(null);
-
-  useEffect(() => {
-    if (user?.name) {
-      setNewReview((prev) => ({ ...prev, name: user.name }));
-    }
-  }, [user]);
-
-  const { avgRating, stats } = useMemo(() => {
-    if (!reviews.length) return { avgRating: "—", stats: {} };
-
-    const sum = reviews.reduce((s, r) => s + r.stars, 0);
-    const avg = (sum / reviews.length).toFixed(1);
-
-    const counts = [5, 4, 3, 2, 1].reduce((acc, star) => {
-      const count = reviews.filter((r) => r.stars === star).length;
-      acc[star] = {
-        count,
-        percent: Math.round((count / reviews.length) * 100),
-      };
-      return acc;
-    }, {});
-
-    return { avgRating: avg, stats: counts };
-  }, [reviews]);
-
-  const handleSubmitReview = (e) => {
-    e.preventDefault();
-    const errors = {};
-    if (!newReview.stars) errors.stars = "Необхідно виставити оцінку.";
-    if (!newReview.name.trim()) errors.name = "Поле обов'язкове для заповнення";
-    if (!newReview.text.trim()) {
-      errors.text = "Поле обов'язкове для заповнення";
-    } else if (newReview.text.trim().length < 10) {
-      errors.text = "Введіть не менш ніж 10 символів";
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
-
-    const review = {
-      id: Date.now(),
-      name: newReview.name,
-      date: new Date().toLocaleDateString("uk-UA", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      stars: newReview.stars,
-      text: newReview.text,
-      pros: newReview.pros,
-      cons: newReview.cons,
-      model: "",
-      verified: isAuthenticated,
-    };
-
-    setReviews((prev) => [review, ...prev]);
-    setFormErrors({});
-    setNewReview({
-      name: user?.name || "",
-      stars: 0,
-      text: "",
-      pros: "",
-      cons: "",
-    });
-    setShowForm(false);
-    toast.success("Відгук додано!");
-  };
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getProductById(id);
-        setProduct(data);
-      } catch (err) {
-        setError(err.message || String(err));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchSimilarProducts = async () => {
-      if (!id || !product) return;
-      try {
-        const similar = await getSimilarProducts(id);
-        setSimilarProducts(similar);
-      } catch (err) {
-        setSimilarProducts([]);
-      }
-    };
-    fetchSimilarProducts();
-  }, [id, product]);
+  const {
+    reviews,
+    showForm,
+    setShowForm,
+    newReview,
+    setNewReview,
+    formErrors,
+    setFormErrors,
+    ratingFilter,
+    setRatingFilter,
+    avgRating,
+    stats,
+    handleSubmitReview,
+  } = useReviews(user, isAuthenticated);
 
   const handleAddToCart = () => {
     if (!product) return;
