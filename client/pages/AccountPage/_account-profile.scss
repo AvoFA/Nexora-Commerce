@@ -1,0 +1,250 @@
+// ─── Profile Tab ───────────────────────────────────────────────────────────
+// Covers: .profile-tab, .profile-module, .profile-toolbar, .profile-heading,
+//         .profile-board, .profile-board-empty, .profile-section,
+//         .profile-section-head, .profile-edit-button, .profile-contact-grid,
+//         .profile-data-row, .profile-data-row-readonly, .profile-field,
+//         .profile-input-wrap, .profile-actions
+
+.profile-tab {
+  width: 100%;
+  min-height: 700px;
+  padding: 4px 0 0;
+  background: transparent;
+}
+
+.profile-module {
+  min-height: 700px;
+  background: $glass-gradient;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.profile-toolbar {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.profile-heading {
+  h2 {
+    margin: 0 0 8px;
+    color: $text-color;
+    font-size: 1.75rem;
+    line-height: 1.18;
+  }
+
+  p {
+    max-width: 620px;
+    margin: 0;
+    color: $text-secondary;
+    opacity: 0.72;
+    line-height: 1.5;
+  }
+}
+
+.profile-board {
+  display: grid;
+  gap: 16px;
+  padding: 22px 24px;
+}
+
+.profile-board-empty {
+  min-height: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+  color: $text-secondary;
+
+  .MuiSvgIcon-root {
+    color: $primary-color;
+    font-size: 48px;
+  }
+
+  h3 {
+    margin: 0;
+    color: $text-color;
+    font-size: 1.45rem;
+  }
+
+  p {
+    max-width: 520px;
+    margin: 0 0 8px;
+    line-height: 1.55;
+  }
+}
+
+.profile-section {
+  display: grid;
+  gap: 12px;
+  max-width: 620px;
+
+  & + .profile-section {
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+  }
+}
+
+.profile-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+
+  h3 {
+    margin: 0;
+    color: $text-color;
+    font-size: 1.1rem;
+  }
+}
+
+.profile-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: $primary-color;
+  font-family: inherit;
+  font-weight: 750;
+  cursor: pointer;
+
+  .MuiSvgIcon-root {
+    font-size: 18px;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: lighten($primary-color, 8%);
+    border-color: rgba($primary-color, 0.28);
+    background: rgba($primary-color, 0.09);
+    outline: none;
+  }
+}
+
+.profile-contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: start;
+  max-width: 560px;
+}
+
+.profile-data-row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  min-height: 30px;
+  max-width: 560px;
+
+  span {
+    color: $text-secondary;
+    opacity: 0.72;
+  }
+
+  strong {
+    min-width: 0;
+    color: $text-color;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+  }
+}
+
+.profile-data-row-readonly {
+  cursor: default;
+  user-select: text;
+}
+
+.profile-field {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  max-width: 560px;
+
+  > span {
+    color: $text-color;
+    font-weight: 750;
+  }
+
+  small {
+    color: $danger-color;
+    font-weight: 650;
+  }
+
+  &.has-error {
+    .profile-input-wrap {
+      border-color: rgba($danger-color, 0.72);
+    }
+  }
+}
+
+.profile-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  .MuiSvgIcon-root {
+    color: $primary-color;
+    font-size: 21px;
+    flex-shrink: 0;
+  }
+
+  &:focus-within {
+    border-color: rgba($primary-color, 0.55);
+    background: rgba($primary-color, 0.06);
+  }
+
+  &.is-readonly {
+    background: rgba(255, 255, 255, 0.025);
+
+    .MuiSvgIcon-root,
+    input {
+      opacity: 0.74;
+    }
+  }
+
+  input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: $text-color;
+    font: inherit;
+
+    &::placeholder {
+      color: rgba($text-secondary, 0.55);
+    }
+  }
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 24px;
+
+  .btn-primary,
+  .btn-secondary {
+    min-height: 44px;
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: default;
+    }
+  }
+}
