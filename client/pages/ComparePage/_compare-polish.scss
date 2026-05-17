@@ -1,0 +1,146 @@
+// ─── Compare Page: Polish Fixes & Compact Layer ─────────────────────────────
+// Covers: refined button/picker/menu color overrides,
+//         .cmp-compact-products-layer visibility states.
+
+// ─── Polish fixes: list picker ────────────────────────────────────────────────
+
+.cmp-list-picker__label {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba($text-color, 0.96);
+  box-shadow: none;
+}
+
+.cmp-list-picker__trigger {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba($border-color, 0.95);
+  color: $text-color;
+
+  svg {
+    color: $text-color;
+  }
+
+  &:hover,
+  &.is-open {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba($primary-color, 0.3);
+    color: $text-color;
+  }
+}
+
+// ─── Polish fixes: danger buttons ─────────────────────────────────────────────
+
+.cmp-clear {
+  border-color: rgba($danger-color, 0.22);
+  background: rgba($danger-color, 0.07);
+  color: $danger-color;
+
+  svg {
+    color: $danger-color;
+  }
+
+  &:hover {
+    border-color: rgba($danger-color, 0.38);
+    background: rgba($danger-color, 0.13);
+    color: $danger-color;
+
+    svg {
+      color: $danger-color;
+    }
+  }
+}
+
+.cmp-list-menu__delete,
+.cmp-list-menu__clear-all {
+  border: 1px solid rgba($danger-color, 0.2);
+  background: rgba($danger-color, 0.08);
+  color: $danger-color;
+
+  &:hover {
+    border-color: rgba($danger-color, 0.36);
+    background: rgba($danger-color, 0.14);
+    color: #ffffff;
+  }
+}
+
+// ─── Polish fixes: nav control arrow ──────────────────────────────────────────
+
+.cmp-tbl__control {
+  width: 34px;
+  height: 74px;
+  min-width: 34px;
+  border-radius: 9px;
+  border: 1px solid rgba($border-color, 0.9);
+  background: rgba($surface-color, 0.96);
+  color: $text-color;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34);
+
+  svg {
+    width: 21px;
+    height: 21px;
+    padding: 4px;
+    border-radius: 50%;
+    background: $primary-color;
+    color: #ffffff;
+  }
+
+  &:hover {
+    background: rgba($surface-color, 1);
+    border-color: rgba($primary-color, 0.36);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+
+    svg {
+      background: $primary-color;
+      color: #ffffff;
+    }
+  }
+}
+
+// ─── Compact products layer ───────────────────────────────────────────────────
+
+.cmp-compact-products-layer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s ease,
+    visibility 0s linear 0.22s;
+
+  .cmp-header-sync-scroll {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: auto;
+    opacity: 1;
+    visibility: hidden;
+    pointer-events: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+.cmp-compact-products-layer--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s ease,
+    visibility 0s;
+
+  .cmp-header-sync-scroll {
+    visibility: visible;
+    pointer-events: auto;
+  }
+}

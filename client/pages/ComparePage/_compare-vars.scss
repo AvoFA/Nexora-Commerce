@@ -1,0 +1,14 @@
+// ─── Compare Page: Local Variables & Mixins ────────────────────────────────
+// Defines variables and mixins used only within ComparePage partials.
+// Import this partial first in every other compare partial if needed,
+// OR import once via ComparePage.scss (entry point imports order matters).
+
+$card-width: 235px;
+$mobile-card-width: clamp(150px, 40vw, 168px);
+
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  overflow: hidden;
+}

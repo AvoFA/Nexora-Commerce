@@ -1,0 +1,519 @@
+// ─── Compare Page: Responsive Breakpoints ───────────────────────────────────
+// Covers: @media (min-width: 1024px) — desktop nav controls & sync scroll,
+//         @media (max-width: 1023px) — mobile/tablet full layout override.
+
+// ─── Desktop: min-width 1024px ────────────────────────────────────────────────
+
+@media (min-width: 1024px) {
+  .cmp-tbl__control--normal {
+    position: absolute;
+    top: calc(var(--cmp-normal-products-offset, 0px) + 1.15rem + 66px);
+    z-index: 14;
+  }
+
+  .cmp-tbl__control--compact {
+    position: absolute;
+    top: 50%;
+    z-index: 14;
+    width: 28px;
+    height: 56px;
+    min-width: 28px;
+    border-radius: 8px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      padding: 3px;
+    }
+  }
+
+  .cmp-tbl__control--normal.cmp-tbl__control--left,
+  .cmp-tbl__control--compact.cmp-tbl__control--left {
+    left: 10px;
+  }
+
+  .cmp-tbl__control--normal.cmp-tbl__control--right,
+  .cmp-tbl__control--compact.cmp-tbl__control--right {
+    right: 10px;
+  }
+
+  .cmp-header-sync-scroll {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 3;
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.18s ease,
+      transform 0.22s ease,
+      visibility 0s linear 0.22s;
+  }
+
+  .cmp-header-sync-scroll--visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.18s ease,
+      transform 0.22s ease,
+      visibility 0s;
+  }
+
+  .cmp-products-shell--compact {
+    position: relative;
+    max-height: none;
+    border-top: 1px solid $border-color;
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: inherit;
+  }
+
+  .cmp-compact-products-layer {
+    .cmp-tbl__control--compact {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+// ─── Mobile/tablet: max-width 1023px ─────────────────────────────────────────
+
+@media (max-width: 1023px) {
+  .cmp-page {
+    overflow-x: hidden;
+    padding-bottom: 3rem;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .cmp-content-card {
+    width: 100%;
+    max-width: 100%;
+    margin-top: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .cmp-tbl {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .cmp-main-canvas-wrapper {
+    width: 100%;
+  }
+
+  .cmp-main-canvas-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+
+  .cmp-main-canvas-inner,
+  .cmp-header-sync-inner {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  // ── Navbar sticky fix ──
+  .cmp-sticky-stack {
+    position: sticky;
+    top: var(--navbar-height, 64px);
+    z-index: 20;
+    width: 100%;
+    margin-left: 0;
+    border-radius: 0;
+    background: $card-bg;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  }
+
+  // ── Scroll fix ──
+  .cmp-tbl__scroll,
+  .cmp-attrs__values-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .cmp-tbl__products,
+  .cmp-attrs__values {
+    display: flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    min-width: 100%;
+    background: $card-bg;
+  }
+
+  .cmp-tbl__attrs {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  // ── Sync scroll (header) ──
+  .cmp-header-sync-scroll {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.18s ease,
+      transform 0.22s ease,
+      visibility 0s linear 0.22s;
+  }
+
+  .cmp-header-sync-scroll--visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 0.18s ease,
+      transform 0.22s ease,
+      visibility 0s;
+  }
+
+  // ── Toolbar sticky: state 1 (default) ──
+  .cmp-toolbar--sticky {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 42px;
+    gap: 0.7rem 0.65rem;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem;
+    border-radius: 0;
+    background: $card-bg;
+    border-bottom: 1px solid $border-color;
+    max-height: 180px;
+    opacity: 1;
+    overflow: visible;
+    transition:
+      max-height 0.28s ease,
+      opacity 0.22s ease,
+      padding 0.28s ease,
+      border-width 0.22s ease;
+  }
+
+  // ── Toolbar sticky: state 2 (scrolled) ──
+  .cmp-sticky-stack--compact {
+    .cmp-toolbar--sticky {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom-width: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+  }
+
+  // ── Compact shell (hidden by default) ──
+  .cmp-products-shell--compact {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    border-bottom: 0 solid $border-color;
+    transition:
+      max-height 0.26s ease,
+      opacity 0.2s ease,
+      border-width 0.2s ease;
+
+    .cmp-tbl__control {
+      display: none;
+    }
+
+    .cmp-product-card {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      grid-template-rows: auto auto;
+      column-gap: 0.55rem;
+      row-gap: 0.35rem;
+      min-height: auto;
+      padding: 0.45rem 0.5rem 0.55rem;
+    }
+
+    .cmp-product-card__img-link {
+      grid-column: 1;
+      grid-row: 1;
+      height: 46px;
+      margin-bottom: 0;
+    }
+
+    .cmp-product-card__name {
+      grid-column: 2 / 4;
+      grid-row: 1;
+      font-size: 0.68rem;
+      line-height: 1.25;
+      margin-bottom: 0.25rem;
+      flex-grow: 0;
+    }
+
+    .cmp-product-card__rating {
+      display: none;
+    }
+
+    .cmp-product-card__price {
+      font-size: 0.88rem;
+    }
+
+    .cmp-product-card__footer {
+      grid-column: 1 / 4;
+      grid-row: 2;
+      margin-top: 0;
+    }
+  }
+
+  .cmp-products-shell--compact.cmp-products-shell--compact-visible {
+    max-height: 132px;
+    opacity: 1;
+    pointer-events: auto;
+    border-bottom-width: 1px;
+  }
+
+  // Desktop override: show compact shell always on mobile
+  .cmp-products-shell--compact {
+    position: relative;
+    max-height: none;
+    border-bottom: 1px solid $border-color;
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    pointer-events: inherit;
+  }
+
+  // ── Normal shell product cards ──
+  .cmp-products-shell--normal {
+    .cmp-product-card {
+      min-height: 0;
+      padding: 0.7rem 0.5rem 0.8rem;
+
+      &__img-link {
+        height: 112px;
+        margin-bottom: 0.55rem;
+      }
+
+      &__name {
+        @include line-clamp(2);
+        font-size: 0.75rem;
+        line-height: 1.35;
+        min-height: 2.05rem;
+        margin-bottom: 0.55rem;
+        text-align: left;
+        flex-grow: 0;
+      }
+
+      &__rating {
+        margin-bottom: 0.55rem;
+      }
+    }
+
+    .cmp-tbl__control {
+      display: none;
+    }
+  }
+
+  // ── Spec block ──
+  .cmp-spec-block {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    min-width: 100%;
+  }
+
+  // ── Spec header ──
+  .cmp-attrs__header {
+    position: sticky;
+    left: 0;
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.55rem;
+    padding: 0.55rem 1rem;
+    background: rgba(255, 255, 255, 0.055);
+    border-top: 1px solid $border-color;
+    border-bottom: 1px solid $border-color;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .cmp-attrs__name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba($text-color, 0.9);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  // ── Product/value card mobile sizing ──
+  .cmp-product-card,
+  .cmp-attr-val {
+    flex: 0 0 $mobile-card-width;
+    width: $mobile-card-width;
+    min-width: $mobile-card-width;
+    scroll-snap-align: none;
+  }
+
+  .cmp-product-card__footer {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 0;
+  }
+
+  .cmp-product-card__price {
+    font-size: 0.98rem;
+  }
+
+  .cmp-product-card__cart {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .cmp-attr-val {
+    min-height: 44px;
+    padding: 0.62rem 0.45rem;
+    font-size: 0.82rem;
+    color: rgba($text-color, 0.78);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .cmp-tbl__control {
+    display: none;
+  }
+
+  // ── Toolbar grid items ──
+  .cmp-list-picker {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .cmp-list-picker__label {
+    display: none;
+  }
+
+  .cmp-list-picker__trigger {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    border-radius: 7px;
+  }
+
+  .cmp-list-menu {
+    left: 0;
+    right: auto;
+    width: min(320px, calc(100vw - 1.5rem));
+  }
+
+  .cmp-toolbar__actions {
+    display: contents;
+  }
+
+  .cmp-toolbar-add {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: start;
+    min-height: 38px;
+    padding: 0.48rem 1rem;
+    border-radius: 7px;
+
+    span {
+      font-size: 0;
+
+      &::after {
+        content: "Товар";
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  .cmp-clear {
+    grid-column: 2;
+    grid-row: 1;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    padding: 0;
+
+    span {
+      display: none;
+    }
+  }
+
+  .cmp-toolbar--sticky .cmp-toggle {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    justify-self: end;
+    margin-left: 0;
+  }
+
+  .cmp-toggle__label {
+    font-size: 0.82rem;
+  }
+
+  // ── Rating mobile ──
+  .cmp-product-card__rating {
+    min-height: 10px;
+    margin-bottom: 0.32rem;
+    font-size: 10px;
+  }
+
+  .cmp-product-card__rating .cmp-product-card__rating-star.MuiSvgIcon-root {
+    width: 1em;
+    height: 1em;
+    font-size: 1em;
+  }
+
+  .cmp-product-card__rating-count {
+    font-size: 0.6rem;
+  }
+}

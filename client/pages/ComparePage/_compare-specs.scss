@@ -1,0 +1,105 @@
+// ─── Compare Page: Spec Block & Header Overrides ────────────────────────────
+// Covers: .cmp-spec-block (contrast rows, diff state),
+//         static spec header overrides, canvas scroll overrides.
+
+// ─── Spec Block ───────────────────────────────────────────────────────────────
+
+.cmp-spec-block {
+  width: 100%;
+  min-width: 100%;
+  background: $card-bg;
+
+  &--diff {
+    .cmp-attrs__header {
+      background: rgba($primary-color, 0.08);
+      border-color: rgba($primary-color, 0.14);
+    }
+
+    .cmp-attrs__values {
+      background: rgba($primary-color, 0.035);
+    }
+
+    .cmp-attrs__name,
+    .cmp-attr-val--diff {
+      color: rgba($text-color, 0.92);
+    }
+  }
+
+  &:nth-child(even) {
+    .cmp-attrs__values {
+      background: rgba($surface-color, 0.28);
+    }
+  }
+
+  &:nth-child(odd) {
+    .cmp-attrs__values {
+      background: $card-bg;
+    }
+  }
+}
+
+// ─── Static spec header overrides ─────────────────────────────────────────────
+
+.cmp-tbl__attrs {
+  min-width: 100%;
+}
+
+.cmp-attrs__header {
+  position: sticky;
+  left: 0;
+  width: 100%;
+  max-width: $card-width * 4;
+  z-index: 4;
+  min-height: 2.75rem;
+  padding: 0.6rem 1rem;
+  background: rgba($surface-color, 0.9);
+  border-top: 1px solid rgba($border-color, 0.9);
+  border-bottom: 1px solid rgba($border-color, 0.9);
+}
+
+.cmp-attrs__values-scroll {
+  overflow-y: hidden;
+}
+
+.cmp-attrs__name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba($text-color, 0.9);
+  letter-spacing: 0.03em;
+}
+
+.cmp-attr-val {
+  color: rgba($text-color, 0.82);
+  padding: 0.85rem 0.85rem 0.95rem;
+  min-height: 52px;
+  scroll-snap-align: start;
+  border-right-color: rgba($border-color, 0.7);
+
+  &--diff {
+    color: rgba($text-color, 0.92);
+    background: rgba($primary-color, 0.055);
+    font-weight: 600;
+  }
+
+  &--empty {
+    background: rgba($bg-color, 0.35);
+  }
+}
+
+.cmp-attrs__values {
+  border-bottom-color: rgba($border-color, 0.76);
+}
+
+// ─── Canvas override ──────────────────────────────────────────────────────────
+
+.cmp-main-canvas-scroll {
+  scroll-snap-type: none;
+}
+
+.cmp-products-shell--normal,
+.cmp-products-shell--compact {
+  .cmp-tbl__products {
+    width: max-content;
+    min-width: 100%;
+  }
+}

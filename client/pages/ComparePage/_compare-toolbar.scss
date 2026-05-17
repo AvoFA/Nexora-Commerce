@@ -1,0 +1,306 @@
+// ─── Compare Page: Header & Toolbar ────────────────────────────────────────
+// Covers: .cmp-header, .cmp-header__*, .cmp-toolbar, .cmp-toolbar--sticky,
+//         .cmp-list-picker, .cmp-list-picker__*, .cmp-list-menu,
+//         .cmp-list-menu__*, .cmp-toggle, .cmp-toolbar-add, .cmp-clear
+
+// ─── Хедер ────────────────────────────────────────────────────────────────────
+
+.cmp-header {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cmp-header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cmp-header__title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  color: $text-color;
+  letter-spacing: -0.02em;
+
+  svg {
+    color: $primary-color;
+    filter: drop-shadow(0 0 10px rgba($primary-color, 0.4));
+  }
+}
+
+.cmp-header__subtitle {
+  color: $text-secondary;
+  font-size: 1rem;
+  margin: 0;
+}
+
+// ─── Тулбар ───────────────────────────────────────────────────────────────────
+
+.cmp-toolbar {
+  display: flex;
+  align-items: center;
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-left: auto;
+  }
+}
+
+// ── Sticky-версія тулбару ─────────────────────────────────────────────────────
+
+.cmp-toolbar--sticky {
+  width: 100%;
+  justify-content: space-between;
+  gap: 0.65rem;
+  padding: 0.6rem 1rem;
+  background: rgba($surface-color, 0.96);
+  border-radius: 16px 16px 0 0;
+  border: 0;
+  border-bottom: 1px solid $border-color;
+  box-shadow: none;
+
+  .cmp-toolbar__actions {
+    margin-left: 0;
+  }
+
+  .cmp-toggle {
+    margin-left: auto;
+  }
+}
+
+// ─── List Picker ──────────────────────────────────────────────────────────────
+
+.cmp-list-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.cmp-list-picker__label {
+  color: $text-color;
+  font-size: 0.92rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cmp-list-picker__trigger {
+  @extend .btn-secondary;
+  height: 40px;
+  min-width: 176px;
+  padding: 0 0.75rem;
+  color: rgba($text-color, 0.9);
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+
+  svg {
+    color: $text-secondary;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.045);
+    border-color: $border-color;
+    color: $text-color;
+  }
+
+  &.is-open {
+    border-color: rgba($text-secondary, 0.26);
+    color: $text-color;
+
+    svg {
+      color: $text-color;
+      transform: rotate(180deg);
+    }
+  }
+}
+
+// ─── List Menu (dropdown) ──────────────────────────────────────────────────────
+
+.cmp-list-menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 80;
+  width: min(300px, calc(100vw - 2rem));
+  overflow: hidden;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  background: $surface-color;
+  color: $text-color;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4);
+}
+
+.cmp-list-menu__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.72rem 0.88rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: $text-color;
+
+  strong {
+    font-size: 0.95rem;
+  }
+}
+
+.cmp-list-menu__items {
+  display: flex;
+  flex-direction: column;
+}
+
+.cmp-list-menu__item {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid rgba($border-color, 0.75);
+  background: transparent;
+  color: $text-color;
+  padding: 0.68rem 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  strong {
+    font-size: 0.93rem;
+  }
+
+  small {
+    color: $text-secondary;
+    font-size: 0.78rem;
+  }
+
+  &:hover,
+  &.is-active {
+    background: rgba(255, 255, 255, 0.055);
+  }
+
+  &.is-active strong {
+    color: rgba($text-color, 0.96);
+  }
+}
+
+.cmp-list-menu__delete,
+.cmp-list-menu__clear-all {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: $danger-color;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    color: $danger-color;
+    background: rgba($danger-color, 0.1);
+  }
+}
+
+// ─── Toggle (show differences) ────────────────────────────────────────────────
+
+.cmp-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+
+  &__track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .cmp-toggle__thumb {
+      transform: translateX(20px);
+      background: $primary-color;
+    }
+  }
+
+  &:has(.cmp-toggle__input:checked) .cmp-toggle__track {
+    background: rgba($primary-color, 0.2);
+    border-color: rgba($primary-color, 0.3);
+  }
+
+  &__thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &__label {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: rgba(#fff, 0.7);
+  }
+}
+
+// ─── Toolbar buttons ──────────────────────────────────────────────────────────
+
+.cmp-toolbar-add {
+  @extend .btn-primary;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+
+.cmp-clear {
+  @extend .btn-secondary;
+  padding: 8px 14px;
+  font-size: 0.86rem;
+  border-radius: $border-radius / 1.5;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: rgba($danger-color, 0.1);
+    color: $danger-color;
+    border-color: rgba($danger-color, 0.2);
+  }
+}
