@@ -59,6 +59,9 @@ const ProductPage = () => {
     avgRating,
     stats,
     handleSubmitReview,
+    userReview,
+    isEditing,
+    setIsEditing,
   } = useReviews(id, user, isAuthenticated);
 
   const handleAddToCart = () => {
@@ -274,6 +277,9 @@ const ProductPage = () => {
         ratingFilter={ratingFilter}
         setRatingFilter={setRatingFilter}
         handleSubmitReview={handleSubmitReview}
+        userReview={userReview}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
       />
 
       {/* Схожі товари */}

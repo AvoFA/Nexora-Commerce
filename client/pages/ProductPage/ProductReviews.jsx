@@ -15,7 +15,84 @@ const ProductReviews = ({
   ratingFilter,
   setRatingFilter,
   handleSubmitReview,
+  userReview,
+  isEditing,
+  setIsEditing,
 }) => {
+  const handleEditClick = () => {
+    if (userReview) {
+      setNewReview((prev) => ({
+        ...prev,
+        stars: userReview.rating || 0,
+        text: userReview.text || "",
+        pros: userReview.pros || "",
+        cons: userReview.cons || "",
+      }));
+      setIsEditing(true);
+    }
+    setShowForm(true);
+  };
+
+  const renderReviewAction = () => {
+    if (userReview?.status === "pending") {
+      return (
+        <div className="review-pending-notice" style={{ marginTop: '20px', padding: '12px', background: '#334155', borderRadius: '8px', border: '1px solid #475569' }}>
+          <p style={{ margin: 0, fontSize: '0.9rem', color: '#cbd5e1', textAlign: 'center' }}>
+            Ваш відгук вже очікує модерації
+          </p>
+        </div>
+      );
+    }
+
+    if (userReview?.status === "approved") {
+      return (
+        <button
+          className="btn-write-review"
+          onClick={() => {
+            if (showForm) {
+              setShowForm(false);
+              setIsEditing(false);
+            } else {
+              handleEditClick();
+            }
+          }}
+        >
+          {showForm ? "Скасувати" : "Редагувати відгук"}
+        </button>
+      );
+    }
+
+    if (userReview?.status === "rejected") {
+      return (
+        <button
+          className="btn-write-review"
+          onClick={() => {
+            if (showForm) {
+              setShowForm(false);
+              setIsEditing(false);
+            } else {
+              handleEditClick();
+            }
+          }}
+          style={{ background: '#ef4444', borderColor: '#ef4444' }}
+        >
+          {showForm ? "Скасувати" : "Написати новий відгук"}
+        </button>
+      );
+    }
+
+    return (
+      <button
+        className="btn-write-review"
+        onClick={() => {
+          setShowForm((v) => !v);
+          setIsEditing(false);
+        }}
+      >
+        {showForm ? "Скасувати" : "Написати відгук"}
+      </button>
+    );
+  };
   return (
     <section className="reviews-section bottom-layout">
       <h2 className="section-title">Відгуки клієнтів</h2>
@@ -62,12 +139,7 @@ const ProductReviews = ({
             ))}
           </div>
 
-          <button
-            className="btn-write-review"
-            onClick={() => setShowForm((v) => !v)}
-          >
-            {showForm ? "Скасувати" : "Написати відгук"}
-          </button>
+          {renderReviewAction()}
         </div>
 
         {/* Правая зона */}

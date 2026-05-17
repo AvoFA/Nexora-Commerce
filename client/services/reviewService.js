@@ -42,6 +42,35 @@ export const createReview = async (reviewData, token) => {
   return data;
 };
 
+export const getUserProductReview = async (productId, token) => {
+  const response = await fetch(`${API_BASE_URL}/reviews/me/product/${productId}`, {
+    headers: getAuthHeaders(token)
+  });
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося завантажити ваш відгук');
+  }
+
+  return data.review;
+};
+
+export const updateUserReview = async (id, reviewData, token) => {
+  const response = await fetch(`${API_BASE_URL}/reviews/${id}/edit`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(token),
+    body: JSON.stringify(reviewData)
+  });
+
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося оновити відгук');
+  }
+
+  return data;
+};
+
 export const getAdminReviews = async (token) => {
   const response = await fetch(`${API_BASE_URL}/reviews/admin`, {
     headers: getAuthHeaders(token)

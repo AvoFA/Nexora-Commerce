@@ -14,6 +14,9 @@ export const useReviews = (productId, user, isAuthenticated) => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [ratingFilter, setRatingFilter] = useState(null);
+  
+  const [userReview, setUserReview] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (user?.name) {
@@ -24,8 +27,22 @@ export const useReviews = (productId, user, isAuthenticated) => {
   useEffect(() => {
     if (productId) {
       fetchReviews();
+      if (isAuthenticated) {
+        fetchUserReview();
+      }
     }
-  }, [productId]);
+  }, [productId, isAuthenticated]);
+
+  const fetchUserReview = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const review = await getUserProductReview(productId, token);
+      setUserReview(review || null);
+    } catch (error) {
+      console.error("Failed to fetch user review:", error);
+    }
+  };
 
   const fetchReviews = async () => {
     try {
@@ -87,13 +104,25 @@ export const useReviews = (productId, user, isAuthenticated) => {
 
     try {
       const token = localStorage.getItem("token");
-      await createReview({
-        productId,
-        rating: newReview.stars,
-        text: newReview.text,
-        pros: newReview.pros,
-        cons: newReview.cons
-      }, token);
+      
+      if (isEditing && userReview) {
+        await updateUserReview(userReview._id, {
+          rating: newReview.stars,
+          text: newReview.text,
+          pros: newReview.pros,
+          cons: newReview.cons
+        }, token);
+        toast.success("Ваш відгук оновлено та відправлено на модерацію");
+      } else {
+        await createReview({
+          productId,
+          rating: newReview.stars,
+          text: newReview.text,
+          pros: newReview.pros,
+          cons: newReview.cons
+        }, token);
+        toast.success("Ваш відгук відправлено на модерацію");
+      }
 
       setFormErrors({});
       setNewReview({
@@ -104,7 +133,8 @@ export const useReviews = (productId, user, isAuthenticated) => {
         cons: "",
       });
       setShowForm(false);
-      toast.success("Ваш відгук відправлено на модерацію");
+      setIsEditing(false);
+      fetchUserReview();
     } catch (error) {
       toast.error(error.message || "Помилка відправки відгуку");
     }
@@ -123,5 +153,8 @@ export const useReviews = (productId, user, isAuthenticated) => {
     avgRating,
     stats,
     handleSubmitReview,
+    userReview,
+    isEditing,
+    setIsEditing,
   };
 };
