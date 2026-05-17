@@ -132,7 +132,7 @@ const ReviewListPage = () => {
         </div>
       </Box>
 
-      {/* Фільтри за статусом із лічильниками */}
+      {/* Фільтри за статусом із лічильниками та статистика модерації справа */}
       <div className="admin-solid-card filter-card">
         <div className="filter-tabs">
           {filterOptions.map((option) => {
@@ -150,6 +150,26 @@ const ReviewListPage = () => {
             );
           })}
         </div>
+
+        {/* Компактна статистика модерації */}
+        <Box className="moderation-stats-overview">
+          <div className="stat-item all">
+            <span className="stat-label">Всього</span>
+            <span className="stat-value">{counts.all}</span>
+          </div>
+          <div className="stat-item pending">
+            <span className="stat-label">На модерації</span>
+            <span className="stat-value">{counts.pending}</span>
+          </div>
+          <div className="stat-item approved">
+            <span className="stat-label">Опубліковано</span>
+            <span className="stat-value">{counts.approved}</span>
+          </div>
+          <div className="stat-item rejected">
+            <span className="stat-label">Відхилено</span>
+            <span className="stat-value">{counts.rejected}</span>
+          </div>
+        </Box>
       </div>
 
       {isLoading ? (
