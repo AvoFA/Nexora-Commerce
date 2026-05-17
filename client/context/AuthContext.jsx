@@ -1,29 +1,25 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { addToFavorites as addToFavoritesAPI, removeFromFavorites as removeFromFavoritesAPI } from '../services/favoritesService.js';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import { getWishlist } from '../services/wishlistService.js';
 
-// AuthContext для управління авторизацією клієнтів та wishlist
-
-// Стан за замовчуванням
 const initialState = {
-  user: null, // Об'єкт користувача
-  isAuthenticated: false, // Чи авторизований
-  favorites: [], // Список улюблених товарів
-  loading: false, // Стан завантаження
-  error: null // Помилки
+  user: null,
+  isAuthenticated: false,
+  wishlistProductIds: [],
+  loading: false,
+  error: null
 };
 
-// Типи дій
 const AuthActionTypes = {
   SET_LOADING: 'SET_LOADING',
   SET_ERROR: 'SET_ERROR',
   LOGIN_SUCCESS: 'LOGIN_SUCCESS',
   LOGOUT: 'LOGOUT',
-  UPDATE_FAVORITES: 'UPDATE_FAVORITES',
-  ADD_FAVORITE: 'ADD_FAVORITE',
-  REMOVE_FAVORITE: 'REMOVE_FAVORITE'
+  UPDATE_USER: 'UPDATE_USER',
+  UPDATE_WISHLIST_PRODUCT_IDS: 'UPDATE_WISHLIST_PRODUCT_IDS'
 };
 
-// Reducer для керування станом
+const normalizeIds = (ids = []) => Array.from(new Set(ids.map((id) => String(id))));
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case AuthActionTypes.SET_LOADING:
@@ -35,71 +31,97 @@ const authReducer = (state, action) => {
         ...state,
         user: action.payload.user,
         isAuthenticated: true,
-        favorites: action.payload.favorites || [],
+        wishlistProductIds: normalizeIds(action.payload.wishlistProductIds),
         loading: false,
         error: null
       };
     case AuthActionTypes.LOGOUT:
       return { ...initialState };
-    case AuthActionTypes.UPDATE_FAVORITES:
-      return { ...state, favorites: action.payload };
-    case AuthActionTypes.ADD_FAVORITE:
+    case AuthActionTypes.UPDATE_USER:
       return {
         ...state,
-        favorites: [...state.favorites, action.payload]
+        user: {
+          ...state.user,
+          ...action.payload
+        }
       };
-    case AuthActionTypes.REMOVE_FAVORITE:
+    case AuthActionTypes.UPDATE_WISHLIST_PRODUCT_IDS:
       return {
         ...state,
-        favorites: state.favorites.filter(id => id !== action.payload)
+        wishlistProductIds: normalizeIds(action.payload)
       };
     default:
       return state;
   }
 };
 
-// Створення контексу
 const AuthContext = createContext();
 
-// Провайдер контексу: обгортає додаток і надає доступ до авторизації
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Відновлюємо сесію користувача при завантаженні сторінки
   useEffect(() => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    const favorites = localStorage.getItem('favorites');
+    const wishlistProductIds = localStorage.getItem('wishlistProductIds');
 
     if (token && user) {
       try {
         const parsedUser = JSON.parse(user);
-        const parsedFavorites = favorites ? JSON.parse(favorites) : [];
+        const parsedWishlistProductIds = wishlistProductIds ? JSON.parse(wishlistProductIds) : [];
 
         dispatch({
           type: AuthActionTypes.LOGIN_SUCCESS,
           payload: {
             user: parsedUser,
-            favorites: parsedFavorites
+            wishlistProductIds: parsedWishlistProductIds
           }
         });
       } catch (error) {
-        // Якщо дані пошкоджені — очищаємо все
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        localStorage.removeItem('favorites');
+        localStorage.removeItem('wishlistProductIds');
       }
     }
   }, []);
 
-  // Допоміжна функція: зберігаємо сесію в браузері
-  const saveToLocalStorage = (user, token) => {
+  const saveToLocalStorage = (user, token, wishlistProductIds = []) => {
     localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('token', token);
-    localStorage.setItem('favorites', JSON.stringify(user.favorites || []));
+    localStorage.setItem('wishlistProductIds', JSON.stringify(normalizeIds(wishlistProductIds)));
   };
 
-  // Авторизація (Вхід)
+  const updateWishlistProductIds = (ids = []) => {
+    const normalizedIds = normalizeIds(ids);
+    localStorage.setItem('wishlistProductIds', JSON.stringify(normalizedIds));
+    dispatch({
+      type: AuthActionTypes.UPDATE_WISHLIST_PRODUCT_IDS,
+      payload: normalizedIds
+    });
+  };
+
+  const refreshWishlistProductIds = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) return [];
+
+    const data = await getWishlist(token);
+    updateWishlistProductIds(data.wishlistProductIds || []);
+    return data.wishlistProductIds || [];
+  };
+
+  const updateUserData = (updates = {}) => {
+    const updatedUser = {
+      ...state.user,
+      ...updates
+    };
+
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    dispatch({
+      type: AuthActionTypes.UPDATE_USER,
+      payload: updates
+    });
+  };
+
   const login = async (email, password) => {
     dispatch({ type: AuthActionTypes.SET_LOADING, payload: true });
     dispatch({ type: AuthActionTypes.SET_ERROR, payload: null });
@@ -120,27 +142,27 @@ export const AuthProvider = ({ children }) => {
           id: data.user.id,
           email: data.user.email,
           name: data.user.name,
+          phone: data.user.phone || '',
           role: data.user.role,
-          favorites: data.user.favorites || []
+          wishlistProductIds: data.user.wishlistProductIds || []
         };
 
-        // Успішний вхід: зберігаємо токен і оновлюємо стан
-        saveToLocalStorage(userData, data.token);
+        saveToLocalStorage(userData, data.token, userData.wishlistProductIds);
         dispatch({
           type: AuthActionTypes.LOGIN_SUCCESS,
           payload: {
             user: userData,
-            favorites: userData.favorites
+            wishlistProductIds: userData.wishlistProductIds
           }
         });
 
         return { success: true };
-      } else {
-        dispatch({ type: AuthActionTypes.SET_ERROR, payload: data.message });
-        return { success: false, message: data.message };
       }
+
+      dispatch({ type: AuthActionTypes.SET_ERROR, payload: data.message });
+      return { success: false, message: data.message };
     } catch (error) {
-      const message = 'Помилка з\'єднання. Спробуйте пізніше.';
+      const message = 'Помилка зʼєднання. Спробуйте пізніше.';
       dispatch({ type: AuthActionTypes.SET_ERROR, payload: message });
       return { success: false, message };
     } finally {
@@ -148,7 +170,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Реєстрація нового користувача
   const register = async (email, name, password) => {
     dispatch({ type: AuthActionTypes.SET_LOADING, payload: true });
     dispatch({ type: AuthActionTypes.SET_ERROR, payload: null });
@@ -169,25 +190,25 @@ export const AuthProvider = ({ children }) => {
           id: data.user.id,
           email: data.user.email,
           name: data.user.name,
+          phone: data.user.phone || '',
           role: data.user.role,
-          favorites: []
+          wishlistProductIds: data.user.wishlistProductIds || []
         };
 
-        // Одразу входимо після реєстрації
-        saveToLocalStorage(userData, data.token);
+        saveToLocalStorage(userData, data.token, userData.wishlistProductIds);
         dispatch({
           type: AuthActionTypes.LOGIN_SUCCESS,
           payload: {
             user: userData,
-            favorites: []
+            wishlistProductIds: userData.wishlistProductIds
           }
         });
 
         return { success: true };
-      } else {
-        dispatch({ type: AuthActionTypes.SET_ERROR, payload: data.message });
-        return { success: false, message: data.message };
       }
+
+      dispatch({ type: AuthActionTypes.SET_ERROR, payload: data.message });
+      return { success: false, message: data.message };
     } catch (error) {
       const message = 'Помилка реєстрації. Спробуйте пізніше.';
       dispatch({ type: AuthActionTypes.SET_ERROR, payload: message });
@@ -197,77 +218,31 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Вихід із системи
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem('favorites');
+    localStorage.removeItem('wishlistProductIds');
     dispatch({ type: AuthActionTypes.LOGOUT });
   };
 
-  // Додавання товару в обране
-  const addToFavorites = async (productId) => {
-    if (!state.isAuthenticated) return { success: false, message: 'Увійдіть для додавання до улюблених' };
-
-    const token = localStorage.getItem('token');
-    try {
-      const data = await addToFavoritesAPI(productId, token);
-
-      if (data.success) {
-        dispatch({ type: AuthActionTypes.ADD_FAVORITE, payload: productId });
-
-        // Оновлюємо кеш в localStorage
-        const updatedFavorites = [...state.favorites, productId];
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-
-        return { success: true };
-      } else {
-        return { success: false, message: data.message };
-      }
-    } catch (error) {
-      return { success: false, message: 'Помилка з\'єднання' };
-    }
-  };
-
-  // Видалення товару з обраного
-  const removeFromFavorites = async (productId) => {
-    const token = localStorage.getItem('token');
-    try {
-      const data = await removeFromFavoritesAPI(productId, token);
-
-      if (data.success) {
-        dispatch({ type: AuthActionTypes.REMOVE_FAVORITE, payload: productId });
-
-        // Оновлюємо кеш в localStorage
-        const updatedFavorites = state.favorites.filter(id => id !== productId);
-        localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
-
-        return { success: true };
-      } else {
-        return { success: false, message: data.message };
-      }
-    } catch (error) {
-      return { success: false, message: 'Помилка з\'єднання' };
-    }
-  };
-
-  // Перевіряємо, чи є товар в улюблених (true/false)
-  const isFavorite = (productId) => {
-    return state.favorites.includes(productId);
+  const isWishlisted = (productId) => {
+    if (!productId) return false;
+    return state.wishlistProductIds.includes(String(productId));
   };
 
   const value = {
     user: state.user,
     isAuthenticated: state.isAuthenticated,
-    favorites: state.favorites,
+    wishlistProductIds: state.wishlistProductIds,
     loading: state.loading,
     error: state.error,
     login,
     register,
     logout,
-    addToFavorites,
-    removeFromFavorites,
-    isFavorite
+    isWishlisted,
+    refreshWishlistProductIds,
+    updateUserData,
+    updateWishlistProductIds
   };
 
   return (
@@ -277,7 +252,6 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Хук для використання контексу
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
