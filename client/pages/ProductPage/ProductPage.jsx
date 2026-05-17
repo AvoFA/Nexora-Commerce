@@ -20,7 +20,6 @@ import {
   InfoOutlined,
 } from "@mui/icons-material";
 import { Rating, TextField, FormControl, FormHelperText, Tooltip } from "@mui/material";
-import ProductCard from "../../components/catalog/ProductCard/ProductCard.jsx";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
 import { useCompare } from "../../hooks/useCompare.js";
@@ -30,6 +29,8 @@ import WishlistPickerModal from "../../components/common/WishlistPickerModal/Wis
 import "./ProductPage.scss";
 import { useProductData } from "./useProductData.js";
 import { useReviews } from "./useReviews.js";
+import ProductSpecsTable from "./ProductSpecsTable.jsx";
+import SimilarProducts from "./SimilarProducts.jsx";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -254,109 +255,7 @@ const ProductPage = () => {
           </section>
 
           {/* Характеристики (Єдина таблиця як у макеті) */}
-          <section className="characteristics-section">
-            <h2 className="section-title">Характеристики</h2>
-
-            <div className="specs-table-box">
-              {(() => {
-                const groups = {
-                  Екран: [
-                    "Діагональ",
-                    "Діагональ екрану",
-                    "Роздільна здатність",
-                    "Тип матриці",
-                    "Частота оновлення",
-                    "Яскравість",
-                  ],
-                  "Процесор та Пам'ять": [
-                    "Процесор",
-                    "Оперативна пам'ять",
-                    "Вбудована пам'ять",
-                    "RAM",
-                    "SSD",
-                    "Пам'ять",
-                    "Тип пам'яті",
-                    "Відеокарта",
-                  ],
-                  Камера: [
-                    "Основна камера",
-                    "Фронтальна камера",
-                    "Камера",
-                    "Запис відео",
-                  ],
-                  "Зв'язок та ОС": [
-                    "SIM",
-                    "Кількість SIM-карт",
-                    "Операційна система",
-                    "NFC",
-                    "Bluetooth",
-                    "Wi-Fi",
-                    "Версія ОС",
-                  ],
-                  Корпус: [
-                    "Колір",
-                    "Матеріал корпусу",
-                    "Вага",
-                    "Габарити",
-                    "Захист",
-                    "Комплектація",
-                  ],
-                };
-
-                const attributes = product.attributes || [];
-                const usedKeys = new Set();
-
-                // Фільтруємо групи, які мають дані
-                const activeGroups = Object.entries(groups).filter(
-                  ([_, keys]) =>
-                    attributes.some((attr) => keys.includes(attr.key)),
-                );
-
-                return (
-                  <>
-                    {activeGroups.map(([groupName, keys], groupIdx) => {
-                      const groupSpecs = attributes.filter((attr) =>
-                        keys.includes(attr.key),
-                      );
-                      groupSpecs.forEach((attr) => usedKeys.add(attr.key));
-
-                      return (
-                        <div key={groupName} className="specs-table-group">
-                          <div className="group-header">{groupName}</div>
-                          <div className="group-rows">
-                            {groupSpecs.map((spec, idx) => (
-                              <div key={idx} className="spec-row-grid">
-                                <div className="spec-key">{spec.key}</div>
-                                <div className="spec-value">{spec.value}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-
-                    {/* Інші характеристики */}
-                    {attributes.filter((attr) => !usedKeys.has(attr.key))
-                      .length > 0 && (
-                      <div className="specs-table-group">
-                        <div className="group-header">Інші характеристики</div>
-                        <div className="group-rows">
-                          {attributes
-                            .filter((attr) => !usedKeys.has(attr.key))
-                            .map((spec, idx) => (
-                              <div key={idx} className="spec-row-grid">
-                                <div className="spec-key">{spec.key}</div>
-                                <div className="spec-value">{spec.value}</div>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          </section>
+          <ProductSpecsTable attributes={product.attributes} />
         </div>
       </div>
 
@@ -654,17 +553,7 @@ const ProductPage = () => {
       </section>
 
       {/* Схожі товари */}
-      {similarProducts.length > 0 && (
-        <div className="similar-products-section">
-          <h2 className="section-title">Схожі товари</h2>
-          <p className="section-subtitle">Вам також можуть сподобатися</p>
-          <div className="similar-products-grid">
-            {similarProducts.map((similarProduct) => (
-              <ProductCard key={similarProduct.id} product={similarProduct} />
-            ))}
-          </div>
-        </div>
-      )}
+      <SimilarProducts similarProducts={similarProducts} />
     </div>
   );
 };
