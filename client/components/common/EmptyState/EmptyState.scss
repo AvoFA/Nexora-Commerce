@@ -1,0 +1,30 @@
+// ─── EmptyState base styles ─────────────────────────────────────────────────
+// Provides only the structural base. Visual skin (background, border, padding)
+// is controlled by the page-specific className passed via the className prop
+// (e.g. .account-empty-state defined in _account-layout.scss,
+//       .cart-empty-state defined in CartPage.scss).
+//
+// This file sets only what every empty-state needs regardless of context.
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+
+  .empty-icon {
+    font-size: 4rem;
+    opacity: 0.7;
+  }
+
+  h2 {
+    margin: 0;
+  }
+
+  p {
+    margin: 0 0 8px;
+    line-height: 1.6;
+  }
+}

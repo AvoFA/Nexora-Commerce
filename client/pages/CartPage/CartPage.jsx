@@ -10,6 +10,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { useState } from "react";
 import { formatPrice } from "../../utils/formatPrice.js";
+import EmptyState from "../../components/common/EmptyState/EmptyState.jsx";
 import "./CartPage.scss";
 
 const CartPage = () => {
@@ -67,14 +68,13 @@ const CartPage = () => {
   if (items.length === 0) {
     return (
       <div className="cart-page">
-        <div className="cart-empty-state">
-          <ShoppingBagOutlinedIcon className="empty-icon" />
-          <h2>Ваш кошик порожній</h2>
-          <p>Додайте товари, щоб розпочати покупки</p>
-          <Link to="/catalog" className="btn-primary">
-            Перейти до каталогу
-          </Link>
-        </div>
+        <EmptyState
+          icon={ShoppingBagOutlinedIcon}
+          title="Ваш кошик порожній"
+          description="Додайте товари, щоб розпочати покупки"
+          action={{ label: "Перейти до каталогу", to: "/catalog" }}
+          className="cart-empty-state"
+        />
       </div>
     );
   }
