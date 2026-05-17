@@ -3,6 +3,62 @@
   flex-direction: column;
   gap: 24px;
 
+  .filter-card {
+    padding: 16px;
+    
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      
+      .filter-tab-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        background-color: rgba(255, 255, 255, 0.02);
+        color: var(--text-secondary, #94a3b8);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        user-select: none;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.06);
+          color: var(--text-primary, #f8fafc);
+        }
+        
+        &.active {
+          background-color: rgba(59, 130, 246, 0.15);
+          color: #3b82f6;
+          border-color: rgba(59, 130, 246, 0.3);
+          
+          .MuiChip-root {
+            background-color: #3b82f6;
+            color: #ffffff;
+          }
+        }
+        
+        .MuiChip-root {
+          height: 20px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          background-color: rgba(255, 255, 255, 0.08);
+          color: var(--text-secondary, #94a3b8);
+          cursor: pointer;
+          
+          .MuiChip-label {
+            padding-left: 6px;
+            padding-right: 6px;
+          }
+        }
+      }
+    }
+  }
+
   .admin-table-container {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);

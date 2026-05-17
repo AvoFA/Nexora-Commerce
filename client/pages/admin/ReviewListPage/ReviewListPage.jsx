@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Avatar, CircularProgress, Tooltip } from '@mui/material';
-import { Check as CheckIcon, Close as CloseIcon, Star as StarIcon } from '@mui/icons-material';
+import { Check as CheckIcon, Close as CloseIcon, Star as StarIcon, Undo as UndoIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
 import { toast } from 'sonner';
 import { getAdminReviews, updateReviewStatus } from '../../../services/reviewService';
 
@@ -26,6 +26,7 @@ const ReviewListPage = () => {
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
+  const [activeFilter, setActiveFilter] = useState('pending');
   const navigate = useNavigate();
 
   const fetchReviews = async () => {
@@ -38,7 +39,7 @@ const ReviewListPage = () => {
       }
       const data = await getAdminReviews(token);
       if (data.success) {
-        setReviews(data.reviews);
+        setReviews(data.reviews || []);
       }
     } catch (error) {
       toast.error(error.message || 'Помилка завантаження відгуків');
@@ -101,6 +102,27 @@ const ReviewListPage = () => {
     );
   };
 
+  // Розрахунок лічильників
+  const counts = {
+    pending: reviews.filter(r => r.status === 'pending').length,
+    approved: reviews.filter(r => r.status === 'approved').length,
+    rejected: reviews.filter(r => r.status === 'rejected').length,
+    all: reviews.length
+  };
+
+  // Фільтрація відгуків
+  const filteredReviews = reviews.filter(review => {
+    if (activeFilter === 'all') return true;
+    return review.status === activeFilter;
+  });
+
+  const filterOptions = [
+    { value: 'pending', label: 'На модерації' },
+    { value: 'approved', label: 'Опубліковані' },
+    { value: 'rejected', label: 'Відхилені' },
+    { value: 'all', label: 'Усі' }
+  ];
+
   return (
     <Box className="review-list-page">
       <Box className="admin-page-header">
@@ -109,6 +131,26 @@ const ReviewListPage = () => {
           <Typography variant="body2" className="subtitle">Управління відгуками користувачів</Typography>
         </div>
       </Box>
+
+      {/* Фільтри за статусом із лічильниками */}
+      <div className="admin-solid-card filter-card">
+        <div className="filter-tabs">
+          {filterOptions.map((option) => {
+            const isActive = activeFilter === option.value;
+            const count = counts[option.value];
+            return (
+              <div
+                key={option.value}
+                onClick={() => setActiveFilter(option.value)}
+                className={`filter-tab-button ${isActive ? 'active' : ''}`}
+              >
+                <span>{option.label}</span>
+                <Chip label={count} size="small" />
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
       {isLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
@@ -128,12 +170,12 @@ const ReviewListPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {reviews.length === 0 ? (
+              {filteredReviews.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} align="center" sx={{ py: 3 }}>Немає відгуків</TableCell>
                 </TableRow>
               ) : (
-                reviews.map((review) => (
+                filteredReviews.map((review) => (
                   <TableRow key={review._id}>
                     <TableCell>
                       <Typography variant="body2" fontWeight="medium">{review.name}</Typography>
@@ -175,22 +217,39 @@ const ReviewListPage = () => {
                     </TableCell>
                     <TableCell align="right">
                       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        {review.status !== 'approved' && (
-                          <Tooltip title="Схвалити">
-                            <span>
-                              <IconButton 
-                                color="success" 
-                                onClick={() => handleStatusChange(review._id, 'approved')}
-                                disabled={isUpdating === review._id}
-                                size="small"
-                              >
-                                <CheckIcon />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
+                        {/* Дії для статусу pending (На модерації): Схвалити та Відхилити */}
+                        {review.status === 'pending' && (
+                          <>
+                            <Tooltip title="Схвалити">
+                              <span>
+                                <IconButton 
+                                  color="success" 
+                                  onClick={() => handleStatusChange(review._id, 'approved')}
+                                  disabled={isUpdating === review._id}
+                                  size="small"
+                                >
+                                  <CheckIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                            <Tooltip title="Відхилити">
+                              <span>
+                                <IconButton 
+                                  color="error" 
+                                  onClick={() => handleStatusChange(review._id, 'rejected')}
+                                  disabled={isUpdating === review._id}
+                                  size="small"
+                                >
+                                  <CloseIcon />
+                                </IconButton>
+                              </span>
+                            </Tooltip>
+                          </>
                         )}
-                        {review.status !== 'rejected' && (
-                          <Tooltip title="Відхилити">
+
+                        {/* Дії для статусу approved (Опубліковані): Приховати / Відхилити */}
+                        {review.status === 'approved' && (
+                          <Tooltip title="Приховати відгук">
                             <span>
                               <IconButton 
                                 color="error" 
@@ -198,7 +257,23 @@ const ReviewListPage = () => {
                                 disabled={isUpdating === review._id}
                                 size="small"
                               >
-                                <CloseIcon />
+                                <VisibilityOffIcon />
+                              </IconButton>
+                            </span>
+                          </Tooltip>
+                        )}
+
+                        {/* Дії для статусу rejected (Відхилені): Повернути на модерацію */}
+                        {review.status === 'rejected' && (
+                          <Tooltip title="Повернути на модерацію">
+                            <span>
+                              <IconButton 
+                                color="warning" 
+                                onClick={() => handleStatusChange(review._id, 'pending')}
+                                disabled={isUpdating === review._id}
+                                size="small"
+                              >
+                                <UndoIcon />
                               </IconButton>
                             </span>
                           </Tooltip>
