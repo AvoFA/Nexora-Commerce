@@ -24,6 +24,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import "./CatalogPage.scss";
 
+import CatalogToolbar from "./CatalogToolbar.jsx";
+import CatalogSortMenu from "./CatalogSortMenu.jsx";
+import CatalogEmptyState from "./CatalogEmptyState.jsx";
+
 // Спеціальні хуки для логіки каталогу
 import { useCatalogData } from "../../components/catalog/hooks/useCatalogData.js";
 import { useCatalogSearch } from "../../components/catalog/hooks/useCatalogSearch.js";
@@ -340,39 +344,15 @@ const CatalogPage = () => {
             Фільтри
           </Button>
 
-          <div className="catalog-sort-picker header-sort">
-            <span className="sort-label">Сортувати:</span>
-            <div className="sort-trigger-wrapper">
-              <button 
-                className={`sort-trigger ${isSortOpen ? 'is-active' : ''}`}
-                onClick={() => setIsSortOpen(!isSortOpen)}
-              >
-                <SwapVertIcon className="sort-icon" />
-                <span className="sort-text">
-                  {sortOptions.find(opt => opt.value === sortOrder)?.label}
-                </span>
-              </button>
-              {isSortOpen && (
-                <div className="sort-menu">
-                  {sortOptions.map(option => (
-                    <div 
-                      key={option.value}
-                      className={`sort-item ${sortOrder === option.value ? 'is-selected' : ''}`}
-                      onClick={() => {
-                        setSortOrder(option.value);
-                        setIsSortOpen(false);
-                      }}
-                    >
-                      <span>{option.label}</span>
-                      {sortOrder === option.value && (
-                        <CheckIcon className="selected-check" />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+          <CatalogSortMenu
+            isSortOpen={isSortOpen}
+            setIsSortOpen={setIsSortOpen}
+            sortOptions={sortOptions}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            className="header-sort"
+            variant="header"
+          />
         </div>
       </header>
 
@@ -456,165 +436,20 @@ const CatalogPage = () => {
 
         <main className="catalog-right">
           {/* активні чіпси перенесено всередину контрольного блоку */}
-          <div className="catalog-controls">
-            {/* Пошук */}
-            <div className="catalog-search">
-              <TextField
-                variant="outlined"
-                size="small"
-                className="mui-form-control"
-                placeholder="Пошук у каталозі..."
-                value={pageSearchQuery}
-                onChange={(e) => setPageSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon className="search-icon" />
-                    </InputAdornment>
-                  ),
-                }}
-                aria-label="Search products"
-              />
-            </div>
-
-            <div className="catalog-toolbar-actions">
-              {/* Десктопная версия (скрыта на мобилке через CSS) */}
-              <div className="toolbar-desktop-only">
-                <div className="catalog-sort-picker toolbar-sort">
-                  <span className="sort-label">Сортувати:</span>
-                  <div className="sort-trigger-wrapper">
-                    <button 
-                      className={`sort-trigger ${isSortOpen ? 'is-active' : ''}`}
-                      onClick={() => setIsSortOpen(!isSortOpen)}
-                    >
-                      <SwapVertIcon className="sort-icon" />
-                      <span className="sort-text">
-                        {sortOptions.find(opt => opt.value === sortOrder)?.label}
-                      </span>
-                    </button>
-                    {isSortOpen && (
-                      <div className="sort-menu">
-                        {sortOptions.map(option => (
-                          <div 
-                            key={option.value}
-                            className={`sort-item ${sortOrder === option.value ? 'is-selected' : ''}`}
-                            onClick={() => {
-                              setSortOrder(option.value);
-                              setIsSortOpen(false);
-                            }}
-                          >
-                            <div className="sort-item-content">
-                              <div className="check-placeholder">
-                                {sortOrder === option.value && <CheckIcon className="selected-check" />}
-                              </div>
-                              <span className="sort-item-text">{option.label}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Мобільна версія (капсульна пара як у Comfy) */}
-              <div className="toolbar-mobile-capsules">
-                <div className="sort-mobile-capsule-wrapper">
-                  <button 
-                    className={`sort-mobile-capsule ${isSortOpen ? 'is-active' : ''}`}
-                    onClick={() => setIsSortOpen(!isSortOpen)}
-                  >
-                    <SwapVertIcon className="capsule-icon" />
-                    <span>{sortOptions.find(opt => opt.value === sortOrder)?.label}</span>
-                  </button>
-                  {isSortOpen && (
-                    <>
-                      <div className="sort-backdrop" onClick={() => setIsSortOpen(false)} />
-                      <div className="mobile-sort-wrapper">
-                        <button className="mobile-sort-close-btn" onClick={() => setIsSortOpen(false)}>
-                          <CloseIcon />
-                        </button>
-                        <div className="mobile-sort-body">
-                          {sortOptions.map(option => (
-                            <div 
-                              key={option.value}
-                              className={`sort-item mobile-capsule ${sortOrder === option.value ? 'is-selected' : ''}`}
-                              onClick={() => {
-                                setSortOrder(option.value);
-                                setIsSortOpen(false);
-                              }}
-                            >
-                              <span className="sort-item-text">{option.label}</span>
-                              {sortOrder === option.value && (
-                                <div className="corner-check-wrapper">
-                                  <CheckIcon className="corner-check-icon" />
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                <button 
-                  className="filter-mobile-capsule"
-                  onClick={() => setIsFiltersOpen(true)}
-                >
-                  <FilterListIcon className="capsule-icon" />
-                  <span>Фільтри</span>
-                  {activeFiltersCount > 0 && (
-                    <span className="filter-counter">{activeFiltersCount}</span>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Активні фільтри (chips) — тепер одразу під пошуком */}
-            {activeSidebarFilters && (
-              <div className="active-filters-container">
-                {(activeSidebarFilters.minPrice > 0 ||
-                  (activeSidebarFilters.maxPrice < Infinity &&
-                    activeSidebarFilters.maxPrice)) && (
-                  <Chip
-                    label={`Ціна: ${activeSidebarFilters.minPrice?.toLocaleString() || 0} – ${activeSidebarFilters.maxPrice !== Infinity ? activeSidebarFilters.maxPrice?.toLocaleString() : "∞"} ₴`}
-                    onDelete={() => handleRemoveFilter("price")}
-                    className="filter-chip"
-                  />
-                )}
-                {activeSidebarFilters.brands?.map((brand) => (
-                  <Chip
-                    key={`brand-${brand}`}
-                    label={brand}
-                    onDelete={() => handleRemoveFilter("brand", brand)}
-                    className="filter-chip"
-                  />
-                ))}
-                {activeSidebarFilters.memory?.map((mem) => (
-                  <Chip
-                    key={`mem-${mem}`}
-                    label={mem}
-                    onDelete={() => handleRemoveFilter("memory", mem)}
-                    className="filter-chip"
-                  />
-                ))}
-                {(activeSidebarFilters.minPrice > 0 ||
-                  (activeSidebarFilters.maxPrice < Infinity &&
-                    activeSidebarFilters.maxPrice) ||
-                  activeSidebarFilters.brands?.length > 0 ||
-                  activeSidebarFilters.memory?.length > 0) && (
-                  <button
-                    className="chips-clear-btn"
-                    onClick={handleResetFilters}
-                  >
-                    Очистити все
-                  </button>
-                )}
-              </div>
-            )}
-
-          </div>
+          <CatalogToolbar
+            pageSearchQuery={pageSearchQuery}
+            setPageSearchQuery={setPageSearchQuery}
+            isSortOpen={isSortOpen}
+            setIsSortOpen={setIsSortOpen}
+            sortOptions={sortOptions}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            setIsFiltersOpen={setIsFiltersOpen}
+            activeFiltersCount={activeFiltersCount}
+            activeSidebarFilters={activeSidebarFilters}
+            handleRemoveFilter={handleRemoveFilter}
+            handleResetFilters={handleResetFilters}
+          />
 
           {filteredProducts.length > 0 ? (
             <>
@@ -671,21 +506,7 @@ const CatalogPage = () => {
               {isLoading ? (
                 <ProductList isLoading={true} />
               ) : (
-                <div className="catalog-empty-state" role="status">
-                  <div className="empty-icon-wrapper">
-                    <SearchOffIcon className="empty-icon" />
-                  </div>
-                  <h2>
-                    {error
-                      ? "Сервер тимчасово недоступний"
-                      : "Нічого не знайдено"}
-                  </h2>
-                  <p>
-                    {error
-                      ? "Перевірте підключення до інтернету та спробуйте пізніше."
-                      : "На жаль, за вашим запитом нічого не знайдено. Спробуйте скинути фільтри."}
-                  </p>
-                </div>
+                <CatalogEmptyState error={error} />
               )}
             </>
           )}
