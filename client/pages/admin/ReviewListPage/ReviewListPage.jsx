@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Avatar, CircularProgress, Tooltip } from '@mui/material';
 import { Check as CheckIcon, Close as CloseIcon, Star as StarIcon } from '@mui/icons-material';
 import { toast } from 'sonner';
@@ -25,11 +26,12 @@ const ReviewListPage = () => {
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
+  const navigate = useNavigate();
 
   const fetchReviews = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
       if (!token) {
         toast.error('Токен відсутній. Увійдіть в систему.');
         return;
@@ -40,6 +42,18 @@ const ReviewListPage = () => {
       }
     } catch (error) {
       toast.error(error.message || 'Помилка завантаження відгуків');
+      const isTokenError = error.message && (
+        error.message.includes('токен') || 
+        error.message.includes('Токен') || 
+        error.message.includes('token') || 
+        error.message.includes('Token') ||
+        error.message.includes('auth') ||
+        error.message.includes('Auth')
+      );
+      if (isTokenError) {
+        localStorage.removeItem('adminToken');
+        navigate('/admin/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +66,7 @@ const ReviewListPage = () => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       setIsUpdating(id);
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
       const data = await updateReviewStatus(id, newStatus, token);
       if (data.success) {
         toast.success(data.message || 'Статус відгуку оновлено');
@@ -61,6 +75,18 @@ const ReviewListPage = () => {
       }
     } catch (error) {
       toast.error(error.message || 'Помилка оновлення статусу');
+      const isTokenError = error.message && (
+        error.message.includes('токен') || 
+        error.message.includes('Токен') || 
+        error.message.includes('token') || 
+        error.message.includes('Token') ||
+        error.message.includes('auth') ||
+        error.message.includes('Auth')
+      );
+      if (isTokenError) {
+        localStorage.removeItem('adminToken');
+        navigate('/admin/login');
+      }
     } finally {
       setIsUpdating(null);
     }

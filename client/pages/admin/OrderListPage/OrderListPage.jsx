@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, CircularProgress, Select, MenuItem, FormControl } from '@mui/material';
 import { toast } from 'sonner';
 import { getAdminOrders, updateOrderStatus } from '../../../services/orderService';
@@ -30,11 +31,12 @@ const OrderListPage = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
+  const navigate = useNavigate();
 
   const fetchOrders = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
       if (!token) {
         toast.error('Токен відсутній. Увійдіть в систему.');
         return;
@@ -45,6 +47,18 @@ const OrderListPage = () => {
       }
     } catch (error) {
       toast.error(error.message || 'Помилка завантаження замовлень');
+      const isTokenError = error.message && (
+        error.message.includes('токен') || 
+        error.message.includes('Токен') || 
+        error.message.includes('token') || 
+        error.message.includes('Token') ||
+        error.message.includes('auth') ||
+        error.message.includes('Auth')
+      );
+      if (isTokenError) {
+        localStorage.removeItem('adminToken');
+        navigate('/admin/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +71,7 @@ const OrderListPage = () => {
   const handleStatusChange = async (id, newStatus) => {
     try {
       setIsUpdating(id);
-      const token = localStorage.getItem('adminToken');
+      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
       const data = await updateOrderStatus(id, newStatus, token);
       if (data.success) {
         toast.success(data.message || 'Статус замовлення оновлено');
@@ -65,6 +79,18 @@ const OrderListPage = () => {
       }
     } catch (error) {
       toast.error(error.message || 'Помилка оновлення статусу');
+      const isTokenError = error.message && (
+        error.message.includes('токен') || 
+        error.message.includes('Токен') || 
+        error.message.includes('token') || 
+        error.message.includes('Token') ||
+        error.message.includes('auth') ||
+        error.message.includes('Auth')
+      );
+      if (isTokenError) {
+        localStorage.removeItem('adminToken');
+        navigate('/admin/login');
+      }
     } finally {
       setIsUpdating(null);
     }
