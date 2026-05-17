@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Avatar, CircularProgress, Tooltip } from '@mui/material';
-import { Check as CheckIcon, Close as CloseIcon, Star as StarIcon, Undo as UndoIcon, VisibilityOff as VisibilityOffIcon } from '@mui/icons-material';
+import { Check as CheckIcon, Close as CloseIcon, Star as StarIcon, Undo as UndoIcon, HighlightOff as HighlightOffIcon } from '@mui/icons-material';
 import { toast } from 'sonner';
 import { getAdminReviews, updateReviewStatus } from '../../../services/reviewService';
 
@@ -247,9 +247,9 @@ const ReviewListPage = () => {
                           </>
                         )}
 
-                        {/* Дії для статусу approved (Опубліковані): Приховати / Відхилити */}
+                        {/* Дії для статусу approved (Опубліковані): Зняти з публікації */}
                         {review.status === 'approved' && (
-                          <Tooltip title="Приховати відгук">
+                          <Tooltip title="Зняти з публікації">
                             <span>
                               <IconButton 
                                 color="error" 
@@ -257,7 +257,7 @@ const ReviewListPage = () => {
                                 disabled={isUpdating === review._id}
                                 size="small"
                               >
-                                <VisibilityOffIcon />
+                                <HighlightOffIcon />
                               </IconButton>
                             </span>
                           </Tooltip>
