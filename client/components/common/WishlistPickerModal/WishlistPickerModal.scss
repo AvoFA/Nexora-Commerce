@@ -1,0 +1,280 @@
+@import "../../../styles/variables";
+
+.wishlist-picker-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 10, 20, 0.72);
+}
+
+.wishlist-picker-modal {
+  position: relative;
+  width: min(430px, 100%);
+  padding: 28px 30px 30px;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  background: $glass-gradient, $card-bg;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+
+  h3 {
+    margin: 0 0 20px;
+    color: $text-color;
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+}
+
+.wishlist-picker-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba($text-secondary, 0.72);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+  }
+}
+
+.wishlist-picker-loading {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+}
+
+.wishlist-picker-options {
+  display: grid;
+  gap: 8px;
+}
+
+.wishlist-picker-option {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  min-height: 38px;
+  padding: 5px 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .wishlist-picker-radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba($text-secondary, 0.55);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    flex-shrink: 0;
+    transition: border-color 0.2s ease, background 0.2s ease;
+
+    &::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: $primary-color;
+      transform: scale(0);
+      transition: transform 0.2s ease;
+    }
+  }
+
+  .wishlist-picker-name {
+    color: $text-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+  }
+
+  small {
+    color: rgba($text-secondary, 0.62);
+    font-size: 0.78rem;
+  }
+
+  &:hover {
+    background: transparent;
+    border-color: transparent;
+
+    .wishlist-picker-radio {
+      border-color: rgba($primary-color, 0.7);
+    }
+  }
+
+  &.selected {
+    background: transparent;
+    border-color: transparent;
+
+    .wishlist-picker-radio {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.1);
+
+      &::after {
+        transform: scale(1);
+      }
+    }
+
+    .wishlist-picker-name {
+      color: $primary-color;
+    }
+
+    small {
+      color: rgba($text-secondary, 0.62);
+    }
+  }
+}
+
+.wishlist-picker-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 4px;
+  padding: 8px 0;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba($text-secondary, 0.86);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  .MuiSvgIcon-root {
+    color: currentColor;
+    font-size: 22px;
+  }
+
+  &:hover,
+  &.active {
+    background: transparent;
+    border-color: transparent;
+    color: $primary-color;
+  }
+}
+
+.wishlist-picker-input {
+  width: 100%;
+  margin: 4px 0 2px;
+  padding: 13px 14px;
+  border: 1px solid rgba($primary-color, 0.26);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  color: $text-color;
+  font: inherit;
+  outline: none;
+
+  &:focus {
+    border-color: rgba($primary-color, 0.65);
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+
+  &.error {
+    border-color: rgba($danger-color, 0.85);
+    box-shadow: 0 0 0 3px rgba($danger-color, 0.1);
+  }
+}
+
+.wishlist-picker-field {
+  width: 100%;
+}
+
+.wishlist-picker-error {
+  margin-top: 6px;
+  color: $danger-color;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.wishlist-picker-submit {
+  width: 100%;
+  margin-top: 20px;
+  min-height: 48px;
+  border: 0;
+  border-radius: 10px;
+  background: $primary-color;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    background: darken($primary-color, 4%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  &.inactive {
+    cursor: default;
+    opacity: 0.55;
+    filter: grayscale(0.25);
+
+    &:hover {
+      transform: none;
+      background: $primary-color;
+      box-shadow: none;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    filter: grayscale(0.35);
+  }
+}
+
+.wishlist-picker-remove {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+  border: 1px solid rgba($danger-color, 0.35);
+  border-radius: 10px;
+  background: transparent;
+  color: $danger-color;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background: rgba($danger-color, 0.1);
+    border-color: rgba($danger-color, 0.58);
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+}

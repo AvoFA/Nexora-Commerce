@@ -1,19 +1,19 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../../../hooks/useCart.js";
-import { useAuth } from "../../../context/AuthContext.jsx";
 import { toast } from "sonner";
 import {
-  ShoppingCartOutlined,
+  Balance,
   Favorite,
   FavoriteBorder,
-  Balance,
+  ShoppingCartOutlined,
   Star,
 } from "@mui/icons-material";
+import { useCart } from "../../../hooks/useCart.js";
+import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCompare } from "../../../hooks/useCompare.js";
+import WishlistPickerModal from "../../common/WishlistPickerModal/WishlistPickerModal.jsx";
 import "./ProductCard.scss";
 
-// Smart Stub: детермінований рейтинг на основі ID продукту
 const getStubRating = (id) => {
   if (!id) return { rating: 4.2, count: 28 };
   const hash = String(id).split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
@@ -22,51 +22,39 @@ const getStubRating = (id) => {
   return { rating: parseFloat(rating), count };
 };
 
-// Картка товару: відображає основну інфо та кнопки дій
-const ProductCard = memo(({ product, onFavoriteChange }) => {
+const ProductCard = memo(({ product, onWishlistChange }) => {
+  const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
-  const { isAuthenticated, isFavorite, addToFavorites, removeFromFavorites } =
-    useAuth();
+  const { isAuthenticated, isWishlisted } = useAuth();
 
   const productId = product._id || product.id;
   const imgSrc = product.image || product.imageUrl || null;
   const { rating, count } = getStubRating(productId);
 
-  // Швидке додавання в кошик
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dispatch({ type: "ADD_ITEM", payload: product });
+  const handleAddToCart = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dispatch({ type: "ADD_ITEM", payload: { ...product, id: productId } });
     toast.success(`${product.name} додано в кошик!`);
   };
 
-  // Улюблені
-  const handleToggleFavorite = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleOpenWishlist = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
 
     if (!isAuthenticated) {
-      toast.error("Увійдіть щоб додати в улюблені");
+      toast.error("Увійдіть, щоб додати товар до списку бажань");
       return;
     }
 
-    const favorite = isFavorite(productId);
-    if (favorite) {
-      await removeFromFavorites(productId);
-      toast.success("Видалено з улюблених");
-      if (onFavoriteChange) onFavoriteChange(productId, false);
-    } else {
-      await addToFavorites(productId);
-      toast.success("Додано в улюблені");
-      if (onFavoriteChange) onFavoriteChange(productId, true);
-    }
+    setIsWishlistModalOpen(true);
   };
 
-  // Порівняння
-  const handleToggleCompare = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleToggleCompare = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (isCompared(productId)) {
       removeFromCompare(productId);
       toast.success("Видалено з порівняння");
@@ -77,7 +65,6 @@ const ProductCard = memo(({ product, onFavoriteChange }) => {
 
   return (
     <div className="product-card-link">
-      {/* Зображення + кнопки-іконки */}
       <div className="product-card-image">
         <Link to={`/product/${productId}`} tabIndex={-1}>
           {imgSrc ? (
@@ -87,21 +74,19 @@ const ProductCard = memo(({ product, onFavoriteChange }) => {
           )}
         </Link>
 
-        {/* Улюблені */}
         <button
-          className={`action-btn favorite-button${isFavorite(productId) ? " active" : ""}`}
-          onClick={handleToggleFavorite}
-          title={isFavorite(productId) ? "Видалити з улюблених" : "Додати в улюблені"}
-          aria-pressed={isFavorite(productId)}
+          className={`action-btn wishlist-button${isWishlisted(productId) ? " active" : ""}`}
+          onClick={handleOpenWishlist}
+          title={isWishlisted(productId) ? "Додати в інший список" : "Додати до списку бажань"}
+          aria-pressed={isWishlisted(productId)}
         >
-          {isFavorite(productId) ? (
+          {isWishlisted(productId) ? (
             <Favorite sx={{ fontSize: "20px" }} />
           ) : (
             <FavoriteBorder sx={{ fontSize: "20px" }} />
           )}
         </button>
 
-        {/* Порівняння */}
         <button
           className={`action-btn compare-button${isCompared(productId) ? " active" : ""}`}
           onClick={handleToggleCompare}
@@ -112,7 +97,6 @@ const ProductCard = memo(({ product, onFavoriteChange }) => {
         </button>
       </div>
 
-      {/* Контент */}
       <div className="card-content">
         <Link to={`/product/${productId}`} className="card-name-link">
           <h3 className="card-name" title={product.name}>
@@ -120,18 +104,16 @@ const ProductCard = memo(({ product, onFavoriteChange }) => {
           </h3>
         </Link>
 
-        {/* Рейтинг (Smart Stub) */}
         <div className="card-rating">
           <Star className="rating-star" />
           <span className="rating-value">{rating}</span>
           <span className="rating-count">({count})</span>
         </div>
 
-        {/* Ціна + кнопка кошика */}
         <div className="card-footer">
           <div className="price-block">
             <span className="card-price">
-              {product.price.toLocaleString("uk-UA")} ₴
+              {Number(product.price || 0).toLocaleString("uk-UA")} ₴
             </span>
           </div>
 
@@ -147,6 +129,13 @@ const ProductCard = memo(({ product, onFavoriteChange }) => {
           </div>
         </div>
       </div>
+
+      <WishlistPickerModal
+        isOpen={isWishlistModalOpen}
+        onClose={() => setIsWishlistModalOpen(false)}
+        product={product}
+        onWishlistChange={(data) => onWishlistChange?.(productId, data)}
+      />
     </div>
   );
 });

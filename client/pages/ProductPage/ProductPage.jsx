@@ -29,6 +29,7 @@ import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
 import { useCompare } from "../../hooks/useCompare.js";
 import { getCategoryDisplay } from "../../utils/categories.js";
+import WishlistPickerModal from "../../components/common/WishlistPickerModal/WishlistPickerModal.jsx";
 import "./ProductPage.scss";
 
 const MOCK_REVIEWS = [
@@ -68,10 +69,9 @@ const ProductPage = () => {
   const {
     isAuthenticated,
     user,
-    isFavorite,
-    addToFavorites,
-    removeFromFavorites,
+    isWishlisted,
   } = useAuth();
+  const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
 
   const [reviews, setReviews] = useState(MOCK_REVIEWS);
   const [showForm, setShowForm] = useState(false);
@@ -189,17 +189,13 @@ const ProductPage = () => {
     toast.success(`${product.name} додано в кошик!`);
   };
 
-  const handleToggleFavorite = async () => {
-    if (!isAuthenticated) return toast.error("Увійдіть щоб додати в улюблені");
-
-    const productId = product._id || product.id;
-    if (isFavorite(productId)) {
-      await removeFromFavorites(productId);
-      toast.success("Видалено з улюблених");
-    } else {
-      await addToFavorites(productId);
-      toast.success("Додано в улюблені");
+  const handleOpenWishlist = () => {
+    if (!isAuthenticated) {
+      toast.error("Увійдіть, щоб додати товар до списку бажань");
+      return;
     }
+
+    setIsWishlistModalOpen(true);
   };
 
   const handleToggleCompare = () => {
@@ -290,15 +286,15 @@ const ProductPage = () => {
             <div className="product-actions-icons">
               {/* Сердечко улюблені */}
               <button
-                className={`product-favorite-button${isFavorite(product._id || product.id) ? " active" : ""}`}
-                onClick={handleToggleFavorite}
+                className={`product-wishlist-button${isWishlisted(product._id || product.id) ? " active" : ""}`}
+                onClick={handleOpenWishlist}
                 title={
-                  isFavorite(product._id || product.id)
-                    ? "Видалити з улюблених"
-                    : "Додати в улюблені"
+                  isWishlisted(product._id || product.id)
+                    ? "Додати в інший список"
+                    : "Додати до списку бажань"
                 }
               >
-                {isFavorite(product._id || product.id) ? (
+                {isWishlisted(product._id || product.id) ? (
                   <Favorite sx={{ fontSize: "28px" }} />
                 ) : (
                   <FavoriteBorder sx={{ fontSize: "28px" }} />
@@ -360,6 +356,12 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
+
+      <WishlistPickerModal
+        isOpen={isWishlistModalOpen}
+        onClose={() => setIsWishlistModalOpen(false)}
+        product={product}
+      />
 
       {/* НОВА СЕКЦІЯ: Детальна інформація (Опис, Характеристики та Відгуки) */}
       <div className="product-detailed-content">
