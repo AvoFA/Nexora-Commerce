@@ -24,6 +24,7 @@ import {
   getCategoryDisplay,
   getProductCategoryKey,
 } from "../../utils/categories.js";
+import { formatPrice } from "../../utils/formatPrice.js";
 import "./ComparePage.scss";
 
 const CARD_WIDTH = 235;
@@ -335,7 +336,7 @@ const ComparePage = () => {
       {
         label: "Ціна",
         values: activeCompareItems.map((product) =>
-          product.price != null ? `${product.price} ₴` : EMPTY_VALUE,
+          product.price != null ? formatPrice(product.price) : EMPTY_VALUE,
         ),
       },
       {
@@ -410,7 +411,7 @@ const ComparePage = () => {
             </div>
 
             <div className="cmp-product-card__footer">
-              <span className="cmp-product-card__price">{product.price} ₴</span>
+              <span className="cmp-product-card__price">{formatPrice(product.price)}</span>
               <button
                 className="cmp-product-card__cart"
                 onClick={() => handleAddToCart(product)}

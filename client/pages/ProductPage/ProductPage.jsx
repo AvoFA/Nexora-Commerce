@@ -29,6 +29,7 @@ import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
 import { useCompare } from "../../hooks/useCompare.js";
 import { getCategoryDisplay } from "../../utils/categories.js";
+import { formatPrice } from "../../utils/formatPrice.js";
 import WishlistPickerModal from "../../components/common/WishlistPickerModal/WishlistPickerModal.jsx";
 import "./ProductPage.scss";
 import { MOCK_REVIEWS } from "./productPage.constants.js";
@@ -258,7 +259,7 @@ const ProductPage = () => {
           </div>
           <div className="price-row">
             <div className="price">
-              {product.price.toLocaleString("uk-UA")} ₴
+              {formatPrice(product.price)}
             </div>
             <div className="product-actions-icons">
               {/* Сердечко улюблені */}

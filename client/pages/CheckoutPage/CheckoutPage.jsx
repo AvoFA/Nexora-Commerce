@@ -16,6 +16,7 @@ import {
   LocalShippingOutlined,
   ArrowBackIosNewOutlined,
 } from "@mui/icons-material";
+import { formatPrice } from "../../utils/formatPrice.js";
 import "./CheckoutPage.scss";
 
 const CheckoutPage = () => {
@@ -280,14 +281,14 @@ const CheckoutPage = () => {
                   <span>
                     {item.name} x {item.quantity}
                   </span>
-                  <strong>{item.price * item.quantity} ₴</strong>
+                  <strong>{formatPrice(item.price * item.quantity)}</strong>
                 </div>
               ))}
             </div>
 
             <div className="summary-total">
               <strong>Всього до сплати:</strong>
-              <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
+              <strong>{formatPrice(totalPrice)}</strong>
             </div>
 
             {/* --- Кнопка оформлення --- */}

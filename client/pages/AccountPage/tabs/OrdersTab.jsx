@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { formatPrice } from '../../../utils/formatPrice.js';
 import {
   ExpandMore,
   Inventory2Outlined,
@@ -43,7 +44,7 @@ const formatShortDate = (date) => {
   });
 };
 
-const formatPrice = (value) => `${Number(value || 0).toLocaleString("uk-UA")} ₴`;
+
 
 const getOrderNumber = (order) => {
   const raw = order?._id || "";

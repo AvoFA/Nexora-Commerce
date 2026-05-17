@@ -12,6 +12,7 @@ import { useCart } from "../../../hooks/useCart.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCompare } from "../../../hooks/useCompare.js";
 import WishlistPickerModal from "../../common/WishlistPickerModal/WishlistPickerModal.jsx";
+import { formatPrice } from "../../../utils/formatPrice.js";
 import "./ProductCard.scss";
 
 const getStubRating = (id) => {
@@ -113,7 +114,7 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
         <div className="card-footer">
           <div className="price-block">
             <span className="card-price">
-              {Number(product.price || 0).toLocaleString("uk-UA")} ₴
+              {formatPrice(product.price)}
             </span>
           </div>
 

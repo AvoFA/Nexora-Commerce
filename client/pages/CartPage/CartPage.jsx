@@ -9,6 +9,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import { useState } from "react";
+import { formatPrice } from "../../utils/formatPrice.js";
 import "./CartPage.scss";
 
 const CartPage = () => {
@@ -109,7 +110,7 @@ const CartPage = () => {
                 <Link to={`/product/${item.id}`} className="cart-item-title">
                   {item.name}
                 </Link>
-                <p className="cart-item-price">{item.price} ₴</p>
+                <p className="cart-item-price">{formatPrice(item.price)}</p>
               </div>
 
               <div className="cart-item-controls">
@@ -147,7 +148,7 @@ const CartPage = () => {
           <div className="card-content">
             <div className="summary-row">
               <span>Вартість товарів:</span>
-              <span>{totalPrice.toLocaleString("uk-UA")} ₴</span>
+              <span>{formatPrice(totalPrice)}</span>
             </div>
             <div className="summary-row">
               <span>Доставка:</span>
@@ -156,7 +157,7 @@ const CartPage = () => {
 
             <div className="summary-total">
               <strong>Всього до сплати:</strong>
-              <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
+              <strong>{formatPrice(totalPrice)}</strong>
             </div>
 
             <Link to="/checkout" className="btn-checkout">

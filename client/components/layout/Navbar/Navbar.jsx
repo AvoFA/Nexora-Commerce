@@ -18,6 +18,7 @@ import { useCart } from "../../../hooks/useCart";
 import { useAuth } from "../../../context/AuthContext";
 import { useCompare } from "../../../hooks/useCompare";
 import MegaMenu from "./MegaMenu.jsx";
+import { formatPrice } from "../../../utils/formatPrice.js";
 import "./Navbar.scss";
 
 const accountLinks = [
@@ -206,7 +207,7 @@ const Navbar = ({ openAuth }) => {
                 {totalItems > 0 ? (
                   <span className="cart-cta-text">
                     <small>Сума:</small>
-                    <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
+                    <strong>{formatPrice(totalPrice)}</strong>
                   </span>
                 ) : (
                   <span>Кошик</span>

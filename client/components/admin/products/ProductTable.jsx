@@ -4,6 +4,7 @@ import {
   Edit,
   Delete
 } from '@mui/icons-material';
+import { formatPrice } from '../../../utils/formatPrice.js';
 import '../../../styles/_common.scss';
 import '../../../styles/_mui-theme.scss';
 import '../../../styles/_admin.scss';
@@ -46,7 +47,7 @@ const ProductTable = ({
             </div>
           </div>
           <div className="product-card-details">
-            <div className="mobile-price">{product.price.toLocaleString('uk-UA')} ₴</div>
+            <div className="mobile-price">{formatPrice(product.price)}</div>
             <div className="mobile-stock">
               <span className="stock-badge in-stock">В наявності: {product.stock} шт.</span>
             </div>
@@ -149,7 +150,7 @@ const ProductTable = ({
                       {product.category}
                     </span>
                   </td>
-                  <td>{product.price.toLocaleString('uk-UA')} ₴</td>
+                  <td>{formatPrice(product.price)}</td>
                   <td>
                     <span className="stock-badge in-stock">
                       В наявності: {product.stock} шт.

@@ -17,6 +17,7 @@ import {
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCompare } from "../../../hooks/useCompare.js";
 import { useCart } from "../../../hooks/useCart.js";
+import { formatPrice } from "../../../utils/formatPrice.js";
 import {
   clearWishlistList,
   createWishlistList,
@@ -310,7 +311,7 @@ const WishlistTab = () => {
 
             <div className="wishlist-board-right">
               <div className="wishlist-current-total">
-                <strong>{totalPrice.toLocaleString("uk-UA")} ₴</strong>
+                <strong>{formatPrice(totalPrice)}</strong>
                 <span>у поточному списку</span>
               </div>
               <div className="wishlist-more-wrap">
@@ -387,7 +388,7 @@ const WishlistTab = () => {
                         </div>
                       </div>
                       <div className="wishlist-product-price-row">
-                        <strong>{price.toLocaleString("uk-UA")} ₴</strong>
+                        <strong>{formatPrice(price)}</strong>
                         <button
                           type="button"
                           className="wishlist-cart-btn"
