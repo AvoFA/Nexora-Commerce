@@ -1,6 +1,6 @@
 // ─── Orders Tab: Static Constants ───────────────────────────────────────────
 // Feature flag — will be replaced by real API when backend is ready.
-export const SHOW_DEMO_ORDER_LAYOUT = true;
+export const SHOW_DEMO_ORDER_LAYOUT = false;
 
 // Ordered pipeline steps (canonical order matters for timeline rendering).
 export const ORDER_STEPS = [

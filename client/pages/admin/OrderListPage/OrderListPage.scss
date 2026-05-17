@@ -1,0 +1,54 @@
+.order-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .admin-table-container {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background-color: var(--card-bg, #1a2235);
+    overflow: hidden;
+    
+    .MuiTableHead-root {
+      background-color: rgba(0, 0, 0, 0.2);
+      
+      .MuiTableCell-head {
+        font-weight: 600;
+        color: var(--text-secondary, #94a3b8);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+    }
+    
+    .MuiTableBody-root {
+      .MuiTableRow-root {
+        transition: background-color 0.2s ease;
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.02);
+        }
+        
+        .MuiTableCell-body {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          color: var(--text-primary, #f8fafc);
+        }
+      }
+    }
+
+    .status-select {
+      color: var(--text-primary, #f8fafc);
+      .MuiSelect-select {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+      .MuiOutlinedInput-notchedOutline {
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+      &:hover .MuiOutlinedInput-notchedOutline {
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+      &.Mui-focused .MuiOutlinedInput-notchedOutline {
+        border-color: var(--primary-color, #3a86ff);
+      }
+    }
+  }
+}
