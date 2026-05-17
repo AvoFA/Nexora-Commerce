@@ -17,17 +17,6 @@
     overflow: hidden;
   }
 
-  &.clear-favorites-modal {
-    .confirm-modal-icon {
-      color: hsl(0, 70%, 50%);
-    }
-    .confirm-modal-warning {
-      color: hsl(0, 70%, 40%);
-      background: rgba(hsl(0, 70%, 50%), 0.1);
-      border-left: 3px solid hsl(0, 70%, 50%);
-    }
-  }
-
   &.clear-cart-modal {
     .confirm-modal-icon {
       color: hsl(0, 70%, 50%);

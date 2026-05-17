@@ -628,7 +628,7 @@ $mobile-card-width: clamp(150px, 40vw, 168px);
     color: $text-color;
     text-decoration: none;
     line-height: 1.4;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.25rem;
     flex-grow: 1;
     transition: color 0.2s ease;
 
@@ -1923,4 +1923,174 @@ $mobile-card-width: clamp(150px, 40vw, 168px);
     visibility: visible;
     pointer-events: inherit;
   }
+}
+
+.cmp-compact-products-layer {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s ease,
+    visibility 0s linear 0.22s;
+
+  .cmp-header-sync-scroll {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: auto;
+    opacity: 1;
+    visibility: hidden;
+    pointer-events: none;
+    transform: none;
+    transition: none;
+  }
+}
+
+.cmp-compact-products-layer--visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+  transition:
+    opacity 0.18s ease,
+    transform 0.22s ease,
+    visibility 0s;
+
+  .cmp-header-sync-scroll {
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .cmp-compact-products-layer {
+    .cmp-tbl__control--compact {
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+// Align compare arrows to the product photo area, not to the full card height.
+.cmp-product-card__img-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cmp-product-card__img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.cmp-product-card__rating {
+  min-height: 11px;
+  gap: 0.02rem;
+  margin-bottom: 0.34rem;
+  font-size: 11px;
+}
+
+.cmp-product-card__rating .cmp-product-card__rating-star.MuiSvgIcon-root {
+  width: 1em;
+  height: 1em;
+  font-size: 1em;
+}
+
+.cmp-product-card__rating-count {
+  margin-left: 0.12rem;
+  font-size: 0.64rem;
+  color: rgba($text-secondary, 0.62);
+}
+
+@media (min-width: 1024px) {
+  .cmp-tbl__control--normal {
+    top: calc(var(--cmp-normal-products-offset, 0px) + 1.15rem + 66px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .cmp-product-card__rating {
+    min-height: 10px;
+    margin-bottom: 0.32rem;
+    font-size: 10px;
+  }
+
+  .cmp-product-card__rating .cmp-product-card__rating-star.MuiSvgIcon-root {
+    width: 1em;
+    height: 1em;
+    font-size: 1em;
+  }
+
+  .cmp-product-card__rating-count {
+    font-size: 0.6rem;
+  }
+}
+
+// Compare table contrast: calm dark rows with clearer spec headers.
+.cmp-tbl__attrs {
+  background: $card-bg;
+}
+
+.cmp-spec-block {
+  background: $card-bg;
+
+  &:nth-child(even) {
+    .cmp-attrs__values {
+      background: rgba($surface-color, 0.28);
+    }
+  }
+
+  &:nth-child(odd) {
+    .cmp-attrs__values {
+      background: $card-bg;
+    }
+  }
+
+  &--diff {
+    .cmp-attrs__header {
+      background: rgba($primary-color, 0.08);
+      border-color: rgba($primary-color, 0.14);
+    }
+
+    .cmp-attrs__values {
+      background: rgba($primary-color, 0.035);
+    }
+
+    .cmp-attrs__name,
+    .cmp-attr-val--diff {
+      color: rgba($text-color, 0.92);
+    }
+  }
+}
+
+.cmp-attrs__header {
+  background: rgba($surface-color, 0.9);
+  border-top-color: rgba($border-color, 0.9);
+  border-bottom-color: rgba($border-color, 0.9);
+}
+
+.cmp-attrs__name {
+  color: rgba($text-color, 0.92);
+}
+
+.cmp-attrs__values {
+  border-bottom-color: rgba($border-color, 0.76);
+}
+
+.cmp-attr-val {
+  color: rgba($text-color, 0.82);
+  border-right-color: rgba($border-color, 0.7);
+}
+
+.cmp-attr-val--empty {
+  background: rgba($bg-color, 0.35);
 }

@@ -396,6 +396,7 @@ const ComparePage = () => {
               {Array.from({ length: 5 }).map((_, index) => (
                 <Star
                   key={`${id}-rating-${index}`}
+                  fontSize="inherit"
                   className={`cmp-product-card__rating-star${
                     index < Math.round(rating)
                       ? " cmp-product-card__rating-star--filled"
@@ -596,8 +597,7 @@ const ComparePage = () => {
                   </div>
 
                   <div
-                    className={`cmp-header-sync-scroll${isStickyCompact ? " cmp-header-sync-scroll--visible" : ""}`}
-                    ref={headerRef}
+                    className={`cmp-compact-products-layer${isStickyCompact ? " cmp-compact-products-layer--visible" : ""}`}
                   >
                     <button
                       className={`cmp-tbl__control cmp-tbl__control--compact cmp-tbl__control--left${
@@ -608,12 +608,17 @@ const ComparePage = () => {
                     >
                       <ChevronLeft sx={{ fontSize: 22 }} />
                     </button>
-                    <div className="cmp-header-sync-inner">
-                      <div
-                        className={`cmp-products-shell cmp-products-shell--compact${isStickyCompact ? " cmp-products-shell--compact-visible" : ""}`}
-                      >
-                        <div className="cmp-tbl__products">
-                          {renderProductCards(true)}
+                    <div
+                      className={`cmp-header-sync-scroll${isStickyCompact ? " cmp-header-sync-scroll--visible" : ""}`}
+                      ref={headerRef}
+                    >
+                      <div className="cmp-header-sync-inner">
+                        <div
+                          className={`cmp-products-shell cmp-products-shell--compact${isStickyCompact ? " cmp-products-shell--compact-visible" : ""}`}
+                        >
+                          <div className="cmp-tbl__products">
+                            {renderProductCards(true)}
+                          </div>
                         </div>
                       </div>
                     </div>

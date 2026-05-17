@@ -222,7 +222,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                 <form onSubmit={handleRegister}>
                   {/* Особисті дані */}
                   <div className="form-group">
-                    <label>Повне ім'я</label>
+                    <label>Ім'я</label>
                     <PersonOutlined className="form-icon" />
                     <input
                       type="text"
