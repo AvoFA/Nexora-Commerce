@@ -198,10 +198,17 @@ const ReviewListPage = () => {
                 filteredReviews.map((review) => (
                   <TableRow key={review._id}>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="medium">{review.name}</Typography>
-                      {review.user?.email && (
-                        <Typography variant="caption" color="text.secondary">{review.user.email}</Typography>
-                      )}
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                        <Typography variant="body2" fontWeight="medium">{review.name}</Typography>
+                        {review.user?.email && (
+                          <Typography variant="caption" color="text.secondary">{review.user.email}</Typography>
+                        )}
+                        {review.createdAt && (
+                          <Typography variant="caption" sx={{ color: 'var(--text-secondary, #94a3b8)' }}>
+                            {new Date(review.createdAt).toLocaleDateString('uk-UA', { year: 'numeric', month: 'long', day: 'numeric' })}
+                          </Typography>
+                        )}
+                      </Box>
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
