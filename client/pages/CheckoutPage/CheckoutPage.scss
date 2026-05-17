@@ -80,8 +80,28 @@
     .form-input {
       @include shared-input-style;
       padding-left: 44px; // Відступ для іконки, як в AuthModal
-    }
 
+      &.is-empty {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.08);
+        color: rgba($text-color, 0.84);
+
+        &::placeholder {
+          color: rgba($text-secondary, 0.48);
+        }
+      }
+
+      &.is-filled {
+        background: rgba($primary-color, 0.055);
+        border-color: rgba($primary-color, 0.22);
+        color: $text-color;
+      }
+
+      &:focus {
+        background: rgba($primary-color, 0.08);
+        border-color: rgba($primary-color, 0.65);
+      }
+    }
 
   }
 }

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useCart } from "../../hooks/useCart.js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { createOrder } from "../../services/orderService.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import {
   PersonOutlined,
   EmailOutlined,
@@ -20,6 +22,9 @@ const CheckoutPage = () => {
   const { state, dispatch } = useCart();
   const { items } = state;
   const navigate = useNavigate();
+  const { isAuthenticated, user, updateUserData } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOrderCompleted, setIsOrderCompleted] = useState(false);
 
   /* === СТАН ФОРМИ === */
   const [name, setName] = useState("");
@@ -32,47 +37,86 @@ const CheckoutPage = () => {
   /* === СПОСІБ ОПЛАТИ === */
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhone(user.phone || "");
+    }
+  }, [user]);
+
   const totalPrice = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
   );
 
+  const getInputClassName = (value) => (
+    `form-input ${String(value || "").trim() ? "is-filled" : "is-empty"}`
+  );
+
   /* === ПЕРЕВІРКА, ЧИ КОШИК ПУСТИЙ === */
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !isOrderCompleted) {
       navigate("/cart");
     }
-  }, [items, navigate]);
+  }, [items, navigate, isOrderCompleted]);
 
   /* === ВІДПРАВКА ЗАМОВЛЕННЯ === */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isAuthenticated) {
+      toast.error("Увійдіть або зареєструйтесь, щоб оформити замовлення");
+      return;
+    }
 
     if (!name || !email || !phone || !address || !city || !zip) {
       toast.error("Будь ласка, заповніть всі поля");
       return;
     }
 
-    console.log("Замовлення відправлено:", {
-      name,
-      email,
-      phone,
-      address,
-      city,
-      zip,
-      items,
-      totalPrice,
-      paymentMethod,
-    });
+    try {
+      setIsSubmitting(true);
+      const token = localStorage.getItem("token");
 
-    dispatch({ type: "CLEAR_CART" });
+      await createOrder({
+        items: items.map((item) => ({
+          product: item._id || item.id,
+          id: item._id || item.id,
+          name: item.name,
+          price: item.price,
+          image: item.image || item.imageUrl || "",
+          quantity: item.quantity,
+        })),
+        customer: {
+          name,
+          email,
+          phone,
+        },
+        delivery: {
+          address,
+          city,
+          zip,
+        },
+        totalPrice,
+        paymentMethod,
+      }, token);
 
-    toast.success("Дякуємо за замовлення!", {
-      description: "Ми скоро зв'яжемося з вами для підтвердження.",
-      duration: 3000,
-    });
+      setIsOrderCompleted(true);
+      updateUserData?.({ phone });
+      dispatch({ type: "CLEAR_CART" });
 
-    setTimeout(() => navigate("/"), 3000);
+      toast.success("Дякуємо за замовлення!", {
+        description: "Замовлення збережено у вашому кабінеті.",
+        duration: 3000,
+      });
+
+      navigate("/account/orders");
+    } catch (error) {
+      toast.error(error.message || "Не вдалося оформити замовлення");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   /* === ЯКЩО КОШИК ПУСТИЙ === */
@@ -106,7 +150,7 @@ const CheckoutPage = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Іван Петренко"
-                  className="form-input"
+                  className={getInputClassName(name)}
                   required
                 />
               </div>
@@ -120,7 +164,7 @@ const CheckoutPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="example@gmail.com"
-                  className="form-input"
+                  className={getInputClassName(email)}
                   required
                 />
               </div>
@@ -134,7 +178,7 @@ const CheckoutPage = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+380 99 123 4567"
-                  className="form-input"
+                  className={getInputClassName(phone)}
                   required
                 />
               </div>
@@ -154,7 +198,7 @@ const CheckoutPage = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Вул. Хрещатик, 1"
-                  className="form-input"
+                  className={getInputClassName(address)}
                   required
                 />
               </div>
@@ -168,7 +212,7 @@ const CheckoutPage = () => {
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Київ"
-                  className="form-input"
+                  className={getInputClassName(city)}
                   required
                 />
               </div>
@@ -182,7 +226,7 @@ const CheckoutPage = () => {
                   value={zip}
                   onChange={(e) => setZip(e.target.value)}
                   placeholder="01001"
-                  className="form-input"
+                  className={getInputClassName(zip)}
                   required
                 />
               </div>
@@ -232,7 +276,7 @@ const CheckoutPage = () => {
           <div className="card-content">
             <div className="summary-items">
               {items.map((item) => (
-                <div key={item.id} className="summary-item">
+                <div key={item._id || item.id} className="summary-item">
                   <span>
                     {item.name} x {item.quantity}
                   </span>
@@ -247,8 +291,8 @@ const CheckoutPage = () => {
             </div>
 
             {/* --- Кнопка оформлення --- */}
-            <button type="submit" className="btn-checkout-submit">
-              Підтвердити замовлення
+            <button type="submit" className="btn-checkout-submit" disabled={isSubmitting}>
+              {isSubmitting ? "Створюємо замовлення..." : "Підтвердити замовлення"}
             </button>
 
             {/* --- НОВА КНОПКА: Назад до кошика --- */}
