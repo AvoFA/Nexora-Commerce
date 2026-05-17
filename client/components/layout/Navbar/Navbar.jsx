@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "sonner";
 import GridViewIcon from "@mui/icons-material/GridView";
 import MenuIcon from "@mui/icons-material/Menu";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -16,6 +15,7 @@ import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import LogoutConfirmModal from "../../common/LogoutConfirmModal/LogoutConfirmModal";
 import { useCart } from "../../../hooks/useCart";
 import { useAuth } from "../../../context/AuthContext";
+import { useLogoutFlow } from "../../../hooks/useLogoutFlow.js";
 import { useCompare } from "../../../hooks/useCompare";
 import MegaMenu from "./MegaMenu.jsx";
 import { formatPrice } from "../../../utils/formatPrice.js";
@@ -52,17 +52,28 @@ const accountLinks = [
 const Navbar = ({ openAuth }) => {
   const { state } = useCart();
   const { compareCount } = useCompare();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   const closeMegaMenu = () => {
     setIsMegaMenuOpen(false);
   };
+
+  const {
+    isLogoutModalOpen,
+    openLogoutModal: handleLogoutClick,
+    closeLogoutModal: handleCancelLogout,
+    confirmLogout: handleConfirmLogout,
+  } = useLogoutFlow({
+    onSuccess: () => {
+      setIsMenuOpen(false);
+      closeMegaMenu();
+    },
+  });
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -74,22 +85,6 @@ const Navbar = ({ openAuth }) => {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
-
-  const handleLogoutClick = () => {
-    setIsLogoutModalOpen(true);
-  };
-
-  const handleConfirmLogout = () => {
-    logout();
-    setIsLogoutModalOpen(false);
-    setIsMenuOpen(false);
-    closeMegaMenu();
-    toast.success("Ви вийшли з акаунта");
-  };
-
-  const handleCancelLogout = () => {
-    setIsLogoutModalOpen(false);
-  };
 
   return (
     <header className="navbar">

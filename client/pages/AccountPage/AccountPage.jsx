@@ -1,6 +1,4 @@
-import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import {
   EditOutlined,
   FavoriteBorder,
@@ -11,6 +9,7 @@ import {
   RateReviewOutlined,
 } from "@mui/icons-material";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useLogoutFlow } from "../../hooks/useLogoutFlow.js";
 import LogoutConfirmModal from "../../components/common/LogoutConfirmModal/LogoutConfirmModal.jsx";
 import "./AccountPage.scss";
 
@@ -48,16 +47,14 @@ const getInitial = (user) => {
 };
 
 const AccountPage = () => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-
-  const handleConfirmLogout = () => {
-    logout();
-    setIsLogoutModalOpen(false);
-    toast.success("Ви вийшли з акаунта");
-    navigate("/home");
-  };
+  const { user } = useAuth();
+  
+  const {
+    isLogoutModalOpen,
+    openLogoutModal,
+    closeLogoutModal,
+    confirmLogout: handleConfirmLogout,
+  } = useLogoutFlow({ redirectPath: "/home" });
 
   return (
     <>
@@ -97,7 +94,7 @@ const AccountPage = () => {
               <button
                 type="button"
                 className="account-nav-link account-nav-logout"
-                onClick={() => setIsLogoutModalOpen(true)}
+                onClick={openLogoutModal}
               >
                 <Logout />
                 <span>Вийти</span>
@@ -113,7 +110,7 @@ const AccountPage = () => {
 
       <LogoutConfirmModal
         isOpen={isLogoutModalOpen}
-        onClose={() => setIsLogoutModalOpen(false)}
+        onClose={closeLogoutModal}
         onConfirm={handleConfirmLogout}
       />
     </>
