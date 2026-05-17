@@ -24,6 +24,7 @@ import AccountPage from "./pages/AccountPage/AccountPage.jsx";
 import OrdersTab from "./pages/AccountPage/tabs/OrdersTab.jsx";
 import WishlistTab from "./pages/AccountPage/tabs/WishlistTab.jsx";
 import ProfileTab from "./pages/AccountPage/tabs/ProfileTab.jsx";
+import ReviewsTab from "./pages/AccountPage/tabs/ReviewsTab.jsx";
 import AccountPlaceholderTab from "./pages/AccountPage/tabs/AccountPlaceholderTab.jsx";
 
 // сторінки адмінки
@@ -136,12 +137,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "reviews",
-            element: (
-              <AccountPlaceholderTab
-                title="Мої відгуки"
-                description="Тут буде список ваших відгуків та їхній статус."
-              />
-            ),
+            element: <ReviewsTab />,
           },
           {
             path: "profile",

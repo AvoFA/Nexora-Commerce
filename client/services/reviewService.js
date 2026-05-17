@@ -55,6 +55,19 @@ export const getUserProductReview = async (productId, token) => {
   return data.review;
 };
 
+export const getUserReviews = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/reviews/me`, {
+    headers: getAuthHeaders(token)
+  });
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося завантажити ваші відгуки');
+  }
+
+  return data.reviews;
+};
+
 export const updateUserReview = async (id, reviewData, token) => {
   const response = await fetch(`${API_BASE_URL}/reviews/${id}/edit`, {
     method: 'PATCH',

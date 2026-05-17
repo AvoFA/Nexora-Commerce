@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { getProductReviews, createReview } from "../../services/reviewService.js";
+import { getProductReviews, createReview, getUserProductReview, updateUserReview } from "../../services/reviewService.js";
 
 export const useReviews = (productId, user, isAuthenticated) => {
   const [reviews, setReviews] = useState([]);
