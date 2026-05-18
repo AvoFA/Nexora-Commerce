@@ -14,7 +14,6 @@ import WarehouseSelectModal from "../../components/checkout/WarehouseSelectModal
 import PaymentSection from "../../components/checkout/PaymentSection/PaymentSection.jsx";
 import RecipientSection from "../../components/checkout/RecipientSection/RecipientSection.jsx";
 import {
-  HomeOutlined,
   ChevronLeft,
   ChevronRight,
   CalendarMonthOutlined,
@@ -642,6 +641,16 @@ const CheckoutPage = () => {
     );
   }
 
+  const isCourierDelivery =
+    deliveryMethod === DELIVERY_METHODS.COURIER ||
+    deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA;
+  const confirmationDeliveryAddress = isCourierDelivery
+    ? address
+    : deliveryMethod === DELIVERY_METHODS.PICKUP
+      ? chosenStore
+      : npBranch;
+  const confirmationCourierContext = isCourierDelivery ? `, м. ${city}` : "";
+
   return (
     <div className="checkout-page">
       <CheckoutStepper
@@ -745,14 +754,8 @@ const CheckoutPage = () => {
           {activeStep === 3 && (
             <ConfirmationSection
               deliveryTypeLabel={getDeliveryTypeLabel()}
-              deliveryAddress={deliveryMethod === DELIVERY_METHODS.PICKUP ? chosenStore : npBranch}
-              courierAddress={
-                deliveryMethod !== DELIVERY_METHODS.PICKUP &&
-                deliveryMethod !== DELIVERY_METHODS.NOVA_POSHTA &&
-                deliveryMethod !== DELIVERY_METHODS.MEEST
-                  ? `м. ${city}, ${address}`
-                  : ""
-              }
+              deliveryAddress={confirmationDeliveryAddress}
+              courierAddress={confirmationCourierContext}
               plannedDate={getPlannedDate()}
               paymentLabel={paymentMethod === PAYMENT_METHODS.CASH ? "Оплата при отриманні" : "Картою онлайн"}
               recipientName={name}
