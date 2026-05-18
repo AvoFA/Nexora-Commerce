@@ -45,6 +45,14 @@ const OrderDeliveryBlock = ({ order }) => {
                 )}
               </td>
             </tr>
+            <tr>
+              <td>Коментар до замовлення:</td>
+              <td>
+                <span className="order-comment-text" style={{ fontStyle: "italic", opacity: 0.9 }}>
+                  {order.comment || "—"}
+                </span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

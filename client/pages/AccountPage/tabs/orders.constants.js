@@ -76,6 +76,7 @@ export const DEMO_ORDER = {
   totalPrice: 46798,
   discount: 0,
   deliveryPrice: 0,
+  comment: "Передзвонити за 1 годину до доставки",
   items: [
     {
       product: "demo-macbook-air-m2",

@@ -55,7 +55,8 @@ router.post('/', authenticateToken, async (req, res) => {
       customer,
       delivery,
       paymentMethod = 'cash',
-      totalPrice
+      totalPrice,
+      comment = ""
     } = req.body;
 
     const normalizedItems = normalizeItems(items);
@@ -87,6 +88,7 @@ router.post('/', authenticateToken, async (req, res) => {
       paymentMethod,
       totalPrice: Number(totalPrice) || calculatedTotal,
       status: 'new',
+      comment: comment.trim(),
       history: [{ status: 'new', timestamp: new Date() }]
     });
 

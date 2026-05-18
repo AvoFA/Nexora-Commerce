@@ -64,6 +64,11 @@ const orderSchema = new mongoose.Schema({
     enum: ['cash', 'card'],
     default: 'cash'
   },
+  comment: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   totalPrice: {
     type: Number,
     required: true,
