@@ -1,0 +1,261 @@
+@import "../../../styles/variables";
+@import "../../../styles/common";
+
+.added-to-cart-portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-end;
+}
+
+// Повний оверлей затемнення заднього фону
+.added-to-cart-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(11, 14, 23, 0.7); // М'яке затемнення на базі $bg-color
+  animation: fadeInOverlay 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+// Висувна шторка
+.added-to-cart-drawer {
+  position: relative;
+  width: 480px;
+  max-width: 100%;
+  height: 100%;
+  background: $bg-color;
+  border-left: 1px solid $border-color;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  animation: slideInDrawer 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+  @media (max-width: 600px) {
+    width: 100%;
+    border-left: none;
+  }
+}
+
+// Анімації для плавного виїзду
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInDrawer {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+// Шапка шторки
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid $border-color;
+
+  .drawer-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: $text-color;
+    margin: 0;
+  }
+
+  .btn-close-drawer {
+    background: transparent;
+    border: none;
+    color: $text-secondary;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: $text-color;
+    }
+  }
+}
+
+// Вміст шторки
+.drawer-content {
+  flex-grow: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+// Картка доданого товару
+.added-product-card {
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .product-image-container {
+    width: 90px;
+    height: 90px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .product-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .product-image-placeholder {
+      color: $text-secondary;
+      font-size: 0.8rem;
+    }
+  }
+
+  .product-info-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: $text-color;
+      margin: 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-align: left;
+    }
+
+    .product-finance {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+
+      .product-price {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Селектор кількості
+.quantity-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  height: 36px;
+  overflow: hidden;
+
+  .quantity-btn {
+    background: transparent;
+    border: none;
+    color: $text-color;
+    cursor: pointer;
+    width: 32px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.05);
+      color: $primary-color;
+    }
+
+    &:disabled {
+      color: rgba(255, 255, 255, 0.2);
+      cursor: not-allowed;
+    }
+  }
+
+  .quantity-value {
+    padding: 0 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $text-color;
+    min-width: 20px;
+    text-align: center;
+  }
+}
+
+// Кнопки дій внизу шторки
+.drawer-actions {
+  padding: 24px;
+  border-top: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .btn-drawer-action {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+    &.btn-go-cart {
+      background: $primary-color;
+      border: 1px solid transparent;
+      color: #ffffff;
+
+      &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+    }
+
+    &.btn-checkout {
+      background: transparent;
+      border: 1px solid $border-color;
+      color: $text-color;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
