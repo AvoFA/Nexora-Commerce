@@ -1,3 +1,5 @@
+@import "../../../styles/variables";
+
 .review-list-page {
   display: flex;
   flex-direction: column;
@@ -139,6 +141,99 @@
           color: var(--text-primary, #f8fafc);
         }
       }
+    }
+  }
+}
+
+.review-detail-dialog {
+  .MuiBackdrop-root {
+    background-color: rgba(10, 10, 20, 0.85) !important;
+  }
+
+  .MuiPaper-root {
+    background: linear-gradient(135deg, #1e293b, #0f172a) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
+    color: var(--text-primary, #f8fafc) !important;
+  }
+
+  .MuiDialogTitle-root {
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 18px 24px !important;
+    color: var(--text-primary, #f8fafc) !important;
+  }
+
+  .MuiDialogContent-root {
+    padding: 24px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: transparent !important;
+    
+    .modal-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      
+      .section-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: rgba(255, 255, 255, 0.4);
+        font-weight: 600;
+      }
+      
+      .section-content {
+        font-size: 0.95rem;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+    }
+
+    .modal-grid-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      
+      @media (max-width: 600px) {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .product-info-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  .MuiDialogActions-root {
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 14px 24px !important;
+    background: rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+// Уніфіковані стилі імені та пошти для таблиці та модального вікна з використанням системних змінних другого плану
+.review-list-page,
+.review-detail-dialog {
+  .user-name {
+    &.MuiTypography-root {
+      color: $text-color;
+    }
+  }
+
+  .user-email {
+    &.MuiTypography-root {
+      color: $text-secondary;
     }
   }
 }

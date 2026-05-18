@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Avatar, CircularProgress, Tooltip } from '@mui/material';
+import { Box, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Avatar, CircularProgress, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { Check as CheckIcon, Close as CloseIcon, Star as StarIcon, Undo as UndoIcon, HighlightOff as HighlightOffIcon } from '@mui/icons-material';
 import { toast } from 'sonner';
 import { getAdminReviews, updateReviewStatus } from '../../../services/reviewService';
@@ -27,6 +27,7 @@ const ReviewListPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
   const [activeFilter, setActiveFilter] = useState('pending');
+  const [selectedReviewForModal, setSelectedReviewForModal] = useState(null);
   const navigate = useNavigate();
 
   const fetchReviews = async () => {
@@ -199,9 +200,9 @@ const ReviewListPage = () => {
                   <TableRow key={review._id}>
                     <TableCell>
                       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
-                        <Typography variant="body2" fontWeight="medium">{review.name}</Typography>
+                        <Typography variant="body2" fontWeight="medium" className="user-name">{review.name}</Typography>
                         {review.user?.email && (
-                          <Typography variant="caption" color="text.secondary">{review.user.email}</Typography>
+                          <Typography variant="body2" className="user-email">{review.user.email}</Typography>
                         )}
                         {review.createdAt && (
                           <Typography variant="caption" sx={{ color: 'var(--text-secondary, #94a3b8)' }}>
@@ -221,18 +222,58 @@ const ReviewListPage = () => {
                     <TableCell>
                       {renderStars(review.rating)}
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ maxWidth: 300 }}>
                       <Typography variant="body2" sx={{ 
                         maxWidth: 300, 
                         display: '-webkit-box', 
                         WebkitLineClamp: 2, 
                         WebkitBoxOrient: 'vertical', 
-                        overflow: 'hidden' 
+                        overflow: 'hidden',
+                        overflowWrap: 'anywhere',
+                        wordBreak: 'break-word'
                       }}>
                         {review.text}
                       </Typography>
-                      {review.pros && <Typography variant="caption" color="success.main" display="block"><b>+</b> {review.pros}</Typography>}
-                      {review.cons && <Typography variant="caption" color="error.main" display="block"><b>-</b> {review.cons}</Typography>}
+                      {review.pros && (
+                        <Typography variant="caption" color="success.main" sx={{ 
+                          display: '-webkit-box',
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          overflowWrap: 'anywhere',
+                          wordBreak: 'break-word',
+                          mt: 0.5
+                        }}>
+                          <b>+</b> {review.pros}
+                        </Typography>
+                      )}
+                      {review.cons && (
+                        <Typography variant="caption" color="error.main" sx={{ 
+                          display: '-webkit-box',
+                          WebkitLineClamp: 1,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          overflowWrap: 'anywhere',
+                          wordBreak: 'break-word',
+                          mt: 0.5
+                        }}>
+                          <b>-</b> {review.cons}
+                        </Typography>
+                      )}
+                      <Typography 
+                        variant="caption" 
+                        onClick={() => setSelectedReviewForModal(review)}
+                        sx={{ 
+                          display: 'inline-block',
+                          color: '#3b82f6', 
+                          cursor: 'pointer', 
+                          fontWeight: 600, 
+                          mt: 0.75,
+                          '&:hover': { textDecoration: 'underline' } 
+                        }}
+                      >
+                        Детальніше
+                      </Typography>
                     </TableCell>
                     <TableCell>
                       <Chip 
@@ -314,6 +355,116 @@ const ReviewListPage = () => {
           </Table>
         </TableContainer>
       )}
+
+      {/* Модальне вікно перегляду повних деталей відгуку */}
+      <Dialog
+        open={Boolean(selectedReviewForModal)}
+        onClose={() => setSelectedReviewForModal(null)}
+        className="review-detail-dialog"
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Деталі відгуку</DialogTitle>
+        <DialogContent dividers sx={{ pb: 3 }}>
+          {selectedReviewForModal && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              
+              {/* Рядок 1: Користувач та Дата */}
+              <Box className="modal-grid-two-col">
+                <div className="modal-section">
+                  <span className="section-label">Користувач</span>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, mt: 0.5 }}>
+                    <Typography variant="body2" fontWeight="medium" className="user-name">
+                      {selectedReviewForModal.name}
+                    </Typography>
+                    {selectedReviewForModal.user?.email && (
+                      <Typography variant="body2" className="user-email">
+                        {selectedReviewForModal.user.email}
+                      </Typography>
+                    )}
+                  </Box>
+                </div>
+                <div className="modal-section">
+                  <span className="section-label">Дата створення</span>
+                  <Typography variant="body2" className="section-content">
+                    {selectedReviewForModal.createdAt ? new Date(selectedReviewForModal.createdAt).toLocaleString('uk-UA', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    }) : 'Невідомо'}
+                  </Typography>
+                </div>
+              </Box>
+
+              {/* Рядок 2: Рейтинг та Статус */}
+              <Box className="modal-grid-two-col">
+                <div className="modal-section">
+                  <span className="section-label">Оцінка</span>
+                  <Box sx={{ mt: 0.5 }}>
+                    {renderStars(selectedReviewForModal.rating)}
+                  </Box>
+                </div>
+                <div className="modal-section">
+                  <span className="section-label">Статус</span>
+                  <Box sx={{ mt: 0.5 }}>
+                    <Chip 
+                      label={statusLabelMap[selectedReviewForModal.status]} 
+                      color={statusColorMap[selectedReviewForModal.status]} 
+                      size="small" 
+                      variant={selectedReviewForModal.status === 'pending' ? 'outlined' : 'filled'}
+                    />
+                  </Box>
+                </div>
+              </Box>
+
+              {/* Рядок 3: Товар */}
+              <div className="modal-section">
+                <span className="section-label">Товар</span>
+                <div className="product-info-wrapper" style={{ marginTop: '4px' }}>
+                  <Avatar src={selectedReviewForModal.product?.image} alt={selectedReviewForModal.product?.name} variant="rounded" sx={{ width: 44, height: 44 }} />
+                  <Typography variant="body2" fontWeight="medium" sx={{ wordBreak: 'break-word' }}>
+                    {selectedReviewForModal.product?.name || 'Видалений товар'}
+                  </Typography>
+                </div>
+              </div>
+
+              {/* Рядок 4: Повний текст відгуку */}
+              <div className="modal-section">
+                <span className="section-label">Текст відгуку</span>
+                <Typography variant="body2" className="section-content" sx={{ whiteSpace: 'pre-wrap', bgcolor: 'rgba(255,255,255,0.015)', p: 2, borderRadius: 1.5, border: '1px solid rgba(255,255,255,0.03)' }}>
+                  {selectedReviewForModal.text}
+                </Typography>
+              </div>
+
+              {/* Рядок 5: Переваги та Недоліки */}
+              {selectedReviewForModal.pros && (
+                <div className="modal-section">
+                  <span className="section-label">Переваги</span>
+                  <Typography variant="body2" className="section-content" sx={{ bgcolor: 'rgba(16, 185, 129, 0.04)', p: 1.5, borderRadius: 1, border: '1px solid rgba(16, 185, 129, 0.25)', color: 'var(--text-primary, #f8fafc)' }}>
+                    <b>+</b> {selectedReviewForModal.pros}
+                  </Typography>
+                </div>
+              )}
+              {selectedReviewForModal.cons && (
+                <div className="modal-section">
+                  <span className="section-label">Недоліки</span>
+                  <Typography variant="body2" className="section-content" sx={{ bgcolor: 'rgba(239, 68, 68, 0.04)', p: 1.5, borderRadius: 1, border: '1px solid rgba(239, 68, 68, 0.25)', color: 'var(--text-primary, #f8fafc)' }}>
+                    <b>-</b> {selectedReviewForModal.cons}
+                  </Typography>
+                </div>
+              )}
+
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedReviewForModal(null)} variant="outlined" sx={{ borderColor: 'rgba(255,255,255,0.15)', color: 'var(--text-primary)' }}>
+            Закрити
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
