@@ -417,43 +417,52 @@
   .card-content {
     padding: 24px;
   }
+
+  &:has(.delivery-date-strip) {
+    overflow: visible;
+  }
 }
 
 // 🏷️ Двохрівневі глобальні вкладки вибору доставки
 .delivery-groups-toggle {
   display: flex;
   width: 100%;
-  gap: 12px;
+  gap: 6px;
   margin-bottom: 24px;
+  padding: 5px;
+  border: 1px solid rgba($border-color, 0.9);
+  border-radius: 12px;
+  background: rgba($bg-color, 0.46);
 
   @media (max-width: 600px) {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
 
   .group-toggle-btn {
     flex: 1;
-    padding: 14px 20px;
-    border-radius: 12px;
-    border: 1px solid $border-color;
-    background: rgba(255, 255, 255, 0.02);
+    padding: 12px 18px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    background: transparent;
     color: $text-secondary;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     text-align: center;
 
     &:hover {
-      border-color: rgba($primary-color, 0.5);
-      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba($primary-color, 0.28);
+      background: rgba($primary-color, 0.035);
       color: $text-color;
     }
 
     &.active {
-      background: $primary-color;
-      color: #ffffff;
-      border-color: $primary-color;
+      background: rgba($primary-color, 0.1);
+      color: $text-color;
+      border-color: rgba($primary-color, 0.45);
+      box-shadow: none;
       cursor: default; // Звичайний курсор, оскільки кнопка вже обрана
 
       &:hover {
@@ -469,7 +478,7 @@
 .delivery-options-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   margin-bottom: 24px;
 }
 
@@ -478,35 +487,51 @@
   flex-direction: column;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid $border-color;
-  border-radius: 12px;
+  border-radius: 11px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
 
   .option-card-header {
     display: flex;
     align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
+    gap: 14px;
+    padding: 15px 18px;
     width: 100%;
     text-align: left;
 
+    .option-icon-shell {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
+      border: 1px solid rgba($primary-color, 0.16);
+      transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
     .option-icon {
-      font-size: 1.8rem;
-      color: $text-secondary;
+      font-size: 1.45rem;
+      color: currentColor;
       transition: color 0.2s ease;
     }
 
     .option-info {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 3px;
       flex-grow: 1;
+      min-width: 0;
 
       .option-title {
         font-weight: 700;
         font-size: 0.98rem;
         color: $text-color;
+        line-height: 1.25;
       }
 
       .option-date {
@@ -519,10 +544,17 @@
       font-size: 0.95rem;
       font-weight: 700;
       color: $text-color;
+      white-space: nowrap;
 
       &.free {
         color: $primary-color;
       }
+    }
+
+    .option-selected-check {
+      color: $primary-color;
+      font-size: 1.25rem;
+      flex-shrink: 0;
     }
   }
 
@@ -535,7 +567,7 @@
   &.active {
     border-color: $primary-color;
     background: rgba($primary-color, 0.055);
-    box-shadow: inset 3px 0 0 $primary-color;
+    box-shadow: none;
     cursor: default; // Звичайний курсор, оскільки карта вже обрана
 
     &:hover {
@@ -550,10 +582,46 @@
 }
 
 // Блок детальних налаштувань всередині карти
+.delivery-option-card {
+  &.active {
+    overflow: visible;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba($primary-color, 0.42);
+    box-shadow: none;
+  }
+
+  &.active {
+    border-color: rgba($primary-color, 0.58);
+    background: rgba($primary-color, 0.055);
+    box-shadow: none;
+
+    &:hover {
+      transform: none;
+      border-color: rgba($primary-color, 0.62);
+      background: rgba($primary-color, 0.065);
+    }
+
+    .option-card-header .option-icon-shell {
+      background: rgba($primary-color, 0.11);
+      border-color: rgba($primary-color, 0.24);
+    }
+  }
+}
+
+.delivery-groups-toggle .group-toggle-btn.active:hover {
+  background: rgba($primary-color, 0.1);
+  border-color: rgba($primary-color, 0.45);
+  color: $text-color;
+}
+
 .option-settings-block {
-  padding: 20px;
-  border-top: 1px dashed rgba($border-color, 0.5);
-  background: rgba(0, 0, 0, 0.12);
+  position: relative;
+  padding: 16px 18px 18px;
+  border-top: 1px solid rgba($border-color, 0.58);
+  background: rgba(0, 0, 0, 0.105);
   cursor: default;
   text-align: left;
 
@@ -689,6 +757,301 @@
 }
 
 // Вибір оплати
+.delivery-date-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 190px);
+  gap: 10px;
+  align-items: stretch;
+  margin-top: 12px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 520px) {
+    gap: 8px;
+  }
+}
+
+.delivery-date-options {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.delivery-date-option {
+  display: grid;
+  gap: 6px;
+  min-width: 96px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $text-color;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  @media (max-width: 520px) {
+    min-width: 90px;
+  }
+
+  .date-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+
+    small {
+      color: rgba($text-secondary, 0.72);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+  }
+
+  .date-time-chip {
+    width: fit-content;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba($border-color, 0.82);
+    background: rgba(255, 255, 255, 0.018);
+    color: $text-secondary;
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+
+    .date-time-chip {
+      border-color: rgba($primary-color, 0.38);
+      color: $text-color;
+      background: rgba($primary-color, 0.045);
+    }
+  }
+
+  &.active {
+    cursor: default;
+
+    .date-time-chip {
+      border-color: rgba($primary-color, 0.5);
+      background: rgba($primary-color, 0.11);
+      color: $text-color;
+    }
+  }
+}
+
+.delivery-custom-date {
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba($primary-color, 0.2);
+  background: rgba($primary-color, 0.045);
+  color: $text-color;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  .MuiSvgIcon-root {
+    color: rgba($text-secondary, 0.86);
+    font-size: 1.15rem;
+  }
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .custom-date-arrow {
+    color: $primary-color;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover,
+  &:focus-visible,
+  &.active {
+    border-color: rgba($primary-color, 0.42);
+    background: rgba($primary-color, 0.07);
+    outline: none;
+
+    .custom-date-arrow {
+      transform: translateX(2px);
+    }
+  }
+}
+
+.delivery-custom-date-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.delivery-calendar-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 20;
+  width: min(310px, calc(100vw - 48px));
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba($primary-color, 0.24);
+  background: linear-gradient(135deg, rgba($card-bg, 0.98), rgba($bg-color, 0.98));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+  color: $text-color;
+}
+
+.calendar-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+
+  strong {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .calendar-close-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: $text-secondary;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
+      outline: none;
+    }
+  }
+}
+
+.calendar-month-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  span {
+    text-align: center;
+    color: $text-color;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: capitalize;
+  }
+
+  button {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: $primary-color;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    .MuiSvgIcon-root {
+      font-size: 1.15rem;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: rgba($primary-color, 0.08);
+      outline: none;
+    }
+  }
+}
+
+.calendar-week-row,
+.calendar-day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-week-row {
+  margin-bottom: 8px;
+
+  span {
+    text-align: center;
+    color: rgba($text-secondary, 0.72);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+}
+
+.calendar-day {
+  width: 32px;
+  height: 32px;
+  justify-self: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.025);
+  color: $text-color;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+
+  &.outside {
+    color: rgba($text-secondary, 0.28);
+    background: transparent;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.32);
+    background: rgba($primary-color, 0.08);
+    outline: none;
+  }
+
+  &.selected {
+    border-color: rgba($primary-color, 0.58);
+    background: rgba($primary-color, 0.16);
+    color: $text-color;
+    font-weight: 800;
+  }
+
+  &:disabled {
+    color: rgba($text-secondary, 0.24);
+    background: rgba(255, 255, 255, 0.012);
+    cursor: not-allowed;
+  }
+}
+
 .payment-options-group {
   display: flex;
   flex-direction: column;
@@ -1400,16 +1763,25 @@
   justify-content: space-between;
   align-items: center;
   padding: 18px 24px;
-  background: rgba($surface-color, 0.3) !important;
-  border: 1px solid $border-color !important;
+  background: rgba($primary-color, 0.045) !important;
+  border: 1px solid rgba($primary-color, 0.32) !important;
   border-radius: $border-radius;
   margin-bottom: 0px;
-  transition: all 0.25s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
   box-sizing: border-box;
 
   &:hover {
-    border-color: rgba($primary-color, 0.4) !important;
-    background: rgba($primary-color, 0.02) !important;
+    border-color: rgba($primary-color, 0.32) !important;
+    background: rgba($primary-color, 0.045) !important;
+
+    .btn-change-info {
+      background: rgba($primary-color, 0.12) !important;
+      border-color: rgba($primary-color, 0.42) !important;
+
+      .arrow-icon {
+        transform: translateX(3px);
+      }
+    }
   }
 
   .preview-content {
@@ -1432,8 +1804,8 @@
   }
 
   .btn-change-info {
-    background: transparent !important;
-    border: none !important;
+    background: rgba($primary-color, 0.075) !important;
+    border: 1px solid rgba($primary-color, 0.24) !important;
     color: $primary-color !important;
     font-size: 0.88rem;
     font-weight: 700;
@@ -1452,7 +1824,8 @@
     }
 
     &:hover {
-      background: rgba($primary-color, 0.08) !important;
+      background: rgba($primary-color, 0.12) !important;
+      border-color: rgba($primary-color, 0.42) !important;
 
       .arrow-icon {
         transform: translateX(3px);
@@ -1501,6 +1874,167 @@
   color: $danger-color;
   font-size: 0.82rem;
   font-weight: 600;
+}
+
+.warehouse-choice-group {
+  .form-icon {
+    display: none;
+  }
+}
+
+.selected-warehouse-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba($primary-color, 0.32);
+  background: rgba($primary-color, 0.045);
+  box-shadow: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: none;
+
+  .summary-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+
+    strong {
+      color: $text-color;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    small {
+      color: rgba($text-secondary, 0.76);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .summary-change-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid rgba($primary-color, 0.24);
+    border-radius: 999px;
+    background: rgba($primary-color, 0.075);
+    color: $primary-color;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    pointer-events: none;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+    .warehouse-trigger-arrow {
+      font-size: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: rgba($primary-color, 0.12);
+      border-color: rgba($primary-color, 0.42);
+      outline: none;
+
+      .warehouse-trigger-arrow {
+        transform: translateX(2px);
+      }
+    }
+  }
+
+  &.has-error {
+    border-color: rgba($danger-color, 0.75);
+    background: rgba($danger-color, 0.035);
+    box-shadow: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.32);
+    background: rgba($primary-color, 0.045);
+    outline: none;
+
+    .summary-change-btn {
+      background: rgba($primary-color, 0.12);
+      border-color: rgba($primary-color, 0.42);
+
+      .warehouse-trigger-arrow {
+        transform: translateX(2px);
+      }
+    }
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+
+    .summary-change-btn {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+}
+
+.delivery-city-context {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid rgba($border-color, 0.72);
+  background: rgba($surface-color, 0.28);
+
+  .context-label {
+    color: rgba($text-secondary, 0.68);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .context-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .MuiSvgIcon-root {
+      width: 34px;
+      height: 34px;
+      padding: 7px;
+      border-radius: 9px;
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
+      box-sizing: border-box;
+    }
+
+    div {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    strong {
+      color: $text-color;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    small {
+      color: rgba($text-secondary, 0.76);
+      font-size: 0.82rem;
+      line-height: 1.25;
+    }
+  }
 }
 
 .warehouse-select-trigger {

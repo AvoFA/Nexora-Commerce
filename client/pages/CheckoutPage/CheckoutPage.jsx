@@ -21,6 +21,7 @@ import {
   CheckCircle,
   ArrowBack,
   ArrowForward,
+  CalendarMonthOutlined,
 } from "@mui/icons-material";
 import { formatPrice } from "../../utils/formatPrice.js";
 import "./CheckoutPage.scss";
@@ -46,6 +47,12 @@ const CheckoutPage = () => {
   /* === СПОСІБ ДОСТАВКИ === */
   const [deliveryGroup, setDeliveryGroup] = useState("pickup"); // pickup | courier
   const [deliveryMethod, setDeliveryMethod] = useState("pickup"); // pickup | post | meest | courier | courier_np
+  const [selectedDeliveryDateOffset, setSelectedDeliveryDateOffset] = useState(1);
+  const [isDeliveryCalendarOpen, setIsDeliveryCalendarOpen] = useState(false);
+  const [deliveryCalendarMonth, setDeliveryCalendarMonth] = useState(() => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), 1);
+  });
 
   /* === СТАН ФОРМИ === */
   const parts = (user?.name || "").trim().split(/\s+/);
@@ -58,7 +65,7 @@ const CheckoutPage = () => {
   const [phone, setPhone] = useState(user?.phone || "");
   const [city, setCity] = useState("Київ");
   const [cityArea, setCityArea] = useState("Київська обл.");
-  const [zip, setZip] = useState("01001");
+  const [zip] = useState("01001");
   
   // Поля для адресної доставки
   const [address, setAddress] = useState("");
@@ -104,9 +111,43 @@ const CheckoutPage = () => {
     }));
   };
 
+  const getWarehouseSummary = (description) => {
+    const normalized = String(description || "").trim();
+
+    if (!normalized) {
+      return {
+        title: "",
+        details: "",
+      };
+    }
+
+    const [title, ...detailsParts] = normalized.split(",");
+
+    return {
+      title: title.trim() || "Відділення Нової Пошти",
+      details: detailsParts.join(",").trim() || `${city}${cityArea ? `, ${cityArea}` : ""}`,
+    };
+  };
+
+  const selectedWarehouse = getWarehouseSummary(npBranch);
+
+  const renderCourierCityContext = () => (
+    <div className="delivery-city-context">
+      <span className="context-label">Місто доставки</span>
+      <div className="context-main">
+        <HomeOutlined />
+        <div>
+          <strong>{city}</strong>
+          <small>{cityArea || "Доставка у вказане місто"}</small>
+        </div>
+      </div>
+    </div>
+  );
+
   /* === РЕФ ТА СТЕЙТ ДЛЯ ГОРИЗОНТАЛЬНОГО СЛАЙДЕРА ТОВАРІВ === */
   const itemsContainerRef = useRef(null);
   const stepTransitionRef = useRef(false);
+  const deliveryCalendarRef = useRef(null);
   const [scrollLeft, setScrollLeft] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
 
@@ -137,6 +178,31 @@ const CheckoutPage = () => {
     return `form-input ${isFilled} ${hasErrorClass}`;
   };
 
+  const getDefaultDateOffset = (method) => (method === "pickup" ? 1 : 2);
+
+  const selectDeliveryMethod = (method) => {
+    setDeliveryMethod(method);
+    setSelectedDeliveryDateOffset(getDefaultDateOffset(method));
+    setIsDeliveryCalendarOpen(false);
+  };
+
+  const getStartOfToday = () => {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  };
+
+  const getDateByOffset = (daysToAdd) => {
+    const date = getStartOfToday();
+    date.setDate(date.getDate() + daysToAdd);
+    return date;
+  };
+
+  const getOffsetByDate = (date) => {
+    const today = getStartOfToday();
+    const selected = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    return Math.round((selected - today) / 86400000);
+  };
+
   /* === СИНХРОНІЗАЦІЯ ДАНИХ З ПРОФІЛЮ КОРИСТУВАЧА === */
   useEffect(() => {
     if (user) {
@@ -159,10 +225,24 @@ const CheckoutPage = () => {
     }
   }, [items, navigate, isOrderCompleted]);
 
+  useEffect(() => {
+    if (!isDeliveryCalendarOpen) return undefined;
+
+    const handleOutsideCalendarClick = (event) => {
+      if (deliveryCalendarRef.current?.contains(event.target)) return;
+      setIsDeliveryCalendarOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleOutsideCalendarClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideCalendarClick);
+    };
+  }, [isDeliveryCalendarOpen]);
+
   /* === РОЗРАХУНОК ДАТ ДОСТАВКИ === */
-  const getFormattedDate = (daysToAdd) => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysToAdd);
+  const getDateParts = (daysToAdd) => {
+    const date = getDateByOffset(daysToAdd);
     const day = date.getDate();
     const months = [
       "січня", "лютого", "березня", "квітня", "травня", "червня",
@@ -173,15 +253,176 @@ const CheckoutPage = () => {
     const weekdays = [
       "неділя", "понеділок", "вівторок", "середа", "четвер", "п'ятниця", "субота"
     ];
+    const weekdayShorts = [
+      "Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
+    ];
     const weekday = weekdays[date.getDay()];
+    const weekdayShort = weekdayShorts[date.getDay()];
     
-    return `${day} ${month} (${weekday})`;
+    return {
+      dayMonth: `${day} ${month}`,
+      weekday,
+      weekdayShort,
+      full: `${day} ${month} (${weekday})`,
+      numeric: date.toLocaleDateString("uk-UA", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }),
+    };
+  };
+
+  const getFormattedDate = (daysToAdd) => {
+    return getDateParts(daysToAdd).full;
   };
 
   const getPlannedDate = () => {
-    if (deliveryMethod === "pickup") return `завтра, ${getFormattedDate(1)}`;
-    if (deliveryMethod === "post" || deliveryMethod === "meest") return `післязавтра, ${getFormattedDate(2)}`;
-    return `кур'єром, ${getFormattedDate(2)}`;
+    if (deliveryMethod === "pickup") return `самовивіз, ${getFormattedDate(selectedDeliveryDateOffset)}`;
+    if (deliveryMethod === "post" || deliveryMethod === "meest") return `до відділення, ${getFormattedDate(selectedDeliveryDateOffset)}`;
+    return `кур'єром, ${getFormattedDate(selectedDeliveryDateOffset)}`;
+  };
+
+  const getDeliveryDateOffsets = () => {
+    const firstOffset = getDefaultDateOffset(deliveryMethod);
+    return [firstOffset, firstOffset + 1, firstOffset + 2, firstOffset + 3];
+  };
+
+  const changeDeliveryCalendarMonth = (step) => {
+    setDeliveryCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() + step, 1));
+  };
+
+  const getDeliveryCalendarDays = () => {
+    const year = deliveryCalendarMonth.getFullYear();
+    const month = deliveryCalendarMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const calendarStart = new Date(firstDay);
+    calendarStart.setDate(firstDay.getDate() - ((firstDay.getDay() + 6) % 7));
+
+    return Array.from({ length: 42 }, (_, index) => {
+      const date = new Date(calendarStart);
+      date.setDate(calendarStart.getDate() + index);
+      const offset = getOffsetByDate(date);
+
+      return {
+        date,
+        offset,
+        day: date.getDate(),
+        isCurrentMonth: date.getMonth() === month,
+        isSelected: offset === selectedDeliveryDateOffset,
+        isDisabled: offset < getDefaultDateOffset(deliveryMethod),
+      };
+    });
+  };
+
+  const selectDeliveryCalendarDate = (day) => {
+    if (day.isDisabled) return;
+    setSelectedDeliveryDateOffset(day.offset);
+    setIsDeliveryCalendarOpen(false);
+  };
+
+  const getMethodHeaderDate = (method) => {
+    const offset = deliveryMethod === method ? selectedDeliveryDateOffset : getDefaultDateOffset(method);
+    return getFormattedDate(offset);
+  };
+
+  const renderDeliveryDateStrip = () => {
+    const offsets = getDeliveryDateOffsets();
+    const customDate = getDateParts(selectedDeliveryDateOffset);
+    const calendarTitle = deliveryCalendarMonth.toLocaleDateString("uk-UA", {
+      month: "long",
+      year: "numeric",
+    });
+    const weekLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
+
+    return (
+      <div className="delivery-date-strip" onClick={(e) => e.stopPropagation()}>
+        <div className="delivery-date-options">
+          {offsets.map((offset) => {
+            const date = getDateParts(offset);
+            const isActive = selectedDeliveryDateOffset === offset;
+
+            return (
+              <button
+                key={offset}
+                type="button"
+                className={`delivery-date-option ${isActive ? "active" : ""}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedDeliveryDateOffset(offset);
+                }}
+              >
+                <span className="date-title">
+                  {date.dayMonth} <small>({date.weekdayShort})</small>
+                </span>
+                <span className="date-time-chip">Протягом дня</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="delivery-custom-date-wrap" ref={deliveryCalendarRef}>
+          {isDeliveryCalendarOpen && (
+            <div className="delivery-calendar-popover" onClick={(e) => e.stopPropagation()}>
+              <div className="calendar-popover-header">
+                <strong>Вибрати іншу дату</strong>
+                <button
+                  type="button"
+                  className="calendar-close-btn"
+                  onClick={() => setIsDeliveryCalendarOpen(false)}
+                  aria-label="Закрити календар"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="calendar-month-row">
+                <button type="button" onClick={() => changeDeliveryCalendarMonth(-1)} aria-label="Попередній місяць">
+                  <ChevronLeft />
+                </button>
+                <span>{calendarTitle}</span>
+                <button type="button" onClick={() => changeDeliveryCalendarMonth(1)} aria-label="Наступний місяць">
+                  <ChevronRight />
+                </button>
+              </div>
+
+              <div className="calendar-week-row">
+                {weekLabels.map((label) => (
+                  <span key={label}>{label}</span>
+                ))}
+              </div>
+
+              <div className="calendar-day-grid">
+                {getDeliveryCalendarDays().map((day) => (
+                  <button
+                    key={day.date.toISOString()}
+                    type="button"
+                    className={`calendar-day ${day.isCurrentMonth ? "" : "outside"} ${day.isSelected ? "selected" : ""}`}
+                    disabled={day.isDisabled}
+                    onClick={() => selectDeliveryCalendarDate(day)}
+                  >
+                    {day.day}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button
+            type="button"
+            className={`delivery-custom-date ${isDeliveryCalendarOpen ? "active" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeliveryCalendarMonth(new Date(getDateByOffset(selectedDeliveryDateOffset).getFullYear(), getDateByOffset(selectedDeliveryDateOffset).getMonth(), 1));
+              setIsDeliveryCalendarOpen((isOpen) => !isOpen);
+            }}
+          >
+            <CalendarMonthOutlined />
+            <span>{customDate.numeric}</span>
+            <ChevronRight className="custom-date-arrow" />
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const getDeliveryTypeLabel = () => {
@@ -248,9 +489,6 @@ const CheckoutPage = () => {
     } else if (deliveryMethod === "courier" || deliveryMethod === "courier_np") {
       if (!address.trim()) {
         nextErrors.address = "Поле обов'язкове для заповнення";
-      }
-      if (!zip.trim()) {
-        nextErrors.zip = "Поле обов'язкове для заповнення";
       }
     }
 
@@ -678,7 +916,7 @@ const CheckoutPage = () => {
                       className={`group-toggle-btn ${deliveryGroup === "pickup" ? "active" : ""}`}
                       onClick={() => {
                         setDeliveryGroup("pickup");
-                        setDeliveryMethod("pickup"); // Дефолт всередині групи Самовивозу
+                        selectDeliveryMethod("pickup"); // Дефолт всередині групи Самовивозу
                       }}
                     >
                       Самовивіз / До відділення
@@ -688,7 +926,7 @@ const CheckoutPage = () => {
                       className={`group-toggle-btn ${deliveryGroup === "courier" ? "active" : ""}`}
                       onClick={() => {
                         setDeliveryGroup("courier");
-                        setDeliveryMethod("courier"); // Дефолт всередині групи Кур'єра
+                        selectDeliveryMethod("courier"); // Дефолт всередині групи Кур'єра
                       }}
                     >
                       Доставка кур'єром від 199 ₴
@@ -703,15 +941,18 @@ const CheckoutPage = () => {
                         {/* 1. Самовивіз з шоуруму */}
                         <div 
                           className={`delivery-option-card ${deliveryMethod === "pickup" ? "active" : ""}`}
-                          onClick={() => setDeliveryMethod("pickup")}
+                          onClick={() => selectDeliveryMethod("pickup")}
                         >
                           <div className="option-card-header">
-                            <StorefrontOutlined className="option-icon" />
+                            <span className="option-icon-shell">
+                              <StorefrontOutlined className="option-icon" />
+                            </span>
                             <div className="option-info">
                               <span className="option-title">Самовивіз з шоуруму</span>
-                              <span className="option-date">Буде готово: {getFormattedDate(1)}</span>
+                              <span className="option-date">Буде готово: {getMethodHeaderDate("pickup")}</span>
                             </div>
                             <span className="option-cost free">Безкоштовно</span>
+                            {deliveryMethod === "pickup" && <CheckCircle className="option-selected-check" />}
                           </div>
 
                           {deliveryMethod === "pickup" && (
@@ -733,20 +974,7 @@ const CheckoutPage = () => {
                                 </div>
                               </div>
 
-                              <div className="delivery-dates-badges">
-                                <div className="date-badge active">
-                                  <span className="date-day">{getFormattedDate(1)}</span>
-                                  <span className="date-time">Протягом дня</span>
-                                </div>
-                                <div className="date-badge">
-                                  <span className="date-day">{getFormattedDate(2)}</span>
-                                  <span className="date-time">Протягом дня</span>
-                                </div>
-                                <div className="date-badge">
-                                  <span className="date-day">{getFormattedDate(3)}</span>
-                                  <span className="date-time">Протягом дня</span>
-                                </div>
-                              </div>
+                              {renderDeliveryDateStrip()}
                             </div>
                           )}
                         </div>
@@ -754,51 +982,53 @@ const CheckoutPage = () => {
                         {/* 2. До відділення Нова Пошта */}
                         <div 
                           className={`delivery-option-card ${deliveryMethod === "post" ? "active" : ""}`}
-                          onClick={() => setDeliveryMethod("post")}
+                          onClick={() => selectDeliveryMethod("post")}
                         >
                           <div className="option-card-header">
-                            <MarkunreadMailboxOutlined className="option-icon" />
+                            <span className="option-icon-shell">
+                              <MarkunreadMailboxOutlined className="option-icon" />
+                            </span>
                             <div className="option-info">
                               <span className="option-title">До відділення Нова Пошта</span>
-                              <span className="option-date">Відправка: {getFormattedDate(2)}</span>
+                              <span className="option-date">Відправка: {getMethodHeaderDate("post")}</span>
                             </div>
                             <span className="option-cost">1 ₴</span>
+                            {deliveryMethod === "post" && <CheckCircle className="option-selected-check" />}
                           </div>
 
                           {deliveryMethod === "post" && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
-                              <div className="form-group full-width">
-                                <label htmlFor="zip">Поштовий індекс</label>
-                                <MarkunreadMailboxOutlined className="form-icon" />
-                                <input
-                                  id="zip"
-                                  type="text"
-                                  value={zip}
-                                  onChange={(e) => {
-                                    setZip(e.target.value);
-                                    if (errors.zip) setErrors(prev => ({ ...prev, zip: null }));
-                                  }}
-                                  placeholder="01001"
-                                  className={getInputClassName(zip, "zip")}
-                                  required
-                                />
-                                {errors.zip && <div className="error-message">{errors.zip}</div>}
-                              </div>
-
-                              <div className="form-group full-width">
-                                <label htmlFor="npBranch">Виберіть відділення Нової Пошти</label>
-                                <HomeOutlined className="form-icon" />
-                                <button
-                                  id="npBranch"
-                                  type="button"
-                                  className={`warehouse-select-trigger ${npBranch ? "is-filled" : "is-empty"} ${errors.npBranch ? "has-error" : ""}`}
-                                  onClick={() => setIsWarehouseModalOpen(true)}
-                                >
-                                  <span>{npBranch || "Виберіть відділення Нової Пошти"}</span>
-                                  <ChevronRight className="warehouse-trigger-arrow" />
-                                </button>
+                              <div className="form-group full-width warehouse-choice-group">
+                                <label htmlFor="npBranch">Відділення Нової Пошти</label>
+                                {npBranch ? (
+                                  <button
+                                    id="npBranch"
+                                    type="button"
+                                    className={`selected-warehouse-summary ${errors.npBranch ? "has-error" : ""}`}
+                                    onClick={() => setIsWarehouseModalOpen(true)}
+                                  >
+                                    <div className="summary-copy">
+                                      <strong>{selectedWarehouse.title}</strong>
+                                      <small>{selectedWarehouse.details}</small>
+                                    </div>
+                                    <span className="summary-change-btn">
+                                      Змінити <ChevronRight className="warehouse-trigger-arrow" />
+                                    </span>
+                                  </button>
+                                ) : (
+                                  <button
+                                    id="npBranch"
+                                    type="button"
+                                    className={`warehouse-select-trigger is-empty ${errors.npBranch ? "has-error" : ""}`}
+                                    onClick={() => setIsWarehouseModalOpen(true)}
+                                  >
+                                    <span>Обрати відділення для: {city}</span>
+                                    <ChevronRight className="warehouse-trigger-arrow" />
+                                  </button>
+                                )}
                                 {errors.npBranch && <div className="error-message">{errors.npBranch}</div>}
                               </div>
+                              {renderDeliveryDateStrip()}
                             </div>
                           )}
                         </div>
@@ -806,37 +1036,22 @@ const CheckoutPage = () => {
                         {/* 3. До відділення Meest ПОШТА */}
                         <div 
                           className={`delivery-option-card ${deliveryMethod === "meest" ? "active" : ""}`}
-                          onClick={() => setDeliveryMethod("meest")}
+                          onClick={() => selectDeliveryMethod("meest")}
                         >
                           <div className="option-card-header">
-                            <MarkunreadMailboxOutlined className="option-icon" />
+                            <span className="option-icon-shell">
+                              <MarkunreadMailboxOutlined className="option-icon" />
+                            </span>
                             <div className="option-info">
                               <span className="option-title">До відділення Meest ПОШТА</span>
-                              <span className="option-date">Відправка: {getFormattedDate(2)}</span>
+                              <span className="option-date">Відправка: {getMethodHeaderDate("meest")}</span>
                             </div>
                             <span className="option-cost">1 ₴</span>
+                            {deliveryMethod === "meest" && <CheckCircle className="option-selected-check" />}
                           </div>
 
                           {deliveryMethod === "meest" && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
-                              <div className="form-group full-width">
-                                <label htmlFor="zip">Поштовий індекс</label>
-                                <MarkunreadMailboxOutlined className="form-icon" />
-                                <input
-                                  id="zip"
-                                  type="text"
-                                  value={zip}
-                                  onChange={(e) => {
-                                    setZip(e.target.value);
-                                    if (errors.zip) setErrors(prev => ({ ...prev, zip: null }));
-                                  }}
-                                  placeholder="01001"
-                                  className={getInputClassName(zip, "zip")}
-                                  required
-                                />
-                                {errors.zip && <div className="error-message">{errors.zip}</div>}
-                              </div>
-
                               <div className="form-group full-width">
                                 <label htmlFor="meestBranch">Номер або адреса відділення Meest ПОШТА</label>
                                 <HomeOutlined className="form-icon" />
@@ -854,6 +1069,7 @@ const CheckoutPage = () => {
                                 />
                                 {errors.npBranch && <div className="error-message">{errors.npBranch}</div>}
                               </div>
+                              {renderDeliveryDateStrip()}
                             </div>
                           )}
                         </div>
@@ -863,37 +1079,23 @@ const CheckoutPage = () => {
                         {/* 1. Кур'єр нашої компанії */}
                         <div 
                           className={`delivery-option-card ${deliveryMethod === "courier" ? "active" : ""}`}
-                          onClick={() => setDeliveryMethod("courier")}
+                          onClick={() => selectDeliveryMethod("courier")}
                         >
                           <div className="option-card-header">
-                            <LocalShippingOutlined className="option-icon" />
+                            <span className="option-icon-shell">
+                              <LocalShippingOutlined className="option-icon" />
+                            </span>
                             <div className="option-info">
                               <span className="option-title">Кур'єр нашої компанії</span>
-                              <span className="option-date">Доставка: {getFormattedDate(2)}</span>
+                              <span className="option-date">Доставка: {getMethodHeaderDate("courier")}</span>
                             </div>
                             <span className="option-cost font-semibold text-primary">199 ₴</span>
+                            {deliveryMethod === "courier" && <CheckCircle className="option-selected-check" />}
                           </div>
 
                           {deliveryMethod === "courier" && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
-                              <div className="form-group full-width">
-                                <label htmlFor="zip">Поштовий індекс</label>
-                                <MarkunreadMailboxOutlined className="form-icon" />
-                                <input
-                                  id="zip"
-                                  type="text"
-                                  value={zip}
-                                  onChange={(e) => {
-                                    setZip(e.target.value);
-                                    if (errors.zip) setErrors(prev => ({ ...prev, zip: null }));
-                                  }}
-                                  placeholder="01001"
-                                  className={getInputClassName(zip, "zip")}
-                                  required
-                                />
-                                {errors.zip && <div className="error-message">{errors.zip}</div>}
-                              </div>
-
+                              {renderCourierCityContext()}
                               <div className="form-group full-width">
                                 <label htmlFor="address">Повна адреса доставки (Вулиця, будинок, квартира)</label>
                                 <HomeOutlined className="form-icon" />
@@ -911,6 +1113,7 @@ const CheckoutPage = () => {
                                 />
                                 {errors.address && <div className="error-message">{errors.address}</div>}
                               </div>
+                              {renderDeliveryDateStrip()}
                             </div>
                           )}
                         </div>
@@ -918,37 +1121,23 @@ const CheckoutPage = () => {
                         {/* 2. Кур'єр Нова Пошта */}
                         <div 
                           className={`delivery-option-card ${deliveryMethod === "courier_np" ? "active" : ""}`}
-                          onClick={() => setDeliveryMethod("courier_np")}
+                          onClick={() => selectDeliveryMethod("courier_np")}
                         >
                           <div className="option-card-header">
-                            <LocalShippingOutlined className="option-icon" />
+                            <span className="option-icon-shell">
+                              <LocalShippingOutlined className="option-icon" />
+                            </span>
                             <div className="option-info">
                               <span className="option-title">Кур'єр Нова Пошта</span>
-                              <span className="option-date">Доставка: {getFormattedDate(2)}</span>
+                              <span className="option-date">Доставка: {getMethodHeaderDate("courier_np")}</span>
                             </div>
                             <span className="option-cost text-primary font-semibold">329 ₴</span>
+                            {deliveryMethod === "courier_np" && <CheckCircle className="option-selected-check" />}
                           </div>
 
                           {deliveryMethod === "courier_np" && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
-                              <div className="form-group full-width">
-                                <label htmlFor="zip">Поштовий індекс</label>
-                                <MarkunreadMailboxOutlined className="form-icon" />
-                                <input
-                                  id="zip"
-                                  type="text"
-                                  value={zip}
-                                  onChange={(e) => {
-                                    setZip(e.target.value);
-                                    if (errors.zip) setErrors(prev => ({ ...prev, zip: null }));
-                                  }}
-                                  placeholder="01001"
-                                  className={getInputClassName(zip, "zip")}
-                                  required
-                                />
-                                {errors.zip && <div className="error-message">{errors.zip}</div>}
-                              </div>
-
+                              {renderCourierCityContext()}
                               <div className="form-group full-width">
                                 <label htmlFor="address">Повна адреса для доставки кур'єром НП</label>
                                 <HomeOutlined className="form-icon" />
@@ -966,6 +1155,7 @@ const CheckoutPage = () => {
                                 />
                                 {errors.address && <div className="error-message">{errors.address}</div>}
                               </div>
+                              {renderDeliveryDateStrip()}
                             </div>
                           )}
                         </div>
