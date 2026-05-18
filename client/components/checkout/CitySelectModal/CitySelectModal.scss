@@ -1,0 +1,285 @@
+@import "../../../styles/variables";
+
+.checkout-delivery-dialog {
+  .MuiBackdrop-root {
+    background-color: rgba(5, 9, 18, 0.78) !important;
+  }
+
+  .MuiPaper-root {
+    position: relative !important;
+    width: min(560px, calc(100vw - 28px)) !important;
+    max-height: min(720px, calc(100vh - 40px)) !important;
+    margin: 0 !important;
+    border-radius: 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    background:
+      linear-gradient(135deg, rgba(30, 41, 59, 0.98), rgba(15, 23, 42, 0.98)) !important;
+    color: $text-color !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.56) !important;
+    overflow: hidden !important;
+  }
+
+  .checkout-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba($text-secondary, 0.88);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+
+    .MuiSvgIcon-root {
+      font-size: 20px;
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: $primary-color;
+      background: rgba($primary-color, 0.1);
+      border-color: rgba($primary-color, 0.2);
+      outline: none;
+    }
+  }
+
+  .MuiDialogTitle-root {
+    display: grid;
+    gap: 4px;
+    padding: 20px 24px 18px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    color: $text-color !important;
+    font-family: inherit !important;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+
+    .dialog-kicker {
+      color: $primary-color;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+  }
+
+  .MuiDialogContent-root {
+    padding: 20px 24px 24px !important;
+    background: transparent !important;
+  }
+}
+
+.city-modal-search {
+  position: relative;
+  margin-bottom: 18px;
+
+  .city-search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba($text-secondary, 0.72);
+    font-size: 20px;
+  }
+
+  input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px 0 44px;
+    border-radius: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: rgba(255, 255, 255, 0.035);
+    color: $text-color;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: rgba($text-secondary, 0.48);
+    }
+
+    &:focus {
+      border-color: rgba($primary-color, 0.72);
+      background: rgba($primary-color, 0.055);
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.13);
+    }
+  }
+}
+
+.popular-city-section,
+.city-results-section {
+  display: grid;
+  gap: 10px;
+}
+
+.popular-city-section {
+  margin-bottom: 20px;
+}
+
+.modal-section-label {
+  color: rgba($text-secondary, 0.7);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.popular-city-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+
+  @media (max-width: 520px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.popular-city-btn,
+.city-result-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 42px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.025);
+  color: $text-color;
+  font-family: inherit;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+
+  .MuiSvgIcon-root {
+    color: rgba($text-secondary, 0.75);
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: $text-color;
+    border-color: rgba($primary-color, 0.45);
+    background: rgba($primary-color, 0.08);
+    outline: none;
+
+    .MuiSvgIcon-root {
+      color: $primary-color;
+    }
+  }
+
+  &.active {
+    border-color: rgba($primary-color, 0.6);
+    background: rgba($primary-color, 0.12);
+    color: $primary-color;
+  }
+}
+
+.popular-city-btn {
+  justify-content: flex-start;
+  padding: 0 12px;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: progress;
+  }
+}
+
+.city-result-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(300px, 36vh);
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+.city-result-card {
+  width: 100%;
+  align-items: flex-start;
+  min-height: 70px;
+  padding: 13px 12px;
+
+  .city-result-copy {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+    white-space: normal;
+
+    strong {
+      color: $text-color;
+      font-size: 0.98rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    small {
+      color: rgba($text-secondary, 0.76);
+      font-size: 0.86rem;
+      line-height: 1.25;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.42);
+  }
+}
+
+.modal-state-row {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba($text-secondary, 0.82);
+  font-size: 0.9rem;
+
+  &.error {
+    color: lighten($danger-color, 8%);
+    border: 1px solid rgba($danger-color, 0.24);
+    background: rgba($danger-color, 0.055);
+  }
+
+  &.muted {
+    color: rgba($text-secondary, 0.58);
+  }
+}

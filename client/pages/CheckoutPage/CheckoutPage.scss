@@ -529,16 +529,18 @@
   &:hover {
     border-color: rgba($primary-color, 0.4);
     background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
   }
 
   &.active {
     border-color: $primary-color;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba($primary-color, 0.055);
+    box-shadow: inset 3px 0 0 $primary-color;
     cursor: default; // Звичайний курсор, оскільки карта вже обрана
 
     &:hover {
       border-color: $primary-color; // Без змін при ховері на активному варіанті
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba($primary-color, 0.065);
     }
 
     .option-card-header .option-icon {
@@ -1460,113 +1462,6 @@
 }
 
 // 🌆 Спеціальний блок вибору міста (Популярні міста та Пошук)
-.city-selector-block {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 8px 0;
-  text-align: left;
-  box-sizing: border-box;
-
-  .popular-cities {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 4px;
-
-    .city-pill {
-      background: rgba(255, 255, 255, 0.03) !important;
-      border: 1px solid $border-color !important;
-      border-radius: 20px;
-      padding: 7px 16px;
-      font-size: 0.85rem;
-      color: $text-color !important;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        border-color: $primary-color !important;
-        color: $primary-color !important;
-        background: rgba($primary-color, 0.04) !important;
-      }
-
-      &.active {
-        border-color: $primary-color !important;
-        color: #ffffff !important;
-        background: $primary-color !important;
-      }
-    }
-  }
-
-  .city-search-wrapper {
-    position: relative;
-    width: 100%;
-
-    .search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: $text-secondary;
-      font-size: 1.15rem;
-    }
-
-    input {
-      width: 100%;
-      height: 44px;
-      background: rgba(255, 255, 255, 0.03) !important;
-      border: 1px solid $border-color !important;
-      border-radius: 8px !important;
-      padding: 12px 16px 12px 42px !important;
-      color: $text-color !important;
-      font-size: 0.95rem;
-      font-family: inherit;
-      box-sizing: border-box;
-      outline: none;
-      transition: all 0.25s ease;
-
-      &::placeholder {
-        color: rgba($text-secondary, 0.45);
-      }
-
-      &:focus {
-        border-color: $primary-color !important;
-        background: rgba($primary-color, 0.04) !important;
-        box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
-      }
-    }
-  }
-
-  .city-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: $card-bg;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    margin-top: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 50;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-
-    .suggestion-item {
-      padding: 10px 16px;
-      font-size: 0.9rem;
-      color: $text-color;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.15s ease;
-
-      &:hover {
-        background: rgba($primary-color, 0.08);
-        color: $primary-color;
-      }
-    }
-  }
-}
-
 // Кнопка підтвердження редагування в плашці
 .btn-save-section {
   align-self: flex-start;
@@ -1585,5 +1480,85 @@
   &:hover {
     background: $primary-color !important;
     color: #ffffff !important;
+  }
+}
+
+.city-preview-card {
+  &:focus-visible {
+    outline: none;
+    border-color: rgba($primary-color, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.13);
+  }
+
+  &.has-error {
+    border-color: rgba($danger-color, 0.72) !important;
+    background: rgba($danger-color, 0.035) !important;
+  }
+}
+
+.city-error-message {
+  margin: -4px 0 2px 2px;
+  color: $danger-color;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.warehouse-select-trigger {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px 0 42px;
+  border-radius: 8px;
+  border: 1px solid $border-color;
+  background: rgba(255, 255, 255, 0.025);
+  color: $text-color;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .warehouse-trigger-arrow {
+    flex-shrink: 0;
+    color: $primary-color;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+  }
+
+  &.is-empty {
+    color: rgba($text-secondary, 0.62);
+  }
+
+  &.is-filled {
+    border-color: rgba($primary-color, 0.3);
+    background: rgba($primary-color, 0.04);
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.65);
+    background: rgba($primary-color, 0.07);
+    outline: none;
+
+    .warehouse-trigger-arrow {
+      transform: translateX(3px);
+    }
+  }
+
+  &.has-error {
+    border-color: rgba($danger-color, 0.75);
+    background: rgba($danger-color, 0.035);
   }
 }

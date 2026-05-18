@@ -1,12 +1,9 @@
-const API_KEY = process.env.NOVA_POSHTA_API_KEY || 'dfb9ddbee363e69c904c58ded817495056d387a8';
+const API_KEY = process.env.NOVA_POSHTA_API_KEY || '';
 const BASE_URL = 'https://api.novaposhta.ua/v2.0/json/';
 
-/**
- * Універсальний метод для відправки POST-запитів до Нової Пошти
- */
-async function sendRequest(modelName, calledMethod, methodProperties = {}) {
+async function sendRequest(modelName, calledMethod, methodProperties = {}, apiKey = API_KEY) {
     const payload = {
-        apiKey: API_KEY,
+        apiKey,
         modelName,
         calledMethod,
         methodProperties
@@ -23,31 +20,33 @@ async function sendRequest(modelName, calledMethod, methodProperties = {}) {
 
         if (data.success) {
             return data.data;
-        } else {
-            console.error(`Помилка API Нової Пошти (${calledMethod}):`, data.errors);
-            throw new Error(data.errors.join(', '));
         }
+
+        const errors = data.errors || [];
+        const isInvalidApiKey = errors.some((message) =>
+            String(message).toLowerCase().includes('api key incorrect')
+        );
+
+        if (apiKey && isInvalidApiKey) {
+            console.warn(`Nova Poshta API key rejected for ${calledMethod}. Retrying without apiKey.`);
+            return sendRequest(modelName, calledMethod, methodProperties, '');
+        }
+
+        console.error(`Nova Poshta API error (${calledMethod}):`, errors);
+        throw new Error(errors.join(', ') || 'Nova Poshta API request failed');
     } catch (error) {
-        console.error(`Помилка мережі при запиті до ${calledMethod}:`, error.message);
+        console.error(`Nova Poshta network error (${calledMethod}):`, error.message);
         throw error;
     }
 }
 
-/**
- * 1. Отримання міст (можна з фільтром по назві)
- * @param {string} findString - Назва міста або його частина для пошуку (наприклад, "Київ")
- */
 async function getCities(findString = '') {
     const properties = findString ? { FindByString: findString } : {};
     return await sendRequest('Address', 'getCities', properties);
 }
 
-/**
- * 2. Отримання відділень для конкретного міста
- * @param {string} cityRef - Унікальний ідентифікатор міста (Ref), отриманий з методу getCities
- */
 async function getWarehouses(cityRef) {
-    if (!cityRef) throw new Error('Для отримання відділень необхідно вказати cityRef');
+    if (!cityRef) throw new Error('cityRef is required to load Nova Poshta warehouses');
     return await sendRequest('Address', 'getWarehouses', { CityRef: cityRef });
 }
 

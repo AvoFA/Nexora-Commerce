@@ -5,12 +5,13 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { createOrder } from "../../services/orderService.js";
 import { useAuth } from "../../context/AuthContext.jsx";
+import CitySelectModal from "../../components/checkout/CitySelectModal/CitySelectModal.jsx";
+import WarehouseSelectModal from "../../components/checkout/WarehouseSelectModal/WarehouseSelectModal.jsx";
 import {
   PersonOutlined,
   EmailOutlined,
   PhoneOutlined,
   HomeOutlined,
-  LocationCityOutlined,
   MarkunreadMailboxOutlined,
   CreditCardOutlined,
   LocalShippingOutlined,
@@ -29,15 +30,6 @@ const STORES = [
   { id: "store-1", name: "Шоурум AvoShop №1", address: "м. Київ, вул. Хрещатик, 1", hours: "09:00 - 21:00" },
   { id: "store-2", name: "Шоурум AvoShop №2", address: "м. Київ, проспект Перемоги, 45", hours: "10:00 - 22:00" }
 ];
-
-const POPULAR_CITIES = [
-  { name: "Київ", ref: "dbdb8b48-9c6d-11e3-b904-005056801329" },
-  { name: "Львів", ref: "dbdb8b4b-9c6d-11e3-b904-005056801329" },
-  { name: "Одеса", ref: "dbdb8b4c-9c6d-11e3-b904-005056801329" },
-  { name: "Дніпро", ref: "dbdb8b49-9c6d-11e3-b904-005056801329" },
-  { name: "Харків", ref: "dbdb8b4a-9c6d-11e3-b904-005056801329" }
-];
-
 
 const CheckoutPage = () => {
   const { state, dispatch } = useCart();
@@ -65,6 +57,7 @@ const CheckoutPage = () => {
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [city, setCity] = useState("Київ");
+  const [cityArea, setCityArea] = useState("Київська обл.");
   const [zip, setZip] = useState("01001");
   
   // Поля для адресної доставки
@@ -86,71 +79,30 @@ const CheckoutPage = () => {
   const [errors, setErrors] = useState({});
 
   // Стан для преміальних плашок редагування (Колапс як у Comfy)
-  const [isEditingCity, setIsEditingCity] = useState(false);
   const [isEditingRecipient, setIsEditingRecipient] = useState(!hasCompleteProfile);
-  
-  const [citySearch, setCitySearch] = useState("");
-  const [filteredCities, setFilteredCities] = useState([]);
-  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
   const [cityRef, setCityRef] = useState("dbdb8b48-9c6d-11e3-b904-005056801329"); // Дефолтний Ref для Києва
-  const [isSearchingCities, setIsSearchingCities] = useState(false);
+  const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+  const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
 
-  const [warehouses, setWarehouses] = useState([]);
-  const [isLoadingWarehouses, setIsLoadingWarehouses] = useState(false);
-
-  const handleCitySearchChange = async (val) => {
-    setCitySearch(val);
-    if (!val.trim() || val.trim().length < 2) {
-      setFilteredCities([]);
-      setShowCitySuggestions(false);
-      return;
-    }
-
-    setIsSearchingCities(true);
-    try {
-      const response = await fetch(`http://localhost:5000/api/delivery/cities?search=${encodeURIComponent(val)}`);
-      const data = await response.json();
-      if (data.success && Array.isArray(data.data)) {
-        setFilteredCities(data.data);
-        setShowCitySuggestions(true);
-      } else {
-        setFilteredCities([]);
-      }
-    } catch (error) {
-      console.error("Error searching cities:", error);
-      setFilteredCities([]);
-    } finally {
-      setIsSearchingCities(false);
-    }
+  const handleCitySelect = ({ name: nextCity, ref: nextCityRef, areaLabel }) => {
+    setCity(nextCity);
+    setCityArea(areaLabel || "");
+    setCityRef(nextCityRef || "");
+    setNpBranch("");
+    setErrors((prev) => ({
+      ...prev,
+      city: null,
+      npBranch: null,
+    }));
   };
 
-  // Завантаження відділень Нової Пошти при зміні міста
-  useEffect(() => {
-    if (deliveryMethod === "post" && cityRef) {
-      setIsLoadingWarehouses(true);
-      fetch(`http://localhost:5000/api/delivery/warehouses?cityRef=${cityRef}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success && Array.isArray(data.data)) {
-            setWarehouses(data.data);
-            if (data.data.length > 0) {
-              setNpBranch(data.data[0].Description);
-            } else {
-              setNpBranch("");
-            }
-          } else {
-            setWarehouses([]);
-            setNpBranch("");
-          }
-        })
-        .catch((err) => {
-          console.error("Error loading warehouses:", err);
-          setWarehouses([]);
-          setNpBranch("");
-        })
-        .finally(() => setIsLoadingWarehouses(false));
-    }
-  }, [cityRef, deliveryMethod]);
+  const handleWarehouseSelect = (warehouseDescription) => {
+    setNpBranch(warehouseDescription);
+    setErrors((prev) => ({
+      ...prev,
+      npBranch: null,
+    }));
+  };
 
   /* === РЕФ ТА СТЕЙТ ДЛЯ ГОРИЗОНТАЛЬНОГО СЛАЙДЕРА ТОВАРІВ === */
   const itemsContainerRef = useRef(null);
@@ -555,107 +507,23 @@ const CheckoutPage = () => {
                 <div className="card-content" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                   
                   {/* --- 1.1 Місто доставки --- */}
-                  {!isEditingCity ? (
-                    <div className="info-preview-card" onClick={() => setIsEditingCity(true)} style={{ cursor: "pointer" }}>
+                  <div className={`info-preview-card city-preview-card ${errors.city ? "has-error" : ""}`} onClick={() => setIsCityModalOpen(true)} style={{ cursor: "pointer" }}>
                       <div className="preview-content">
                         <span className="preview-title">{city}</span>
-                        <span className="preview-subtext">Доставка у вказане місто</span>
+                        <span className="preview-subtext">{cityArea || "Доставка у вказане місто"}</span>
                       </div>
                       <button
                         type="button"
                         className="btn-change-info"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setIsEditingCity(true);
+                          setIsCityModalOpen(true);
                         }}
                       >
                         Змінити <ChevronRight className="arrow-icon" />
                       </button>
-                    </div>
-                  ) : (
-                    <div className="city-selector-block" style={{ width: "100%", padding: "16px 20px", background: "rgba(255,255,255,0.01)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "8px" }}>
-                      <div className="city-search-wrapper" style={{ marginBottom: "16px" }}>
-                        <LocationCityOutlined className="search-icon" />
-                        <input
-                          type="text"
-                          placeholder="Введіть ваше місто..."
-                          value={citySearch}
-                          onChange={(e) => handleCitySearchChange(e.target.value)}
-                          className="form-input is-filled"
-                        />
-                        {citySearch.trim() && showCitySuggestions && (
-                          <div className="city-suggestions">
-                            {isSearchingCities ? (
-                              <div className="suggestion-item disabled" style={{ opacity: 0.6, padding: "10px 16px" }}>Шукаємо міста...</div>
-                            ) : filteredCities.map((item, idx) => (
-                              <div
-                                key={idx}
-                                className="suggestion-item"
-                                onClick={() => {
-                                  setCity(item.Description);
-                                  setCityRef(item.Ref);
-                                  setCitySearch("");
-                                  setShowCitySuggestions(false);
-                                  setIsEditingCity(false);
-                                }}
-                              >
-                                {item.SettlementTypeDescription || "м."} {item.Description} 
-                                {item.AreaDescription && ` (${item.AreaDescription} обл.)`}
-                              </div>
-                            ))}
-                            {!isSearchingCities && filteredCities.length === 0 && (
-                              <div 
-                                className="suggestion-item" 
-                                onClick={() => {
-                                  setCity(citySearch);
-                                  setCityRef("");
-                                  setCitySearch("");
-                                  setShowCitySuggestions(false);
-                                  setIsEditingCity(false);
-                                }}
-                              >
-                                Додати "{citySearch}"
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="popular-cities" style={{ marginBottom: "20px" }}>
-                        {POPULAR_CITIES.map((popular) => (
-                          <button
-                            key={popular.ref}
-                            type="button"
-                            className={`city-pill ${city === popular.name ? "active" : ""}`}
-                            onClick={() => {
-                              setCity(popular.name);
-                              setCityRef(popular.ref);
-                              setIsEditingCity(false);
-                            }}
-                          >
-                            {popular.name}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div style={{ display: "flex", justifyContent: "flex-end", width: "100%", marginTop: "16px" }}>
-                        <button
-                          type="button"
-                          className="btn-save-section"
-                          onClick={() => {
-                            if (!city.trim()) {
-                              setErrors(prev => ({ ...prev, city: "Поле обов'язкове для заповнення" }));
-                              return;
-                            }
-                            setIsEditingCity(false);
-                          }}
-                          style={{ margin: 0 }}
-                        >
-                          Зберегти
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                  </div>
+                  {errors.city && <div className="error-message city-error-message">{errors.city}</div>}
 
                   {/* --- 1.2 Одержувач замовлення --- */}
                   {!isEditingRecipient ? (
@@ -920,44 +788,15 @@ const CheckoutPage = () => {
                               <div className="form-group full-width">
                                 <label htmlFor="npBranch">Виберіть відділення Нової Пошти</label>
                                 <HomeOutlined className="form-icon" />
-                                {isLoadingWarehouses ? (
-                                  <div className="form-input is-filled" style={{ display: "flex", alignItems: "center", height: "44px", color: "var(--text-secondary)", opacity: 0.7 }}>
-                                    Завантаження списку відділень...
-                                  </div>
-                                ) : warehouses.length === 0 ? (
-                                  <div className="form-input is-filled" style={{ display: "flex", alignItems: "center", height: "44px", color: "rgba(255, 77, 79, 0.8)", borderColor: "rgba(255, 77, 79, 0.2)" }}>
-                                    У цьому місті немає відділень Нової Пошти
-                                  </div>
-                                ) : (
-                                  <select
-                                    id="npBranch"
-                                    value={npBranch}
-                                    onChange={(e) => {
-                                      setNpBranch(e.target.value);
-                                      if (errors.npBranch) setErrors(prev => ({ ...prev, npBranch: null }));
-                                    }}
-                                    className="form-input is-filled"
-                                    style={{
-                                      width: "100%",
-                                      background: "rgba(255, 255, 255, 0.03)",
-                                      color: "var(--text-color)",
-                                      border: "1px solid var(--border-color)",
-                                      paddingRight: "40px",
-                                      appearance: "none",
-                                      cursor: "pointer",
-                                      height: "44px",
-                                      borderRadius: "8px",
-                                      paddingLeft: "42px"
-                                    }}
-                                    required
-                                  >
-                                    {warehouses.map((w, idx) => (
-                                      <option key={idx} value={w.Description} style={{ background: "#131722", color: "#fff" }}>
-                                        {w.Description}
-                                      </option>
-                                    ))}
-                                  </select>
-                                )}
+                                <button
+                                  id="npBranch"
+                                  type="button"
+                                  className={`warehouse-select-trigger ${npBranch ? "is-filled" : "is-empty"} ${errors.npBranch ? "has-error" : ""}`}
+                                  onClick={() => setIsWarehouseModalOpen(true)}
+                                >
+                                  <span>{npBranch || "Виберіть відділення Нової Пошти"}</span>
+                                  <ChevronRight className="warehouse-trigger-arrow" />
+                                </button>
                                 {errors.npBranch && <div className="error-message">{errors.npBranch}</div>}
                               </div>
                             </div>
@@ -1431,6 +1270,22 @@ const CheckoutPage = () => {
           </div>
         </div>
       </form>
+
+      <CitySelectModal
+        isOpen={isCityModalOpen}
+        onClose={() => setIsCityModalOpen(false)}
+        onSelect={handleCitySelect}
+        selectedCity={city}
+      />
+
+      <WarehouseSelectModal
+        isOpen={isWarehouseModalOpen}
+        onClose={() => setIsWarehouseModalOpen(false)}
+        onSelect={handleWarehouseSelect}
+        city={city}
+        cityRef={cityRef}
+        selectedWarehouse={npBranch}
+      />
     </div>
   );
 };
