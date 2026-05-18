@@ -1,15 +1,17 @@
 // client/pages/CheckoutPage/CheckoutPage.jsx
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "../../hooks/useCart.js";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { createOrder } from "../../services/orderService.js";
 import { useAuth } from "../../context/AuthContext.jsx";
+import CheckoutStepper from "../../components/checkout/CheckoutStepper/CheckoutStepper.jsx";
+import CheckoutSummary from "../../components/checkout/CheckoutSummary/CheckoutSummary.jsx";
 import CitySelectModal from "../../components/checkout/CitySelectModal/CitySelectModal.jsx";
+import ConfirmationSection from "../../components/checkout/ConfirmationSection/ConfirmationSection.jsx";
 import WarehouseSelectModal from "../../components/checkout/WarehouseSelectModal/WarehouseSelectModal.jsx";
 import CourierCityContext from "../../components/checkout/CourierCityContext/CourierCityContext.jsx";
-import OrderCommentCard from "../../components/checkout/OrderCommentCard/OrderCommentCard.jsx";
-import PaymentOptionCard from "../../components/checkout/PaymentOptionCard/PaymentOptionCard.jsx";
+import PaymentSection from "../../components/checkout/PaymentSection/PaymentSection.jsx";
 import SelectedWarehouseSummary from "../../components/checkout/SelectedWarehouseSummary/SelectedWarehouseSummary.jsx";
 import {
   PersonOutlined,
@@ -17,17 +19,13 @@ import {
   PhoneOutlined,
   HomeOutlined,
   MarkunreadMailboxOutlined,
-  CreditCardOutlined,
   LocalShippingOutlined,
   StorefrontOutlined,
   ChevronLeft,
   ChevronRight,
   CheckCircle,
-  ArrowBack,
-  ArrowForward,
   CalendarMonthOutlined,
 } from "@mui/icons-material";
-import { formatPrice } from "../../utils/formatPrice.js";
 import {
   DEFAULT_CITY,
   DEFAULT_CITY_AREA,
@@ -654,70 +652,12 @@ const CheckoutPage = () => {
 
   return (
     <div className="checkout-page">
-      {/* 🏁 Преміальна шапка оформлення: Заголовок та Степпер на одному рівні вище бордера */}
-      <div className="checkout-stepper-container">
-        <div className="title-with-back">
-          {activeStep > 1 && (
-            <button 
-              type="button" 
-              className="btn-step-back-round" 
-              onClick={() => setActiveStep(activeStep - 1)}
-              aria-label="Назад до попереднього кроку"
-            >
-              <ArrowBack />
-            </button>
-          )}
-          <h1 className="page-title">{getPageTitle()}</h1>
-        </div>
-        
-        <div className="checkout-stepper">
-          {/* Крок 1: Доставка */}
-          <div 
-            className={`step ${activeStep === 1 ? "active" : ""} ${activeStep > 1 ? "completed" : ""} clickable`}
-            onClick={() => handleStepClick(1)}
-          >
-            <div className="step-node">
-              {activeStep > 1 ? (
-                <span className="step-check">✓</span>
-              ) : (
-                <div className="step-dot"></div>
-              )}
-            </div>
-            <span className="step-label">Доставка</span>
-          </div>
-
-          <div className={`step-line ${activeStep >= 2 ? "active" : ""}`}></div>
-
-          {/* Крок 2: Оплата */}
-          <div 
-            className={`step ${activeStep === 2 ? "active" : ""} ${activeStep > 2 ? "completed" : ""} clickable`}
-            onClick={() => handleStepClick(2)}
-          >
-            <div className="step-node">
-              {activeStep > 2 ? (
-                <span className="step-check">✓</span>
-              ) : (
-                <div className="step-dot"></div>
-              )}
-            </div>
-            <span className="step-label">Оплата</span>
-          </div>
-
-          <div className={`step-line ${activeStep >= 3 ? "active" : ""}`}></div>
-
-          {/* Крок 3: Підтвердження */}
-          <div className={`step ${activeStep === 3 ? "active" : ""} ${activeStep < 3 ? "pending" : ""}`}>
-            <div className="step-node">
-              {activeStep > 3 ? (
-                <span className="step-check">✓</span>
-              ) : (
-                <div className="step-dot"></div>
-              )}
-            </div>
-            <span className="step-label">Підтвердження</span>
-          </div>
-        </div>
-      </div>
+      <CheckoutStepper
+        activeStep={activeStep}
+        pageTitle={getPageTitle()}
+        onBack={() => setActiveStep(activeStep - 1)}
+        onStepClick={handleStepClick}
+      />
 
       <form className="checkout-container" onSubmit={handleSubmit}>
         {/* === ЛІВА КОЛОНКА (ДЕТАЛІ ЗАМОВЛЕННЯ) === */}
@@ -1148,255 +1088,53 @@ const CheckoutPage = () => {
             </div>
           )}
 
-          {/* ================= КРОК 2: ОПЛАТА ================= */}
           {activeStep === 2 && (
-            <div className="step-section-wrapper">
-              <div className="checkout-card">
-                <h2>Вибір способу оплати</h2>
-                <div className="card-content">
-                  <div className="payment-options-group">
-                    <PaymentOptionCard
-                      value={PAYMENT_METHODS.CASH}
-                      selectedValue={paymentMethod}
-                      icon={<LocalShippingOutlined />}
-                      title="Оплата при отриманні"
-                      description="Готівкою або карткою у точці видачі / кур'єру"
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-
-                    <PaymentOptionCard
-                      value={PAYMENT_METHODS.CARD}
-                      selectedValue={paymentMethod}
-                      icon={<CreditCardOutlined />}
-                      title="Картою онлайн"
-                      description="Миттєва безпечна оплата Visa / Mastercard / Apple Pay"
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                    />
-                  </div>
-
-                  {/* Кнопка Продовжити під вибором оплати всередині картки */}
-                  <div className="step-actions left-aligned" style={{ marginTop: "24px" }}>
-                    <button 
-                      type="button" 
-                      className="btn-continue-step" 
-                      onClick={handleContinueToConfirmation}
-                    >
-                      Продовжити <ChevronRight className="arrow-continue" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <PaymentSection
+              paymentMethod={paymentMethod}
+              onPaymentMethodChange={(e) => setPaymentMethod(e.target.value)}
+              onContinue={handleContinueToConfirmation}
+            />
           )}
 
-          {/* ================= КРОК 3: ПІДТВЕРДЖЕННЯ ================= */}
           {activeStep === 3 && (
-            <div className="step-section-wrapper">
-              <div className="checkout-card confirmation-card">
-                <h2>Підтвердження замовлення</h2>
-                <div className="card-content confirmation-vertical-list">
-                  {/* Рядок 1: Доставка */}
-                  <div className="confirmation-row">
-                    <div className="row-left">
-                      <CheckCircle className="check-icon" />
-                    </div>
-                    <div className="row-middle">
-                      <h3>Доставка</h3>
-                      <p className="row-text">{getDeliveryTypeLabel()}</p>
-                      <p className="row-subtext">
-                        {deliveryMethod === DELIVERY_METHODS.PICKUP ? chosenStore : npBranch}
-                        {deliveryMethod !== DELIVERY_METHODS.PICKUP && deliveryMethod !== DELIVERY_METHODS.NOVA_POSHTA && deliveryMethod !== DELIVERY_METHODS.MEEST && (
-                          `м. ${city}, ${address}`
-                        )}
-                      </p>
-                      <p className="row-delivery-date">
-                        Очікувана дата доставки <strong>{getPlannedDate()}</strong>
-                      </p>
-                    </div>
-                    <div className="row-right">
-                      <button 
-                        type="button" 
-                        className="btn-change-row" 
-                        onClick={() => setActiveStep(1)}
-                      >
-                        <span>Змінити</span>
-                        <ChevronRight className="arrow-icon" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Рядок 2: Оплата */}
-                  <div className="confirmation-row">
-                    <div className="row-left">
-                      <CheckCircle className="check-icon" />
-                    </div>
-                    <div className="row-middle">
-                      <h3>Оплата</h3>
-                      <p className="row-text">
-                        {paymentMethod === PAYMENT_METHODS.CASH ? "Оплата при отриманні" : "Картою онлайн"}
-                      </p>
-                    </div>
-                    <div className="row-right">
-                      <button 
-                        type="button" 
-                        className="btn-change-row" 
-                        onClick={() => setActiveStep(2)}
-                      >
-                        <span>Змінити</span>
-                        <ChevronRight className="arrow-icon" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Рядок 3: Одержувач */}
-                  <div className="confirmation-row">
-                    <div className="row-left">
-                      <CheckCircle className="check-icon" />
-                    </div>
-                    <div className="row-middle">
-                      <h3>Одержувач замовлення</h3>
-                      <p className="row-text">{name}</p>
-                      <p className="row-subtext">{phone}</p>
-                    </div>
-                    <div className="row-right">
-                      <button 
-                        type="button" 
-                        className="btn-change-row" 
-                        onClick={() => setActiveStep(1)}
-                      >
-                        <span>Змінити</span>
-                        <ChevronRight className="arrow-icon" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <OrderCommentCard
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              />
-
-            </div>
+            <ConfirmationSection
+              deliveryTypeLabel={getDeliveryTypeLabel()}
+              deliveryAddress={deliveryMethod === DELIVERY_METHODS.PICKUP ? chosenStore : npBranch}
+              courierAddress={
+                deliveryMethod !== DELIVERY_METHODS.PICKUP &&
+                deliveryMethod !== DELIVERY_METHODS.NOVA_POSHTA &&
+                deliveryMethod !== DELIVERY_METHODS.MEEST
+                  ? `м. ${city}, ${address}`
+                  : ""
+              }
+              plannedDate={getPlannedDate()}
+              paymentLabel={paymentMethod === PAYMENT_METHODS.CASH ? "Оплата при отриманні" : "Картою онлайн"}
+              recipientName={name}
+              recipientPhone={phone}
+              comment={comment}
+              onCommentChange={(e) => setComment(e.target.value)}
+              onEditDelivery={() => setActiveStep(1)}
+              onEditPayment={() => setActiveStep(2)}
+            />
           )}
 
         </div>
 
-        {/* === ПРАВА КОЛОНКА (ПІДСУМОК З ГОРИЗОНТАЛЬНИМ СЛАЙДЕРОМ) === */}
-        <div className="checkout-summary">
-          <div className="summary-header">
-            <h2>Товари {items.reduce((acc, item) => acc + item.quantity, 0)}</h2>
-            <button 
-              type="button" 
-              className="btn-edit-items" 
-              onClick={() => navigate("/cart")}
-            >
-              Редагувати товари <ChevronRight className="edit-arrow" />
-            </button>
-          </div>
-          
-          <div className="card-content">
-            {/* 🎯 Горизонтальний слайдер товарів із двосторонніми круглими стрілками (як у Comfy) */}
-            <div className="summary-items-wrapper">
-            {scrollLeft > 5 && (
-              <button 
-                type="button" 
-                className="btn-scroll-left" 
-                onClick={scrollItemsLeft}
-                title="Гортати назад"
-              >
-                <ArrowBack className="scroll-arrow" />
-              </button>
-            )}
-
-              <div className="summary-items" ref={itemsContainerRef}>
-                {items.map((item) => (
-                  <Link 
-                    key={item._id || item.id} 
-                    to={`/product/${item._id || item.id}`}
-                    className="summary-product-item"
-                  >
-                    <div className="summary-product-image-wrapper">
-                      {item.image || item.imageUrl ? (
-                        <img src={item.image || item.imageUrl} alt={item.name} />
-                      ) : (
-                        <StorefrontOutlined />
-                      )}
-                    </div>
-                    <div className="summary-product-info">
-                      <span className="summary-product-price">{formatPrice(item.price)}</span>
-                      <span className="summary-product-quantity">x {item.quantity} од.</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-
-            {scrollLeft < maxScroll - 5 && items.length > 2 && (
-              <button 
-                type="button" 
-                className="btn-scroll-right" 
-                onClick={scrollItemsRight}
-                title="Гортати вперед"
-              >
-                <ArrowForward className="scroll-arrow" />
-              </button>
-            )}
-            </div>
-
-            <div className="summary-breakdown">
-              <div className="summary-row">
-                <span>{items.reduce((acc, item) => acc + item.quantity, 0)} товарів на суму:</span>
-                <span>{formatPrice(totalPrice)}</span>
-              </div>
-              <div className="summary-row">
-                <span>Доставка:</span>
-                <span className="free">{DELIVERY_PRICES.PICKUP}</span>
-              </div>
-            </div>
-
-            <div className="summary-total">
-              <strong>Загальна сума:</strong>
-              <strong>{formatPrice(totalPrice)}</strong>
-            </div>
-
-            {/* --- ДИНАМІЧНА КНОПКА САЙДБАРУ --- */}
-            {activeStep === 1 ? (
-              <button
-                type="button"
-                className="btn-checkout-submit"
-                onClick={handleContinueToPayment}
-              >
-                Продовжити <ChevronRight className="arrow-continue" />
-              </button>
-            ) : activeStep === 2 ? (
-              <button
-                type="button"
-                className="btn-checkout-submit"
-                onClick={handleContinueToConfirmation}
-              >
-                Продовжити <ChevronRight className="arrow-continue" />
-              </button>
-            ) : (
-              <button 
-                type="submit" 
-                className="btn-checkout-submit" 
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Створюємо замовлення..." : "Оформити замовлення"}
-              </button>
-            )}
-
-            {/* Назад до кошика */}
-            <button
-              type="button"
-              className="btn-back-to-cart"
-              onClick={() => navigate("/cart")}
-            >
-              <ChevronLeft className="back-arrow" />
-              Назад до кошика
-            </button>
-          </div>
-        </div>
+        <CheckoutSummary
+          items={items}
+          totalPrice={totalPrice}
+          activeStep={activeStep}
+          isSubmitting={isSubmitting}
+          itemsContainerRef={itemsContainerRef}
+          scrollLeft={scrollLeft}
+          maxScroll={maxScroll}
+          onScrollLeft={scrollItemsLeft}
+          onScrollRight={scrollItemsRight}
+          onEditItems={() => navigate("/cart")}
+          onContinueToPayment={handleContinueToPayment}
+          onContinueToConfirmation={handleContinueToConfirmation}
+          onBackToCart={() => navigate("/cart")}
+        />
       </form>
 
       <CitySelectModal
