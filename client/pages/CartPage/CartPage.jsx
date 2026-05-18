@@ -1,6 +1,4 @@
-// Сторінка кошика: список товарів, зміна кількості, підсумок
-
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart.js";
 import ClearCartConfirmModal from "../../components/common/ClearCartConfirmModal/ClearCartConfirmModal.jsx";
 import { toast } from "sonner";
@@ -8,9 +6,14 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState } from "react";
 import { formatPrice } from "../../utils/formatPrice.js";
 import EmptyState from "../../components/common/EmptyState/EmptyState.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import WishlistPickerModal from "../../components/common/WishlistPickerModal/WishlistPickerModal.jsx";
 import "./CartPage.scss";
 
 const CartPage = () => {
@@ -18,6 +21,22 @@ const CartPage = () => {
   const { state, dispatch } = useCart();
   const { items } = state;
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+  const { isAuthenticated, isWishlisted } = useAuth();
+  const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
+  const [selectedProductForWishlist, setSelectedProductForWishlist] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromProduct = location.state?.fromProduct || state.lastAddedProductId;
+
+  // Розумна кнопка "Назад"
+  const handleBack = () => {
+    if (fromProduct) {
+      navigate(`/product/${fromProduct}`);
+    } else {
+      navigate(-1);
+    }
+  };
 
   // Обробники кількості товарів
   const handleIncrease = (id) => {
@@ -34,6 +53,16 @@ const CartPage = () => {
   const handleRemove = (id, name) => {
     dispatch({ type: "CLEAR_ITEM", payload: id });
     toast.success(`"${name}" видалено з кошика`);
+  };
+
+  // Додати товар до списку бажань
+  const handleOpenWishlist = (item) => {
+    if (!isAuthenticated) {
+      toast.error("Увійдіть, щоб додати товар до списку бажань");
+      return;
+    }
+    setSelectedProductForWishlist(item);
+    setIsWishlistModalOpen(true);
   };
 
   // Відкрити діалог очищення кошика
@@ -81,65 +110,98 @@ const CartPage = () => {
 
   return (
     <div className="cart-page">
-      <h1 className="page-title">Ваш кошик</h1>
-      <div className="cart-header">
-        <p className="cart-items-count">
-          Товарів у кошику{" "}
-          <span className="cart-count-number">{totalItems}</span>
-        </p>
-        <button
-          className="btn-danger btn-clear-cart"
-          onClick={handleClearAllCart}
-          title="Очистити увесь кошик"
+      <div className="cart-title-row">
+        <button 
+          className="cart-back-btn" 
+          onClick={handleBack} 
+          title={fromProduct ? "Назад до товару" : "Назад до покупок"}
         >
-          <DeleteForeverIcon />
-          Очистити увесь кошик
+          <ArrowBackIcon />
         </button>
+        <h1 className="page-title">Ваш кошик</h1>
       </div>
 
       <div className="cart-container">
         {/* Список товарів */}
         <div className="cart-items-list">
-          {items.map((item) => (
-            <div key={item.id} className="cart-item-card">
-              <div className="cart-item-image">
-                <img src={item.image} alt={item.name} />
-              </div>
+          <div className="cart-header">
+            <p className="cart-items-count">
+              Товарів у кошику{" "}
+              <span className="cart-count-number">{totalItems}</span>
+            </p>
+            <button
+              className="btn-clear-cart"
+              onClick={handleClearAllCart}
+              title="Видалити все з кошика"
+            >
+              <DeleteForeverIcon fontSize="small" />
+              Видалити все
+            </button>
+          </div>
+          {items.map((item) => {
+            const productId = item.id || item._id;
+            return (
+              <div key={item.id} className="cart-item-card">
+                <div className="cart-item-checkbox">
+                  <input type="checkbox" defaultChecked />
+                </div>
 
-              <div className="cart-item-details">
-                <Link to={`/product/${item.id}`} className="cart-item-title">
-                  {item.name}
-                </Link>
-                <p className="cart-item-price">{formatPrice(item.price)}</p>
-              </div>
+                <div className="cart-item-image">
+                  <img src={item.image} alt={item.name} />
+                </div>
 
-              <div className="cart-item-controls">
-                <button
-                  onClick={() => handleRemove(item.id, item.name)}
-                  className="cart-item-remove-btn"
-                  title="Видалити товар"
-                >
-                  <DeleteForeverIcon fontSize="small" />
-                </button>
+                <div className="cart-item-details">
+                  <Link to={`/product/${productId}`} className="cart-item-title">
+                    {item.name}
+                  </Link>
+                  
+                  <div className="cart-item-actions">
+                    <button 
+                      className={`cart-item-action-btn wishlist${isWishlisted(productId) ? " active" : ""}`}
+                      onClick={() => handleOpenWishlist(item)}
+                      title="В обране"
+                    >
+                      {isWishlisted(productId) ? (
+                        <FavoriteIcon fontSize="small" />
+                      ) : (
+                        <FavoriteBorderIcon fontSize="small" />
+                      )}
+                      <span>В обране</span>
+                    </button>
+                    
+                    <button 
+                      className="cart-item-action-btn remove"
+                      onClick={() => handleRemove(item.id, item.name)}
+                      title="Видалити товар"
+                    >
+                      <DeleteForeverIcon fontSize="small" />
+                      <span>Видалити</span>
+                    </button>
+                  </div>
+                </div>
 
-                <div className="cart-item-quantity">
-                  <button
-                    onClick={() => handleDecrease(item.id)}
-                    title="Зменшити"
-                  >
-                    <RemoveIcon fontSize="small" />
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => handleIncrease(item.id)}
-                    title="Збільшити"
-                  >
-                    <AddIcon fontSize="small" />
-                  </button>
+                <div className="cart-item-right-block">
+                  <p className="cart-item-price">{formatPrice(item.price)}</p>
+                  
+                  <div className="cart-item-quantity">
+                    <button
+                      onClick={() => handleDecrease(item.id)}
+                      title="Зменшити"
+                    >
+                      <RemoveIcon fontSize="small" />
+                    </button>
+                    <span>{item.quantity}</span>
+                    <button
+                      onClick={() => handleIncrease(item.id)}
+                      title="Збільшити"
+                    >
+                      <AddIcon fontSize="small" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Підсумок замовлення */}
@@ -177,6 +239,15 @@ const CartPage = () => {
         onConfirm={confirmClearAllCart}
         itemsCount={items.length}
       />
+
+      {/* Діалог вибору списку бажань */}
+      {isWishlistModalOpen && (
+        <WishlistPickerModal
+          isOpen={isWishlistModalOpen}
+          onClose={() => setIsWishlistModalOpen(false)}
+          product={selectedProductForWishlist}
+        />
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 // Контекст для керування кошиком
 
-import { createContext, useReducer, useEffect } from 'react';
+import { createContext, useReducer, useEffect } from "react";
 
 // Створюємо контекст кошика
 export const CartContext = createContext();
@@ -23,7 +23,13 @@ const cartReducer = (state, action) => {
         // Якщо товару немає, додаємо його з кількістю 1
         newItems = [...state.items, { ...itemToAdd, quantity: 1 }];
       }
-      return { ...state, items: newItems };
+      return { 
+        ...state, 
+        items: newItems, 
+        lastAddedProductId: itemToAdd.id,
+        isDrawerOpen: true,
+        addedProduct: itemToAdd
+      };
     }
 
     case 'REMOVE_ITEM': {
@@ -51,12 +57,21 @@ const cartReducer = (state, action) => {
 
     case 'CLEAR_CART': {
       // Очищаємо весь кошик
-      return { ...state, items: [] };
+      return { ...state, items: [], lastAddedProductId: null, isDrawerOpen: false, addedProduct: null };
+    }
+
+    case 'CLOSE_DRAWER': {
+      return { ...state, isDrawerOpen: false };
     }
 
     case 'LOAD_STATE': {
       // Завантажуємо збережений стан
-      return action.payload;
+      return {
+        ...initialState,
+        ...action.payload,
+        isDrawerOpen: false,
+        addedProduct: null
+      };
     }
 
     default:
@@ -67,6 +82,9 @@ const cartReducer = (state, action) => {
 // Початковий стан кошика
 const initialState = {
   items: [],
+  lastAddedProductId: null,
+  isDrawerOpen: false,
+  addedProduct: null,
 };
 
 // Провайдер контексту кошика
@@ -77,9 +95,9 @@ export const CartProvider = ({ children }) => {
   // Завантажуємо кошик з localStorage при першому завантаженні
   useEffect(() => {
     try {
-      const localData = localStorage.getItem('cartState');
+      const localData = localStorage.getItem("cartState");
       if (localData) {
-        dispatch({ type: 'LOAD_STATE', payload: JSON.parse(localData) });
+        dispatch({ type: "LOAD_STATE", payload: JSON.parse(localData) });
       }
     } catch (error) {
       console.error("Не вдалося завантажити кошик з localStorage", error);
@@ -90,7 +108,7 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     try {
       if (state !== initialState) {
-        localStorage.setItem('cartState', JSON.stringify(state));
+        localStorage.setItem("cartState", JSON.stringify(state));
       }
     } catch (error) {
       console.error("Не вдалося зберегти кошик у localStorage", error);
