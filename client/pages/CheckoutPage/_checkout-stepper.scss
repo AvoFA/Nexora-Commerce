@@ -1,0 +1,221 @@
+.checkout-page {
+  padding: 24px 0 40px 0;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 1200px) {
+    padding: 16px 16px 32px 16px;
+  }
+
+  // 🏁 Преміальна шапка оформлення (Заголовок та Степпер на одному рівні)
+  .checkout-stepper-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; // 👈 Вирівнюємо по нижньому краю для щільного прилягання до бордера!
+    width: 100%;
+    margin-bottom: 24px;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 28px; // 👈 Збільшили відступ для абсолютних підписів степпера
+    gap: 24px;
+
+    @media (max-width: 991px) {
+      flex-direction: column;
+      align-items: center; // 👈 На мобілках центруємо для балансу
+      gap: 16px;
+      padding-bottom: 24px;
+      margin-bottom: 16px;
+    }
+
+    .title-with-back {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      @media (max-width: 991px) {
+        justify-content: center;
+        width: 100%;
+      }
+    }
+
+    .btn-step-back-round {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none !important;
+      background: transparent !important;
+      color: $text-color !important;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s ease;
+
+      .MuiSvgIcon-root {
+        font-size: 1.2rem;
+        color: $text-color;
+        transition: color 0.2s ease;
+      }
+
+      &:hover {
+        background: rgba($primary-color, 0.08) !important;
+        color: $primary-color !important;
+
+        .MuiSvgIcon-root {
+          color: $primary-color;
+        }
+      }
+    }
+
+    // Заголовок сторінки
+    .page-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: $text-color;
+      margin: 0;
+      text-align: left;
+      line-height: 1.25;
+      margin-bottom: -2px; // 👈 Ідеальне вирівнювання по базовій лінії кружечків!
+
+      @media (max-width: 991px) {
+        text-align: center;
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 768px) {
+        font-size: 1.05rem;
+      }
+    }
+
+    .checkout-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 400px; // 👈 Зменшили макс-ширину, щоб лінії були акуратнішими
+      position: relative;
+      padding: 0 45px; // 👈 Внутрішній відступ по боках, щоб довгий текст не вилазив за межі контейнера!
+      box-sizing: border-box;
+
+      @media (max-width: 991px) {
+        max-width: 100%;
+        padding: 0 45px;
+      }
+
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+        width: 28px; // 👈 Фіксована ширина кроку дорівнює ширині кружечка!
+
+        &.clickable {
+          cursor: pointer;
+
+          &:hover {
+            .step-node {
+              border-color: rgba($primary-color, 0.8);
+              background: rgba($primary-color, 0.08);
+            }
+            .step-label {
+              color: $text-color;
+            }
+          }
+        }
+
+        .step-node {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: $card-bg;
+          border: 2px solid $border-color;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.25s ease;
+          position: relative;
+
+          .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: transparent;
+            transition: all 0.25s ease;
+          }
+        }
+
+        // Абсолютне позиціонування підписів для ідеальних ліній
+        .step-label {
+          position: absolute;
+          top: 38px; // 28px кружечок + 10px відступ
+          left: 50%;
+          transform: translateX(-50%);
+          white-space: nowrap;
+          font-size: 0.8rem;
+          font-weight: 700;
+          color: rgba($text-secondary, 0.6);
+          transition: color 0.25s ease;
+
+          @media (max-width: 480px) {
+            font-size: 0.72rem;
+          }
+        }
+
+        // Активний стан (подвійне кільце)
+        &.active {
+          .step-node {
+            border-color: $primary-color;
+            background: $card-bg;
+
+            .step-dot {
+              background: $primary-color;
+              transform: scale(1.2);
+            }
+          }
+
+          .step-label {
+            color: $text-color;
+          }
+        }
+
+        // Завершений стан (галочка)
+        &.completed {
+          .step-node {
+            background: $primary-color;
+            border-color: $primary-color;
+
+            .step-check {
+              color: #ffffff;
+              font-weight: 800;
+              font-size: 0.95rem;
+            }
+          }
+
+          .step-label {
+            color: $text-secondary;
+          }
+        }
+
+        &.pending {
+          opacity: 0.5;
+        }
+      }
+
+      // Ідеальні лінії, які тепер ТОЧНО доводяться до кружечків
+      .step-line {
+        flex-grow: 1;
+        height: 2px;
+        background: $border-color;
+        margin: 0 -2px; // 👈 Мінімальний нахлест на рамку кружечка
+        z-index: 1;
+        transition: background 0.25s ease;
+
+        &.active {
+          background: $primary-color;
+        }
+      }
+    }
+  }
+}
+

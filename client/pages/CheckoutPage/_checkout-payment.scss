@@ -1,0 +1,90 @@
+.payment-options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment-option-card {
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  gap: 16px;
+
+  input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: $primary-color;
+    cursor: pointer;
+  }
+
+  .payment-option-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-grow: 1;
+
+    .MuiSvgIcon-root {
+      font-size: 1.8rem;
+      color: $text-secondary;
+      transition: color 0.2s ease;
+    }
+
+    .payment-option-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-align: left;
+
+      span {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: $text-color;
+      }
+
+      small {
+        font-size: 0.8rem;
+        color: $text-secondary;
+      }
+    }
+  }
+
+  .payment-select-check {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $primary-color;
+    font-size: 1.5rem;
+  }
+
+  &:hover {
+    border-color: rgba($primary-color, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  &.selected {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.04);
+    cursor: default;
+
+    input[type="radio"] {
+      cursor: default;
+    }
+
+    &:hover {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.04);
+    }
+
+    .payment-option-content .MuiSvgIcon-root {
+      color: $primary-color;
+    }
+  }
+}
+

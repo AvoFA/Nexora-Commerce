@@ -1,0 +1,200 @@
+// Стан пустої корзини
+.checkout-empty {
+  text-align: center;
+  padding: 80px 24px;
+
+  h2 {
+    font-size: 1.8rem;
+    color: $text-color;
+    margin-bottom: 12px;
+  }
+
+  p {
+    color: $text-secondary;
+  }
+}
+
+// 🔒 Основна сітка Grid з фундаментальним min-height протидіє стрибкам сторінки
+.checkout-container {
+  display: grid;
+  gap: 32px;
+  align-items: flex-start;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  min-height: 720px; // Забезпечує стабільну висоту всього екрану
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    min-height: auto;
+  }
+}
+
+// 🔒 Стабілізація лівої колонки форми
+.checkout-form {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 992px) {
+    min-height: auto;
+  }
+
+  .step-section-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 750px; // Рівень висоти, що гарантує нерухомість кнопок знизу
+    width: 750px; // Фіксована ширина на десктопі для повної стабільності та однакового розміру кроків 1 і 2
+
+    @media (max-width: 992px) {
+      width: 100%; // Адаптивність на планшетах та мобільних
+      min-height: auto;
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: start;
+
+    &.three-cols {
+      grid-template-columns: 1fr 1fr 1fr;
+
+      @media (max-width: 900px) {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr !important;
+      gap: 12px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+    position: relative;
+    text-align: left;
+
+    &.full-width {
+      grid-column: span 2;
+      @media (max-width: 600px) {
+        grid-column: auto;
+      }
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: $text-color;
+      font-size: 0.9rem;
+    }
+
+    .form-icon {
+      position: absolute;
+      top: 36px;
+      left: 14px;
+      color: $text-secondary;
+      z-index: 1;
+      pointer-events: none;
+      font-size: 1.25rem;
+    }
+
+    .error-message {
+      font-size: 0.82rem;
+      color: #ef4444;
+      margin-top: 6px;
+      font-weight: 500;
+      animation: sectionFadeIn 0.2s ease-out;
+      display: block;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+
+    .form-input {
+      @include shared-input-style;
+      padding-left: 44px;
+      height: 42px;
+      font-size: 0.95rem;
+
+      &.is-empty {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: $border-color;
+        color: $text-color;
+
+        &::placeholder {
+          color: rgba($text-secondary, 0.45);
+        }
+      }
+
+      &.is-filled {
+        background: rgba($primary-color, 0.04);
+        border-color: rgba($primary-color, 0.3);
+        color: $text-color;
+      }
+
+      &:focus {
+        background: rgba($primary-color, 0.08);
+        border-color: $primary-color;
+      }
+
+      &.has-error {
+        border-color: #ef4444 !important;
+        border-bottom-color: #ef4444 !important;
+        background: rgba(#ef4444, 0.03) !important;
+      }
+
+      &:disabled {
+        background: rgba(255, 255, 255, 0.01) !important;
+        border-color: rgba(255, 255, 255, 0.05) !important;
+        color: rgba($text-color, 0.4) !important;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+    }
+  }
+}
+
+// Обгортка покрокової секції
+.step-section-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
+}
+
+// Картки оформлення
+.checkout-card {
+  background: $card-bg;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  margin-bottom: 24px;
+  overflow: hidden;
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-color;
+    margin: 0;
+    padding: 20px 24px;
+    border-bottom: 1px solid $border-color;
+    text-align: left;
+  }
+
+  .card-content {
+    padding: 24px;
+  }
+
+  &:has(.delivery-date-strip) {
+    overflow: visible;
+  }
+}
+

@@ -1,0 +1,339 @@
+// 🏷️ Преміальні плашки-прев'ю (City & Recipient) як у Comfy, але у стилі Slate & Glow
+.info-preview-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  background: rgba($primary-color, 0.045) !important;
+  border: 1px solid rgba($primary-color, 0.32) !important;
+  border-radius: $border-radius;
+  margin-bottom: 0px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  box-sizing: border-box;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.32) !important;
+    background: rgba($primary-color, 0.045) !important;
+
+    .btn-change-info {
+      background: rgba($primary-color, 0.12) !important;
+      border-color: rgba($primary-color, 0.42) !important;
+
+      .arrow-icon {
+        transform: translateX(3px);
+      }
+    }
+  }
+
+  .preview-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+
+    .preview-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: $text-color;
+      letter-spacing: -0.01em;
+    }
+
+    .preview-subtext {
+      font-size: 0.9rem;
+      color: $text-secondary;
+    }
+  }
+
+  .btn-change-info {
+    background: rgba($primary-color, 0.075) !important;
+    border: 1px solid rgba($primary-color, 0.24) !important;
+    color: $primary-color !important;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+
+    .arrow-icon {
+      font-size: 0.95rem !important;
+      transition: transform 0.2s ease;
+      color: $primary-color !important;
+    }
+
+    &:hover {
+      background: rgba($primary-color, 0.12) !important;
+      border-color: rgba($primary-color, 0.42) !important;
+
+      .arrow-icon {
+        transform: translateX(3px);
+      }
+    }
+  }
+}
+
+// 🌆 Спеціальний блок вибору міста (Популярні міста та Пошук)
+// Кнопка підтвердження редагування в плашці
+.btn-save-section {
+  align-self: flex-start;
+  height: 36px;
+  padding: 0 22px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: transparent !important;
+  border: 1px solid $primary-color !important;
+  color: $primary-color !important;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 12px;
+
+  &:hover {
+    background: $primary-color !important;
+    color: #ffffff !important;
+  }
+}
+
+.city-preview-card {
+  &:focus-visible {
+    outline: none;
+    border-color: rgba($primary-color, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.13);
+  }
+
+  &.has-error {
+    border-color: rgba($danger-color, 0.72) !important;
+    background: rgba($danger-color, 0.035) !important;
+  }
+}
+
+.city-error-message {
+  margin: -4px 0 2px 2px;
+  color: $danger-color;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.warehouse-choice-group {
+  .form-icon {
+    display: none;
+  }
+}
+
+.selected-warehouse-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba($primary-color, 0.32);
+  background: rgba($primary-color, 0.045);
+  box-shadow: none;
+  color: inherit;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: none;
+
+  .summary-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+
+    strong {
+      color: $text-color;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
+    }
+
+    small {
+      color: rgba($text-secondary, 0.76);
+      font-size: 0.82rem;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .summary-change-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid rgba($primary-color, 0.24);
+    border-radius: 999px;
+    background: rgba($primary-color, 0.075);
+    color: $primary-color;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 800;
+    cursor: pointer;
+    pointer-events: none;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+    .warehouse-trigger-arrow {
+      font-size: 1rem;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: rgba($primary-color, 0.12);
+      border-color: rgba($primary-color, 0.42);
+      outline: none;
+
+      .warehouse-trigger-arrow {
+        transform: translateX(2px);
+      }
+    }
+  }
+
+  &.has-error {
+    border-color: rgba($danger-color, 0.75);
+    background: rgba($danger-color, 0.035);
+    box-shadow: none;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.32);
+    background: rgba($primary-color, 0.045);
+    outline: none;
+
+    .summary-change-btn {
+      background: rgba($primary-color, 0.12);
+      border-color: rgba($primary-color, 0.42);
+
+      .warehouse-trigger-arrow {
+        transform: translateX(2px);
+      }
+    }
+  }
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
+
+    .summary-change-btn {
+      justify-content: center;
+      width: 100%;
+    }
+  }
+}
+
+.delivery-city-context {
+  display: grid;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  border: 1px solid rgba($border-color, 0.72);
+  background: rgba($surface-color, 0.28);
+
+  .context-label {
+    color: rgba($text-secondary, 0.68);
+    font-size: 0.73rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .context-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .MuiSvgIcon-root {
+      width: 34px;
+      height: 34px;
+      padding: 7px;
+      border-radius: 9px;
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
+      box-sizing: border-box;
+    }
+
+    div {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    strong {
+      color: $text-color;
+      font-size: 0.95rem;
+      line-height: 1.25;
+    }
+
+    small {
+      color: rgba($text-secondary, 0.76);
+      font-size: 0.82rem;
+      line-height: 1.25;
+    }
+  }
+}
+
+.warehouse-select-trigger {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px 0 42px;
+  border-radius: 8px;
+  border: 1px solid $border-color;
+  background: rgba(255, 255, 255, 0.025);
+  color: $text-color;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .warehouse-trigger-arrow {
+    flex-shrink: 0;
+    color: $primary-color;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+  }
+
+  &.is-empty {
+    color: rgba($text-secondary, 0.62);
+  }
+
+  &.is-filled {
+    border-color: rgba($primary-color, 0.3);
+    background: rgba($primary-color, 0.04);
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.65);
+    background: rgba($primary-color, 0.07);
+    outline: none;
+
+    .warehouse-trigger-arrow {
+      transform: translateX(3px);
+    }
+  }
+
+  &.has-error {
+    border-color: rgba($danger-color, 0.75);
+    background: rgba($danger-color, 0.035);
+  }
+}

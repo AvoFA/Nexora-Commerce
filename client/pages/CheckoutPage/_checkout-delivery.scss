@@ -1,0 +1,333 @@
+// 🏷️ Двохрівневі глобальні вкладки вибору доставки
+.delivery-groups-toggle {
+  display: flex;
+  width: 100%;
+  gap: 6px;
+  margin-bottom: 24px;
+  padding: 5px;
+  border: 1px solid rgba($border-color, 0.9);
+  border-radius: 12px;
+  background: rgba($bg-color, 0.46);
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .group-toggle-btn {
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: 9px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: $text-secondary;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    text-align: center;
+
+    &:hover {
+      border-color: rgba($primary-color, 0.28);
+      background: rgba($primary-color, 0.035);
+      color: $text-color;
+    }
+
+    &.active {
+      background: rgba($primary-color, 0.1);
+      color: $text-color;
+      border-color: rgba($primary-color, 0.45);
+      box-shadow: none;
+      cursor: default; // Звичайний курсор, оскільки кнопка вже обрана
+
+      &:hover {
+        background: $primary-color; // Без змін та ховерів
+        border-color: $primary-color;
+        color: #ffffff;
+      }
+    }
+  }
+}
+
+// Список карт вибору доставки
+.delivery-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.delivery-option-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid $border-color;
+  border-radius: 11px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+
+  .option-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 15px 18px;
+    width: 100%;
+    text-align: left;
+
+    .option-icon-shell {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
+      border: 1px solid rgba($primary-color, 0.16);
+      transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .option-icon {
+      font-size: 1.45rem;
+      color: currentColor;
+      transition: color 0.2s ease;
+    }
+
+    .option-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex-grow: 1;
+      min-width: 0;
+
+      .option-title {
+        font-weight: 700;
+        font-size: 0.98rem;
+        color: $text-color;
+        line-height: 1.25;
+      }
+
+      .option-date {
+        font-size: 0.8rem;
+        color: rgba($text-secondary, 0.75);
+      }
+    }
+
+    .option-cost {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $text-color;
+      white-space: nowrap;
+
+      &.free {
+        color: $primary-color;
+      }
+    }
+
+    .option-selected-check {
+      color: $primary-color;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+  }
+
+  &:hover {
+    border-color: rgba($primary-color, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
+  }
+
+  &.active {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.055);
+    box-shadow: none;
+    cursor: default; // Звичайний курсор, оскільки карта вже обрана
+
+    &:hover {
+      border-color: $primary-color; // Без змін при ховері на активному варіанті
+      background: rgba($primary-color, 0.065);
+    }
+
+    .option-card-header .option-icon {
+      color: $primary-color;
+    }
+  }
+}
+
+// Блок детальних налаштувань всередині карти
+.delivery-option-card {
+  &.active {
+    overflow: visible;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: rgba($primary-color, 0.42);
+    box-shadow: none;
+  }
+
+  &.active {
+    border-color: rgba($primary-color, 0.58);
+    background: rgba($primary-color, 0.055);
+    box-shadow: none;
+
+    &:hover {
+      transform: none;
+      border-color: rgba($primary-color, 0.62);
+      background: rgba($primary-color, 0.065);
+    }
+
+    .option-card-header .option-icon-shell {
+      background: rgba($primary-color, 0.11);
+      border-color: rgba($primary-color, 0.24);
+    }
+  }
+}
+
+.delivery-groups-toggle .group-toggle-btn.active:hover {
+  background: rgba($primary-color, 0.1);
+  border-color: rgba($primary-color, 0.45);
+  color: $text-color;
+}
+
+.option-settings-block {
+  position: relative;
+  padding: 16px 18px 18px;
+  border-top: 1px solid rgba($border-color, 0.58);
+  background: rgba(0, 0, 0, 0.105);
+  cursor: default;
+  text-align: left;
+
+  .form-grid {
+    margin-bottom: 12px;
+  }
+}
+
+// Вибір магазину
+.store-selector-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  .compact-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text-secondary;
+  }
+
+  .stores-compact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+  }
+
+  .store-compact-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    background: rgba(255, 255, 255, 0.02);
+    color: $text-secondary;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    width: 100%;
+
+    strong {
+      font-size: 0.85rem;
+      color: $text-color;
+    }
+
+    .store-btn-addr {
+      font-size: 0.75rem;
+      color: rgba($text-secondary, 0.7);
+    }
+
+    &:hover {
+      border-color: rgba($primary-color, 0.4);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    &.active {
+      border-color: $primary-color;
+      background: rgba($primary-color, 0.06);
+      color: $primary-color;
+      cursor: default; // Звичайний курсор, оскільки магазин вже обраний
+
+      strong {
+        color: $primary-color;
+      }
+
+      &:hover {
+        border-color: $primary-color;
+        background: rgba($primary-color, 0.06);
+      }
+    }
+  }
+}
+
+// Плитка вибору дати
+.delivery-dates-badges {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none; // Приховуємо scrollbar
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .date-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba($border-color, 0.5);
+    background: rgba(255, 255, 255, 0.01);
+    min-width: 110px;
+    text-align: center;
+    cursor: pointer;
+
+    .date-day {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: $text-color;
+    }
+
+    .date-time {
+      font-size: 0.7rem;
+      color: rgba($text-secondary, 0.7);
+    }
+
+    &:hover {
+      border-color: rgba($primary-color, 0.4);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    &.active {
+      border-color: rgba($primary-color, 0.6);
+      background: rgba($primary-color, 0.04);
+      cursor: default; // Звичайний курсор, оскільки дата вже обрана
+
+      .date-day {
+        color: $primary-color;
+      }
+
+      &:hover {
+        border-color: rgba($primary-color, 0.6);
+        background: rgba($primary-color, 0.04);
+      }
+    }
+  }
+}
+

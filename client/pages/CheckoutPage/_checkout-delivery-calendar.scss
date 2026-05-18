@@ -1,0 +1,296 @@
+// Вибір оплати
+.delivery-date-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 190px);
+  gap: 10px;
+  align-items: stretch;
+  margin-top: 12px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 520px) {
+    gap: 8px;
+  }
+}
+
+.delivery-date-options {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.delivery-date-option {
+  display: grid;
+  gap: 6px;
+  min-width: 96px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: $text-color;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  @media (max-width: 520px) {
+    min-width: 90px;
+  }
+
+  .date-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+
+    small {
+      color: rgba($text-secondary, 0.72);
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+  }
+
+  .date-time-chip {
+    width: fit-content;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 999px;
+    border: 1px solid rgba($border-color, 0.82);
+    background: rgba(255, 255, 255, 0.018);
+    color: $text-secondary;
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    outline: none;
+
+    .date-time-chip {
+      border-color: rgba($primary-color, 0.38);
+      color: $text-color;
+      background: rgba($primary-color, 0.045);
+    }
+  }
+
+  &.active {
+    cursor: default;
+
+    .date-time-chip {
+      border-color: rgba($primary-color, 0.5);
+      background: rgba($primary-color, 0.11);
+      color: $text-color;
+    }
+  }
+}
+
+.delivery-custom-date {
+  min-height: 44px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid rgba($primary-color, 0.2);
+  background: rgba($primary-color, 0.045);
+  color: $text-color;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  .MuiSvgIcon-root {
+    color: rgba($text-secondary, 0.86);
+    font-size: 1.15rem;
+  }
+
+  span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .custom-date-arrow {
+    color: $primary-color;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover,
+  &:focus-visible,
+  &.active {
+    border-color: rgba($primary-color, 0.42);
+    background: rgba($primary-color, 0.07);
+    outline: none;
+
+    .custom-date-arrow {
+      transform: translateX(2px);
+    }
+  }
+}
+
+.delivery-custom-date-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.delivery-calendar-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 10px);
+  z-index: 20;
+  width: min(310px, calc(100vw - 48px));
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba($primary-color, 0.24);
+  background: linear-gradient(135deg, rgba($card-bg, 0.98), rgba($bg-color, 0.98));
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+  color: $text-color;
+}
+
+.calendar-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+
+  strong {
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .calendar-close-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: $text-secondary;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: $primary-color;
+      background: rgba($primary-color, 0.08);
+      outline: none;
+    }
+  }
+}
+
+.calendar-month-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+
+  span {
+    text-align: center;
+    color: $text-color;
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: capitalize;
+  }
+
+  button {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: $primary-color;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    .MuiSvgIcon-root {
+      font-size: 1.15rem;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: rgba($primary-color, 0.08);
+      outline: none;
+    }
+  }
+}
+
+.calendar-week-row,
+.calendar-day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.calendar-week-row {
+  margin-bottom: 8px;
+
+  span {
+    text-align: center;
+    color: rgba($text-secondary, 0.72);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+}
+
+.calendar-day {
+  width: 32px;
+  height: 32px;
+  justify-self: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.025);
+  color: $text-color;
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+
+  &.outside {
+    color: rgba($text-secondary, 0.28);
+    background: transparent;
+  }
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba($primary-color, 0.32);
+    background: rgba($primary-color, 0.08);
+    outline: none;
+  }
+
+  &.selected {
+    border-color: rgba($primary-color, 0.58);
+    background: rgba($primary-color, 0.16);
+    color: $text-color;
+    font-weight: 800;
+  }
+
+  &:disabled {
+    color: rgba($text-secondary, 0.24);
+    background: rgba(255, 255, 255, 0.012);
+    cursor: not-allowed;
+  }
+}
+
