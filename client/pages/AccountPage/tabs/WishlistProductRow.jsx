@@ -1,22 +1,45 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Rating } from "@mui/material";
 import { Balance, DeleteOutline, RateReview, ShoppingCart, Star } from "@mui/icons-material";
 import { formatPrice } from "../../../utils/formatPrice.js";
+import { getProductReviews } from "../../../services/reviewService.js";
 
 const getProductId = (product) => product?._id || product?.id;
-
-const getStubRating = (id) => {
-  if (!id) return { rating: 4.2, count: 28 };
-  const hash = String(id).split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  const rating = (3.5 + (hash % 15) / 10).toFixed(1);
-  const count = 8 + (hash % 120);
-  return { rating: parseFloat(rating), count };
-};
 
 const WishlistProductRow = ({ product, onAddToCart, onRemove, onToggleCompare, isCompared }) => {
   const productId = getProductId(product);
   const imgSrc = product.image || product.imageUrl;
-  const { rating, count } = getStubRating(productId);
+  
+  const [rating, setRating] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    let isMounted = true;
+    if (productId) {
+      getProductReviews(productId)
+        .then((data) => {
+          if (!isMounted) return;
+          const reviewsList = data.reviews || [];
+          if (reviewsList.length > 0) {
+            const sum = reviewsList.reduce((acc, r) => acc + (r.rating || 0), 0);
+            const avg = Number((sum / reviewsList.length).toFixed(1));
+            setRating(avg);
+            setCount(reviewsList.length);
+          } else {
+            setRating(0);
+            setCount(0);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load reviews for product in wishlist:", err);
+        });
+    }
+    return () => {
+      isMounted = false;
+    };
+  }, [productId]);
+
   const price = Number(product.price || 0);
 
   return (

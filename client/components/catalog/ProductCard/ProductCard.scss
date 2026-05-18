@@ -136,18 +136,17 @@
 .wishlist-button {
   top: 10px;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba($primary-color, 0.35);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 
   .MuiSvgIcon-root {
     color: $primary-color;
-    stroke: currentColor;
-    stroke-width: 0.8;
     transition: all 0.3s ease;
   }
 
   &:hover {
     background: #ffffff;
+    border-color: rgba($primary-color, 0.7);
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 
@@ -161,6 +160,7 @@
     border-color: $primary-color;
     backdrop-filter: none;
     opacity: 1;
+
     .MuiSvgIcon-root {
       color: #ffffff;
     }
@@ -170,18 +170,17 @@
 .compare-button {
   top: 54px;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba($secondary-color, 0.35);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 
   .MuiSvgIcon-root {
     color: $secondary-color;
-    stroke: currentColor;
-    stroke-width: 0.8;
     transition: all 0.3s ease;
   }
 
   &:hover {
     background: #ffffff;
+    border-color: rgba($secondary-color, 0.7);
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 
@@ -195,6 +194,7 @@
     border-color: $secondary-color;
     backdrop-filter: none;
     opacity: 1;
+
     .MuiSvgIcon-root {
       color: #ffffff;
     }
@@ -227,14 +227,13 @@
   margin: 0;
   color: $text-color;
   line-height: 1.4;
-
+  height: 2.66rem; // Fixed height for 2 lines of text to align details
 
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  line-height: 1.4;
   transition: color 0.2s;
 
   .card-name-link:hover & {
@@ -244,6 +243,7 @@
   @media (max-width: 768px) {
     font-size: 0.78rem;
     line-height: 1.35;
+    height: 2.1rem; // Fixed height on mobile for 2 lines
   }
 }
 
@@ -252,11 +252,14 @@
 .card-rating {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px; // Snug spacing between star and rating value
   margin-top: 2px;
+  text-decoration: none;
+  cursor: pointer;
+  width: fit-content;
 
   .rating-star {
-    color: $warning-color;
+    color: #fbbf24;
     font-size: 16px;
   }
 
@@ -266,10 +269,21 @@
     color: $text-color;
   }
 
-  .rating-count {
-    font-size: 0.78rem;
+  .rating-reviews {
+    display: flex;
+    align-items: center;
+    gap: 4px; // Snug spacing between review icon and count
     color: $text-secondary;
-    opacity: 0.6;
+    margin-left: 4px; // Snug separation between value and reviews block
+
+    .review-icon {
+      font-size: 14px;
+    }
+
+    .rating-count {
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
   }
 
   @media (max-width: 768px) {
@@ -284,8 +298,17 @@
       font-size: 0.76rem;
     }
 
-    .rating-count {
-      font-size: 0.7rem;
+    .rating-reviews {
+      gap: 2px;
+      margin-left: 2px;
+
+      .review-icon {
+        font-size: 12px;
+      }
+
+      .rating-count {
+        font-size: 0.7rem;
+      }
     }
   }
 }
@@ -358,6 +381,26 @@
     width: 34px;
     height: 34px;
     min-width: 34px;
+  }
+
+  &.added {
+    background: rgba($primary-color, 0.12);
+    border: 1px solid rgba($primary-color, 0.35);
+    color: $primary-color;
+    box-shadow: none;
+
+    .cart-added-badge-outline {
+      stroke: $surface-color;
+      stroke-width: 1.5px;
+    }
+
+    &:hover {
+      background: rgba($primary-color, 0.22);
+      border-color: rgba($primary-color, 0.6);
+      color: lighten($primary-color, 5%);
+      box-shadow: none;
+      transform: scale(1.08);
+    }
   }
 
   &:hover {

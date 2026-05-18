@@ -372,12 +372,6 @@
   width: fit-content;
   margin-top: 8px;
   color: $text-secondary;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-
-  &:hover {
-    opacity: 0.82;
-  }
 }
 
 .wishlist-product-stars,
@@ -444,16 +438,16 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.2s ease;
 
   .MuiSvgIcon-root {
     font-size: 26px;
     /* Increased to look better in the new 42px circle */
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.2s ease;
   }
 
   &:hover {
-    transform: translateY(-2px) scale(1.1);
+    transform: none;
   }
 }
 
