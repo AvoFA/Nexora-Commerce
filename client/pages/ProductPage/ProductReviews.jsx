@@ -1,5 +1,5 @@
 import { Rating } from "@mui/material";
-import { Star, CheckCircle } from "@mui/icons-material";
+import { Star, CheckCircle, Close, InfoOutlined } from "@mui/icons-material";
 import ReviewForm from "./ReviewForm.jsx";
 
 const ProductReviews = ({
@@ -18,6 +18,8 @@ const ProductReviews = ({
   userReview,
   isEditing,
   setIsEditing,
+  showSuccess,
+  setShowSuccess,
 }) => {
   const handleEditClick = () => {
     if (userReview) {
@@ -33,66 +35,6 @@ const ProductReviews = ({
     setShowForm(true);
   };
 
-  const renderReviewAction = () => {
-    if (userReview?.status === "pending") {
-      return (
-        <div className="review-pending-notice" style={{ marginTop: '20px', padding: '12px', background: '#334155', borderRadius: '8px', border: '1px solid #475569' }}>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#cbd5e1', textAlign: 'center' }}>
-            Ваш відгук вже очікує модерації
-          </p>
-        </div>
-      );
-    }
-
-    if (userReview?.status === "approved") {
-      return (
-        <button
-          className="btn-write-review"
-          onClick={() => {
-            if (showForm) {
-              setShowForm(false);
-              setIsEditing(false);
-            } else {
-              handleEditClick();
-            }
-          }}
-        >
-          {showForm ? "Скасувати" : "Редагувати відгук"}
-        </button>
-      );
-    }
-
-    if (userReview?.status === "rejected") {
-      return (
-        <button
-          className="btn-write-review"
-          onClick={() => {
-            if (showForm) {
-              setShowForm(false);
-              setIsEditing(false);
-            } else {
-              handleEditClick();
-            }
-          }}
-          style={{ background: '#ef4444', borderColor: '#ef4444' }}
-        >
-          {showForm ? "Скасувати" : "Написати новий відгук"}
-        </button>
-      );
-    }
-
-    return (
-      <button
-        className="btn-write-review"
-        onClick={() => {
-          setShowForm((v) => !v);
-          setIsEditing(false);
-        }}
-      >
-        {showForm ? "Скасувати" : "Написати відгук"}
-      </button>
-    );
-  };
   return (
     <section className="reviews-section bottom-layout">
       <h2 className="section-title">Відгуки клієнтів</h2>
@@ -138,22 +80,106 @@ const ProductReviews = ({
               </div>
             ))}
           </div>
-
-          {renderReviewAction()}
         </div>
 
         {/* Правая зона */}
         <div className="reviews-content-side">
-          {/* Форма (показывается по кнопке) */}
-          <ReviewForm
-            showForm={showForm}
-            setShowForm={setShowForm}
-            newReview={newReview}
-            setNewReview={setNewReview}
-            formErrors={formErrors}
-            setFormErrors={setFormErrors}
-            handleSubmitReview={handleSubmitReview}
-          />
+          {/* Форма, плашка успіху, плашка очікування або CTA-банер */}
+          {showSuccess ? (
+            <div className="review-success-banner">
+              <CheckCircle className="success-icon" />
+              <div className="banner-text">
+                <strong>Дякуємо за ваш відгук.</strong>
+                <span>Після перевірки модератором він з'явиться на сайті.</span>
+              </div>
+              <button
+                type="button"
+                className="close-banner"
+                onClick={() => {
+                  setShowSuccess(false);
+                  setShowForm(false);
+                }}
+              >
+                <Close />
+              </button>
+            </div>
+          ) : userReview?.status === "pending" ? (
+            <div className="review-pending-banner">
+              <InfoOutlined className="pending-icon" />
+              <span>Ваш відгук вже очікує модерації та скоро з'явиться на сайті.</span>
+            </div>
+          ) : (
+            <form className={`reviews-interactive-card ${showForm ? "form-active" : "banner-active"}`} onSubmit={handleSubmitReview}>
+              {/* Рядок шапки (завжди видимий) */}
+              <div className="card-header-row">
+                <h3 className="card-title">Залиште свій відгук про цей товар</h3>
+                
+                {showForm ? (
+                  <button
+                    type="button"
+                    className="close-banner"
+                    onClick={() => {
+                      setShowForm(false);
+                      setIsEditing(false);
+                    }}
+                    title="Скасувати"
+                  >
+                    <Close />
+                  </button>
+                ) : userReview?.status === "approved" ? (
+                  <button
+                    type="button"
+                    className="btn-cta"
+                    onClick={() => {
+                      setShowSuccess(false);
+                      handleEditClick();
+                    }}
+                  >
+                    Редагувати відгук
+                  </button>
+                ) : userReview?.status === "rejected" ? (
+                  <button
+                    type="button"
+                    className="btn-cta btn-danger"
+                    onClick={() => {
+                      setShowSuccess(false);
+                      handleEditClick();
+                    }}
+                    style={{ background: '#ef4444', borderColor: '#ef4444' }}
+                  >
+                    Написати новий відгук
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn-cta"
+                    onClick={() => {
+                      setShowSuccess(false);
+                      setShowForm(true);
+                      setIsEditing(false);
+                    }}
+                  >
+                    Залишити відгук
+                  </button>
+                )}
+              </div>
+
+              {/* Частина, що схлопується (форма) */}
+              <div className="form-collapsible-wrapper">
+                <div className="form-collapsible-content">
+                  <ReviewForm
+                    showForm={showForm}
+                    setShowForm={setShowForm}
+                    newReview={newReview}
+                    setNewReview={setNewReview}
+                    formErrors={formErrors}
+                    setFormErrors={setFormErrors}
+                    handleSubmitReview={handleSubmitReview}
+                  />
+                </div>
+              </div>
+            </form>
+          )}
 
           <div className="reviews-list-header">
             <div className="rating-filters">

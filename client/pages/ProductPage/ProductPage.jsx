@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../../hooks/useCart.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { Link } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   Favorite,
   FavoriteBorder,
   Balance,
+  ShoppingCart,
   ShoppingCartOutlined,
   VisibilityOutlined,
   LocalShippingOutlined,
@@ -18,6 +19,7 @@ import {
   RateReview,
   Close,
   InfoOutlined,
+  ChevronRight,
 } from "@mui/icons-material";
 import { Rating, TextField, FormControl, FormHelperText, Tooltip } from "@mui/material";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
@@ -35,9 +37,25 @@ import ProductReviews from "./ProductReviews.jsx";
 
 const ProductPage = () => {
   const { id } = useParams();
+  const location = useLocation();
   const { product, similarProducts, isLoading, error } = useProductData(id);
 
-  const { dispatch } = useCart();
+  useEffect(() => {
+    if (location.hash === "#reviews" && !isLoading && product) {
+      const timer = setTimeout(() => {
+        document
+          .querySelector(".reviews-section")
+          ?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash, isLoading, product]);
+
+  const navigate = useNavigate();
+  const { state, dispatch } = useCart();
+  const isInCart = product && state?.items?.some(
+    (item) => item.id === product._id || item.id === product.id || item._id === product._id
+  );
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
   const {
     isAuthenticated,
@@ -62,6 +80,8 @@ const ProductPage = () => {
     userReview,
     isEditing,
     setIsEditing,
+    showSuccess,
+    setShowSuccess,
   } = useReviews(id, user, isAuthenticated);
 
   const handleAddToCart = () => {
@@ -121,6 +141,13 @@ const ProductPage = () => {
           <div className="product-header">
             <div className="product-title-section">
               <h1>{product.name}</h1>
+            </div>
+
+            <div className="product-status-row">
+              <span className="stock-badge in-stock">
+                <CheckCircle sx={{ fontSize: "16px" }} />В наявності
+              </span>
+
               <div
                 className="product-rating-link"
                 onClick={() =>
@@ -150,88 +177,99 @@ const ProductPage = () => {
                 </div>
               </div>
             </div>
-            <div className="product-badges">
-              <span className="badge brand-badge">{product.brand}</span>
-              <span className="badge category-badge">
-                {getCategoryDisplay(product.category)}
-              </span>
-              <span className="badge stock-badge in-stock">
-                <CheckCircle sx={{ fontSize: "16px" }} />В наявності
-              </span>
-            </div>
-          </div>
-          <div className="price-row">
-            <div className="price">
-              {formatPrice(product.price)}
-            </div>
-            <div className="product-actions-icons">
-              {/* Сердечко улюблені */}
-              <button
-                className={`product-wishlist-button${isWishlisted(product._id || product.id) ? " active" : ""}`}
-                onClick={handleOpenWishlist}
-                title={
-                  isWishlisted(product._id || product.id)
-                    ? "Додати в інший список"
-                    : "Додати до списку бажань"
-                }
-              >
-                {isWishlisted(product._id || product.id) ? (
-                  <Favorite sx={{ fontSize: "28px" }} />
-                ) : (
-                  <FavoriteBorder sx={{ fontSize: "28px" }} />
-                )}
-              </button>
-              {/* Ваги порівняння */}
-              <button
-                className={`product-compare-button${isCompared(product._id || product.id) ? " active" : ""}`}
-                onClick={handleToggleCompare}
-                title={
-                  isCompared(product._id || product.id)
-                    ? "Видалити з порівняння"
-                    : "Додати до порівняння"
-                }
-              >
-                <Balance sx={{ fontSize: "28px" }} />
-              </button>
-            </div>
+
+            <Link
+              to={`/catalog?brand=${encodeURIComponent(product.brand)}`}
+              className="product-brand-card"
+            >
+              <div className="brand-card-left">
+                <span className="brand-name">{product.brand}</span>
+                <span className="brand-subtitle">Всі товари бренду</span>
+              </div>
+              <ChevronRight className="brand-chevron" />
+            </Link>
           </div>
           {/* Mini Description (Stay here as requested) */}
           <p className="description-short">{product.description}</p>
 
-          {/* Блок кнопок */}
-          <div className="product-actions-wrapper">
-            <button
-              className="btn-primary btn-with-icon"
-              onClick={handleAddToCart}
-            >
-              <ShoppingCartOutlined sx={{ fontSize: "20px" }} />
-              Додати в кошик
-            </button>
-
-            <Link to="/cart" className="btn-secondary">
-              <VisibilityOutlined sx={{ fontSize: "20px" }} />
-              Перейти до кошика
-            </Link>
-          </div>
-
-          {/* Info Badges Card Grid */}
-          <div className="product-info-grid">
-            <div className="info-card">
-              <div className="icon-box delivery">
-                <LocalShippingOutlined className="info-icon" />
+          {/* Premium Slate & Glow Purchase Card */}
+          <div className="product-purchase-card">
+            <div className="price-row">
+              <div className="price">
+                {formatPrice(product.price)}
               </div>
-              <div className="info-card-text">
-                <span className="info-label">Доставка</span>
-                <span className="info-value">Безкоштовно</span>
+              <div className="product-actions-icons">
+                {/* Сердечко улюблені */}
+                <button
+                  className={`product-wishlist-button${isWishlisted(product._id || product.id) ? " active" : ""}`}
+                  onClick={handleOpenWishlist}
+                  title={
+                    isWishlisted(product._id || product.id)
+                      ? "Додати в інший список"
+                      : "Додати до списку бажань"
+                  }
+                >
+                  {isWishlisted(product._id || product.id) ? (
+                    <Favorite sx={{ fontSize: "28px" }} />
+                  ) : (
+                    <FavoriteBorder sx={{ fontSize: "28px" }} />
+                  )}
+                </button>
+                {/* Ваги порівняння */}
+                <button
+                  className={`product-compare-button${isCompared(product._id || product.id) ? " active" : ""}`}
+                  onClick={handleToggleCompare}
+                  title={
+                    isCompared(product._id || product.id)
+                      ? "Видалити з порівняння"
+                      : "Додати до порівняння"
+                  }
+                >
+                  <Balance sx={{ fontSize: "28px" }} />
+                </button>
               </div>
             </div>
-            <div className="info-card">
-              <div className="icon-box warranty">
-                <VerifiedUserOutlined className="info-icon" />
+
+            {/* Блок кнопок (One single dynamic primary button!) */}
+            <div className="product-actions-wrapper">
+              {isInCart ? (
+                <button
+                  className="btn-primary btn-with-icon"
+                  onClick={() => navigate("/cart", { state: { fromProduct: product._id || product.id } })}
+                >
+                  <ShoppingCart sx={{ fontSize: "20px" }} />
+                  Перейти до кошика
+                </button>
+              ) : (
+                <button
+                  className="btn-primary btn-with-icon"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCartOutlined sx={{ fontSize: "20px" }} />
+                  Додати в кошик
+                </button>
+              )}
+            </div>
+
+            {/* Info Badges Card Grid */}
+            <div className="product-info-grid">
+              <div className="info-card">
+                <div className="icon-box delivery">
+                  <LocalShippingOutlined className="info-icon" />
+                </div>
+                <div className="info-card-text">
+                  <span className="info-label">Доставка</span>
+                  <span className="info-value">Безкоштовно</span>
+                </div>
               </div>
-              <div className="info-card-text">
-                <span className="info-label">Гарантія</span>
-                <span className="info-value">24 місяці</span>
+              <div className="info-card">
+                <div className="icon-box warranty">
+                  <VerifiedUserOutlined className="info-icon" />
+                </div>
+                <div className="info-card-text">
+                  <span className="info-label">Гарантія</span>
+                  <span className="info-value">24 місяці</span>
+                </div>
               </div>
             </div>
           </div>
@@ -280,6 +318,8 @@ const ProductPage = () => {
         userReview={userReview}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
+        showSuccess={showSuccess}
+        setShowSuccess={setShowSuccess}
       />
 
       {/* Схожі товари */}

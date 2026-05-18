@@ -1,5 +1,5 @@
 import { Rating, FormHelperText, Tooltip } from "@mui/material";
-import { Star, Close, InfoOutlined } from "@mui/icons-material";
+import { Star, InfoOutlined } from "@mui/icons-material";
 
 const ReviewForm = ({
   showForm,
@@ -10,20 +10,9 @@ const ReviewForm = ({
   setFormErrors,
   handleSubmitReview,
 }) => {
-  if (!showForm) return null;
-
   return (
-    <form className="review-form" onSubmit={handleSubmitReview}>
-      <button
-        type="button"
-        className="close-form"
-        onClick={() => setShowForm(false)}
-      >
-        <Close />
-      </button>
-
-      <div className="review-form-header">
-        <h3>Залиште свій відгук про цей товар</h3>
+    <div className="review-form-fields-wrapper">
+      <div className="review-form-header-simple">
         <Tooltip
           title={
             <div style={{ padding: "8px", fontSize: "13px", lineHeight: "1.6" }}>
@@ -125,6 +114,7 @@ const ReviewForm = ({
           />
           {formErrors.text && <div className="error-message">{formErrors.text}</div>}
         </div>
+
         <div className="form-row">
           <div className="form-group">
             <label htmlFor="review-pros">Переваги</label>
@@ -155,10 +145,10 @@ const ReviewForm = ({
         </div>
       </div>
 
-      <button type="submit" className="btn-primary btn-with-icon">
+      <button type="submit" className="btn-primary btn-with-icon" style={{ marginTop: "24px" }}>
         Надіслати відгук
       </button>
-    </form>
+    </div>
   );
 };
 

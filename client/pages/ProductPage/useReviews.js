@@ -17,6 +17,7 @@ export const useReviews = (productId, user, isAuthenticated) => {
   
   const [userReview, setUserReview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (user?.name) {
@@ -112,7 +113,6 @@ export const useReviews = (productId, user, isAuthenticated) => {
           pros: newReview.pros,
           cons: newReview.cons
         }, token);
-        toast.success("Ваш відгук оновлено та відправлено на модерацію");
       } else {
         await createReview({
           productId,
@@ -121,7 +121,6 @@ export const useReviews = (productId, user, isAuthenticated) => {
           pros: newReview.pros,
           cons: newReview.cons
         }, token);
-        toast.success("Ваш відгук відправлено на модерацію");
       }
 
       setFormErrors({});
@@ -132,7 +131,7 @@ export const useReviews = (productId, user, isAuthenticated) => {
         pros: "",
         cons: "",
       });
-      setShowForm(false);
+      setShowSuccess(true);
       setIsEditing(false);
       fetchUserReview();
     } catch (error) {
@@ -156,5 +155,7 @@ export const useReviews = (productId, user, isAuthenticated) => {
     userReview,
     isEditing,
     setIsEditing,
+    showSuccess,
+    setShowSuccess,
   };
 };

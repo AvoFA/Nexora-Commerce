@@ -10,6 +10,7 @@ import AdminLayout from "./components/layout/AdminLayout/AdminLayout.jsx";
 import Footer from "./components/layout/Footer/Footer.jsx";
 import AuthModal from "./components/auth/AuthModal.jsx";
 import ScrollToTop from "./components/common/ScrollToTop/ScrollToTop.jsx";
+import AddedToCartDrawer from "./components/cart/AddedToCartDrawer/AddedToCartDrawer.jsx";
 
 // сторінки сайту
 import HomePage from "./pages/HomePage/HomePage.jsx";
@@ -48,17 +49,19 @@ const SiteLayout = () => {
         minHeight: "100vh"
       }}
     >
-      {/* Toast для основного сайту */}
       <Toaster
-        position="top-center"
+        position="top-right"
+        theme="dark"
+        richColors
+        closeButton
+        style={{
+          top: "85px",
+          right: "24px"
+        }}
         toastOptions={{
           style: {
-            background: "rgba(27, 35, 53, 0.9)",
-            backdropFilter: "blur(10px)",
-            borderColor: "rgba(58, 134, 255, 0.2)",
-            color: "#F0F4F8",
-            marginTop: "50px"
-          },
+            width: "fit-content"
+          }
         }}
       />
 
@@ -73,6 +76,7 @@ const SiteLayout = () => {
       </main>
       <Footer />
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      <AddedToCartDrawer />
     </div>
   );
 };
@@ -84,17 +88,9 @@ const AdminLayoutWithToaster = () => {
       {/* Toast для адмін-панелі */}
       <Toaster
         position="top-right"
-        toastOptions={{
-          style: {
-            background: "linear-gradient(135deg, rgba(22, 33, 62, 0.95), rgba(17, 24, 48, 0.98))",
-            border: "1px solid rgba(58, 134, 255, 0.3)",
-            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
-            color: "#F0F4F8",
-            fontSize: "15px",
-            padding: "16px 20px",
-            minWidth: "300px",
-          },
-        }}
+        theme="dark"
+        closeButton
+        richColors
       />
       <AdminLayout />
     </>
