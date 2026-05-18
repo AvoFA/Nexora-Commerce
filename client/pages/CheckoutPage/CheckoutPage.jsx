@@ -7,6 +7,10 @@ import { createOrder } from "../../services/orderService.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import CitySelectModal from "../../components/checkout/CitySelectModal/CitySelectModal.jsx";
 import WarehouseSelectModal from "../../components/checkout/WarehouseSelectModal/WarehouseSelectModal.jsx";
+import CourierCityContext from "../../components/checkout/CourierCityContext/CourierCityContext.jsx";
+import OrderCommentCard from "../../components/checkout/OrderCommentCard/OrderCommentCard.jsx";
+import PaymentOptionCard from "../../components/checkout/PaymentOptionCard/PaymentOptionCard.jsx";
+import SelectedWarehouseSummary from "../../components/checkout/SelectedWarehouseSummary/SelectedWarehouseSummary.jsx";
 import {
   PersonOutlined,
   EmailOutlined,
@@ -141,19 +145,6 @@ const CheckoutPage = () => {
   };
 
   const selectedWarehouse = getWarehouseSummary(npBranch);
-
-  const renderCourierCityContext = () => (
-    <div className="delivery-city-context">
-      <span className="context-label">Місто доставки</span>
-      <div className="context-main">
-        <HomeOutlined />
-        <div>
-          <strong>{city}</strong>
-          <small>{cityArea || "Доставка у вказане місто"}</small>
-        </div>
-      </div>
-    </div>
-  );
 
   /* === РЕФ ТА СТЕЙТ ДЛЯ ГОРИЗОНТАЛЬНОГО СЛАЙДЕРА ТОВАРІВ === */
   const itemsContainerRef = useRef(null);
@@ -996,32 +987,13 @@ const CheckoutPage = () => {
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
                               <div className="form-group full-width warehouse-choice-group">
                                 <label htmlFor="npBranch">Відділення Нової Пошти</label>
-                                {npBranch ? (
-                                  <button
-                                    id="npBranch"
-                                    type="button"
-                                    className={`selected-warehouse-summary ${errors.npBranch ? "has-error" : ""}`}
-                                    onClick={() => setIsWarehouseModalOpen(true)}
-                                  >
-                                    <div className="summary-copy">
-                                      <strong>{selectedWarehouse.title}</strong>
-                                      <small>{selectedWarehouse.details}</small>
-                                    </div>
-                                    <span className="summary-change-btn">
-                                      Змінити <ChevronRight className="warehouse-trigger-arrow" />
-                                    </span>
-                                  </button>
-                                ) : (
-                                  <button
-                                    id="npBranch"
-                                    type="button"
-                                    className={`warehouse-select-trigger is-empty ${errors.npBranch ? "has-error" : ""}`}
-                                    onClick={() => setIsWarehouseModalOpen(true)}
-                                  >
-                                    <span>Обрати відділення для: {city}</span>
-                                    <ChevronRight className="warehouse-trigger-arrow" />
-                                  </button>
-                                )}
+                                <SelectedWarehouseSummary
+                                  branch={npBranch}
+                                  city={city}
+                                  hasError={Boolean(errors.npBranch)}
+                                  warehouseSummary={selectedWarehouse}
+                                  onOpen={() => setIsWarehouseModalOpen(true)}
+                                />
                                 {errors.npBranch && <div className="error-message">{errors.npBranch}</div>}
                               </div>
                               {renderDeliveryDateStrip()}
@@ -1091,7 +1063,7 @@ const CheckoutPage = () => {
 
                           {deliveryMethod === DELIVERY_METHODS.COURIER && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
-                              {renderCourierCityContext()}
+                              <CourierCityContext city={city} cityArea={cityArea} />
                               <div className="form-group full-width">
                                 <label htmlFor="address">Повна адреса доставки (Вулиця, будинок, квартира)</label>
                                 <HomeOutlined className="form-icon" />
@@ -1133,7 +1105,7 @@ const CheckoutPage = () => {
 
                           {deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
-                              {renderCourierCityContext()}
+                              <CourierCityContext city={city} cityArea={cityArea} />
                               <div className="form-group full-width">
                                 <label htmlFor="address">Повна адреса для доставки кур'єром НП</label>
                                 <HomeOutlined className="form-icon" />
@@ -1183,41 +1155,23 @@ const CheckoutPage = () => {
                 <h2>Вибір способу оплати</h2>
                 <div className="card-content">
                   <div className="payment-options-group">
-                    <label className={`payment-option-card ${paymentMethod === PAYMENT_METHODS.CASH ? "selected" : ""}`}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={PAYMENT_METHODS.CASH}
-                        checked={paymentMethod === PAYMENT_METHODS.CASH}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <div className="payment-option-content">
-                        <LocalShippingOutlined />
-                        <div className="payment-option-text">
-                          <span>Оплата при отриманні</span>
-                          <small>Готівкою або карткою у точці видачі / кур'єру</small>
-                        </div>
-                      </div>
-                      {paymentMethod === PAYMENT_METHODS.CASH && <CheckCircle className="payment-select-check" />}
-                    </label>
+                    <PaymentOptionCard
+                      value={PAYMENT_METHODS.CASH}
+                      selectedValue={paymentMethod}
+                      icon={<LocalShippingOutlined />}
+                      title="Оплата при отриманні"
+                      description="Готівкою або карткою у точці видачі / кур'єру"
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
 
-                    <label className={`payment-option-card ${paymentMethod === PAYMENT_METHODS.CARD ? "selected" : ""}`}>
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={PAYMENT_METHODS.CARD}
-                        checked={paymentMethod === PAYMENT_METHODS.CARD}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                      />
-                      <div className="payment-option-content">
-                        <CreditCardOutlined />
-                        <div className="payment-option-text">
-                          <span>Картою онлайн</span>
-                          <small>Миттєва безпечна оплата Visa / Mastercard / Apple Pay</small>
-                        </div>
-                      </div>
-                      {paymentMethod === PAYMENT_METHODS.CARD && <CheckCircle className="payment-select-check" />}
-                    </label>
+                    <PaymentOptionCard
+                      value={PAYMENT_METHODS.CARD}
+                      selectedValue={paymentMethod}
+                      icon={<CreditCardOutlined />}
+                      title="Картою онлайн"
+                      description="Миттєва безпечна оплата Visa / Mastercard / Apple Pay"
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                    />
                   </div>
 
                   {/* Кнопка Продовжити під вибором оплати всередині картки */}
@@ -1318,22 +1272,10 @@ const CheckoutPage = () => {
                 </div>
               </div>
 
-              {/* Картка 4: Коментар до замовлення */}
-              <div className="checkout-card comment-card">
-                <h2>Коментар до замовлення</h2>
-                <div className="card-content">
-                  <div className="form-group full-width no-icon">
-                    <textarea
-                      id="order-comment"
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder="Ваші побажання щодо доставки, часу отримання або додаткові деталі..."
-                      className="form-textarea"
-                      rows={4}
-                    />
-                  </div>
-                </div>
-              </div>
+              <OrderCommentCard
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              />
 
             </div>
           )}
