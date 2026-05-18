@@ -24,13 +24,24 @@ import {
   CalendarMonthOutlined,
 } from "@mui/icons-material";
 import { formatPrice } from "../../utils/formatPrice.js";
+import {
+  DEFAULT_CITY,
+  DEFAULT_CITY_AREA,
+  DEFAULT_CITY_REF,
+  DEFAULT_NOVA_POSHTA_BRANCH,
+  DEFAULT_ZIP,
+  DELIVERY_CONFIRMATION_LABELS,
+  DELIVERY_GROUPS,
+  DELIVERY_METHODS,
+  DELIVERY_PRICES,
+  PAYMENT_METHODS,
+  STORES,
+  UKRAINIAN_CALENDAR_WEEKDAY_LABELS,
+  UKRAINIAN_MONTH_LABELS,
+  UKRAINIAN_WEEKDAY_LABELS,
+  UKRAINIAN_WEEKDAY_SHORT_LABELS,
+} from "./checkout.constants.js";
 import "./CheckoutPage.scss";
-
-// Магазини для самовивозу
-const STORES = [
-  { id: "store-1", name: "Шоурум AvoShop №1", address: "м. Київ, вул. Хрещатик, 1", hours: "09:00 - 21:00" },
-  { id: "store-2", name: "Шоурум AvoShop №2", address: "м. Київ, проспект Перемоги, 45", hours: "10:00 - 22:00" }
-];
 
 const CheckoutPage = () => {
   const { state, dispatch } = useCart();
@@ -45,8 +56,8 @@ const CheckoutPage = () => {
   const [activeStep, setActiveStep] = useState(1);
 
   /* === СПОСІБ ДОСТАВКИ === */
-  const [deliveryGroup, setDeliveryGroup] = useState("pickup"); // pickup | courier
-  const [deliveryMethod, setDeliveryMethod] = useState("pickup"); // pickup | post | meest | courier | courier_np
+  const [deliveryGroup, setDeliveryGroup] = useState(DELIVERY_GROUPS.PICKUP); // pickup | courier
+  const [deliveryMethod, setDeliveryMethod] = useState(DELIVERY_METHODS.PICKUP); // pickup | post | meest | courier | courier_np
   const [selectedDeliveryDateOffset, setSelectedDeliveryDateOffset] = useState(1);
   const [isDeliveryCalendarOpen, setIsDeliveryCalendarOpen] = useState(false);
   const [deliveryCalendarMonth, setDeliveryCalendarMonth] = useState(() => {
@@ -63,9 +74,9 @@ const CheckoutPage = () => {
   const [patronymic, setPatronymic] = useState(parts[2] || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
-  const [city, setCity] = useState("Київ");
-  const [cityArea, setCityArea] = useState("Київська обл.");
-  const [zip] = useState("01001");
+  const [city, setCity] = useState(DEFAULT_CITY);
+  const [cityArea, setCityArea] = useState(DEFAULT_CITY_AREA);
+  const [zip] = useState(DEFAULT_ZIP);
   
   // Поля для адресної доставки
   const [address, setAddress] = useState("");
@@ -74,10 +85,10 @@ const CheckoutPage = () => {
   const [chosenStore, setChosenStore] = useState(STORES[0].name + ", " + STORES[0].address);
   
   // Відділення Нової Пошти
-  const [npBranch, setNpBranch] = useState("Відділення №1, вул. Пирогова, 2");
+  const [npBranch, setNpBranch] = useState(DEFAULT_NOVA_POSHTA_BRANCH);
 
   /* === СПОСІБ ОПЛАТИ === */
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS.CASH);
 
   // Коментар до замовлення
   const [comment, setComment] = useState("");
@@ -87,7 +98,7 @@ const CheckoutPage = () => {
 
   // Стан для преміальних плашок редагування (Колапс як у Comfy)
   const [isEditingRecipient, setIsEditingRecipient] = useState(!hasCompleteProfile);
-  const [cityRef, setCityRef] = useState("dbdb8b48-9c6d-11e3-b904-005056801329"); // Дефолтний Ref для Києва
+  const [cityRef, setCityRef] = useState(DEFAULT_CITY_REF); // Дефолтний Ref для Києва
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
 
@@ -178,7 +189,7 @@ const CheckoutPage = () => {
     return `form-input ${isFilled} ${hasErrorClass}`;
   };
 
-  const getDefaultDateOffset = (method) => (method === "pickup" ? 1 : 2);
+  const getDefaultDateOffset = (method) => (method === DELIVERY_METHODS.PICKUP ? 1 : 2);
 
   const selectDeliveryMethod = (method) => {
     setDeliveryMethod(method);
@@ -244,20 +255,9 @@ const CheckoutPage = () => {
   const getDateParts = (daysToAdd) => {
     const date = getDateByOffset(daysToAdd);
     const day = date.getDate();
-    const months = [
-      "січня", "лютого", "березня", "квітня", "травня", "червня",
-      "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
-    ];
-    const month = months[date.getMonth()];
-    
-    const weekdays = [
-      "неділя", "понеділок", "вівторок", "середа", "четвер", "п'ятниця", "субота"
-    ];
-    const weekdayShorts = [
-      "Нд", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"
-    ];
-    const weekday = weekdays[date.getDay()];
-    const weekdayShort = weekdayShorts[date.getDay()];
+    const month = UKRAINIAN_MONTH_LABELS[date.getMonth()];
+    const weekday = UKRAINIAN_WEEKDAY_LABELS[date.getDay()];
+    const weekdayShort = UKRAINIAN_WEEKDAY_SHORT_LABELS[date.getDay()];
     
     return {
       dayMonth: `${day} ${month}`,
@@ -277,8 +277,8 @@ const CheckoutPage = () => {
   };
 
   const getPlannedDate = () => {
-    if (deliveryMethod === "pickup") return `самовивіз, ${getFormattedDate(selectedDeliveryDateOffset)}`;
-    if (deliveryMethod === "post" || deliveryMethod === "meest") return `до відділення, ${getFormattedDate(selectedDeliveryDateOffset)}`;
+    if (deliveryMethod === DELIVERY_METHODS.PICKUP) return `самовивіз, ${getFormattedDate(selectedDeliveryDateOffset)}`;
+    if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) return `до відділення, ${getFormattedDate(selectedDeliveryDateOffset)}`;
     return `кур'єром, ${getFormattedDate(selectedDeliveryDateOffset)}`;
   };
 
@@ -332,7 +332,7 @@ const CheckoutPage = () => {
       month: "long",
       year: "numeric",
     });
-    const weekLabels = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
+    const weekLabels = UKRAINIAN_CALENDAR_WEEKDAY_LABELS;
 
     return (
       <div className="delivery-date-strip" onClick={(e) => e.stopPropagation()}>
@@ -426,11 +426,7 @@ const CheckoutPage = () => {
   };
 
   const getDeliveryTypeLabel = () => {
-    if (deliveryMethod === "pickup") return "Самовивіз з шоуруму";
-    if (deliveryMethod === "post") return "До відділення Нова Пошта";
-    if (deliveryMethod === "meest") return "До відділення Meest ПОШТА";
-    if (deliveryMethod === "courier") return "Адресна доставка кур'єром COMFY";
-    return "Адресна доставка кур'єром Нова Пошта";
+    return DELIVERY_CONFIRMATION_LABELS[deliveryMethod] || DELIVERY_CONFIRMATION_LABELS[DELIVERY_METHODS.COURIER_NOVA_POSHTA];
   };
 
   /* === ВАЛІДАЦІЯ ТА ПЕРЕХІД НА НАСТУПНИЙ КРОК === */
@@ -482,11 +478,11 @@ const CheckoutPage = () => {
     let nextErrors = validateRecipientAndCity({});
 
     // Перевірка полів доставки
-    if (deliveryMethod === "post" || deliveryMethod === "meest") {
+    if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) {
       if (!npBranch.trim()) {
         nextErrors.npBranch = "Поле обов'язкове для заповнення";
       }
-    } else if (deliveryMethod === "courier" || deliveryMethod === "courier_np") {
+    } else if (deliveryMethod === DELIVERY_METHODS.COURIER || deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA) {
       if (!address.trim()) {
         nextErrors.address = "Поле обов'язкове для заповнення";
       }
@@ -590,14 +586,14 @@ const CheckoutPage = () => {
     if (!validateDeliveryStep()) return;
 
     let finalAddress = "";
-    let finalCity = city || "Київ";
-    let finalZip = zip || "01001";
+    let finalCity = city || DEFAULT_CITY;
+    let finalZip = zip || DEFAULT_ZIP;
 
-    if (deliveryMethod === "pickup") {
+    if (deliveryMethod === DELIVERY_METHODS.PICKUP) {
       finalAddress = chosenStore;
-    } else if (deliveryMethod === "post" || deliveryMethod === "meest") {
+    } else if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) {
       finalAddress = npBranch;
-    } else if (deliveryMethod === "courier" || deliveryMethod === "courier_np") {
+    } else if (deliveryMethod === DELIVERY_METHODS.COURIER || deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA) {
       finalAddress = address;
     }
 
@@ -913,35 +909,35 @@ const CheckoutPage = () => {
                   <div className="delivery-groups-toggle">
                     <button
                       type="button"
-                      className={`group-toggle-btn ${deliveryGroup === "pickup" ? "active" : ""}`}
+                      className={`group-toggle-btn ${deliveryGroup === DELIVERY_GROUPS.PICKUP ? "active" : ""}`}
                       onClick={() => {
-                        setDeliveryGroup("pickup");
-                        selectDeliveryMethod("pickup"); // Дефолт всередині групи Самовивозу
+                        setDeliveryGroup(DELIVERY_GROUPS.PICKUP);
+                        selectDeliveryMethod(DELIVERY_METHODS.PICKUP); // Дефолт всередині групи Самовивозу
                       }}
                     >
                       Самовивіз / До відділення
                     </button>
                     <button
                       type="button"
-                      className={`group-toggle-btn ${deliveryGroup === "courier" ? "active" : ""}`}
+                      className={`group-toggle-btn ${deliveryGroup === DELIVERY_GROUPS.COURIER ? "active" : ""}`}
                       onClick={() => {
-                        setDeliveryGroup("courier");
-                        selectDeliveryMethod("courier"); // Дефолт всередині групи Кур'єра
+                        setDeliveryGroup(DELIVERY_GROUPS.COURIER);
+                        selectDeliveryMethod(DELIVERY_METHODS.COURIER); // Дефолт всередині групи Кур'єра
                       }}
                     >
-                      Доставка кур'єром від 199 ₴
+                      Доставка кур'єром від {DELIVERY_PRICES.COURIER}
                     </button>
                   </div>
 
                   {/* 📦 Динамічний вміст доставки в залежності від вкладки */}
                   <div className="delivery-options-list">
                     
-                    {deliveryGroup === "pickup" ? (
+                    {deliveryGroup === DELIVERY_GROUPS.PICKUP ? (
                       <>
                         {/* 1. Самовивіз з шоуруму */}
                         <div 
-                          className={`delivery-option-card ${deliveryMethod === "pickup" ? "active" : ""}`}
-                          onClick={() => selectDeliveryMethod("pickup")}
+                          className={`delivery-option-card ${deliveryMethod === DELIVERY_METHODS.PICKUP ? "active" : ""}`}
+                          onClick={() => selectDeliveryMethod(DELIVERY_METHODS.PICKUP)}
                         >
                           <div className="option-card-header">
                             <span className="option-icon-shell">
@@ -949,13 +945,13 @@ const CheckoutPage = () => {
                             </span>
                             <div className="option-info">
                               <span className="option-title">Самовивіз з шоуруму</span>
-                              <span className="option-date">Буде готово: {getMethodHeaderDate("pickup")}</span>
+                              <span className="option-date">Буде готово: {getMethodHeaderDate(DELIVERY_METHODS.PICKUP)}</span>
                             </div>
-                            <span className="option-cost free">Безкоштовно</span>
-                            {deliveryMethod === "pickup" && <CheckCircle className="option-selected-check" />}
+                            <span className="option-cost free">{DELIVERY_PRICES.PICKUP}</span>
+                            {deliveryMethod === DELIVERY_METHODS.PICKUP && <CheckCircle className="option-selected-check" />}
                           </div>
 
-                          {deliveryMethod === "pickup" && (
+                          {deliveryMethod === DELIVERY_METHODS.PICKUP && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
                               <div className="store-selector-compact">
                                 <span className="compact-label">Виберіть магазин для самовивозу:</span>
@@ -981,8 +977,8 @@ const CheckoutPage = () => {
 
                         {/* 2. До відділення Нова Пошта */}
                         <div 
-                          className={`delivery-option-card ${deliveryMethod === "post" ? "active" : ""}`}
-                          onClick={() => selectDeliveryMethod("post")}
+                          className={`delivery-option-card ${deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA ? "active" : ""}`}
+                          onClick={() => selectDeliveryMethod(DELIVERY_METHODS.NOVA_POSHTA)}
                         >
                           <div className="option-card-header">
                             <span className="option-icon-shell">
@@ -990,13 +986,13 @@ const CheckoutPage = () => {
                             </span>
                             <div className="option-info">
                               <span className="option-title">До відділення Нова Пошта</span>
-                              <span className="option-date">Відправка: {getMethodHeaderDate("post")}</span>
+                              <span className="option-date">Відправка: {getMethodHeaderDate(DELIVERY_METHODS.NOVA_POSHTA)}</span>
                             </div>
-                            <span className="option-cost">1 ₴</span>
-                            {deliveryMethod === "post" && <CheckCircle className="option-selected-check" />}
+                            <span className="option-cost">{DELIVERY_PRICES.BRANCH}</span>
+                            {deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA && <CheckCircle className="option-selected-check" />}
                           </div>
 
-                          {deliveryMethod === "post" && (
+                          {deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
                               <div className="form-group full-width warehouse-choice-group">
                                 <label htmlFor="npBranch">Відділення Нової Пошти</label>
@@ -1035,8 +1031,8 @@ const CheckoutPage = () => {
 
                         {/* 3. До відділення Meest ПОШТА */}
                         <div 
-                          className={`delivery-option-card ${deliveryMethod === "meest" ? "active" : ""}`}
-                          onClick={() => selectDeliveryMethod("meest")}
+                          className={`delivery-option-card ${deliveryMethod === DELIVERY_METHODS.MEEST ? "active" : ""}`}
+                          onClick={() => selectDeliveryMethod(DELIVERY_METHODS.MEEST)}
                         >
                           <div className="option-card-header">
                             <span className="option-icon-shell">
@@ -1044,13 +1040,13 @@ const CheckoutPage = () => {
                             </span>
                             <div className="option-info">
                               <span className="option-title">До відділення Meest ПОШТА</span>
-                              <span className="option-date">Відправка: {getMethodHeaderDate("meest")}</span>
+                              <span className="option-date">Відправка: {getMethodHeaderDate(DELIVERY_METHODS.MEEST)}</span>
                             </div>
-                            <span className="option-cost">1 ₴</span>
-                            {deliveryMethod === "meest" && <CheckCircle className="option-selected-check" />}
+                            <span className="option-cost">{DELIVERY_PRICES.BRANCH}</span>
+                            {deliveryMethod === DELIVERY_METHODS.MEEST && <CheckCircle className="option-selected-check" />}
                           </div>
 
-                          {deliveryMethod === "meest" && (
+                          {deliveryMethod === DELIVERY_METHODS.MEEST && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
                               <div className="form-group full-width">
                                 <label htmlFor="meestBranch">Номер або адреса відділення Meest ПОШТА</label>
@@ -1078,8 +1074,8 @@ const CheckoutPage = () => {
                       <>
                         {/* 1. Кур'єр нашої компанії */}
                         <div 
-                          className={`delivery-option-card ${deliveryMethod === "courier" ? "active" : ""}`}
-                          onClick={() => selectDeliveryMethod("courier")}
+                          className={`delivery-option-card ${deliveryMethod === DELIVERY_METHODS.COURIER ? "active" : ""}`}
+                          onClick={() => selectDeliveryMethod(DELIVERY_METHODS.COURIER)}
                         >
                           <div className="option-card-header">
                             <span className="option-icon-shell">
@@ -1087,13 +1083,13 @@ const CheckoutPage = () => {
                             </span>
                             <div className="option-info">
                               <span className="option-title">Кур'єр нашої компанії</span>
-                              <span className="option-date">Доставка: {getMethodHeaderDate("courier")}</span>
+                              <span className="option-date">Доставка: {getMethodHeaderDate(DELIVERY_METHODS.COURIER)}</span>
                             </div>
-                            <span className="option-cost font-semibold text-primary">199 ₴</span>
-                            {deliveryMethod === "courier" && <CheckCircle className="option-selected-check" />}
+                            <span className="option-cost font-semibold text-primary">{DELIVERY_PRICES.COURIER}</span>
+                            {deliveryMethod === DELIVERY_METHODS.COURIER && <CheckCircle className="option-selected-check" />}
                           </div>
 
-                          {deliveryMethod === "courier" && (
+                          {deliveryMethod === DELIVERY_METHODS.COURIER && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
                               {renderCourierCityContext()}
                               <div className="form-group full-width">
@@ -1120,8 +1116,8 @@ const CheckoutPage = () => {
 
                         {/* 2. Кур'єр Нова Пошта */}
                         <div 
-                          className={`delivery-option-card ${deliveryMethod === "courier_np" ? "active" : ""}`}
-                          onClick={() => selectDeliveryMethod("courier_np")}
+                          className={`delivery-option-card ${deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA ? "active" : ""}`}
+                          onClick={() => selectDeliveryMethod(DELIVERY_METHODS.COURIER_NOVA_POSHTA)}
                         >
                           <div className="option-card-header">
                             <span className="option-icon-shell">
@@ -1129,13 +1125,13 @@ const CheckoutPage = () => {
                             </span>
                             <div className="option-info">
                               <span className="option-title">Кур'єр Нова Пошта</span>
-                              <span className="option-date">Доставка: {getMethodHeaderDate("courier_np")}</span>
+                              <span className="option-date">Доставка: {getMethodHeaderDate(DELIVERY_METHODS.COURIER_NOVA_POSHTA)}</span>
                             </div>
-                            <span className="option-cost text-primary font-semibold">329 ₴</span>
-                            {deliveryMethod === "courier_np" && <CheckCircle className="option-selected-check" />}
+                            <span className="option-cost text-primary font-semibold">{DELIVERY_PRICES.COURIER_NOVA_POSHTA}</span>
+                            {deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA && <CheckCircle className="option-selected-check" />}
                           </div>
 
-                          {deliveryMethod === "courier_np" && (
+                          {deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA && (
                             <div className="option-settings-block" onClick={(e) => e.stopPropagation()}>
                               {renderCourierCityContext()}
                               <div className="form-group full-width">
@@ -1187,12 +1183,12 @@ const CheckoutPage = () => {
                 <h2>Вибір способу оплати</h2>
                 <div className="card-content">
                   <div className="payment-options-group">
-                    <label className={`payment-option-card ${paymentMethod === "cash" ? "selected" : ""}`}>
+                    <label className={`payment-option-card ${paymentMethod === PAYMENT_METHODS.CASH ? "selected" : ""}`}>
                       <input
                         type="radio"
                         name="paymentMethod"
-                        value="cash"
-                        checked={paymentMethod === "cash"}
+                        value={PAYMENT_METHODS.CASH}
+                        checked={paymentMethod === PAYMENT_METHODS.CASH}
                         onChange={(e) => setPaymentMethod(e.target.value)}
                       />
                       <div className="payment-option-content">
@@ -1202,15 +1198,15 @@ const CheckoutPage = () => {
                           <small>Готівкою або карткою у точці видачі / кур'єру</small>
                         </div>
                       </div>
-                      {paymentMethod === "cash" && <CheckCircle className="payment-select-check" />}
+                      {paymentMethod === PAYMENT_METHODS.CASH && <CheckCircle className="payment-select-check" />}
                     </label>
 
-                    <label className={`payment-option-card ${paymentMethod === "card" ? "selected" : ""}`}>
+                    <label className={`payment-option-card ${paymentMethod === PAYMENT_METHODS.CARD ? "selected" : ""}`}>
                       <input
                         type="radio"
                         name="paymentMethod"
-                        value="card"
-                        checked={paymentMethod === "card"}
+                        value={PAYMENT_METHODS.CARD}
+                        checked={paymentMethod === PAYMENT_METHODS.CARD}
                         onChange={(e) => setPaymentMethod(e.target.value)}
                       />
                       <div className="payment-option-content">
@@ -1220,7 +1216,7 @@ const CheckoutPage = () => {
                           <small>Миттєва безпечна оплата Visa / Mastercard / Apple Pay</small>
                         </div>
                       </div>
-                      {paymentMethod === "card" && <CheckCircle className="payment-select-check" />}
+                      {paymentMethod === PAYMENT_METHODS.CARD && <CheckCircle className="payment-select-check" />}
                     </label>
                   </div>
 
@@ -1254,8 +1250,8 @@ const CheckoutPage = () => {
                       <h3>Доставка</h3>
                       <p className="row-text">{getDeliveryTypeLabel()}</p>
                       <p className="row-subtext">
-                        {deliveryMethod === "pickup" ? chosenStore : npBranch}
-                        {deliveryMethod !== "pickup" && deliveryMethod !== "post" && deliveryMethod !== "meest" && (
+                        {deliveryMethod === DELIVERY_METHODS.PICKUP ? chosenStore : npBranch}
+                        {deliveryMethod !== DELIVERY_METHODS.PICKUP && deliveryMethod !== DELIVERY_METHODS.NOVA_POSHTA && deliveryMethod !== DELIVERY_METHODS.MEEST && (
                           `м. ${city}, ${address}`
                         )}
                       </p>
@@ -1283,7 +1279,7 @@ const CheckoutPage = () => {
                     <div className="row-middle">
                       <h3>Оплата</h3>
                       <p className="row-text">
-                        {paymentMethod === "cash" ? "Оплата при отриманні" : "Картою онлайн"}
+                        {paymentMethod === PAYMENT_METHODS.CASH ? "Оплата при отриманні" : "Картою онлайн"}
                       </p>
                     </div>
                     <div className="row-right">
@@ -1412,7 +1408,7 @@ const CheckoutPage = () => {
               </div>
               <div className="summary-row">
                 <span>Доставка:</span>
-                <span className="free">Безкоштовно</span>
+                <span className="free">{DELIVERY_PRICES.PICKUP}</span>
               </div>
             </div>
 
