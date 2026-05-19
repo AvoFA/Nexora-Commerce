@@ -138,16 +138,7 @@ export const AdminLayout = () => {
             <MenuIcon sx={{ width: "24px", height: "24px" }} />
           </IconButton>
 
-          {/* Динамічний заголовок розділу */}
-          <h2 className="admin-header-title">
-            {isActive("/admin/categories")
-              ? "Categories Management"
-              : isActive("/admin/reviews")
-              ? "Reviews Management"
-              : isActive("/admin/orders")
-              ? "Orders Management"
-              : "Products Management"}
-          </h2>
+
 
           {/* Пустой div для выравнивания (как flex-1 в примере) */}
           <Box sx={{ flexGrow: 1 }} />

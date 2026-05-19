@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Avatar,
@@ -10,11 +10,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   IconButton,
-  MenuItem,
   Paper,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -28,10 +25,17 @@ import {
   Close as CloseIcon,
   Inventory2Outlined,
   VisibilityOutlined,
+  PersonOutline,
+  LocalShippingOutlined,
+  PaymentOutlined,
+  CommentOutlined,
+  History as HistoryIcon,
+  ReportProblemOutlined,
 } from "@mui/icons-material";
 import { toast } from "sonner";
 import { getAdminOrders, updateOrderStatus } from "../../../services/orderService";
 import { formatPrice } from "../../../utils/formatPrice";
+import ConfirmModal from "../../../components/common/ConfirmModal/ConfirmModal";
 
 import "../../../styles/_common.scss";
 import "../../../styles/_mui-theme.scss";
@@ -81,7 +85,23 @@ const filterOptions = [
   { value: "all", label: "Усі", predicate: () => true },
 ];
 
+// ==========================================
+// ТИМЧАСОВО ДЛЯ ТЕСТІВ / TEMPORARILY FOR TESTING:
+// Встановіть true, щоб дозволити переходи в будь-які статуси (включаючи скасовані/отримані)
+// Set to true to allow transitioning to any status (including reverting terminal received/cancelled states)
+const IS_TEST_MODE = true;
+// ==========================================
+
 const terminalStatuses = new Set(["received", "cancelled"]);
+
+const allowedTransitionsMap = {
+  new: ["confirmed", "cancelled"],
+  confirmed: ["packing", "cancelled"],
+  packing: ["ready_for_pickup", "cancelled"],
+  ready_for_pickup: ["received", "cancelled"],
+  received: [],
+  cancelled: [],
+};
 
 const getOrderNumber = (order) => {
   const raw = order?._id || "";
@@ -131,12 +151,103 @@ const renderProductThumb = (item, className = "") => {
   return <Inventory2Outlined className={className} />;
 };
 
+const StatusDropdown = ({ status, onChange, disabled, isUpdating, isOpen, onToggle }) => {
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        onToggle(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [isOpen, onToggle]);
+
+  const currentLabel = statusLabelMap[status] || status;
+  const isTerminal = disabled || (IS_TEST_MODE ? false : terminalStatuses.has(status));
+
+  const handleToggle = (e) => {
+    e.stopPropagation();
+    if (!isTerminal && !isUpdating) {
+      onToggle(!isOpen);
+    }
+  };
+
+  const handleSelect = (key, e) => {
+    e.stopPropagation();
+    onToggle(false);
+    onChange(key);
+  };
+
+  return (
+    <div
+      ref={dropdownRef}
+      className={`status-dropdown ${isOpen ? "is-open" : ""} ${isTerminal ? "is-disabled" : ""}`}
+    >
+      <button
+        type="button"
+        className="status-dropdown-trigger"
+        onClick={handleToggle}
+        disabled={isTerminal || isUpdating}
+      >
+        <span className="trigger-label">{currentLabel}</span>
+        {!isTerminal && (
+          <span className="chevron-wrapper">
+            <svg
+              className="chevron-icon"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              width="14"
+              height="14"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
+        )}
+      </button>
+      {isOpen && (
+        <div className="status-dropdown-menu">
+          {Object.entries(statusLabelMap).map(([key, label]) => {
+            const isSelected = key === status;
+            const isAllowed = IS_TEST_MODE ? true : allowedTransitionsMap[status]?.includes(key);
+            const isItemDisabled = !isSelected && !isAllowed;
+
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`status-dropdown-item ${isSelected ? "is-selected" : ""} ${isItemDisabled ? "is-disabled" : ""}`}
+                disabled={isItemDisabled}
+                onClick={(e) => handleSelect(key, e)}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const OrderListPage = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
   const [activeFilter, setActiveFilter] = useState("new");
   const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
+  const [activeDropdownOrderId, setActiveDropdownOrderId] = useState(null);
+  const [cancelConfirmation, setCancelConfirmation] = useState({
+    isOpen: false,
+    orderId: null,
+    orderNumber: ""
+  });
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -182,10 +293,16 @@ const OrderListPage = () => {
       if (data.success) {
         toast.success(data.message || "Статус замовлення оновлено");
         setOrders((prev) =>
-          prev.map((order) => (order._id === id ? { ...order, status: newStatus } : order)),
+          prev.map((order) =>
+            order._id === id
+              ? { ...order, status: newStatus, history: data.order?.history || order.history }
+              : order
+          )
         );
         setSelectedOrderForModal((current) =>
-          current?._id === id ? { ...current, status: newStatus } : current,
+          current?._id === id
+            ? { ...current, status: newStatus, history: data.order?.history || current.history }
+            : current
         );
       }
     } catch (error) {
@@ -204,6 +321,18 @@ const OrderListPage = () => {
       }
     } finally {
       setIsUpdating(null);
+    }
+  };
+
+  const handleStatusChangeAttempt = (order, newStatus) => {
+    if (newStatus === "cancelled") {
+      setCancelConfirmation({
+        isOpen: true,
+        orderId: order._id,
+        orderNumber: getOrderNumber(order)
+      });
+    } else {
+      handleStatusChange(order._id, newStatus);
     }
   };
 
@@ -226,30 +355,36 @@ const OrderListPage = () => {
   const renderProductsPreview = (order) => {
     const items = order.items || [];
     const previewItems = items.slice(0, 3);
-    const hiddenCount = Math.max(items.length - previewItems.length, 0);
+    const extraCount = items.length - 1;
 
     return (
       <Box className="products-preview">
         <div className="products-thumb-stack">
           {previewItems.map((item, index) => (
-            <Avatar
+            <Tooltip
               key={getItemKey(order, item, index)}
-              className="product-thumb"
-              variant="rounded"
+              title={item.name || "Товар"}
+              arrow
+              placement="top"
             >
-              {renderProductThumb(item)}
-            </Avatar>
+              <Avatar
+                className="product-thumb"
+                variant="rounded"
+              >
+                {renderProductThumb(item)}
+              </Avatar>
+            </Tooltip>
           ))}
-          {hiddenCount > 0 && <span className="products-extra">+{hiddenCount}</span>}
         </div>
         <div className="products-preview-copy">
           <Typography variant="body2" className="products-main">
             {items[0]?.name || "Товари не вказані"}
           </Typography>
-          <div className="products-chip-row">
-            <span>{items.length} товарів</span>
-            {hiddenCount > 0 && <span>+{hiddenCount} ще</span>}
-          </div>
+          {extraCount > 0 && (
+            <span className="products-extra-text">
+              +{extraCount} ще
+            </span>
+          )}
         </div>
       </Box>
     );
@@ -278,51 +413,55 @@ const OrderListPage = () => {
         </div>
       </Box>
 
-      <div className="admin-solid-card filter-card">
-        <div className="filter-tabs" aria-label="Фільтр замовлень">
-          {filterOptions.map((option) => {
-            const isActive = activeFilter === option.value;
-
-            return (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setActiveFilter(option.value)}
-                className={`filter-tab-button ${isActive ? "active" : ""}`}
-              >
-                <span>{option.label}</span>
-                <Chip label={counts[option.value] || 0} size="small" />
-              </button>
-            );
-          })}
+      <div className="admin-stats-grid">
+        <div className="admin-stat-card stat-secondary">
+          <span className="stat-card-label">Нових замовлень</span>
+          <span className="stat-card-value">{overviewStats.new}</span>
+          <span className="stat-card-subtext">Очікують на підтвердження</span>
         </div>
-
-        <Box className="orders-stats-overview">
-          <div className="stat-item new">
-            <span className="stat-label">Нових замовлень</span>
-            <span className="stat-value">{overviewStats.new}</span>
-          </div>
-          <div className="stat-item shipped">
-            <span className="stat-label">Відправлено</span>
-            <span className="stat-value">{overviewStats.shipped}</span>
-          </div>
-          <div className="stat-item cancelled">
-            <span className="stat-label">Скасовано</span>
-            <span className="stat-value">{overviewStats.cancelled}</span>
-          </div>
-          <div className="stat-item all">
-            <span className="stat-label">Загальна кількість</span>
-            <span className="stat-value">{overviewStats.all}</span>
-          </div>
-        </Box>
+        <div className="admin-stat-card stat-success">
+          <span className="stat-card-label">Відправлено</span>
+          <span className="stat-card-value">{overviewStats.shipped}</span>
+          <span className="stat-card-subtext">Замовлення в дорозі</span>
+        </div>
+        <div className="admin-stat-card stat-danger">
+          <span className="stat-card-label">Скасовано</span>
+          <span className="stat-card-value">{overviewStats.cancelled}</span>
+          <span className="stat-card-subtext">Відхилені замовлення</span>
+        </div>
+        <div className="admin-stat-card stat-primary">
+          <span className="stat-card-label">Загальна кількість</span>
+          <span className="stat-card-value">{overviewStats.all}</span>
+          <span className="stat-card-subtext">За весь час роботи</span>
+        </div>
       </div>
 
-      {isLoading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <TableContainer component={Paper} className="admin-table-container">
+      <TableContainer component={Paper} className="admin-table-container">
+        <div className="table-header-tabs-bar">
+          <div className="filter-tabs" aria-label="Фільтр замовлень">
+            {filterOptions.map((option) => {
+              const isActive = activeFilter === option.value;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setActiveFilter(option.value)}
+                  className={`filter-tab-button ${isActive ? "active" : ""}`}
+                >
+                  <span>{option.label}</span>
+                  <Chip label={counts[option.value] || 0} size="small" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {isLoading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", p: 8 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
           <Table>
             <TableHead>
               <TableRow>
@@ -381,9 +520,11 @@ const OrderListPage = () => {
                         <Typography variant="body2" className="total-value">
                           {formatPrice(getOrderTotal(order))}
                         </Typography>
-                        <Typography variant="caption" className="total-caption">
-                          {order.items?.length || 0} позицій
-                        </Typography>
+                        <div className="total-meta-row">
+                          <span className="total-payment-method">
+                            {order.paymentMethod === "card" ? "Онлайн" : "При отриманні"}
+                          </span>
+                        </div>
                       </Box>
                     </TableCell>
                     <TableCell>{renderStatusChip(order.status)}</TableCell>
@@ -398,33 +539,17 @@ const OrderListPage = () => {
                             <VisibilityOutlined />
                           </IconButton>
                         </Tooltip>
-                        <FormControl size="small" sx={{ minWidth: 140 }}>
-                          <Select
-                            value={order.status}
-                            onChange={(event) => handleStatusChange(order._id, event.target.value)}
-                            disabled={
-                              isUpdating === order._id ||
-                              order.status === "cancelled" ||
-                              order.status === "received"
-                            }
-                            className="status-select"
-                          >
-                            {Object.entries(statusLabelMap).map(([key, label]) => (
-                              <MenuItem
-                                key={key}
-                                value={key}
-                                disabled={
-                                  (order.status === "new" &&
-                                    (key === "ready_for_pickup" || key === "received")) ||
-                                  order.status === "cancelled" ||
-                                  order.status === "received"
-                                }
-                              >
-                                {label}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
+                        <StatusDropdown
+                          status={order.status}
+                          onChange={(newStatus) => handleStatusChangeAttempt(order, newStatus)}
+                          disabled={
+                            isUpdating === order._id ||
+                            (IS_TEST_MODE ? false : (order.status === "cancelled" || order.status === "received"))
+                          }
+                          isUpdating={isUpdating === order._id}
+                          isOpen={activeDropdownOrderId === order._id}
+                          onToggle={(isOpen) => setActiveDropdownOrderId(isOpen ? order._id : null)}
+                        />
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -432,8 +557,8 @@ const OrderListPage = () => {
               )}
             </TableBody>
           </Table>
-        </TableContainer>
-      )}
+        )}
+      </TableContainer>
 
       <Dialog
         open={Boolean(selectedOrderForModal)}
@@ -450,30 +575,43 @@ const OrderListPage = () => {
         >
           <CloseIcon />
         </button>
-        <DialogTitle>Деталі замовлення</DialogTitle>
-        <DialogContent dividers>
+        <DialogTitle sx={{ p: 0 }}>
           {selectedOrderForModal && (
-            <Box className="order-modal-content">
-              <Box className="modal-summary-panel">
-                <div>
-                  <span className="modal-kicker">Замовлення</span>
-                  <Typography variant="h3">{getOrderNumber(selectedOrderForModal)}</Typography>
-                  <span className="modal-date">
-                    {formatOrderDate(selectedOrderForModal.createdAt)} ·{" "}
-                    {formatOrderTime(selectedOrderForModal.createdAt)}
-                  </span>
+            <Box className="modal-header-compact">
+              <div className="modal-header-main">
+                <div className="modal-header-title-row">
+                  <Typography variant="h3" className="modal-title-text">
+                    {getOrderNumber(selectedOrderForModal)}
+                  </Typography>
+                  <div className="modal-header-status-wrapper">
+                    {renderStatusChip(selectedOrderForModal.status)}
+                  </div>
                 </div>
-                <div className="modal-status-block">
-                  {renderStatusChip(selectedOrderForModal.status)}
+                <div className="modal-header-created-row">
+                  <span className="modal-created-label">Створено: </span>
+                  <span className="modal-date">
+                    {formatOrderDate(selectedOrderForModal.createdAt)} · {formatOrderTime(selectedOrderForModal.createdAt)}
+                  </span>
                   {terminalStatuses.has(selectedOrderForModal.status) && (
-                    <span className="terminal-note">Фінальний статус</span>
+                    <>
+                      <span className="modal-subtitle-divider">·</span>
+                      <span className="terminal-note">Фінальний статус</span>
+                    </>
                   )}
                 </div>
-              </Box>
-
+              </div>
+            </Box>
+          )}
+        </DialogTitle>
+        <DialogContent sx={{ p: 3 }}>
+          {selectedOrderForModal && (
+            <Box className="order-modal-content">
               <Box className="modal-info-grid">
                 <div className="modal-section-card">
-                  <span className="section-label">Клієнт</span>
+                  <div className="section-header">
+                    <PersonOutline className="section-icon" />
+                    <span className="section-label">Клієнт</span>
+                  </div>
                   <Typography variant="body2" className="section-title">
                     {selectedOrderForModal.customer?.name || "—"}
                   </Typography>
@@ -482,7 +620,10 @@ const OrderListPage = () => {
                 </div>
 
                 <div className="modal-section-card">
-                  <span className="section-label">Доставка</span>
+                  <div className="section-header">
+                    <LocalShippingOutlined className="section-icon" />
+                    <span className="section-label">Доставка</span>
+                  </div>
                   <Typography variant="body2" className="section-title">
                     {getDeliveryAddress(selectedOrderForModal.delivery)}
                   </Typography>
@@ -493,7 +634,10 @@ const OrderListPage = () => {
                 </div>
 
                 <div className="modal-section-card">
-                  <span className="section-label">Оплата</span>
+                  <div className="section-header">
+                    <PaymentOutlined className="section-icon" />
+                    <span className="section-label">Оплата</span>
+                  </div>
                   <Typography variant="body2" className="section-title">
                     {selectedOrderForModal.paymentMethod === "card"
                       ? "Карткою онлайн"
@@ -504,7 +648,18 @@ const OrderListPage = () => {
               </Box>
 
               <div className="modal-products-section">
-                <span className="section-label">Товари</span>
+                <div className="products-section-header">
+                  <span className="section-label">Товари</span>
+                  <div className="products-summary-badge">
+                    <span className="summary-qty">
+                      {(selectedOrderForModal.items || []).reduce((sum, item) => sum + (Number(item.quantity) || 1), 0)} поз.
+                    </span>
+                    <span className="summary-divider">·</span>
+                    <span className="summary-total">
+                      {formatPrice(getOrderTotal(selectedOrderForModal))}
+                    </span>
+                  </div>
+                </div>
                 <div className="modal-products-list">
                   {(selectedOrderForModal.items || []).map((item, index) => {
                     const quantity = Number(item.quantity) || 1;
@@ -518,9 +673,8 @@ const OrderListPage = () => {
                         <div className="modal-product-image">{renderProductThumb(item)}</div>
                         <div className="modal-product-copy">
                           <Typography variant="body2">{item.name || "Товар"}</Typography>
-                          <span>{formatPrice(Number(item.price) || 0)} за одиницю</span>
                         </div>
-                        <div className="modal-product-qty">{quantity} шт.</div>
+                        <div className="modal-product-qty">x{quantity}</div>
                         <div className="modal-product-total">{formatPrice(itemTotal)}</div>
                       </div>
                     );
@@ -528,28 +682,136 @@ const OrderListPage = () => {
                 </div>
               </div>
 
-              <div className="modal-section-card comment-card">
-                <span className="section-label">Коментар</span>
+              <div className={`modal-section-card comment-card ${selectedOrderForModal.comment ? "has-comment" : ""}`}>
+                <div className="section-header">
+                  <CommentOutlined className="section-icon" />
+                  <span className="section-label">Коментар клієнта</span>
+                </div>
                 <Typography variant="body2">
                   {selectedOrderForModal.comment || "Коментар відсутній"}
                 </Typography>
               </div>
+
+              {selectedOrderForModal.history && selectedOrderForModal.history.length > 0 && (
+                <div className="modal-section-card history-card">
+                  <div className="section-header">
+                    <HistoryIcon className="section-icon" />
+                    <span className="section-label">Історія статусів</span>
+                  </div>
+                  <div className="history-list">
+                    {[...selectedOrderForModal.history]
+                      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+                      .map((entry, idx) => {
+                        const isCurrent = entry.status === selectedOrderForModal.status;
+                        return (
+                          <div
+                            key={idx}
+                            className={`history-item ${isCurrent ? "is-current" : ""}`}
+                          >
+                            <span className="history-status">
+                              {statusLabelMap[entry.status] || entry.status}
+                            </span>
+                            <span className="history-divider">—</span>
+                            <span className="history-timestamp">
+                              {formatOrderDate(entry.timestamp)} · {formatOrderTime(entry.timestamp)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
+          <Box className="modal-quick-actions">
+            {selectedOrderForModal && !terminalStatuses.has(selectedOrderForModal.status) && (
+              <>
+                <Button
+                  onClick={() => handleStatusChangeAttempt(selectedOrderForModal, "cancelled")}
+                  variant="outlined"
+                  color="error"
+                  disabled={isUpdating === selectedOrderForModal._id}
+                  sx={{ mr: 1 }}
+                >
+                  Скасувати
+                </Button>
+                {selectedOrderForModal.status === "new" && (
+                  <Button
+                    onClick={() => handleStatusChange(selectedOrderForModal._id, "confirmed")}
+                    variant="contained"
+                    color="success"
+                    disabled={isUpdating === selectedOrderForModal._id}
+                  >
+                    Підтвердити
+                  </Button>
+                )}
+                {selectedOrderForModal.status === "confirmed" && (
+                  <Button
+                    onClick={() => handleStatusChange(selectedOrderForModal._id, "packing")}
+                    variant="contained"
+                    color="primary"
+                    disabled={isUpdating === selectedOrderForModal._id}
+                  >
+                    Почати комплектування
+                  </Button>
+                )}
+                {selectedOrderForModal.status === "packing" && (
+                  <Button
+                    onClick={() => handleStatusChange(selectedOrderForModal._id, "ready_for_pickup")}
+                    variant="contained"
+                    color="secondary"
+                    disabled={isUpdating === selectedOrderForModal._id}
+                  >
+                    Передати в доставку
+                  </Button>
+                )}
+                {selectedOrderForModal.status === "ready_for_pickup" && (
+                  <Button
+                    onClick={() => handleStatusChange(selectedOrderForModal._id, "received")}
+                    variant="contained"
+                    color="success"
+                    disabled={isUpdating === selectedOrderForModal._id}
+                  >
+                    Позначити як отримано
+                  </Button>
+                )}
+              </>
+            )}
+          </Box>
           <Button
             onClick={() => setSelectedOrderForModal(null)}
             variant="outlined"
             sx={{
               borderColor: "rgba(255,255,255,0.15)",
               color: "var(--text-primary)",
+              "&:hover": {
+                borderColor: "rgba(255,255,255,0.3)",
+                background: "rgba(255,255,255,0.05)",
+              }
             }}
           >
             Закрити
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ConfirmModal
+        isOpen={cancelConfirmation.isOpen}
+        onClose={() => setCancelConfirmation(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={() => {
+          handleStatusChange(cancelConfirmation.orderId, "cancelled");
+          setCancelConfirmation(prev => ({ ...prev, isOpen: false }));
+        }}
+        icon={ReportProblemOutlined}
+        title="Скасування замовлення"
+        message={`Ви впевнені, що хочете скасувати замовлення ${cancelConfirmation.orderNumber}?`}
+        warning="Цю дію не можна скасувати!"
+        confirmText="Скасувати замовлення"
+        cancelText="Не скасовувати"
+        type="danger"
+      />
     </Box>
   );
 };

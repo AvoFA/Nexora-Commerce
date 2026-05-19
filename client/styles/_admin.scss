@@ -230,24 +230,16 @@
   align-items: center;
   justify-content: space-between;
 
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
   .admin-mobile-menu-btn {
     color: $text-color;
-
-    @media (min-width: 1024px) {
-      display: none;
-    }
   }
 
   .admin-header-title {
     display: none;
-
-    @media (min-width: 1024px) {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 700;
-      @include apply-gradient-text;
-      margin: 0;
-    }
   }
 }
 
@@ -628,5 +620,80 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+// Глобальна сітка статистики для адмін-панелі
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+// Картка статистики (ультра-мінімалізм)
+.admin-stat-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba($card-bg, 0.4), rgba($card-bg, 0.15));
+  border: 1px solid rgba($border-color, 0.4);
+  border-radius: $border-radius;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+
+  // Ультра-тонкий кольоровий індикатор з лівого краю (замість фарбування всього тексту)
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+  }
+
+  // Модифікатори кольорів для індикаторів
+  &.stat-primary::before { background-color: $primary-color; }
+  &.stat-secondary::before { background-color: $secondary-color; }
+  &.stat-success::before { background-color: $success-color; }
+  &.stat-danger::before { background-color: $danger-color; }
+  &.stat-warning::before { background-color: $warning-color; }
+
+  // Лейбл картки
+  .stat-card-label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $text-secondary;
+  }
+
+  // Велике чисте монохромне число
+  .stat-card-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: $text-color;
+    line-height: 1.1;
+  }
+
+  // Додатковий опис
+  .stat-card-subtext {
+    font-size: 0.72rem;
+    color: rgba($text-color, 0.35);
+    font-weight: 500;
+    margin-top: 2px;
   }
 }
