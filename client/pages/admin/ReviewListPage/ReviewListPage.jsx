@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -10,57 +10,212 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
-  IconButton,
-  Avatar,
   CircularProgress,
-  Tooltip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Rating,
 } from "@mui/material";
-import {
-  Check as CheckIcon,
-  Close as CloseIcon,
-  Star as StarIcon,
-  Undo as UndoIcon,
-  HighlightOff as HighlightOffIcon,
-} from "@mui/icons-material";
 import { toast } from "sonner";
+
 import {
   getAdminReviews,
   updateReviewStatus,
 } from "../../../services/reviewService";
+import {
+  getAdminQuestions,
+  updateQuestionStatus,
+  answerQuestion,
+  deleteQuestion,
+} from "../../../services/questionService";
+import Pagination from "../../../components/common/Pagination/Pagination.jsx";
+
+// Shared common controls
+import AdminSearchInput from "../../../components/admin/common/AdminSearchInput.jsx";
+import AdminRefreshButton from "../../../components/admin/common/AdminRefreshButton.jsx";
+import AdminToolbarSelect from "../../../components/admin/common/AdminToolbarSelect.jsx";
+import AdminFilterTabs from "../../../components/admin/common/AdminFilterTabs.jsx";
+
+// Moderation components
+import ModerationStats from "../../../components/admin/moderation/ModerationStats.jsx";
+import ModerationTypeToggle from "../../../components/admin/moderation/ModerationTypeToggle.jsx";
+import ReviewsTable from "../../../components/admin/moderation/ReviewsTable.jsx";
+import QuestionsTable from "../../../components/admin/moderation/QuestionsTable.jsx";
+import ReviewDetailsModal from "../../../components/admin/moderation/ReviewDetailsModal.jsx";
+import QuestionDetailsModal from "../../../components/admin/moderation/QuestionDetailsModal.jsx";
+import QuestionReplyDrawer from "../../../components/admin/moderation/QuestionReplyDrawer.jsx";
 
 import "../../../styles/_common.scss";
 import "../../../styles/_mui-theme.scss";
 import "../../../styles/_admin.scss";
 import "./ReviewListPage.scss";
 
-const statusColorMap = {
-  pending: "warning",
-  approved: "success",
-  rejected: "error",
-};
+const ModerationFiltersToolbar = ({
+  activeType,
+  localSearchInput,
+  onSearchChange,
+  onSearchClear,
+  ratingFilter,
+  onRatingChange,
+  answerStatus,
+  onAnswerStatusChange,
+  sortBy,
+  onSortChange,
+  onRefresh,
+  isLoading,
+}) => {
+  return (
+    <div className="review-filters-toolbar">
+      <AdminSearchInput
+        value={localSearchInput}
+        onChange={onSearchChange}
+        onClear={onSearchClear}
+        placeholder={
+          activeType === "reviews"
+            ? "Пошук за автором, email, товаром, текстом..."
+            : "Пошук за запитанням, автором, товаром..."
+        }
+        disabled={isLoading}
+      />
 
-const statusLabelMap = {
-  pending: "На модерації",
-  approved: "Опубліковано",
-  rejected: "Відхилено",
+      <div className="toolbar-selects">
+        {activeType === "reviews" ? (
+          <AdminToolbarSelect
+            label="Оцінка:"
+            value={ratingFilter}
+            onChange={onRatingChange}
+            isLoading={isLoading}
+            options={[
+              { value: "all", label: "Всі оцінки" },
+              { value: "5", label: "5 зірок" },
+              { value: "4", label: "4 зірки" },
+              { value: "3", label: "3 зірки" },
+              { value: "2", label: "2 зірки" },
+              { value: "1", label: "1 зірка" },
+            ]}
+          />
+        ) : (
+          <AdminToolbarSelect
+            label="Відповідь:"
+            value={answerStatus}
+            onChange={onAnswerStatusChange}
+            isLoading={isLoading}
+            options={[
+              { value: "all", label: "Всі" },
+              { value: "unanswered", label: "Без відповіді" },
+              { value: "answered", label: "Є відповідь" },
+            ]}
+          />
+        )}
+
+        <AdminToolbarSelect
+          label="Сортування:"
+          value={sortBy}
+          onChange={onSortChange}
+          isLoading={isLoading}
+          options={
+            activeType === "reviews"
+              ? [
+                  { value: "createdAt_desc", label: "Спочатку нові" },
+                  { value: "createdAt_asc", label: "Спочатку старі" },
+                  { value: "rating_desc", label: "Найвища оцінка" },
+                  { value: "rating_asc", label: "Найнижча оцінка" },
+                ]
+              : [
+                  { value: "createdAt_desc", label: "Спочатку нові" },
+                  { value: "createdAt_asc", label: "Спочатку старі" },
+                ]
+          }
+        />
+
+        <AdminRefreshButton
+          onClick={onRefresh}
+          isLoading={isLoading}
+        />
+      </div>
+    </div>
+  );
 };
 
 const ReviewListPage = () => {
   const [reviews, setReviews] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
-  const [activeFilter, setActiveFilter] = useState("pending");
-  const [selectedReviewForModal, setSelectedReviewForModal] = useState(null);
+  const [selectedItemForModal, setSelectedItemForModal] = useState(null);
   const navigate = useNavigate();
 
-  const fetchReviews = async () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeType = searchParams.get("type") || "reviews";
+  const activeFilter = searchParams.get("status") || "pending";
+  const searchQuery = searchParams.get("q") || "";
+  const ratingFilter = searchParams.get("rating") || "all";
+  const answerStatus = searchParams.get("answerStatus") || "all";
+  const sortBy = searchParams.get("sort") || "createdAt_desc";
+  const page = parseInt(searchParams.get("page"), 10) || 1;
+  const limit = parseInt(searchParams.get("limit"), 10) || 10;
+
+  const [localSearchInput, setLocalSearchInput] = useState(searchQuery);
+  const [lastActiveTab, setLastActiveTab] = useState(null);
+
+  // Quick reply drawer states
+  const [selectedQuestionForAnswer, setSelectedQuestionForAnswer] = useState(null);
+  const [answerText, setAnswerText] = useState("");
+  const [isAnswering, setIsAnswering] = useState(false);
+
+  const [serverCounts, setServerCounts] = useState({
+    all: 0,
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+  });
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [avgRating, setAvgRating] = useState(0);
+  const [unansweredCount, setUnansweredCount] = useState(0);
+
+  // Sync local search input with URL search query parameter
+  useEffect(() => {
+    setLocalSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  // Debounced search synchronization
+  useEffect(() => {
+    if (localSearchInput === searchQuery) return;
+
+    const timer = setTimeout(() => {
+      setSearchParams(
+        (prev) => {
+          if (!localSearchInput.trim()) {
+            prev.delete("q");
+            if (lastActiveTab) {
+              if (lastActiveTab === "pending") {
+                prev.delete("status");
+              } else {
+                prev.set("status", lastActiveTab);
+              }
+            }
+            setLastActiveTab(null);
+          } else {
+            if (!prev.get("q") && activeFilter !== "all") {
+              setLastActiveTab(activeFilter);
+              prev.set("status", "all");
+            }
+            prev.set("q", localSearchInput.trim());
+          }
+          prev.delete("page"); // Reset page to 1 on search
+          return prev;
+        },
+        { replace: true },
+      );
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [
+    localSearchInput,
+    searchQuery,
+    activeFilter,
+    lastActiveTab,
+    setSearchParams,
+  ]);
+
+  const fetchData = async () => {
     try {
       setIsLoading(true);
       const token =
@@ -69,12 +224,50 @@ const ReviewListPage = () => {
         toast.error("Токен відсутній. Увійдіть в систему.");
         return;
       }
-      const data = await getAdminReviews(token);
-      if (data.success) {
-        setReviews(data.reviews || []);
+
+      if (activeType === "reviews") {
+        const data = await getAdminReviews(token, {
+          page,
+          limit,
+          status: activeFilter,
+          search: searchQuery,
+          rating: ratingFilter,
+          sort: sortBy,
+        });
+        if (data.success) {
+          setReviews(data.reviews || []);
+          setTotal(data.total || 0);
+          setTotalPages(data.totalPages || 0);
+          if (data.counts) {
+            setServerCounts(data.counts);
+          }
+          if (data.avgRating !== undefined) {
+            setAvgRating(data.avgRating);
+          }
+        }
+      } else {
+        const data = await getAdminQuestions(token, {
+          page,
+          limit,
+          status: activeFilter,
+          search: searchQuery,
+          answerStatus,
+          sort: sortBy,
+        });
+        if (data.success) {
+          setQuestions(data.questions || []);
+          setTotal(data.total || 0);
+          setTotalPages(data.totalPages || 0);
+          if (data.counts) {
+            setServerCounts(data.counts);
+          }
+          if (data.unansweredCount !== undefined) {
+            setUnansweredCount(data.unansweredCount);
+          }
+        }
       }
     } catch (error) {
-      toast.error(error.message || "Помилка завантаження відгуків");
+      toast.error(error.message || "Помилка завантаження даних");
       const isTokenError =
         error.message &&
         (error.message.includes("токен") ||
@@ -93,74 +286,216 @@ const ReviewListPage = () => {
   };
 
   useEffect(() => {
-    fetchReviews();
-  }, []);
+    fetchData();
+  }, [page, limit, activeType, activeFilter, searchQuery, ratingFilter, answerStatus, sortBy]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
       setIsUpdating(id);
       const token =
         localStorage.getItem("adminToken") || localStorage.getItem("token");
-      const data = await updateReviewStatus(id, newStatus, token);
+      
+      let data;
+      if (activeType === "reviews") {
+        data = await updateReviewStatus(id, newStatus, token);
+      } else {
+        data = await updateQuestionStatus(id, newStatus, token);
+      }
+
       if (data.success) {
         if (newStatus === "approved") {
-          toast.success("Відгук успішно схвалено та опубліковано!");
+          toast.success(
+            activeType === "reviews"
+              ? "Відгук успішно схвалено та опубліковано!"
+              : "Запитання успішно схвалено та опубліковано!",
+          );
         } else if (newStatus === "rejected") {
-          toast.error("Відгук відхилено та знято з публікації.");
+          toast.error(
+            activeType === "reviews"
+              ? "Відгук відхилено та знято з публікації."
+              : "Запитання відхилено та знято з публікації.",
+          );
         } else if (newStatus === "pending") {
-          toast.info("Відгук успішно повернуто на модерацію.");
+          toast.info(
+            activeType === "reviews"
+              ? "Відгук успішно повернуто на модерацію."
+              : "Запитання успішно повернуто на модерацію.",
+          );
         }
-
-        // Оновлюємо стан локально
-        setReviews((prev) =>
-          prev.map((r) => (r._id === id ? { ...r, status: newStatus } : r)),
-        );
+        fetchData();
       }
     } catch (error) {
       toast.error(error.message || "Помилка оновлення статусу");
-      const isTokenError =
-        error.message &&
-        (error.message.includes("токен") ||
-          error.message.includes("Токен") ||
-          error.message.includes("token") ||
-          error.message.includes("Token") ||
-          error.message.includes("auth") ||
-          error.message.includes("Auth"));
-      if (isTokenError) {
-        localStorage.removeItem("adminToken");
-        navigate("/admin/login");
-      }
     } finally {
       setIsUpdating(null);
     }
   };
 
-  const renderStars = (rating) => {
-    return (
-      <Rating
-        value={Number(rating) || 0}
-        readOnly
-        size="small"
-        sx={{
-          "& .MuiRating-iconEmpty": { color: "#475569" },
-        }}
-      />
+  const handleQuestionDelete = async (id) => {
+    if (!window.confirm("Ви впевнені, що хочете видалити це запитання?")) return;
+    try {
+      setIsUpdating(id);
+      const token =
+        localStorage.getItem("adminToken") || localStorage.getItem("token");
+      const data = await deleteQuestion(id, token);
+      if (data.success) {
+        toast.success("Запитання успішно видалено!");
+        fetchData();
+      }
+    } catch (error) {
+      toast.error(error.message || "Помилка видалення запитання");
+    } finally {
+      setIsUpdating(null);
+    }
+  };
+
+  const handleTypeChange = (type) => {
+    setSearchParams(
+      (prev) => {
+        prev.set("type", type);
+        prev.delete("status"); // Reset to default (pending)
+        prev.delete("q");
+        prev.delete("page");
+        prev.delete("rating");
+        prev.delete("answerStatus");
+        return prev;
+      },
+      { replace: true },
+    );
+    setLocalSearchInput("");
+    setLastActiveTab(null);
+  };
+
+  const handleFilterChange = (status) => {
+    setSearchParams(
+      (prev) => {
+        if (status === "pending") {
+          prev.delete("status");
+        } else {
+          prev.set("status", status);
+        }
+        prev.delete("q"); // Clear search when switching tabs manually
+        prev.delete("page"); // Reset page to 1
+        return prev;
+      },
+      { replace: true },
+    );
+    setLastActiveTab(null);
+  };
+
+  const handleRatingChange = (newRating) => {
+    setSearchParams(
+      (prev) => {
+        if (newRating === "all") {
+          prev.delete("rating");
+        } else {
+          prev.set("rating", newRating);
+        }
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true },
     );
   };
 
-  // Розрахунок лічильників
-  const counts = {
-    pending: reviews.filter((r) => r.status === "pending").length,
-    approved: reviews.filter((r) => r.status === "approved").length,
-    rejected: reviews.filter((r) => r.status === "rejected").length,
-    all: reviews.length,
+  const handleAnswerStatusChange = (newAnswerStatus) => {
+    setSearchParams(
+      (prev) => {
+        if (newAnswerStatus === "all") {
+          prev.delete("answerStatus");
+        } else {
+          prev.set("answerStatus", newAnswerStatus);
+        }
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true },
+    );
   };
 
-  // Фільтрація відгуків
-  const filteredReviews = reviews.filter((review) => {
-    if (activeFilter === "all") return true;
-    return review.status === activeFilter;
-  });
+  const handleSortChange = (newSort) => {
+    setSearchParams(
+      (prev) => {
+        if (newSort === "createdAt_desc") {
+          prev.delete("sort");
+        } else {
+          prev.set("sort", newSort);
+        }
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true },
+    );
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > totalPages) return;
+    setSearchParams(
+      (prev) => {
+        prev.set("page", newPage);
+        return prev;
+      },
+      { replace: true },
+    );
+  };
+
+  const handleLimitChange = (newLimit) => {
+    setSearchParams(
+      (prev) => {
+        prev.set("limit", newLimit);
+        prev.delete("page");
+        return prev;
+      },
+      { replace: true },
+    );
+  };
+
+  const handleInstantSearchClear = () => {
+    setLocalSearchInput("");
+    setSearchParams(
+      (prev) => {
+        prev.delete("q");
+        prev.delete("page");
+        if (lastActiveTab) {
+          if (lastActiveTab === "pending") {
+            prev.delete("status");
+          } else {
+            prev.set("status", lastActiveTab);
+          }
+        }
+        setLastActiveTab(null);
+        return prev;
+      },
+      { replace: true },
+    );
+  };
+
+  const handleAnswerSubmit = async () => {
+    if (!answerText.trim()) {
+      toast.error("Введіть текст відповіді");
+      return;
+    }
+    try {
+      setIsAnswering(true);
+      const token =
+        localStorage.getItem("adminToken") || localStorage.getItem("token");
+      const data = await answerQuestion(
+        selectedQuestionForAnswer._id,
+        answerText,
+        token,
+      );
+      if (data.success) {
+        toast.success("Відповідь успішно опубліковано!");
+        setSelectedQuestionForAnswer(null);
+        setAnswerText("");
+        fetchData();
+      }
+    } catch (error) {
+      toast.error(error.message || "Помилка публікації відповіді");
+    } finally {
+      setIsAnswering(false);
+    }
+  };
 
   const filterOptions = [
     { value: "pending", label: "На модерації" },
@@ -171,55 +506,59 @@ const ReviewListPage = () => {
 
   return (
     <Box className="review-list-page">
+      {/* Шапка сторінки */}
       <Box className="admin-page-header">
         <div className="header-title-wrapper">
           <Typography variant="h2" component="h2">
-            Модерація відгуків
+            Модерація {activeType === "reviews" ? "відгуків" : "запитань"}
           </Typography>
-          <Typography variant="body2" className="subtitle">
-            Управління відгуками користувачів
+          <Typography variant="body2" className="subtitle" sx={{ color: "var(--text-secondary, #94a3b8)", opacity: 0.85, mt: 0.5 }}>
+            Керування відгуками покупців та запитаннями про товари
           </Typography>
         </div>
+
+        {/* Статистика модерації */}
+        <ModerationStats
+          activeType={activeType}
+          avgRating={avgRating}
+          unansweredCount={unansweredCount}
+          allCount={serverCounts.all}
+        />
       </Box>
 
-      {/* Фільтри за статусом із лічильниками та статистика модерації справа */}
-      <div className="admin-solid-card filter-card">
-        <div className="filter-tabs">
-          {filterOptions.map((option) => {
-            const isActive = activeFilter === option.value;
-            const count = counts[option.value];
-            return (
-              <div
-                key={option.value}
-                onClick={() => setActiveFilter(option.value)}
-                className={`filter-tab-button ${isActive ? "active" : ""}`}
-              >
-                <span>{option.label}</span>
-                <Chip label={count} size="small" />
-              </div>
-            );
-          })}
+      {/* Панель керування фільтрами */}
+      <div className="admin-solid-card moderation-toolbar-card">
+        <div className="toolbar-header-row">
+          <AdminFilterTabs
+            activeTab={activeFilter}
+            onChange={handleFilterChange}
+            tabs={filterOptions}
+            counts={serverCounts}
+            ariaLabel="Статус модерації"
+          />
+
+          <ModerationTypeToggle
+            activeType={activeType}
+            onChange={handleTypeChange}
+          />
         </div>
 
-        {/* Компактна статистика модерації */}
-        <Box className="moderation-stats-overview">
-          <div className="stat-item all">
-            <span className="stat-label">Всього</span>
-            <span className="stat-value">{counts.all}</span>
-          </div>
-          <div className="stat-item pending">
-            <span className="stat-label">На модерації</span>
-            <span className="stat-value">{counts.pending}</span>
-          </div>
-          <div className="stat-item approved">
-            <span className="stat-label">Опубліковано</span>
-            <span className="stat-value">{counts.approved}</span>
-          </div>
-          <div className="stat-item rejected">
-            <span className="stat-label">Відхилено</span>
-            <span className="stat-value">{counts.rejected}</span>
-          </div>
-        </Box>
+        <div className="toolbar-divider" />
+
+        <ModerationFiltersToolbar
+          activeType={activeType}
+          localSearchInput={localSearchInput}
+          onSearchChange={setLocalSearchInput}
+          onSearchClear={handleInstantSearchClear}
+          ratingFilter={ratingFilter}
+          onRatingChange={handleRatingChange}
+          answerStatus={answerStatus}
+          onAnswerStatusChange={handleAnswerStatusChange}
+          sortBy={sortBy}
+          onSortChange={handleSortChange}
+          onRefresh={fetchData}
+          isLoading={isLoading}
+        />
       </div>
 
       {isLoading ? (
@@ -230,480 +569,96 @@ const ReviewListPage = () => {
         <TableContainer component={Paper} className="admin-table-container">
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Користувач</TableCell>
-                <TableCell>Товар</TableCell>
-                <TableCell>Оцінка</TableCell>
-                <TableCell>Відгук</TableCell>
-                <TableCell>Статус</TableCell>
-                <TableCell align="right">Дії</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredReviews.length === 0 ? (
+              {activeType === "reviews" ? (
                 <TableRow>
-                  <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
-                    Немає відгуків
-                  </TableCell>
+                  <TableCell>Користувач</TableCell>
+                  <TableCell>Товар</TableCell>
+                  <TableCell>Оцінка</TableCell>
+                  <TableCell>Відгук</TableCell>
+                  <TableCell>Статус</TableCell>
+                  <TableCell align="right">Дії</TableCell>
                 </TableRow>
               ) : (
-                filteredReviews.map((review) => (
-                  <TableRow key={review._id}>
-                    <TableCell>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 0.5,
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          className="user-name"
-                        >
-                          {review.name}
-                        </Typography>
-                        {review.user?.email && (
-                          <Typography
-                            variant="caption"
-                            className="user-email"
-                          >
-                            {review.user.email}
-                          </Typography>
-                        )}
-                        {review.createdAt && (
-                          <Typography
-                            variant="caption"
-                            className="user-date"
-                          >
-                            {new Date(review.createdAt).toLocaleDateString(
-                              "uk-UA",
-                              {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              },
-                            )}
-                          </Typography>
-                        )}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Box
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                      >
-                        <Avatar
-                          src={review.product?.image}
-                          alt={review.product?.name}
-                          variant="rounded"
-                          sx={{
-                            width: 52,
-                            height: 52,
-                            borderRadius: "10px",
-                            border: "1px solid rgba(255, 255, 255, 0.08)",
-                          }}
-                        />
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            maxWidth: 200,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {review.product?.name || "Видалений товар"}
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>{renderStars(review.rating)}</TableCell>
-                    <TableCell sx={{ maxWidth: 300 }}>
-                      <Box
-                        className="review-cell-interactive-wrapper"
-                        onClick={() => setSelectedReviewForModal(review)}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          width: "100%",
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          className="review-text-clickable"
-                          sx={{
-                            maxWidth: 300,
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                            overflowWrap: "anywhere",
-                            wordBreak: "break-word",
-                          }}
-                        >
-                          {review.text}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          className="review-more-link"
-                          sx={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 0.5,
-                            color: "#3b82f6",
-                            fontWeight: 600,
-                            mt: 0.75,
-                          }}
-                        >
-                          <span className="text-label">Детальніше</span> <span className="arrow">➔</span>
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={statusLabelMap[review.status]}
-                        color={statusColorMap[review.status]}
-                        size="small"
-                        variant={
-                          review.status === "pending" ? "outlined" : "filled"
-                        }
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          gap: 1,
-                        }}
-                      >
-                        {/* Дії для статусу pending (На модерації): Схвалити та Відхилити */}
-                        {review.status === "pending" && (
-                          <>
-                            <Tooltip title="Схвалити">
-                              <span>
-                                <IconButton
-                                  color="success"
-                                  onClick={() =>
-                                    handleStatusChange(review._id, "approved")
-                                  }
-                                  disabled={isUpdating === review._id}
-                                  size="small"
-                                >
-                                  <CheckIcon />
-                                </IconButton>
-                              </span>
-                            </Tooltip>
-                            <Tooltip title="Відхилити">
-                              <span>
-                                <IconButton
-                                  color="error"
-                                  onClick={() =>
-                                    handleStatusChange(review._id, "rejected")
-                                  }
-                                  disabled={isUpdating === review._id}
-                                  size="small"
-                                >
-                                  <CloseIcon />
-                                </IconButton>
-                              </span>
-                            </Tooltip>
-                          </>
-                        )}
-
-                        {/* Дії для статусу approved (Опубліковані): Зняти з публікації */}
-                        {review.status === "approved" && (
-                          <Tooltip title="Зняти з публікації">
-                            <span>
-                              <IconButton
-                                color="error"
-                                onClick={() =>
-                                  handleStatusChange(review._id, "rejected")
-                                }
-                                disabled={isUpdating === review._id}
-                                size="small"
-                              >
-                                <HighlightOffIcon />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-
-                        {/* Дії для статусу rejected (Відхилені): Повернути на модерацію */}
-                        {review.status === "rejected" && (
-                          <Tooltip title="Повернути на модерацію">
-                            <span>
-                              <IconButton
-                                color="warning"
-                                onClick={() =>
-                                  handleStatusChange(review._id, "pending")
-                                }
-                                disabled={isUpdating === review._id}
-                                size="small"
-                              >
-                                <UndoIcon />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        )}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
-                ))
+                <TableRow>
+                  <TableCell>Користувач</TableCell>
+                  <TableCell>Товар</TableCell>
+                  <TableCell>Питання</TableCell>
+                  <TableCell>Відповідь</TableCell>
+                  <TableCell>Статус</TableCell>
+                  <TableCell align="right">Дії</TableCell>
+                </TableRow>
               )}
-            </TableBody>
+            </TableHead>
+            {activeType === "reviews" ? (
+              <ReviewsTable
+                reviews={reviews}
+                searchQuery={searchQuery}
+                isUpdating={isUpdating}
+                onStatusChange={handleStatusChange}
+                onViewDetails={setSelectedItemForModal}
+              />
+            ) : (
+              <QuestionsTable
+                questions={questions}
+                searchQuery={searchQuery}
+                isUpdating={isUpdating}
+                onStatusChange={handleStatusChange}
+                onViewDetails={setSelectedItemForModal}
+                onOpenReply={(question) => {
+                  setSelectedQuestionForAnswer(question);
+                  setAnswerText(question.answer || "");
+                }}
+                onDelete={handleQuestionDelete}
+              />
+            )}
           </Table>
+          {!isLoading && total > 0 && (
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              limit={limit}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+              isLoading={isLoading}
+              itemLabel={activeType === "reviews" ? "відгуків" : "запитань"}
+            />
+          )}
         </TableContainer>
       )}
 
-      {/* Модальне вікно перегляду повних деталей відгуку */}
-      <Dialog
-        open={Boolean(selectedReviewForModal)}
-        onClose={() => setSelectedReviewForModal(null)}
-        className="review-detail-dialog"
-        maxWidth="sm"
-        fullWidth
-      >
-        <button
-          onClick={() => setSelectedReviewForModal(null)}
-          className="admin-modal-close-btn"
-          aria-label="закрити"
-        >
-          <CloseIcon />
-        </button>
-        <DialogTitle>Деталі відгуку</DialogTitle>
-        <DialogContent dividers sx={{ pb: 3 }}>
-          {selectedReviewForModal && (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-              {/* Двоколонкова спліт-панель: Товар ліворуч, Деталі праворуч */}
-              <Box className="modal-header-split">
-                {/* Ліва панель: Товар (повне зображення без обрізання) */}
-                <Box className="product-panel">
-                  <Box className="product-image-container">
-                    <img
-                      src={selectedReviewForModal.product?.image}
-                      alt={selectedReviewForModal.product?.name}
-                      className="product-full-image"
-                    />
-                  </Box>
-                  <Typography variant="body2" className="product-full-name">
-                    {selectedReviewForModal.product?.name || "Видалений товар"}
-                  </Typography>
-                </Box>
+      {/* Модальне вікно перегляду деталей відгуку */}
+      {activeType === "reviews" && (
+        <ReviewDetailsModal
+          isOpen={Boolean(selectedItemForModal)}
+          onClose={() => setSelectedItemForModal(null)}
+          review={selectedItemForModal}
+          isUpdating={isUpdating}
+          onStatusChange={handleStatusChange}
+        />
+      )}
 
-                {/* Права панель: Метадані відгуку та Автор */}
-                <Box className="details-panel">
-                  {/* Автор */}
-                  <Box className="author-card">
-                    <Box className="author-info">
-                      <Typography variant="subtitle2" className="author-name">
-                        {selectedReviewForModal.name}
-                      </Typography>
-                      {selectedReviewForModal.user?.email && (
-                        <Typography variant="caption" className="author-email">
-                          {selectedReviewForModal.user.email}
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
+      {/* Модальне вікно перегляду деталей запитання */}
+      {activeType === "questions" && (
+        <QuestionDetailsModal
+          isOpen={Boolean(selectedItemForModal)}
+          onClose={() => setSelectedItemForModal(null)}
+          question={selectedItemForModal}
+          isUpdating={isUpdating}
+          onStatusChange={handleStatusChange}
+        />
+      )}
 
-                  {/* Інформація про дату та статус */}
-                  <Box className="review-meta-list">
-                    <div className="meta-item">
-                      <span className="meta-label">Оцінка:</span>
-                      <span className="meta-val" style={{ display: 'flex', alignItems: 'center' }}>
-                        {renderStars(selectedReviewForModal.rating)}
-                      </span>
-                    </div>
-                    <div className="meta-item">
-                      <span className="meta-label">Дата створення:</span>
-                      <span className="meta-val">
-                        {selectedReviewForModal.createdAt
-                          ? new Date(
-                              selectedReviewForModal.createdAt,
-                            ).toLocaleDateString("uk-UA", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                            }) +
-                            " " +
-                            new Date(
-                              selectedReviewForModal.createdAt,
-                            ).toLocaleTimeString("uk-UA", {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : "Невідомо"}
-                      </span>
-                    </div>
-                    <div className="meta-item">
-                      <span className="meta-label">Статус:</span>
-                      <span className="meta-val">
-                        <Chip
-                          label={statusLabelMap[selectedReviewForModal.status]}
-                          color={statusColorMap[selectedReviewForModal.status]}
-                          size="small"
-                          variant={
-                            selectedReviewForModal.status === "pending"
-                              ? "outlined"
-                              : "filled"
-                          }
-                          sx={{
-                            fontSize: "0.75rem",
-                            height: "22px",
-                            fontWeight: 600,
-                            backgroundColor: selectedReviewForModal.status === "approved" ? "rgba(16, 185, 129, 0.15)" : undefined,
-                            color: selectedReviewForModal.status === "approved" ? "#10b981" : undefined,
-                            borderColor: selectedReviewForModal.status === "pending" ? "rgba(245, 158, 11, 0.4)" : undefined,
-                            "& .MuiChip-label": {
-                              paddingLeft: "8px",
-                              paddingRight: "8px",
-                            }
-                          }}
-                        />
-                      </span>
-                    </div>
-                  </Box>
-                </Box>
-              </Box>
-
-              {/* Рядок 4: Повний текст відгуку */}
-              <div className="modal-section">
-                <span className="section-label">Текст відгуку</span>
-                <Typography
-                  variant="body2"
-                  className="section-content scrollable-text-box"
-                >
-                  {selectedReviewForModal.text}
-                </Typography>
-              </div>
-
-              {/* Рядок 5: Переваги та Недоліки */}
-              {selectedReviewForModal.pros && (
-                <div className="modal-section">
-                  <span className="section-label">Переваги</span>
-                  <Typography
-                    variant="body2"
-                    className="section-content pros-box"
-                  >
-                    <b>+</b> {selectedReviewForModal.pros}
-                  </Typography>
-                </div>
-              )}
-              {selectedReviewForModal.cons && (
-                <div className="modal-section">
-                  <span className="section-label">Недоліки</span>
-                  <Typography
-                    variant="body2"
-                    className="section-content cons-box"
-                  >
-                    <b>-</b> {selectedReviewForModal.cons}
-                  </Typography>
-                </div>
-              )}
-            </Box>
-          )}
-        </DialogContent>
-        <DialogActions
-          sx={{
-            px: 3,
-            pb: 2.5,
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "1fr auto 1fr" },
-            gap: { xs: 1.5, sm: 0 },
-            alignItems: "center",
-            width: "100%",
-            boxSizing: "border-box",
-          }}
-        >
-          {/* Ліва пуста колонка для математично бездоганного центрування дій */}
-          <Box sx={{ display: { xs: "none", sm: "block" } }} />
-
-          {/* Центральна колонка: кнопки швидкої модерації */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1.5,
-              justifyContent: "center",
-              gridColumn: { xs: "1", sm: "2" },
-            }}
-          >
-            {selectedReviewForModal && selectedReviewForModal.status === "pending" && (
-              <>
-                <Button
-                  onClick={() => {
-                    handleStatusChange(selectedReviewForModal._id, "rejected");
-                    setSelectedReviewForModal(null);
-                  }}
-                  variant="outlined"
-                  color="error"
-                  disabled={isUpdating === selectedReviewForModal._id}
-                >
-                  Відхилити
-                </Button>
-                <Button
-                  onClick={() => {
-                    handleStatusChange(selectedReviewForModal._id, "approved");
-                    setSelectedReviewForModal(null);
-                  }}
-                  variant="contained"
-                  color="success"
-                  disabled={isUpdating === selectedReviewForModal._id}
-                >
-                  Схвалити
-                </Button>
-              </>
-            )}
-
-            {selectedReviewForModal && selectedReviewForModal.status === "approved" && (
-              <Button
-                onClick={() => {
-                  handleStatusChange(selectedReviewForModal._id, "rejected");
-                  setSelectedReviewForModal(null);
-                }}
-                variant="outlined"
-                color="error"
-                disabled={isUpdating === selectedReviewForModal._id}
-              >
-                Зняти з публікації
-              </Button>
-            )}
-
-            {selectedReviewForModal && selectedReviewForModal.status === "rejected" && (
-              <Button
-                onClick={() => {
-                  handleStatusChange(selectedReviewForModal._id, "pending");
-                  setSelectedReviewForModal(null);
-                }}
-                variant="outlined"
-                color="warning"
-                disabled={isUpdating === selectedReviewForModal._id}
-              >
-                Повернути на модерацію
-              </Button>
-            )}
-          </Box>
-
-          {/* Права колонка: кнопка Закрити на своєму місці */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: { xs: "center", sm: "flex-end" },
-              gridColumn: { xs: "1", sm: "3" },
-            }}
-          >
-            <Button
-              onClick={() => setSelectedReviewForModal(null)}
-              variant="outlined"
-              sx={{
-                borderColor: "rgba(255,255,255,0.15)",
-                color: "var(--text-primary)",
-              }}
-            >
-              Закрити
-            </Button>
-          </Box>
-        </DialogActions>
-      </Dialog>
+      {/* Компактний правий Drawer для швидкої відповіді */}
+      <QuestionReplyDrawer
+        isOpen={Boolean(selectedQuestionForAnswer)}
+        onClose={() => setSelectedQuestionForAnswer(null)}
+        question={selectedQuestionForAnswer}
+        answerText={answerText}
+        onAnswerTextChange={setAnswerText}
+        isAnswering={isAnswering}
+        onSubmit={handleAnswerSubmit}
+      />
     </Box>
   );
 };

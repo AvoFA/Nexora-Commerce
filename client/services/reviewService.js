@@ -84,8 +84,16 @@ export const updateUserReview = async (id, reviewData, token) => {
   return data;
 };
 
-export const getAdminReviews = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/reviews/admin`, {
+export const getAdminReviews = async (token, params = {}) => {
+  const queryParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      queryParams.append(key, value);
+    }
+  });
+
+  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+  const response = await fetch(`${API_BASE_URL}/reviews/admin${queryString}`, {
     headers: getAuthHeaders(token)
   });
   
