@@ -11,6 +11,7 @@ const brandRoutes = require('./routes/brands');
 const orderRoutes = require('./routes/orders');
 const wishlistRoutes = require('./routes/wishlist');
 const reviewRoutes = require('./routes/reviews');
+const questionRoutes = require('./routes/questions');
 const deliveryRoutes = require('./routes/delivery');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/questions', questionRoutes);
 app.use('/api/delivery', deliveryRoutes);
 
 // Basic route

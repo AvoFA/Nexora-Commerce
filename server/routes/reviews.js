@@ -169,14 +169,135 @@ router.get('/product/:productId', async (req, res) => {
 
 router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
   try {
-    const reviews = await Review.find()
+    let page = parseInt(req.query.page, 10) || 1;
+    let limit = parseInt(req.query.limit, 10) || 10;
+    const { status, rating, sort, search } = req.query;
+
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 10;
+    if (limit > 100) limit = 100;
+
+    const skip = (page - 1) * limit;
+    const query = {};
+
+    // 1. Status Filter
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    // 2. Rating Filter
+    if (rating && rating !== 'all') {
+      const ratingNum = parseInt(rating, 10);
+      if (!isNaN(ratingNum)) {
+        query.rating = ratingNum;
+      }
+    }
+
+    // 3. Sanitized and Capped Search Filter
+    if (search && search.trim()) {
+      const cleanSearch = search.trim().slice(0, 100);
+      const searchRegex = new RegExp(cleanSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+
+      const User = require('../models/User');
+      const Product = require('../models/Product');
+
+      const [matchingUsers, matchingProducts] = await Promise.all([
+        User.find({
+          $or: [
+            { name: searchRegex },
+            { email: searchRegex }
+          ]
+        }).select('_id').lean(),
+        Product.find({
+          name: searchRegex
+        }).select('_id').lean()
+      ]);
+
+      const userIds = matchingUsers.map(u => u._id);
+      const productIds = matchingProducts.map(p => p._id);
+
+      query.$or = [
+        { name: searchRegex },
+        { text: searchRegex },
+        { pros: searchRegex },
+        { cons: searchRegex },
+        { user: { $in: userIds } },
+        { product: { $in: productIds } }
+      ];
+    }
+
+    // 4. Counts Aggregation (must match search & rating filter but NOT status)
+    const countQuery = {};
+    if (rating && rating !== 'all') {
+      const ratingNum = parseInt(rating, 10);
+      if (!isNaN(ratingNum)) {
+        countQuery.rating = ratingNum;
+      }
+    }
+    if (query.$or) {
+      countQuery.$or = query.$or;
+    }
+
+    const countsAggregation = await Review.aggregate([
+      { $match: countQuery },
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
+
+    const counts = {
+      all: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0
+    };
+
+    let totalAll = 0;
+    countsAggregation.forEach(c => {
+      const s = c._id;
+      const count = c.count;
+      totalAll += count;
+      if (counts.hasOwnProperty(s)) {
+        counts[s] = count;
+      }
+    });
+    counts.all = totalAll;
+
+    // 5. Avg Rating of all approved reviews
+    const statsAggregation = await Review.aggregate([
+      { $match: { status: 'approved' } },
+      { $group: { _id: null, avgRating: { $avg: '$rating' } } }
+    ]);
+    const avgRating = statsAggregation.length > 0 ? Number(statsAggregation[0].avgRating.toFixed(1)) : 0;
+
+    // 6. Sorting
+    let sortObj = { createdAt: -1 };
+    if (sort === 'createdAt_asc') {
+      sortObj = { createdAt: 1 };
+    } else if (sort === 'rating_desc') {
+      sortObj = { rating: -1, createdAt: -1 };
+    } else if (sort === 'rating_asc') {
+      sortObj = { rating: 1, createdAt: -1 };
+    }
+
+    // 7. Execute query
+    const reviews = await Review.find(query)
       .populate('product', 'name image')
       .populate('user', 'name email')
-      .sort({ createdAt: -1 });
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const total = await Review.countDocuments(query);
 
     res.json({
       success: true,
-      reviews
+      reviews,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      counts,
+      avgRating
     });
   } catch (error) {
     console.error('Помилка отримання відгуків (адмін):', error.message);

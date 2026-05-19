@@ -142,14 +142,121 @@ const isAdmin = (req, res, next) => {
 
 router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
   try {
-    const orders = await Order.find()
+    console.log('--- GET /api/orders/admin --- req.query:', req.query);
+    let page = parseInt(req.query.page, 10) || 1;
+    let limit = parseInt(req.query.limit, 10) || 20;
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 20;
+    if (limit > 100) limit = 100;
+
+    const skip = (page - 1) * limit;
+    const { status, search } = req.query;
+    const query = {};
+
+    // 1. Status Filter
+    if (status && status !== 'all') {
+      if (status === 'processing') {
+        query.status = { $in: ['confirmed', 'packing'] };
+      } else {
+        query.status = status;
+      }
+    }
+
+    // 2. Search Filter
+    const searchConditions = [];
+    if (search && search.trim()) {
+      const cleanSearch = search.trim().replace(/^#/, '');
+      const searchRegex = new RegExp(cleanSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+
+      searchConditions.push(
+        { 'customer.name': searchRegex },
+        { 'customer.email': searchRegex },
+        { 'customer.phone': searchRegex }
+      );
+
+      // Check if it is a valid ObjectId (24 hex characters)
+      if (mongoose.Types.ObjectId.isValid(cleanSearch) && cleanSearch.length === 24) {
+        searchConditions.push({ _id: new mongoose.Types.ObjectId(cleanSearch) });
+      }
+
+      // Fallback partial ObjectId matching using $expr
+      searchConditions.push({
+        $expr: {
+          $regexMatch: {
+            input: { $toString: '$_id' },
+            regex: cleanSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+            options: 'i'
+          }
+        }
+      });
+
+      query.$or = searchConditions;
+    }
+
+    // 3. Counts Aggregation (must match search conditions but NOT status and pagination)
+    const countQuery = {};
+    if (searchConditions.length > 0) {
+      countQuery.$or = searchConditions;
+    }
+
+    const countsAggregation = await Order.aggregate([
+      { $match: countQuery },
+      { $group: { _id: '$status', count: { $sum: 1 } } }
+    ]);
+
+    const counts = {
+      all: 0,
+      new: 0,
+      processing: 0,
+      ready_for_pickup: 0,
+      received: 0,
+      cancelled: 0
+    };
+
+    let totalAll = 0;
+    countsAggregation.forEach(c => {
+      const s = c._id;
+      const count = c.count;
+      totalAll += count;
+
+      if (s === 'confirmed' || s === 'packing') {
+        counts.processing += count;
+      }
+      if (counts.hasOwnProperty(s)) {
+        counts[s] += count;
+      }
+    });
+    counts.all = totalAll;
+
+    // 4. Sorting
+    const sortParam = req.query.sort || 'createdAt_desc';
+    let sortObj = { createdAt: -1 };
+    if (sortParam === 'createdAt_asc') {
+      sortObj = { createdAt: 1 };
+    } else if (sortParam === 'totalPrice_desc') {
+      sortObj = { totalPrice: -1, createdAt: -1 };
+    } else if (sortParam === 'totalPrice_asc') {
+      sortObj = { totalPrice: 1, createdAt: -1 };
+    }
+
+    // 5. Fetch orders and total
+    const orders = await Order.find(query)
       .populate('user', 'name email')
-      .sort({ createdAt: -1 })
+      .sort(sortObj)
+      .skip(skip)
+      .limit(limit)
       .lean();
+
+    const total = await Order.countDocuments(query);
 
     res.json({
       success: true,
-      orders
+      orders,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      counts
     });
   } catch (error) {
     console.error('Помилка отримання замовлень (адмін):', error.message);

@@ -17,7 +17,7 @@ const navigation = [
   { name: "Товари", href: "/admin", icon: Package },
   { name: "Категорії", href: "/admin/categories", icon: Category },
   { name: "Замовлення", href: "/admin/orders", icon: OrdersIcon },
-  { name: "Відгуки", href: "/admin/reviews", icon: ReviewsIcon },
+  { name: "Відгуки та питання", href: "/admin/reviews", icon: ReviewsIcon },
 ];
 
 export const AdminLayout = () => {

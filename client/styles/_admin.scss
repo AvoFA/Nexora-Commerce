@@ -165,10 +165,10 @@
       }
 
       &.active {
-        background: linear-gradient(90deg, rgba($primary-color, 0.2), rgba($secondary-color, 0.2));
+        background: rgba($primary-color, 0.08);
         color: $primary-color;
-        border: 1px solid rgba($primary-color, 0.3);
-        box-shadow: 0 0 20px rgba($primary-color, 0.2);
+        border: 1px solid rgba($primary-color, 0.15);
+        box-shadow: 0 0 8px rgba($primary-color, 0.08);
         transform: translateX(0);
 
         .nav-icon-wrapper {
@@ -625,75 +625,141 @@
 
 // Глобальна сітка статистики для адмін-панелі
 .admin-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
   width: 100%;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
 }
 
-// Картка статистики (ультра-мінімалізм)
+// Картка статистики (компактна операційна версія)
 .admin-stat-card {
   position: relative;
-  background: linear-gradient(135deg, rgba($card-bg, 0.4), rgba($card-bg, 0.15));
+  background: rgba($card-bg, 0.45);
   border: 1px solid rgba($border-color, 0.4);
   border-radius: $border-radius;
-  padding: 18px 20px;
+  padding: 12px 20px;
+  min-height: 48px;
+  flex: 1 1 200px;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   overflow: hidden;
+  box-shadow: none;
 
-  // Ультра-тонкий кольоровий індикатор з лівого краю (замість фарбування всього тексту)
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background-color: transparent;
-    transition: background-color 0.2s ease;
+  // Модифікатори кольорів для іконок, індикаторів та значень
+  &.stat-primary {
+    .stat-card-icon {
+      background-color: rgba($primary-color, 0.08);
+      color: $primary-color;
+    }
+    .stat-card-value {
+      color: $primary-color;
+    }
+  }
+  &.stat-secondary {
+    .stat-card-icon {
+      background-color: rgba($secondary-color, 0.08);
+      color: $secondary-color;
+    }
+    .stat-card-value {
+      color: $secondary-color;
+    }
+  }
+  &.stat-success {
+    .stat-card-icon {
+      background-color: rgba($success-color, 0.08);
+      color: $success-color;
+    }
+    .stat-card-value {
+      color: $success-color;
+    }
+  }
+  &.stat-danger {
+    .stat-card-icon {
+      background-color: rgba($danger-color, 0.08);
+      color: $danger-color;
+    }
+    .stat-card-value {
+      color: $danger-color;
+    }
+  }
+  &.stat-warning {
+    .stat-card-icon {
+      background-color: rgba($warning-color, 0.08);
+      color: $warning-color;
+    }
+    .stat-card-value {
+      color: $warning-color;
+    }
   }
 
-  // Модифікатори кольорів для індикаторів
-  &.stat-primary::before { background-color: $primary-color; }
-  &.stat-secondary::before { background-color: $secondary-color; }
-  &.stat-success::before { background-color: $success-color; }
-  &.stat-danger::before { background-color: $danger-color; }
-  &.stat-warning::before { background-color: $warning-color; }
+  // Контейнер іконки статистики
+  .stat-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    flex-shrink: 0;
+
+    svg {
+      font-size: 1.15rem;
+    }
+  }
+
+  // Інформаційна обгортка зліва (лейбл + сабтекст)
+  .stat-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0; // Запобігання переповненню
+  }
 
   // Лейбл картки
   .stat-card-label {
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     color: $text-secondary;
-  }
-
-  // Велике чисте монохромне число
-  .stat-card-value {
-    font-size: 1.75rem;
-    font-weight: 800;
-    color: $text-color;
-    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   // Додатковий опис
   .stat-card-subtext {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: rgba($text-color, 0.35);
     font-weight: 500;
-    margin-top: 2px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // Велике чисте монохромне число
+  .stat-card-value {
+    font-size: 1.35rem;
+    font-weight: 800;
+    line-height: 1;
+    text-align: right;
+    flex-shrink: 0;
+    transition: color 0.2s ease;
   }
 }
+
+// Уніфікований стиль виділення знайденого тексту при пошуку в адмінці
+mark.search-highlight {
+  background-color: rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
