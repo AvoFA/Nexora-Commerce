@@ -158,13 +158,9 @@
 
       &:hover {
         background: rgba($primary-color, 0.1);
-        .sort-item-text {
-          color: $primary-color;
-        }
       }
 
       &.is-selected {
-        background: rgba($primary-color, 0.15);
         .sort-item-text {
           color: $primary-color;
           font-weight: 600;

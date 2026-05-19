@@ -1,8 +1,17 @@
+import React, { useState, useEffect } from 'react';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import ConfirmModal from '../ConfirmModal/ConfirmModal.jsx';
 // import './ClearCartConfirmModal.scss';
 
 const ClearCartConfirmModal = ({ isOpen, onClose, onConfirm, itemsCount }) => {
+  const [persistedCount, setPersistedCount] = useState(itemsCount);
+
+  useEffect(() => {
+    if (isOpen) {
+      setPersistedCount(itemsCount);
+    }
+  }, [isOpen, itemsCount]);
+
   return (
     <ConfirmModal
       isOpen={isOpen}
@@ -15,7 +24,7 @@ const ClearCartConfirmModal = ({ isOpen, onClose, onConfirm, itemsCount }) => {
       warning="Буде видалено {count} товарів із вашого кошика. Цю дію неможливо буде скасувати."
       confirmText="Очистити"
       cancelText="Скасувати"
-      count={itemsCount}
+      count={persistedCount}
     />
   );
 };

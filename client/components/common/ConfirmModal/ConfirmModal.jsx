@@ -25,6 +25,18 @@ const ConfirmModal = ({
       className={`confirm-modal ${className}`}
       maxWidth="xs"
       fullWidth
+      slotProps={{
+        backdrop: {
+          style: {
+            backgroundColor: 'rgba(10, 12, 22, 0.65)'
+          }
+        }
+      }}
+      BackdropProps={{
+        style: {
+          backgroundColor: 'rgba(10, 12, 22, 0.65)'
+        }
+      }}
     >
       <DialogTitle className="confirm-modal-title">
         {IconComponent && (

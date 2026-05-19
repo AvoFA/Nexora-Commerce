@@ -96,13 +96,11 @@ const ProductListPage = () => {
       toast.error('Помилка при видаленні товару');
     } finally {
       setShowDeleteModal(false);
-      setProductToDelete(null);
     }
   };
 
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
-    setProductToDelete(null);
   };
 
   const handleSaveProduct = async (productData) => {
