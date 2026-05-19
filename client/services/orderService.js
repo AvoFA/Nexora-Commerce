@@ -47,8 +47,17 @@ export const getMyOrders = async (token) => {
   return data;
 };
 
-export const getAdminOrders = async (token) => {
-  const response = await fetch(`${API_BASE_URL}/orders/admin`, {
+export const getAdminOrders = async (token, params = {}) => {
+  const query = new URLSearchParams();
+  if (params.page) query.append('page', params.page);
+  if (params.limit) query.append('limit', params.limit);
+  if (params.status) query.append('status', params.status);
+  if (params.search) query.append('search', params.search);
+  if (params.sort) query.append('sort', params.sort);
+
+  const queryString = query.toString() ? `?${query.toString()}` : '';
+
+  const response = await fetch(`${API_BASE_URL}/orders/admin${queryString}`, {
     headers: getAuthHeaders(token)
   });
 
