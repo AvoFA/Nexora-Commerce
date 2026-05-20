@@ -4,46 +4,72 @@ import { toast } from "sonner";
 import {
   EditOutlined,
   PersonOutline,
-  PhoneOutlined,
-  SaveOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@mui/icons-material";
 import { useAuth } from "../../../context/AuthContext.jsx";
 
 const ProfileTab = () => {
   const { isAuthenticated, user, updateUserData } = useAuth();
   const [name, setName] = useState(user?.name || "");
+  const [surname, setSurname] = useState(user?.surname || "");
+  const [patronymic, setPatronymic] = useState(user?.patronymic || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [editingSection, setEditingSection] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const [lastOrder, setLastOrder] = useState(null);
+
   useEffect(() => {
     setName(user?.name || "");
+    setSurname(user?.surname || "");
+    setPatronymic(user?.patronymic || "");
     setPhone(user?.phone || "");
   }, [user]);
 
-  const isDirty = useMemo(() => {
-    return name.trim() !== (user?.name || "") || phone.trim() !== (user?.phone || "");
-  }, [name, phone, user]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchLastOrder = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch("http://localhost:5000/api/orders/my", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json();
+          if (data.success && data.orders?.length > 0) {
+            setLastOrder(data.orders[0]);
+          }
+        } catch (error) {
+          console.error("Failed to fetch last order:", error);
+        }
+      };
+      fetchLastOrder();
+    }
+  }, [isAuthenticated]);
+
+  const isPersonalDirty = useMemo(() => {
+    return name.trim() !== (user?.name || "") || 
+           surname.trim() !== (user?.surname || "") || 
+           patronymic.trim() !== (user?.patronymic || "");
+  }, [name, surname, patronymic, user]);
+
+  const isContactsDirty = useMemo(() => {
+    return phone.trim() !== (user?.phone || "");
+  }, [phone, user]);
 
   const isPersonalEditing = editingSection === "personal";
   const isContactsEditing = editingSection === "contacts";
 
   const validate = () => {
     const nextErrors = {};
-
-    if (name.trim().length < 2) {
-      nextErrors.name = "Ім'я має містити мінімум 2 символи";
-    }
-
+    if (name.trim().length < 2) nextErrors.name = "Мінімум 2 символи";
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!validate()) return;
+  const handleSave = async (section) => {
+    if (section === "personal" && !validate()) return;
 
     try {
       setIsSaving(true);
@@ -57,16 +83,11 @@ const ProfileTab = () => {
         },
         body: JSON.stringify({
           name: name.trim(),
+          surname: surname.trim(),
+          patronymic: patronymic.trim(),
           phone: phone.trim(),
         }),
       });
-
-      const contentType = response.headers.get("content-type") || "";
-
-      if (!contentType.includes("application/json")) {
-        await response.text();
-        throw new Error("Backend не повернув JSON. Перезапустіть сервер і перевірте /api/auth/profile.");
-      }
 
       const data = await response.json();
 
@@ -76,12 +97,14 @@ const ProfileTab = () => {
 
       updateUserData?.({
         name: data.user.name,
+        surname: data.user.surname || "",
+        patronymic: data.user.patronymic || "",
         phone: data.user.phone || "",
       });
       setEditingSection(null);
-      toast.success("Персональні дані оновлено");
+      toast.success("Дані оновлено");
     } catch (error) {
-      toast.error(error.message || "Не вдалося оновити профіль");
+      toast.error(error.message || "Помилка оновлення");
     } finally {
       setIsSaving(false);
     }
@@ -89,14 +112,20 @@ const ProfileTab = () => {
 
   const handleCancel = () => {
     setName(user?.name || "");
+    setSurname(user?.surname || "");
+    setPatronymic(user?.patronymic || "");
     setPhone(user?.phone || "");
     setErrors({});
     setEditingSection(null);
   };
 
-  const startEditing = (section) => {
-    setErrors({});
-    setEditingSection(section);
+  const formatShortDate = (date) => {
+    if (!date) return "—";
+    return new Date(date).toLocaleDateString("uk-UA", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   if (!isAuthenticated) {
@@ -109,14 +138,11 @@ const ProfileTab = () => {
               <p>Увійдіть, щоб переглядати та редагувати дані профілю.</p>
             </div>
           </div>
-
           <div className="profile-board profile-board-empty">
             <PersonOutline />
             <h3>Потрібен вхід</h3>
             <p>Увійдіть або зареєструйтесь, щоб користуватися цим розділом кабінету.</p>
-            <Link to="/catalog" className="btn-primary">
-              Перейти до каталогу
-            </Link>
+            <Link to="/catalog" className="btn-primary">Перейти до каталогу</Link>
           </div>
         </section>
       </div>
@@ -129,99 +155,161 @@ const ProfileTab = () => {
         <div className="profile-toolbar">
           <div className="profile-heading">
             <h2>Персональні дані</h2>
-            <p>Керуйте основною інформацією, яка використовується у кабінеті та під час оформлення замовлення.</p>
           </div>
         </div>
 
-        <form className="profile-board" onSubmit={handleSubmit}>
-          <div className="profile-section">
+        <div className="profile-board">
+          {/* Section: Personal Info */}
+          <div className={`profile-section-compact ${isPersonalEditing ? 'is-editing' : ''}`}>
             <div className="profile-section-head">
-              <h3>Особисті дані</h3>
-              {!editingSection && (
-                <button type="button" className="profile-edit-button" onClick={() => startEditing("personal")} aria-label="Редагувати особисті дані">
-                  <EditOutlined />
-                </button>
-              )}
-            </div>
-
-            {isPersonalEditing ? (
-              <label className={`profile-field ${errors.name ? "has-error" : ""}`}>
-                <span>Ім'я</span>
-                <div className="profile-input-wrap">
-                  <PersonOutline />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(event) => {
-                      setName(event.target.value);
-                      if (errors.name && event.target.value.trim().length >= 2) {
-                        setErrors((current) => ({ ...current, name: null }));
-                      }
-                    }}
-                    autoComplete="name"
-                  />
-                </div>
-                {errors.name && <small>{errors.name}</small>}
-              </label>
-            ) : (
-              <div className="profile-data-row">
-                <span>Ім'я</span>
-                <strong>{user?.name || "Не вказано"}</strong>
+              <div className="head-title-group">
+                <h3>Особисті дані</h3>
+                {!isPersonalEditing && (
+                  <button 
+                    type="button" 
+                    className="profile-edit-icon-btn" 
+                    onClick={() => setEditingSection("personal")}
+                    title="Редагувати"
+                  >
+                    <EditOutlined />
+                  </button>
+                )}
               </div>
-            )}
-          </div>
-
-          <div className="profile-section">
-            <div className="profile-section-head">
-              <h3>Контакти</h3>
-              {!editingSection && (
-                <button type="button" className="profile-edit-button" onClick={() => startEditing("contacts")} aria-label="Редагувати контакти">
-                  <EditOutlined />
-                </button>
-              )}
             </div>
 
-            <div className="profile-contact-grid">
-              {isContactsEditing ? (
-                <label className="profile-field">
-                  <span>Телефон</span>
-                  <div className="profile-input-wrap">
-                    <PhoneOutlined />
-                    <input
-                      type="tel"
-                      value={phone}
-                      onChange={(event) => setPhone(event.target.value)}
-                      placeholder="+380 99 123 4567"
-                      autoComplete="tel"
-                    />
+            <div className="profile-section-body">
+              {isPersonalEditing ? (
+                <div className="edit-mode-container">
+                  <div className="edit-grid-compact">
+                    <div className="field-group">
+                      <label>Прізвище</label>
+                      <input type="text" value={surname} onChange={(e) => setSurname(e.target.value)} placeholder="Прізвище" />
+                    </div>
+                    <div className="field-group">
+                      <label>Ім'я *</label>
+                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ім'я" className={errors.name ? 'has-error' : ''} />
+                    </div>
+                    <div className="field-group">
+                      <label>По батькові</label>
+                      <input type="text" value={patronymic} onChange={(e) => setPatronymic(e.target.value)} placeholder="По батькові" />
+                    </div>
                   </div>
-                </label>
+                  <div className="profile-actions-row">
+                    <button type="button" className="btn-secondary" onClick={handleCancel} disabled={isSaving}>
+                      <CloseOutlined />
+                      <span>Скасувати</span>
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn-primary" 
+                      onClick={() => handleSave("personal")} 
+                      disabled={isSaving || !isPersonalDirty}
+                    >
+                      <CheckOutlined />
+                      <span>Зберегти</span>
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <div className="profile-data-row">
-                  <span>Телефон</span>
-                  <strong>{user?.phone || "Не вказано"}</strong>
+                <div className="view-line">
+                  <span className="label">ПІБ</span>
+                  <span className="value">
+                    {user?.surname || user?.name || user?.patronymic 
+                      ? `${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`.trim() 
+                      : "Не вказано"}
+                  </span>
                 </div>
               )}
-
-              <div className="profile-data-row profile-data-row-readonly">
-                <span>Email</span>
-                <strong>{user?.email || "Не вказано"}</strong>
-              </div>
             </div>
           </div>
 
-          {editingSection && (
-            <div className="profile-actions">
-              <button type="button" className="btn-secondary" onClick={handleCancel} disabled={isSaving}>
-                Скасувати
-              </button>
-              <button type="submit" className="btn-primary btn-with-icon" disabled={isSaving || !isDirty}>
-                <SaveOutlined />
-                {isSaving ? "Зберігаємо..." : "Зберегти"}
-              </button>
+          {/* Section: Contacts */}
+          <div className={`profile-section-compact ${isContactsEditing ? 'is-editing' : ''}`}>
+            <div className="profile-section-head">
+              <div className="head-title-group">
+                <h3>Контакти</h3>
+                {!isContactsEditing && (
+                  <button 
+                    type="button" 
+                    className="profile-edit-icon-btn" 
+                    onClick={() => setEditingSection("contacts")}
+                    title="Редагувати"
+                  >
+                    <EditOutlined />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="profile-section-body">
+              {isContactsEditing ? (
+                <div className="edit-mode-container">
+                  <div className="edit-grid-compact">
+                    <div className="field-group">
+                      <label>Телефон</label>
+                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+380..." />
+                    </div>
+                    <div className="field-group readonly">
+                      <label>Email</label>
+                      <input type="text" value={user?.email || ""} disabled />
+                    </div>
+                  </div>
+                  <div className="profile-actions-row">
+                    <button type="button" className="btn-secondary" onClick={handleCancel} disabled={isSaving}>
+                      <CloseOutlined />
+                      <span>Скасувати</span>
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn-primary" 
+                      onClick={() => handleSave("contacts")} 
+                      disabled={isSaving || !isContactsDirty}
+                    >
+                      <CheckOutlined />
+                      <span>Зберегти</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="contacts-view-grid">
+                  <div className="view-line">
+                    <span className="label">Телефон</span>
+                    <span className="value">{user?.phone || "Не вказано"}</span>
+                  </div>
+                  <div className="view-line readonly" style={{ marginTop: '12px' }}>
+                    <span className="label">Email</span>
+                    <span className="value">{user?.email}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section: History */}
+          {lastOrder && (
+            <div className="profile-section-compact last-delivery-section">
+              <div className="profile-section-head">
+                <div className="head-title-group">
+                  <h3>Остання доставка</h3>
+                </div>
+              </div>
+              <div className="profile-section-body vertical-stack">
+                <div className="view-line-stack">
+                  <span className="label">Дата</span>
+                  <span className="value">{formatShortDate(lastOrder.createdAt)}</span>
+                </div>
+                <div className="view-line-stack">
+                  <span className="label">Одержувач</span>
+                  <span className="value">{lastOrder.customer?.name || "—"}</span>
+                </div>
+                <div className="view-line-stack">
+                  <span className="label">Тел.</span>
+                  <span className="value">{lastOrder.customer?.phone || "—"}</span>
+                </div>
+              </div>
             </div>
           )}
-        </form>
+        </div>
       </section>
     </div>
   );

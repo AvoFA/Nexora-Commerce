@@ -142,6 +142,8 @@ export const AuthProvider = ({ children }) => {
           id: data.user.id,
           email: data.user.email,
           name: data.user.name,
+          surname: data.user.surname || '',
+          patronymic: data.user.patronymic || '',
           phone: data.user.phone || '',
           role: data.user.role,
           wishlistProductIds: data.user.wishlistProductIds || []
@@ -190,6 +192,8 @@ export const AuthProvider = ({ children }) => {
           id: data.user.id,
           email: data.user.email,
           name: data.user.name,
+          surname: data.user.surname || '',
+          patronymic: data.user.patronymic || '',
           phone: data.user.phone || '',
           role: data.user.role,
           wishlistProductIds: data.user.wishlistProductIds || []

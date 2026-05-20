@@ -118,6 +118,8 @@ class UserController {
         id: newUser._id,
         email: newUser.email,
         name: newUser.name,
+        surname: newUser.surname || '',
+        patronymic: newUser.patronymic || '',
         phone: newUser.phone || '',
         wishlistProductIds: [],
         role: newUser.role,
@@ -156,6 +158,8 @@ class UserController {
         id: user._id,
         email: user.email,
         name: user.name,
+        surname: user.surname || '',
+        patronymic: user.patronymic || '',
         phone: user.phone || '',
         wishlistProductIds: getWishlistProductIds(user.wishlistLists),
         role: user.role,
@@ -178,6 +182,8 @@ class UserController {
         id: user._id,
         email: user.email,
         name: user.name,
+        surname: user.surname || '',
+        patronymic: user.patronymic || '',
         phone: user.phone || '',
         username: user.username,
         wishlistLists: user.wishlistLists,
@@ -193,6 +199,8 @@ class UserController {
   static async updateClientProfile(id, updates = {}) {
     try {
       const name = (updates.name || '').trim();
+      const surname = (updates.surname || '').trim();
+      const patronymic = (updates.patronymic || '').trim();
       const phone = (updates.phone || '').trim();
 
       if (name.length < 2) {
@@ -205,6 +213,8 @@ class UserController {
       }
 
       user.name = name;
+      user.surname = surname;
+      user.patronymic = patronymic;
       user.phone = phone;
       await user.save();
 
@@ -212,6 +222,8 @@ class UserController {
         id: user._id,
         email: user.email,
         name: user.name,
+        surname: user.surname || '',
+        patronymic: user.patronymic || '',
         phone: user.phone || '',
         wishlistProductIds: getWishlistProductIds(user.wishlistLists),
         role: user.role,

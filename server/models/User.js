@@ -51,6 +51,16 @@ const userSchema = new mongoose.Schema({
     maxlength: [100, 'Імʼя має бути максимум 100 символів'],
     trim: true
   },
+  surname: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  patronymic: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   phone: {
     type: String,
     trim: true,
