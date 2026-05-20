@@ -49,6 +49,15 @@ const accountLinks = [
   },
 ];
 
+const UserAvatar = ({ name, className = "" }) => {
+  const initial = name ? name.charAt(0).toUpperCase() : "U";
+  return (
+    <div className={`user-initial-avatar ${className}`}>
+      {initial}
+    </div>
+  );
+};
+
 const Navbar = ({ openAuth }) => {
   const { state } = useCart();
   const { compareCount } = useCompare();
@@ -58,9 +67,16 @@ const Navbar = ({ openAuth }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
 
   const closeMegaMenu = () => {
     setIsMegaMenuOpen(false);
+  };
+
+  const handleLinkClick = () => {
+    closeMegaMenu();
+    setIsMenuOpen(false);
+    setIsAccountDropdownOpen(false);
   };
 
   const {
@@ -72,6 +88,7 @@ const Navbar = ({ openAuth }) => {
     onSuccess: () => {
       setIsMenuOpen(false);
       closeMegaMenu();
+      setIsAccountDropdownOpen(false);
     },
   });
 
@@ -79,6 +96,7 @@ const Navbar = ({ openAuth }) => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         closeMegaMenu();
+        setIsAccountDropdownOpen(false);
       }
     };
 
@@ -91,13 +109,13 @@ const Navbar = ({ openAuth }) => {
       <div className="container">
         <div className="navbar-container">
           <div className="navbar-logo">
-            <Link to="/home" onClick={closeMegaMenu}>
+            <Link to="/home" onClick={handleLinkClick}>
               ElectroLux
             </Link>
           </div>
 
           <nav className="navbar-nav">
-            <Link to="/home" className="nav-link" onClick={closeMegaMenu}>
+            <Link to="/home" className="nav-link" onClick={handleLinkClick}>
               Головна
             </Link>
             <button
@@ -110,7 +128,7 @@ const Navbar = ({ openAuth }) => {
               {isMegaMenuOpen ? <CloseIcon /> : <GridViewIcon />}
               <span>Каталог</span>
             </button>
-            <Link to="/about" className="nav-link" onClick={closeMegaMenu}>
+            <Link to="/about" className="nav-link" onClick={handleLinkClick}>
               Про нас
             </Link>
           </nav>
@@ -127,21 +145,30 @@ const Navbar = ({ openAuth }) => {
             <div className="desktop-actions desktop-only">
               {isAuthenticated ? (
                 <>
-                  <div className="account-menu-wrapper">
-                    <Link to="/account/orders" className="desktop-user-info" title="Мій кабінет">
-                      <AccountCircleIcon className="desktop-user-icon" />
+                  <div 
+                    className={`account-menu-wrapper ${isAccountDropdownOpen ? 'is-open' : ''}`}
+                    onMouseEnter={() => setIsAccountDropdownOpen(true)}
+                    onMouseLeave={() => setIsAccountDropdownOpen(false)}
+                  >
+                    <Link to="/account/orders" className="desktop-user-info" onClick={handleLinkClick} title="Мій кабінет">
+                      <UserAvatar name={user?.name} className="desktop-user-avatar-icon" />
                       <span>Кабінет</span>
                     </Link>
-                    <div className="account-dropdown" aria-label="Швидкі переходи кабінету">
+                    <div className={`account-dropdown ${isAccountDropdownOpen ? 'is-visible' : ''}`} aria-label="Швидкі переходи кабінету">
                       <div className="account-dropdown-user">
-                        <AccountCircleIcon />
+                        <UserAvatar name={user?.name} className="dropdown-user-avatar" />
                         <div>
                           <strong>{user?.name || "Користувач"}</strong>
                           <span>{user?.email}</span>
                         </div>
                       </div>
                       {accountLinks.map(({ to, label, icon: Icon }) => (
-                        <Link key={to} to={to} className="account-dropdown-link">
+                        <Link 
+                          key={to} 
+                          to={to} 
+                          className="account-dropdown-link"
+                          onClick={handleLinkClick}
+                        >
                           <Icon />
                           <span>{label}</span>
                         </Link>
@@ -149,14 +176,17 @@ const Navbar = ({ openAuth }) => {
                       <button
                         type="button"
                         className="account-dropdown-link account-dropdown-logout"
-                        onClick={handleLogoutClick}
+                        onClick={() => {
+                          handleLogoutClick();
+                          setIsAccountDropdownOpen(false);
+                        }}
                       >
                         <ExitToAppIcon />
                         <span>Вийти</span>
                       </button>
                     </div>
                   </div>
-                  <Link to="/account/wishlist" className="action-button" title="Мої улюблені">
+                  <Link to="/account/wishlist" className="action-button" onClick={handleLinkClick} title="Мої улюблені">
                     <FavoriteIcon />
                     <span className="action-button-label">Обране</span>
                   </Link>
@@ -187,7 +217,7 @@ const Navbar = ({ openAuth }) => {
                 to="/compare"
                 className="action-button compare-link"
                 title="Порівняння товарів"
-                onClick={closeMegaMenu}
+                onClick={handleLinkClick}
               >
                 <BalanceIcon />
                 <span className="action-button-label">Порівняння</span>
@@ -196,7 +226,7 @@ const Navbar = ({ openAuth }) => {
               <Link
                 to="/cart"
                 className={`cart-cta${totalItems > 0 ? " cart-cta-filled" : ""}`}
-                onClick={closeMegaMenu}
+                onClick={handleLinkClick}
               >
                 <ShoppingCartIcon />
                 {totalItems > 0 ? (

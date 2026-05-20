@@ -289,16 +289,6 @@
     display: flex;
     align-items: center;
     padding: 8px 0 10px;
-
-    &:hover,
-    &:focus-within {
-        .account-dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-    }
 }
 
 .desktop-user-info {
@@ -323,9 +313,18 @@
         color: $primary-color;
     }
 
-    .desktop-user-icon {
-        font-size: 24px;
-        color: currentColor;
+    .desktop-user-avatar-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        margin-bottom: 2px;
     }
 
     span {
@@ -345,22 +344,34 @@
     }
 }
 
+.user-initial-avatar {
+    flex-shrink: 0;
+    user-select: none;
+}
+
 .account-dropdown {
     position: absolute;
     top: 100%;
     left: -8px;
     width: 280px;
     padding: 10px;
-    background: $glass-gradient;
+    background: $surface-color;
     border: 1px solid $border-color;
     border-radius: $border-radius;
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.38);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
     transform: translateY(8px);
     pointer-events: none;
     transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
     z-index: 80;
+
+    &.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
 }
 
 .account-dropdown-user {
@@ -372,13 +383,17 @@
     margin-bottom: 6px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 
-    .MuiSvgIcon-root {
+    .dropdown-user-avatar {
         width: 38px;
         height: 38px;
-        padding: 7px;
+        font-size: 1rem;
         border-radius: 50%;
         color: #fff;
         background: linear-gradient(135deg, $primary-color, $secondary-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
     }
 
     strong,
@@ -443,7 +458,7 @@
 .account-dropdown-logout {
     margin-top: 6px;
     padding-top: 12px;
-    border-top-color: rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     color: rgba($danger-color, 0.9);
 
     .MuiSvgIcon-root {
@@ -455,6 +470,10 @@
         color: $danger-color;
         background: rgba($danger-color, 0.1);
         border-color: rgba($danger-color, 0.24);
+
+        .MuiSvgIcon-root {
+            color: $danger-color;
+        }
     }
 }
 

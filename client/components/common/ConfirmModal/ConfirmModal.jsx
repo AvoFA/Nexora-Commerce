@@ -1,4 +1,5 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './ConfirmModal.scss';
 
 const ConfirmModal = ({
@@ -13,65 +14,77 @@ const ConfirmModal = ({
   count = null,
   confirmText = 'Підтвердити',
   cancelText = 'Скасувати',
-  type = 'danger' // danger, warning, info
+  type = 'danger', // danger, warning, info
+  confirmDisabled = false,
+  children
 }) => {
-  // Функція для заміни {count} в текстах
+  // Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   const replaceCount = (text) => count !== null ? text.replace(/\{count\}/g, count) : text;
 
-  return (
-    <Dialog
-      open={isOpen}
-      onClose={onClose}
-      className={`confirm-modal ${className}`}
-      maxWidth="xs"
-      fullWidth
-      slotProps={{
-        backdrop: {
-          style: {
-            backgroundColor: 'rgba(10, 12, 22, 0.65)'
-          }
-        }
-      }}
-      BackdropProps={{
-        style: {
-          backgroundColor: 'rgba(10, 12, 22, 0.65)'
-        }
-      }}
-    >
-      <DialogTitle className="confirm-modal-title">
-        {IconComponent && (
-          <IconComponent className="confirm-modal-icon" />
-        )}
-        <span>{title}</span>
-      </DialogTitle>
+  return createPortal(
+    <div className={`confirm-modal-overlay ${className}`} onClick={onClose}>
+      <div className="confirm-modal-paper" onClick={(e) => e.stopPropagation()}>
+        <div className="confirm-modal-title">
+          {IconComponent && (
+            <IconComponent className="confirm-modal-icon" />
+          )}
+          <span>{title}</span>
+        </div>
 
-      <DialogContent className="confirm-modal-content">
-        <p>{message}</p>
-        {warning && (
-          <p className="confirm-modal-warning">
-            {replaceCount(warning)}
-          </p>
-        )}
-      </DialogContent>
+        <div className="confirm-modal-content">
+          <p>{message}</p>
+          {warning && (
+            <p className="confirm-modal-warning">
+              {replaceCount(warning)}
+            </p>
+          )}
+          {children}
+        </div>
 
-      <DialogActions className="confirm-modal-actions">
-        <Button
-          onClick={onClose}
-          variant="outlined"
-          className="confirm-modal-cancel-btn"
-        >
-          {cancelText}
-        </Button>
-        <Button
-          onClick={onConfirm}
-          variant="contained"
-          color={type === 'danger' ? 'error' : 'primary'}
-          className="confirm-modal-confirm-btn"
-        >
-          {confirmText}
-        </Button>
-      </DialogActions>
-    </Dialog>
+        <div className="confirm-modal-actions">
+          <button
+            type="button"
+            onClick={onClose}
+            className="confirm-modal-cancel-btn"
+          >
+            {cancelText}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className={`confirm-modal-confirm-btn confirm-modal-confirm-btn--${type}`}
+            disabled={confirmDisabled}
+          >
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 };
 

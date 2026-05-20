@@ -11,7 +11,7 @@
   background-color: $primary-color;
   color: #ffffff;
   border: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   border-radius: $border-radius / 1.5;
   padding: 12px 24px;
   font-weight: 600;
@@ -19,16 +19,17 @@
   font-size: 0.95rem;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: darken($primary-color, 4%);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-    transform: translateY(-1px);
+    background-color: darken($primary-color, 6%);
+    box-shadow: none;
+    transform: none;
   }
 
   &:active {
-    transform: translateY(0) scale(0.98);
+    transform: scale(0.95);
+    box-shadow: none;
   }
 }
 
@@ -36,16 +37,16 @@
 .btn-danger {
   @extend .btn-primary;
   background: linear-gradient(135deg, #e74c3c, #c0392b);
-  border-color: rgba(231, 76, 60, 0.3);
-  box-shadow: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    background: linear-gradient(135deg, #c0392b, #a93226);
+    background: #c0392b;
     box-shadow: none;
+    transform: none;
   }
 
   &:active {
-    transform: translateY(1px);
+    transform: scale(0.95);
     box-shadow: none;
   }
 }

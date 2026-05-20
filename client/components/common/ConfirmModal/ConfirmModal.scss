@@ -1,47 +1,56 @@
-// Базові стилі для всіх типів діалогів підтвердження
 @import "../../../styles/variables";
 @import "../../../styles/common";
 
-.confirm-modal {
-  .MuiBackdrop-root {
-    background-color: rgba(10, 12, 22, 0.65) !important;
-  }
+.confirm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(10, 12, 22, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 9999;
+  animation: fadeInModal 0.2s ease-out forwards;
 
-  .MuiPaper-root {
+  .confirm-modal-paper {
     background: $glass-gradient, rgba($card-bg, 0.95);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
     border: 1px solid rgba($border-color, 0.6);
     border-radius: 16px;
-    overflow: hidden;
-    margin: 16px;
+    width: 100%;
+    max-width: 440px;
+    overflow: visible; // Allow dropdowns to overflow beautifully
+    position: relative;
+    animation: slideUpModal 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .confirm-modal-title {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 20px 24px 8px 24px;
     font-weight: 600;
     font-size: 1.15rem;
     color: $text-color;
-    border-bottom: none; // Убрали разделительную линию для воздушности
+    padding-right: 0;
 
     .confirm-modal-icon {
-      font-size: 20px;
-      color: $text-secondary;
-      filter: none; // Никакого свечения по умолчанию
+      font-size: 22px;
+      color: rgba($text-color, 0.7);
     }
   }
 
   .confirm-modal-content {
-    padding: 8px 24px 16px 24px;
     background: transparent;
 
     p {
       font-size: 0.925rem;
-      color: rgba($text-color, 0.7);
+      color: rgba($text-color, 0.72);
       line-height: 1.5;
-      text-align: left; // Журнальное левое выравнивание вместо дешевого центрирования
+      text-align: left;
       margin: 0;
     }
 
@@ -50,104 +59,139 @@
       margin-top: 12px;
       padding: 10px 12px;
       border-radius: 8px;
-      background: rgba($danger-color, 0.08); // Нежный полупрозрачный фон
-      border: 1px solid rgba($danger-color, 0.15); // Тонкая обводка вместо грубой полосы
-      color: #f87171; // Приглушенный пастельный красный
+      background: rgba($danger-color, 0.08);
+      border: 1px solid rgba($danger-color, 0.15);
+      color: #f87171;
       text-align: left;
     }
   }
 
   .confirm-modal-actions {
-    padding: 8px 24px 20px 24px;
-    gap: 10px;
-    background: transparent;
-    justify-content: flex-end; // Выравнивание кнопок по правому краю
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
 
-    .confirm-modal-cancel-btn {
+    button {
       text-transform: none;
       font-family: inherit;
       font-weight: 500;
-      padding: 8px 16px !important;
-      border-radius: 8px !important;
-      font-size: 0.875rem !important;
-      background: transparent !important;
-      border: 1px solid rgba($border-color, 0.8) !important;
-      color: $text-secondary !important;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      cursor: pointer;
       transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .confirm-modal-cancel-btn {
+      background: transparent;
+      border: 1px solid rgba($border-color, 0.8);
+      color: $text-secondary;
 
       &:hover {
-        background: rgba(255, 255, 255, 0.04) !important;
-        border-color: rgba(255, 255, 255, 0.2) !important;
-        color: $text-color !important;
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: $text-color;
       }
     }
 
     .confirm-modal-confirm-btn {
-      text-transform: none;
-      font-family: inherit;
-      font-weight: 500;
-      padding: 8px 18px !important;
-      border-radius: 8px !important;
-      font-size: 0.875rem !important;
-      box-shadow: none !important;
-      transition: all 0.2s ease;
+      border: none;
+      box-shadow: none;
 
-      // Матовая красная кнопка подтверждения (на основе $danger-color)
-      &.MuiButton-containedError {
-        background: rgba($danger-color, 0.1) !important; 
-        border: 1px solid rgba($danger-color, 0.25) !important;
-        color: $danger-color !important; 
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-        &:hover {
-          background: rgba($danger-color, 0.18) !important; 
-          border-color: rgba($danger-color, 0.4) !important;
-          box-shadow: none !important;
+      &.confirm-modal-confirm-btn--danger {
+        background: rgba($danger-color, 0.1);
+        border: 1px solid rgba($danger-color, 0.25);
+        color: $danger-color;
+
+        &:not(:disabled):hover {
+          background: rgba($danger-color, 0.18);
+          border-color: rgba($danger-color, 0.4);
         }
       }
 
-      // Матовая синяя кнопка подтверждения (на основе $primary-color)
-      &.MuiButton-containedPrimary {
-        background: rgba($primary-color, 0.1) !important;
-        border: 1px solid rgba($primary-color, 0.25) !important;
-        color: $primary-color !important;
+      &.confirm-modal-confirm-btn--warning {
+        background: rgba($warning-color, 0.1);
+        border: 1px solid rgba($warning-color, 0.25);
+        color: $warning-color;
 
-        &:hover {
-          background: rgba($primary-color, 0.18) !important;
-          border-color: rgba($primary-color, 0.4) !important;
-          box-shadow: none !important;
+        &:not(:disabled):hover {
+          background: rgba($warning-color, 0.18);
+          border-color: rgba($warning-color, 0.4);
+        }
+      }
+
+      &.confirm-modal-confirm-btn--primary {
+        background: rgba($primary-color, 0.1);
+        border: 1px solid rgba($primary-color, 0.25);
+        color: $primary-color;
+
+        &:not(:disabled):hover {
+          background: rgba($primary-color, 0.18);
+          border-color: rgba($primary-color, 0.4);
         }
       }
     }
   }
 }
 
-// Адаптивность для мобильных
-@media (max-width: 600px) {
-  .confirm-modal {
+// Animations
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpModal {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Responsiveness
+@media (max-width: 480px) {
+  .confirm-modal-overlay {
+
+    .confirm-modal-paper {
+      padding: 20px;
+      gap: 14px;
+    }
+
     .confirm-modal-title {
       font-size: 1.05rem;
-      padding: 16px 20px 6px 20px;
     }
 
     .confirm-modal-content {
-      padding: 6px 20px 12px 20px;
-
       p {
         font-size: 0.875rem;
       }
 
       .confirm-modal-warning {
         font-size: 0.775rem;
-        padding: 8px 10px;
       }
     }
 
     .confirm-modal-actions {
-      padding: 6px 20px 16px 20px;
+      flex-direction: column-reverse;
+      gap: 8px;
 
-      .confirm-modal-cancel-btn,
-      .confirm-modal-confirm-btn {
-        padding: 7px 14px !important;
+      button {
+        width: 100%;
+        padding: 12px;
       }
     }
   }
