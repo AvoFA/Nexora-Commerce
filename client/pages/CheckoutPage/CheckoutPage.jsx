@@ -48,6 +48,9 @@ const CheckoutPage = () => {
   /* === 👣 КРОК ОФОРМЛЕННЯ (1: Доставка, 2: Оплата) === */
   const [activeStep, setActiveStep] = useState(1);
 
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [maxScroll, setMaxScroll] = useState(0);
+
   /* === СПОСІБ ДОСТАВКИ === */
   const [deliveryGroup, setDeliveryGroup] = useState(DELIVERY_GROUPS.PICKUP); // pickup | courier
   const [deliveryMethod, setDeliveryMethod] = useState(DELIVERY_METHODS.PICKUP); // pickup | post | meest | courier | courier_np
@@ -59,12 +62,9 @@ const CheckoutPage = () => {
   });
 
   /* === СТАН ФОРМИ === */
-  const parts = (user?.name || "").trim().split(/\s+/);
-  const hasCompleteProfile = parts.length === 3 && parts[0] && parts[1] && parts[2] && user?.phone;
-
-  const [name, setName] = useState(parts[0] || "");
-  const [surname, setSurname] = useState(parts[1] || "");
-  const [patronymic, setPatronymic] = useState(parts[2] || "");
+  const [name, setName] = useState(user?.name || "");
+  const [surname, setSurname] = useState(user?.surname || "");
+  const [patronymic, setPatronymic] = useState(user?.patronymic || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
   const [city, setCity] = useState(DEFAULT_CITY);
@@ -89,8 +89,14 @@ const CheckoutPage = () => {
   // Стан помилок валідації
   const [errors, setErrors] = useState({});
 
+  const isIdentityVerificationRequired = 
+    deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || 
+    deliveryMethod === DELIVERY_METHODS.MEEST || 
+    deliveryMethod === DELIVERY_METHODS.COURIER || 
+    deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA;
+
   // Стан для преміальних плашок редагування (Колапс як у Comfy)
-  const [isEditingRecipient, setIsEditingRecipient] = useState(!hasCompleteProfile);
+  const [isEditingRecipient, setIsEditingRecipient] = useState(!isAuthenticated);
   const [cityRef, setCityRef] = useState(DEFAULT_CITY_REF); // Дефолтний Ref для Києва
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
@@ -139,8 +145,7 @@ const CheckoutPage = () => {
   const itemsContainerRef = useRef(null);
   const stepTransitionRef = useRef(false);
   const deliveryCalendarRef = useRef(null);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [maxScroll, setMaxScroll] = useState(0);
+  const recipientSectionRef = useRef(null); // Ref for auto-scroll
 
   const handleItemsScroll = () => {
     const el = itemsContainerRef.current;
@@ -197,15 +202,11 @@ const CheckoutPage = () => {
   /* === СИНХРОНІЗАЦІЯ ДАНИХ З ПРОФІЛЮ КОРИСТУВАЧА === */
   useEffect(() => {
     if (user) {
-      const p = (user.name || "").trim().split(/\s+/);
-      if (!name && p[0]) setName(p[0]);
-      if (!surname && p[1]) setSurname(p[1]);
-      if (!patronymic && p[2]) setPatronymic(p[2]);
+      if (!name && user.name) setName(user.name);
+      if (!surname && user.surname) setSurname(user.surname);
+      if (!patronymic && user.patronymic) setPatronymic(user.patronymic);
       if (!email && user.email) setEmail(user.email);
       if (!phone && user.phone) setPhone(user.phone);
-      if (p[0] && p[1] && p[2] && user.phone) {
-        setIsEditingRecipient(false);
-      }
     }
   }, [user]);
 
@@ -409,26 +410,45 @@ const CheckoutPage = () => {
     return DELIVERY_CONFIRMATION_LABELS[deliveryMethod] || DELIVERY_CONFIRMATION_LABELS[DELIVERY_METHODS.COURIER_NOVA_POSHTA];
   };
 
+  const getNumericDeliveryPrice = () => {
+    if (deliveryMethod === DELIVERY_METHODS.PICKUP) return 0;
+    if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) return 1;
+    if (deliveryMethod === DELIVERY_METHODS.COURIER) return 199;
+    if (deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA) return 329;
+    return 0;
+  };
+
   /* === ВАЛІДАЦІЯ ТА ПЕРЕХІД НА НАСТУПНИЙ КРОК === */
   const validateRecipientAndCity = (currentErrors = {}) => {
     const newErrors = { ...currentErrors };
 
+    // Common fields
     if (!name.trim()) {
       newErrors.name = "Поле обов'язкове для заповнення";
     } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(name.trim())) {
       newErrors.name = "Вкажіть ім'я кирилицею";
     }
 
-    if (!surname.trim()) {
-      newErrors.surname = "Поле обов'язкове для заповнення";
-    } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(surname.trim())) {
-      newErrors.surname = "Вкажіть прізвище кирилицею";
-    }
+    if (isIdentityVerificationRequired) {
+      if (!surname.trim()) {
+        newErrors.surname = "Поле обов'язкове для заповнення";
+      } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(surname.trim())) {
+        newErrors.surname = "Вкажіть прізвище кирилицею";
+      }
 
-    if (!patronymic.trim()) {
-      newErrors.patronymic = "Поле обов'язкове для заповнення";
-    } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(patronymic.trim())) {
-      newErrors.patronymic = "Вкажіть по батькові кирилицею";
+      if (!patronymic.trim()) {
+        newErrors.patronymic = "Поле обов'язкове для заповнення";
+      } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(patronymic.trim())) {
+        newErrors.patronymic = "Вкажіть по батькові кирилицею";
+      }
+    } else {
+      // Optional for pickup, but if provided, must be Cyrillic
+      if (surname.trim() && !/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(surname.trim())) {
+        newErrors.surname = "Вкажіть прізвище кирилицею";
+      }
+      if (patronymic.trim() && !/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(patronymic.trim())) {
+        newErrors.patronymic = "Вкажіть по батькові кирилицею";
+      }
     }
 
     const cleanedPhone = phone.replace(/[\s()+-]/g, "");
@@ -456,6 +476,21 @@ const CheckoutPage = () => {
     }
 
     let nextErrors = validateRecipientAndCity({});
+
+    // Check if recipient info is incomplete for auto-expansion
+    const missingIdentityData = isIdentityVerificationRequired && (!surname.trim() || !patronymic.trim());
+    const missingBasicData = !name.trim() || !phone.trim() || !email.trim();
+    const hasCyrillicErrors = (nextErrors.surname || nextErrors.patronymic || nextErrors.name) && 
+                              (nextErrors.surname?.includes("кирилицею") || 
+                               nextErrors.patronymic?.includes("кирилицею") || 
+                               nextErrors.name?.includes("кирилицею"));
+
+    if (missingIdentityData || missingBasicData || hasCyrillicErrors) {
+      setIsEditingRecipient(true);
+      setTimeout(() => {
+        recipientSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 100);
+    }
 
     // Перевірка полів доставки
     if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) {
@@ -577,6 +612,9 @@ const CheckoutPage = () => {
       finalAddress = address;
     }
 
+    const currentDeliveryPrice = getNumericDeliveryPrice();
+    const finalTotalPrice = totalPrice + currentDeliveryPrice;
+
     try {
       setIsSubmitting(true);
       const token = localStorage.getItem("token");
@@ -591,7 +629,7 @@ const CheckoutPage = () => {
           quantity: item.quantity,
         })),
         customer: {
-          name,
+          name: `${surname} ${name} ${patronymic}`.trim(),
           email,
           phone,
         },
@@ -601,8 +639,9 @@ const CheckoutPage = () => {
           city: finalCity,
           zip: finalZip,
           plannedDate: getPlannedDate(),
+          deliveryPrice: currentDeliveryPrice,
         },
-        totalPrice,
+        totalPrice: finalTotalPrice,
         paymentMethod,
         comment,
       }, token);
@@ -667,49 +706,52 @@ const CheckoutPage = () => {
           {/* ================= КРОК 1: ДОСТАВКА ================= */}
           {activeStep === 1 && (
             <div className="step-section-wrapper">
-              <RecipientSection
-                city={city}
-                cityArea={cityArea}
-                name={name}
-                surname={surname}
-                patronymic={patronymic}
-                phone={phone}
-                email={email}
-                errors={errors}
-                isEditingRecipient={isEditingRecipient}
-                onOpenCityModal={() => setIsCityModalOpen(true)}
-                onEditRecipient={() => setIsEditingRecipient(true)}
-                onPhoneChange={(nextPhone) => {
-                  setPhone(nextPhone);
-                  if (errors.phone) setErrors(prev => ({ ...prev, phone: null }));
-                }}
-                onNameChange={(nextName) => {
-                  setName(nextName);
-                  if (errors.name) setErrors(prev => ({ ...prev, name: null }));
-                }}
-                onSurnameChange={(nextSurname) => {
-                  setSurname(nextSurname);
-                  if (errors.surname) setErrors(prev => ({ ...prev, surname: null }));
-                }}
-                onPatronymicChange={(nextPatronymic) => {
-                  setPatronymic(nextPatronymic);
-                  if (errors.patronymic) setErrors(prev => ({ ...prev, patronymic: null }));
-                }}
-                onEmailChange={(nextEmail) => {
-                  setEmail(nextEmail);
-                  if (errors.email) setErrors(prev => ({ ...prev, email: null }));
-                }}
-                onSaveRecipient={() => {
-                  const nextErrors = validateRecipientAndCity({});
-                  delete nextErrors.city;
-                  if (Object.keys(nextErrors).length > 0) {
-                    setErrors(nextErrors);
-                    return;
-                  }
-                  setIsEditingRecipient(false);
-                }}
-                getInputClassName={getInputClassName}
-              />
+              <div ref={recipientSectionRef}>
+                <RecipientSection
+                  city={city}
+                  cityArea={cityArea}
+                  name={name}
+                  surname={surname}
+                  patronymic={patronymic}
+                  phone={phone}
+                  email={email}
+                  errors={errors}
+                  isEditingRecipient={isEditingRecipient}
+                  isIdentityRequired={isIdentityVerificationRequired}
+                  onOpenCityModal={() => setIsCityModalOpen(true)}
+                  onEditRecipient={() => setIsEditingRecipient(true)}
+                  onPhoneChange={(nextPhone) => {
+                    setPhone(nextPhone);
+                    if (errors.phone) setErrors(prev => ({ ...prev, phone: null }));
+                  }}
+                  onNameChange={(nextName) => {
+                    setName(nextName);
+                    if (errors.name) setErrors(prev => ({ ...prev, name: null }));
+                  }}
+                  onSurnameChange={(nextSurname) => {
+                    setSurname(nextSurname);
+                    if (errors.surname) setErrors(prev => ({ ...prev, surname: null }));
+                  }}
+                  onPatronymicChange={(nextPatronymic) => {
+                    setPatronymic(nextPatronymic);
+                    if (errors.patronymic) setErrors(prev => ({ ...prev, patronymic: null }));
+                  }}
+                  onEmailChange={(nextEmail) => {
+                    setEmail(nextEmail);
+                    if (errors.email) setErrors(prev => ({ ...prev, email: null }));
+                  }}
+                  onSaveRecipient={() => {
+                    const nextErrors = validateRecipientAndCity({});
+                    delete nextErrors.city;
+                    if (Object.keys(nextErrors).length > 0) {
+                      setErrors(nextErrors);
+                      return;
+                    }
+                    setIsEditingRecipient(false);
+                  }}
+                  getInputClassName={getInputClassName}
+                />
+              </div>
               <DeliverySection
                 deliveryGroup={deliveryGroup}
                 deliveryMethod={deliveryMethod}
@@ -772,6 +814,7 @@ const CheckoutPage = () => {
         <CheckoutSummary
           items={items}
           totalPrice={totalPrice}
+          deliveryPrice={getNumericDeliveryPrice()}
           activeStep={activeStep}
           isSubmitting={isSubmitting}
           itemsContainerRef={itemsContainerRef}

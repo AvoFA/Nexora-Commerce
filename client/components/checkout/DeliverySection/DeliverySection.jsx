@@ -251,7 +251,7 @@ const DeliverySection = ({
         )}
       </div>
 
-      <div className="step-actions left-aligned" style={{ marginTop: "24px" }}>
+      <div className="step-actions left-aligned" style={{ marginTop: "8px" }}>
         <button
           type="button"
           className="btn-continue-step"

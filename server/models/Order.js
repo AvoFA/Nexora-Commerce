@@ -57,7 +57,8 @@ const orderSchema = new mongoose.Schema({
   delivery: {
     address: { type: String, required: true, trim: true },
     city: { type: String, required: true, trim: true },
-    zip: { type: String, required: true, trim: true }
+    zip: { type: String, required: true, trim: true },
+    deliveryPrice: { type: Number, default: 0, min: 0 }
   },
   paymentMethod: {
     type: String,
@@ -79,6 +80,12 @@ const orderSchema = new mongoose.Schema({
     enum: ORDER_STATUSES,
     default: 'new'
   },
+  cancellation: {
+    cancelledBy: { type: String, enum: ['customer', 'admin'] },
+    reason: { type: String },
+    comment: { type: String },
+    cancelledAt: { type: Date }
+  },
   history: [{
     status: {
       type: String,
@@ -88,7 +95,10 @@ const orderSchema = new mongoose.Schema({
     timestamp: {
       type: Date,
       default: Date.now
-    }
+    },
+    changedBy: { type: String, enum: ['customer', 'admin', 'system'] },
+    reason: { type: String },
+    comment: { type: String }
   }]
 }, {
   timestamps: true

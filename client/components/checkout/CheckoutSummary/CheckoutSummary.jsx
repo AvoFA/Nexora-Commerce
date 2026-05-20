@@ -7,11 +7,11 @@ import {
   StorefrontOutlined,
 } from "@mui/icons-material";
 import { formatPrice } from "../../../utils/formatPrice.js";
-import { DELIVERY_PRICES } from "../../../pages/CheckoutPage/checkout.constants.js";
 
 const CheckoutSummary = ({
   items,
-  totalPrice,
+  totalPrice: itemsTotalPrice,
+  deliveryPrice,
   activeStep,
   isSubmitting,
   itemsContainerRef,
@@ -25,6 +25,7 @@ const CheckoutSummary = ({
   onBackToCart,
 }) => {
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const finalTotal = itemsTotalPrice + deliveryPrice;
 
   return (
     <div className="checkout-summary">
@@ -89,17 +90,19 @@ const CheckoutSummary = ({
         <div className="summary-breakdown">
           <div className="summary-row">
             <span>{itemCount} товарів на суму:</span>
-            <span>{formatPrice(totalPrice)}</span>
+            <span>{formatPrice(itemsTotalPrice)}</span>
           </div>
           <div className="summary-row">
             <span>Доставка:</span>
-            <span className="free">{DELIVERY_PRICES.PICKUP}</span>
+            <span className={deliveryPrice === 0 ? "free" : ""}>
+              {deliveryPrice === 0 ? "Безкоштовно" : formatPrice(deliveryPrice)}
+            </span>
           </div>
         </div>
 
         <div className="summary-total">
           <strong>Загальна сума:</strong>
-          <strong>{formatPrice(totalPrice)}</strong>
+          <strong>{formatPrice(finalTotal)}</strong>
         </div>
 
         {activeStep === 1 ? (
