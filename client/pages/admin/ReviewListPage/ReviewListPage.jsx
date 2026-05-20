@@ -29,7 +29,7 @@ import Pagination from "../../../components/common/Pagination/Pagination.jsx";
 // Shared common controls
 import AdminSearchInput from "../../../components/admin/common/AdminSearchInput.jsx";
 import AdminRefreshButton from "../../../components/admin/common/AdminRefreshButton.jsx";
-import AdminToolbarSelect from "../../../components/admin/common/AdminToolbarSelect.jsx";
+import CustomSelect from "../../../components/common/CustomSelect/CustomSelect.jsx";
 import AdminFilterTabs from "../../../components/admin/common/AdminFilterTabs.jsx";
 
 // Moderation components
@@ -76,7 +76,7 @@ const ModerationFiltersToolbar = ({
 
       <div className="toolbar-selects">
         {activeType === "reviews" ? (
-          <AdminToolbarSelect
+          <CustomSelect
             label="Оцінка:"
             value={ratingFilter}
             onChange={onRatingChange}
@@ -91,7 +91,7 @@ const ModerationFiltersToolbar = ({
             ]}
           />
         ) : (
-          <AdminToolbarSelect
+          <CustomSelect
             label="Відповідь:"
             value={answerStatus}
             onChange={onAnswerStatusChange}
@@ -104,7 +104,7 @@ const ModerationFiltersToolbar = ({
           />
         )}
 
-        <AdminToolbarSelect
+        <CustomSelect
           label="Сортування:"
           value={sortBy}
           onChange={onSortChange}

@@ -11,7 +11,7 @@ import {
 // Shared Presentational Controls
 import AdminSearchInput from "../../../components/admin/common/AdminSearchInput";
 import AdminRefreshButton from "../../../components/admin/common/AdminRefreshButton";
-import AdminToolbarSelect from "../../../components/admin/common/AdminToolbarSelect";
+import CustomSelect from "../../../components/common/CustomSelect/CustomSelect.jsx";
 import AdminFilterTabs from "../../../components/admin/common/AdminFilterTabs";
 
 // Order Specific Presentational Components
@@ -345,7 +345,7 @@ const OrderListPage = () => {
             showIconWrapper={false}
           />
 
-          <AdminToolbarSelect
+          <CustomSelect
             label="Сортування:"
             value={sort}
             onChange={handleSortChange}

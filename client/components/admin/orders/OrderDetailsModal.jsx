@@ -204,6 +204,33 @@ const OrderDetailsModal = ({
             </Typography>
           </div>
 
+          {order.status === "cancelled" && order.cancellation && (
+            <div className="modal-section-card cancellation-card" style={{ borderLeft: '3px solid #f44336' }}>
+              <div className="section-header" style={{ color: '#f44336' }}>
+                <CloseIcon className="section-icon" />
+                <span className="section-label">Дані про скасування</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px' }}>
+                <Typography variant="body2">
+                  <strong>Ким:</strong> {order.cancellation.cancelledBy === 'customer' ? 'Клієнт' : 'Адміністратор'}
+                </Typography>
+                {order.cancellation.reason && (
+                  <Typography variant="body2">
+                    <strong>Причина:</strong> {order.cancellation.reason}
+                  </Typography>
+                )}
+                {order.cancellation.comment && (
+                  <Typography variant="body2">
+                    <strong>Коментар:</strong> {order.cancellation.comment}
+                  </Typography>
+                )}
+                <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5, fontSize: '13px' }}>
+                  <strong>Дата:</strong> {order.cancellation.cancelledAt ? `${formatOrderDate(order.cancellation.cancelledAt)} · ${formatOrderTime(order.cancellation.cancelledAt)}` : '—'}
+                </Typography>
+              </div>
+            </div>
+          )}
+
           {order.history && order.history.length > 0 && (
             <div className="modal-section-card history-card">
               <div className="section-header">
@@ -224,7 +251,9 @@ const OrderDetailsModal = ({
                         className={`history-item ${isCurrent ? "is-current" : ""}`}
                       >
                         <span className="history-status">
-                          {statusLabelMap[entry.status] || entry.status}
+                          {entry.changedBy === 'customer' && entry.status === 'cancelled'
+                            ? "Скасовано клієнтом" 
+                            : (statusLabelMap[entry.status] || entry.status)}
                         </span>
                         <span className="history-divider">—</span>
                         <span className="history-timestamp">
