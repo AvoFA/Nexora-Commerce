@@ -2,30 +2,8 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const UserController = require('../controllers/userController');
-
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Токен відсутній'
-    });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET || 'super-secret-key-for-course-work', (err, user) => {
-    if (err) {
-      return res.status(403).json({
-        success: false,
-        message: 'Невалідний токен'
-      });
-    }
-
-    req.user = user;
-    next();
-  });
-};
+const { authenticateToken, requireRole } = require('../middleware/auth');
+const adminOnly = requireRole('admin');
 
 // Логін для адмінів (username)
 router.post('/admin/login', async (req, res) => {
@@ -237,7 +215,7 @@ router.patch('/profile', authenticateToken, async (req, res) => {
 });
 
 // Роут для отримання всіх користувачів (тільки для адмінів)
-router.get('/users', async (req, res) => {
+router.get('/users', authenticateToken, adminOnly, async (req, res) => {
   try {
     // Тут можна додати перевірку JWT токена з middleware
     const users = await UserController.getAllUsers();

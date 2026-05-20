@@ -1,35 +1,11 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Product = require('../models/Product');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
 const DEFAULT_LIST_NAME = 'Обране';
-
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Токен відсутній'
-    });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET || 'super-secret-key-for-course-work', (err, user) => {
-    if (err) {
-      return res.status(403).json({
-        success: false,
-        message: 'Невалідний токен'
-      });
-    }
-
-    req.user = user;
-    next();
-  });
-};
 
 const ensureDefaultList = async (user) => {
   if (!Array.isArray(user.wishlistLists) || user.wishlistLists.length === 0) {

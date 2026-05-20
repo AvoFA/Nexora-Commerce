@@ -1,6 +1,11 @@
 // Сервіс для роботи з брендами
 const API_BASE_URL = 'http://localhost:5000/api';
 
+const getAdminHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
+});
+
 const normalizeBrand = (brand) => ({
   ...brand,
   id: brand._id,
@@ -26,7 +31,7 @@ export const createBrand = async (brandData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/brands`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify(brandData)
     });
     if (!response.ok) throw new Error('Не вдалося створити бренд');
@@ -42,7 +47,7 @@ export const updateBrand = async (id, brandData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/brands/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify(brandData)
     });
     if (!response.ok) throw new Error('Не вдалося оновити бренд');
@@ -57,7 +62,8 @@ export const updateBrand = async (id, brandData) => {
 export const deleteBrand = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/brands/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: getAdminHeaders()
     });
     if (!response.ok) throw new Error('Не вдалося видалити бренд');
     return true;

@@ -37,6 +37,7 @@ import AdminLoginPage from "./components/admin/auth/AdminLoginPage/AdminLoginPag
 
 // компоненти захисту
 import AdminProtectedRoute from "./components/common/AdminProtectedRoute/AdminProtectedRoute.jsx";
+import AdminIndexRedirect from "./components/common/AdminProtectedRoute/AdminIndexRedirect.jsx";
 
 // компонент основного макету сайту
 const SiteLayout = () => {
@@ -158,7 +159,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/admin/products" replace />,
+        element: <AdminIndexRedirect />,
       },
       { path: "/admin/products", element: <ProductListPage /> },
       { path: "/admin/categories", element: <CategoryListPage /> },

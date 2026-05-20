@@ -41,6 +41,7 @@ const AdminLoginPage = () => {
       if (data.success) {
         // Зберігаємо токен і переходимо в адмінку
         localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminUser', JSON.stringify(data.user));
         navigate('/admin');
       } else {
         setError(data.message || 'Невірний логін або пароль');

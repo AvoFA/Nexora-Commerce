@@ -1,23 +1,31 @@
-// Компонент для захисту адмін маршрутів
-// Перевіряє чи увійшов користувач як адміністратор
-
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import {
+  clearAdminSession,
+  getDefaultAdminPath,
+  getStoredAdminRole,
+  isAdminPathAllowed,
+  isKnownAdminRole,
+} from "../../../config/adminAccess";
 
 const AdminProtectedRoute = ({ children }) => {
-  // Швидка синхронна перевірка токена
-  const adminToken = localStorage.getItem('adminToken');
+  const adminToken = localStorage.getItem("adminToken");
+  const role = getStoredAdminRole();
+  const location = useLocation();
 
-  // Перевіряємо наявність токена (будь-який непорожній рядок вважаємо токеном для простоти)
-  const hasAdminAccess = !!adminToken;
-
-  // Якщо немає доступу - перенаправляємо на логін
-  if (!hasAdminAccess) {
-    console.log('Адмін доступ заблокований. Перенаправлення на логін...');
+  if (!adminToken) {
     return <Navigate to="/admin/login" replace />;
   }
 
-  // Якщо доступ є - показуємо дочірні компоненти (адмін панель)
+  if (!isKnownAdminRole(role)) {
+    clearAdminSession();
+    return <Navigate to="/admin/login" replace />;
+  }
+
+  if (!isAdminPathAllowed(location.pathname, role)) {
+    return <Navigate to={getDefaultAdminPath(role)} replace />;
+  }
+
   return children;
 };
 

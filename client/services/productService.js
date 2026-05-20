@@ -1,5 +1,10 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
+const getAdminHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
+});
+
 // Підставляємо замість _id звичайний id
 const normalizeProduct = (product) => {
   return {
@@ -133,7 +138,7 @@ export const createProduct = async (productData) => {
 
     const response = await fetch(`${API_BASE_URL}/products`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify(payload)
     });
     if (!response.ok) throw new Error('Не вдалося створити товар');
@@ -156,7 +161,7 @@ export const updateProduct = async (id, productData) => {
 
     const response = await fetch(`${API_BASE_URL}/products/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify(payload)
     });
     if (!response.ok) throw new Error('Не вдалося оновити товар');
@@ -172,7 +177,8 @@ export const updateProduct = async (id, productData) => {
 export const deleteProduct = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: getAdminHeaders()
     });
     if (!response.ok) throw new Error('Не вдалося видалити товар');
     return true;

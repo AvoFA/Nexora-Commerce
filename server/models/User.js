@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema({
   wishlistLists: [wishlistListSchema],
   role: {
     type: String,
-    enum: ['admin', 'user'],
+    enum: ['admin', 'moderator', 'user'],
     default: 'user'
   }
 }, {

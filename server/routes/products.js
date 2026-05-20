@@ -7,17 +7,18 @@ const {
   updateProduct,
   deleteProduct
 } = require('../controllers/productController');
+const { authenticateToken, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
+const adminOnly = requireRole('admin');
 
-// Public routes (in real app, POST/PUT/DELETE should be protected)
 router.route('/')
   .get(getProducts)
-  .post(createProduct);
+  .post(authenticateToken, adminOnly, createProduct);
 
 router.route('/:id')
   .get(getProductById)
-  .put(updateProduct)
-  .delete(deleteProduct);
+  .put(authenticateToken, adminOnly, updateProduct)
+  .delete(authenticateToken, adminOnly, deleteProduct);
 
 module.exports = router;

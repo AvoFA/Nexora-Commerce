@@ -1,34 +1,11 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const { authenticateToken, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
-
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Токен відсутній'
-    });
-  }
-
-  jwt.verify(token, process.env.JWT_SECRET || 'super-secret-key-for-course-work', (err, user) => {
-    if (err) {
-      return res.status(403).json({
-        success: false,
-        message: 'Невалідний токен'
-      });
-    }
-
-    req.user = user;
-    next();
-  });
-};
+const adminOnly = requireRole('admin');
 
 const normalizeItems = (items = []) => {
   return items.map((item) => {
@@ -181,18 +158,7 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
   }
 });
 
-const isAdmin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
-    next();
-  } else {
-    res.status(403).json({
-      success: false,
-      message: 'Доступ заборонено. Потрібні права адміністратора.'
-    });
-  }
-};
-
-router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
+router.get('/admin', authenticateToken, adminOnly, async (req, res) => {
   try {
     let page = parseInt(req.query.page, 10) || 1;
     let limit = parseInt(req.query.limit, 10) || 20;
@@ -340,7 +306,7 @@ router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
   }
 });
 
-router.patch('/:id/status', authenticateToken, isAdmin, async (req, res) => {
+router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
   try {
     const { status } = req.body;
     const validStatuses = ['new', 'confirmed', 'packing', 'ready_for_pickup', 'received', 'cancelled'];

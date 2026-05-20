@@ -1,6 +1,11 @@
 // Сервіс для роботи з категоріями
 const API_BASE_URL = 'http://localhost:5000/api';
 
+const getAdminHeaders = () => ({
+  'Content-Type': 'application/json',
+  Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
+});
+
 const normalizeCategory = (category) => ({
   ...category,
   id: category._id,
@@ -26,7 +31,7 @@ export const createCategory = async (categoryData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/categories`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify(categoryData)
     });
     if (!response.ok) throw new Error('Не вдалося створити категорію');
@@ -42,7 +47,7 @@ export const updateCategory = async (id, categoryData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAdminHeaders(),
       body: JSON.stringify(categoryData)
     });
     if (!response.ok) throw new Error('Не вдалося оновити категорію');
@@ -57,7 +62,8 @@ export const updateCategory = async (id, categoryData) => {
 export const deleteCategory = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: getAdminHeaders()
     });
     if (!response.ok) throw new Error('Не вдалося видалити категорію');
     return true;
