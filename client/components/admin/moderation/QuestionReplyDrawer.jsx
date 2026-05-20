@@ -7,6 +7,7 @@ import {
   Avatar,
   Button,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 
@@ -20,6 +21,10 @@ const QuestionReplyDrawer = ({
   onSubmit,
 }) => {
   if (!question) return null;
+
+  const hasAnswer = question.answer && question.answer.trim();
+  const title = hasAnswer ? "Редагувати відповідь" : "Написати відповідь";
+  const submitLabel = hasAnswer ? "Оновити" : "Опублікувати";
 
   return (
     <Drawer
@@ -49,9 +54,16 @@ const QuestionReplyDrawer = ({
             borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 700, color: "var(--text-primary)" }}>
-            Написати відповідь
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.25, flexWrap: "wrap" }}>
+            <Typography variant="h6" sx={{ fontWeight: 700, color: "var(--text-primary)" }}>
+              {title}
+            </Typography>
+            <Chip
+              label={hasAnswer ? "Є відповідь" : "Немає відповіді"}
+              className={`badge-answer-status ${hasAnswer ? "badge-answered" : "badge-unanswered"}`}
+              size="small"
+            />
+          </Box>
           <IconButton
             onClick={onClose}
             sx={{ color: "var(--text-secondary)" }}
@@ -121,28 +133,10 @@ const QuestionReplyDrawer = ({
               placeholder="Введіть текст офіційної відповіді адміністратора..."
               value={answerText}
               onChange={(e) => onAnswerTextChange(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 14px",
-                borderRadius: "10px",
-                backgroundColor: "rgba(0, 0, 0, 0.25)",
-                border: "1px solid rgba(255, 255, 255, 0.08)",
-                color: "var(--text-primary)",
-                fontFamily: "inherit",
-                fontSize: "0.9rem",
-                resize: "vertical",
-                outline: "none",
-                transition: "border-color 0.2s, box-shadow 0.2s",
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = "var(--color-primary, #3b82f6)";
-                e.target.style.boxShadow = "0 0 0 2px rgba(59, 130, 246, 0.15)";
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = "rgba(255, 255, 255, 0.08)";
-                e.target.style.boxShadow = "none";
-              }}
             />
+            <Typography variant="caption" className="drawer-answer-hint">
+              Публікація відповіді автоматично схвалить питання
+            </Typography>
           </Box>
         </Box>
 
@@ -172,7 +166,7 @@ const QuestionReplyDrawer = ({
           <Button
             fullWidth
             variant="contained"
-            color="success"
+            color="primary"
             onClick={onSubmit}
             disabled={isAnswering}
             sx={{
@@ -181,7 +175,7 @@ const QuestionReplyDrawer = ({
               justifyContent: "center",
             }}
           >
-            {isAnswering ? <CircularProgress size={24} color="inherit" /> : "Опублікувати"}
+            {isAnswering ? <CircularProgress size={24} color="inherit" /> : submitLabel}
           </Button>
         </Box>
       </Box>

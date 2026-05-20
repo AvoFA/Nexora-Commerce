@@ -12,6 +12,7 @@ import {
   TableRow,
   CircularProgress,
 } from "@mui/material";
+import { WarningAmber } from "@mui/icons-material";
 import { toast } from "sonner";
 
 import {
@@ -25,6 +26,7 @@ import {
   deleteQuestion,
 } from "../../../services/questionService";
 import Pagination from "../../../components/common/Pagination/Pagination.jsx";
+import ConfirmModal from "../../../components/common/ConfirmModal/ConfirmModal.jsx";
 
 // Shared common controls
 import AdminSearchInput from "../../../components/admin/common/AdminSearchInput.jsx";
@@ -158,6 +160,7 @@ const ReviewListPage = () => {
   const [selectedQuestionForAnswer, setSelectedQuestionForAnswer] = useState(null);
   const [answerText, setAnswerText] = useState("");
   const [isAnswering, setIsAnswering] = useState(false);
+  const [questionDeleteTarget, setQuestionDeleteTarget] = useState(null);
 
   const [serverCounts, setServerCounts] = useState({
     all: 0,
@@ -331,15 +334,30 @@ const ReviewListPage = () => {
     }
   };
 
-  const handleQuestionDelete = async (id) => {
-    if (!window.confirm("Ви впевнені, що хочете видалити це запитання?")) return;
+  const handleQuestionDelete = (id) => {
+    const targetQuestion =
+      selectedItemForModal?._id === id
+        ? selectedItemForModal
+        : questions.find((question) => question._id === id);
+
+    setQuestionDeleteTarget(targetQuestion || { _id: id });
+    return false;
+  };
+
+  const handleConfirmQuestionDelete = async () => {
+    if (!questionDeleteTarget?._id) return;
+
     try {
-      setIsUpdating(id);
+      setIsUpdating(questionDeleteTarget._id);
       const token =
         localStorage.getItem("adminToken") || localStorage.getItem("token");
-      const data = await deleteQuestion(id, token);
+      const data = await deleteQuestion(questionDeleteTarget._id, token);
       if (data.success) {
         toast.success("Запитання успішно видалено!");
+        if (selectedItemForModal?._id === questionDeleteTarget._id) {
+          setSelectedItemForModal(null);
+        }
+        setQuestionDeleteTarget(null);
         fetchData();
       }
     } catch (error) {
@@ -497,6 +515,11 @@ const ReviewListPage = () => {
     }
   };
 
+  const handleOpenQuestionReply = (question) => {
+    setSelectedQuestionForAnswer(question);
+    setAnswerText(question.answer || "");
+  };
+
   const filterOptions = [
     { value: "pending", label: "На модерації" },
     { value: "approved", label: "Опубліковані" },
@@ -601,14 +624,8 @@ const ReviewListPage = () => {
               <QuestionsTable
                 questions={questions}
                 searchQuery={searchQuery}
-                isUpdating={isUpdating}
-                onStatusChange={handleStatusChange}
                 onViewDetails={setSelectedItemForModal}
-                onOpenReply={(question) => {
-                  setSelectedQuestionForAnswer(question);
-                  setAnswerText(question.answer || "");
-                }}
-                onDelete={handleQuestionDelete}
+                onOpenReply={handleOpenQuestionReply}
               />
             )}
           </Table>
@@ -646,6 +663,8 @@ const ReviewListPage = () => {
           question={selectedItemForModal}
           isUpdating={isUpdating}
           onStatusChange={handleStatusChange}
+          onOpenReply={handleOpenQuestionReply}
+          onDelete={handleQuestionDelete}
         />
       )}
 
@@ -658,6 +677,19 @@ const ReviewListPage = () => {
         onAnswerTextChange={setAnswerText}
         isAnswering={isAnswering}
         onSubmit={handleAnswerSubmit}
+      />
+
+      <ConfirmModal
+        isOpen={Boolean(questionDeleteTarget)}
+        onClose={() => setQuestionDeleteTarget(null)}
+        onConfirm={handleConfirmQuestionDelete}
+        type="danger"
+        icon={WarningAmber}
+        title="Видалити це запитання?"
+        message="Цю дію неможливо скасувати."
+        confirmText="Видалити"
+        cancelText="Скасувати"
+        confirmDisabled={isUpdating === questionDeleteTarget?._id}
       />
     </Box>
   );

@@ -21,6 +21,8 @@ const QuestionDetailsModal = ({
   question,
   isUpdating = null,
   onStatusChange,
+  onOpenReply,
+  onDelete,
 }) => {
   if (!question) return null;
 
@@ -170,55 +172,56 @@ const QuestionDetailsModal = ({
               {question.answer || "Немає відповіді на це запитання."}
             </Typography>
           </div>
+
+          <Box className="question-modal-secondary-action">
+            <Button
+              onClick={async () => {
+                const wasDeleted = await onDelete(question._id);
+                if (wasDeleted) {
+                  onClose();
+                }
+              }}
+              variant="text"
+              color="error"
+              disabled={isUpdating === question._id}
+              size="small"
+            >
+              Видалити
+            </Button>
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions
         sx={{
           px: 3,
           pb: 2.5,
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "1fr auto 1fr" },
-          gap: { xs: 1.5, sm: 0 },
-          alignItems: "center",
           width: "100%",
           boxSizing: "border-box",
         }}
       >
-        <Box sx={{ display: { xs: "none", sm: "block" } }} />
-
         <Box
+          className="question-modal-workflow-actions"
           sx={{
             display: "flex",
             gap: 1.5,
+            flexWrap: "wrap",
             justifyContent: "center",
-            gridColumn: { xs: "1", sm: "2" },
+            alignItems: "center",
+            width: "100%",
           }}
         >
           {question.status === "pending" && (
-            <>
-              <Button
-                onClick={() => {
-                  onStatusChange(question._id, "rejected");
-                  onClose();
-                }}
-                variant="outlined"
-                color="error"
-                disabled={isUpdating === question._id}
-              >
-                Відхилити
-              </Button>
-              <Button
-                onClick={() => {
-                  onStatusChange(question._id, "approved");
-                  onClose();
-                }}
-                variant="contained"
-                color="success"
-                disabled={isUpdating === question._id}
-              >
-                Схвалити
-              </Button>
-            </>
+            <Button
+              onClick={() => {
+                onStatusChange(question._id, "rejected");
+                onClose();
+              }}
+              variant="outlined"
+              color="error"
+              disabled={isUpdating === question._id}
+            >
+              Відхилити
+            </Button>
           )}
 
           {question.status === "approved" && (
@@ -248,25 +251,32 @@ const QuestionDetailsModal = ({
               Повернути на модерацію
             </Button>
           )}
-        </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: { xs: "center", sm: "flex-end" },
-            gridColumn: { xs: "1", sm: "3" },
-          }}
-        >
           <Button
-            onClick={onClose}
-            variant="outlined"
-            sx={{
-              borderColor: "rgba(255,255,255,0.15)",
-              color: "var(--text-primary)",
+            onClick={() => {
+              onClose();
+              onOpenReply(question);
             }}
+            variant="contained"
+            color="primary"
+            disabled={isUpdating === question._id}
           >
-            Закрити
+            {hasAnswer ? "Редагувати відповідь" : "Відповісти"}
           </Button>
+
+          {question.status === "pending" && (
+            <Button
+              onClick={() => {
+                onStatusChange(question._id, "approved");
+                onClose();
+              }}
+              variant="contained"
+              color="success"
+              disabled={isUpdating === question._id}
+            >
+              Схвалити
+            </Button>
+          )}
         </Box>
       </DialogActions>
     </Dialog>

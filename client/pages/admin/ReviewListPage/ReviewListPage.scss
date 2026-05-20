@@ -806,6 +806,26 @@ $rating-color: #fbbf24;
         }
       }
     }
+
+    .question-modal-secondary-action {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -6px;
+
+      .MuiButton-root.MuiButton-root {
+        height: 30px;
+        padding: 4px 8px !important;
+        min-width: auto;
+        color: rgba($danger-color, 0.78);
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+
+        &:hover {
+          background: rgba($danger-color, 0.08);
+          color: $danger-color;
+        }
+      }
+    }
   }
 
   .MuiDialogActions-root {
@@ -821,6 +841,64 @@ $rating-color: #fbbf24;
       border-radius: 8px !important;
       height: 38px !important;
       box-sizing: border-box !important;
+    }
+
+    .question-modal-workflow-actions {
+      .MuiButton-root.MuiButton-root {
+        transition: all 0.2s ease !important;
+      }
+
+      .MuiButton-outlinedError {
+        border: 1px solid rgba($danger-color, 0.2) !important;
+        color: rgba($danger-color, 0.85) !important;
+        background: rgba($danger-color, 0.02) !important;
+
+        &:hover {
+          background: rgba($danger-color, 0.08) !important;
+          border-color: rgba($danger-color, 0.4) !important;
+          color: $danger-color !important;
+        }
+      }
+
+      .MuiButton-outlinedWarning {
+        border: 1px solid rgba($warning-color, 0.2) !important;
+        color: rgba($warning-color, 0.9) !important;
+        background: rgba($warning-color, 0.02) !important;
+
+        &:hover {
+          background: rgba($warning-color, 0.08) !important;
+          border-color: rgba($warning-color, 0.4) !important;
+          color: $warning-color !important;
+        }
+      }
+
+      .MuiButton-containedPrimary {
+        background: rgba($primary-color, 0.16) !important;
+        color: #60a5fa !important;
+        border: 1px solid rgba($primary-color, 0.3) !important;
+        box-shadow: 0 4px 12px rgba($primary-color, 0.1) !important;
+
+        &:hover {
+          background: rgba($primary-color, 0.25) !important;
+          border-color: rgba($primary-color, 0.5) !important;
+          color: #60a5fa !important;
+          box-shadow: 0 6px 16px rgba($primary-color, 0.15) !important;
+        }
+      }
+
+      .MuiButton-containedSuccess {
+        background: rgba(16, 185, 129, 0.16) !important;
+        color: #34d399 !important;
+        border: 1px solid rgba(16, 185, 129, 0.3) !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1) !important;
+
+        &:hover {
+          background: rgba(16, 185, 129, 0.25) !important;
+          border-color: rgba(16, 185, 129, 0.5) !important;
+          color: #34d399 !important;
+          box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15) !important;
+        }
+      }
     }
   }
 }
@@ -880,6 +958,42 @@ $rating-color: #fbbf24;
     }
   }
 
+  .admin-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+
+    &::placeholder {
+      color: rgba(148, 163, 184, 0.72);
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
+    }
+  }
+
+  .drawer-answer-hint {
+    display: block;
+    color: var(--text-secondary);
+    opacity: 0.78;
+    line-height: 1.4;
+    text-align: center;
+  }
+
   .quick-reply-drawer-footer {
     display: flex;
     gap: 16px;
@@ -902,6 +1016,31 @@ $rating-color: #fbbf24;
       font-weight: 600 !important;
       height: 40px;
       border-radius: 8px;
+    }
+
+    .MuiButton-outlined {
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: var(--text-primary) !important;
+      background: rgba(255, 255, 255, 0.015) !important;
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+      }
+    }
+
+    .MuiButton-containedPrimary {
+      background: rgba($primary-color, 0.16) !important;
+      color: #60a5fa !important;
+      border: 1px solid rgba($primary-color, 0.3) !important;
+      box-shadow: 0 4px 12px rgba($primary-color, 0.1) !important;
+
+      &:hover {
+        background: rgba($primary-color, 0.25) !important;
+        border-color: rgba($primary-color, 0.5) !important;
+        color: #60a5fa !important;
+        box-shadow: 0 6px 16px rgba($primary-color, 0.15) !important;
+      }
     }
   }
 }

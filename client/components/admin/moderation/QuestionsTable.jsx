@@ -11,12 +11,8 @@ import {
   IconButton,
 } from "@mui/material";
 import {
-  Check as CheckIcon,
-  Close as CloseIcon,
-  Undo as UndoIcon,
   Visibility as VisibilityIcon,
   Reply as ReplyIcon,
-  Delete as DeleteIcon,
 } from "@mui/icons-material";
 import {
   highlightMatch,
@@ -27,11 +23,8 @@ import {
 const QuestionsTable = ({
   questions = [],
   searchQuery = "",
-  isUpdating = null,
-  onStatusChange,
   onViewDetails,
   onOpenReply,
-  onDelete,
 }) => {
   return (
     <TableBody>
@@ -44,6 +37,7 @@ const QuestionsTable = ({
       ) : (
         questions.map((question) => {
           const hasAnswer = question.answer && question.answer.trim();
+          const replyActionLabel = hasAnswer ? "Редагувати відповідь" : "Відповісти";
           return (
             <TableRow key={question._id}>
               <TableCell>
@@ -180,87 +174,17 @@ const QuestionsTable = ({
                   </Tooltip>
 
                   {/* Відповісти (Drawer) */}
-                  <Tooltip title="Відповісти">
+                  <Tooltip title={replyActionLabel}>
                     <IconButton
                       size="small"
                       className="action-btn action-btn-reply"
+                      aria-label={replyActionLabel}
                       onClick={() => onOpenReply(question)}
                     >
                       <ReplyIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
 
-                  {/* Швидка модерація */}
-                  {question.status === "pending" && (
-                    <>
-                      <Tooltip title="Схвалити">
-                        <span>
-                          <IconButton
-                            className="action-btn action-btn-approve"
-                            onClick={() => onStatusChange(question._id, "approved")}
-                            disabled={isUpdating === question._id}
-                            size="small"
-                          >
-                            <CheckIcon fontSize="small" />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Відхилити">
-                        <span>
-                          <IconButton
-                            className="action-btn action-btn-reject"
-                            onClick={() => onStatusChange(question._id, "rejected")}
-                            disabled={isUpdating === question._id}
-                            size="small"
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </>
-                  )}
-                  {question.status === "approved" && (
-                    <Tooltip title="Зняти з публікації">
-                      <span>
-                        <IconButton
-                          className="action-btn action-btn-reject"
-                          onClick={() => onStatusChange(question._id, "rejected")}
-                          disabled={isUpdating === question._id}
-                          size="small"
-                        >
-                          <CloseIcon fontSize="small" />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
-                  )}
-                  {question.status === "rejected" && (
-                    <Tooltip title="Повернути на модерацію">
-                      <span>
-                        <IconButton
-                          className="action-btn action-btn-undo"
-                          onClick={() => onStatusChange(question._id, "pending")}
-                          disabled={isUpdating === question._id}
-                          size="small"
-                        >
-                          <UndoIcon fontSize="small" />
-                        </IconButton>
-                      </span>
-                    </Tooltip>
-                  )}
-
-                  {/* Видалити */}
-                  <Tooltip title="Видалити">
-                    <span>
-                      <IconButton
-                        className="action-btn action-btn-delete"
-                        onClick={() => onDelete(question._id)}
-                        disabled={isUpdating === question._id}
-                        size="small"
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
                 </Box>
               </TableCell>
             </TableRow>
