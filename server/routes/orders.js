@@ -129,6 +129,58 @@ router.get('/my', authenticateToken, async (req, res) => {
   }
 });
 
+router.patch('/:id/cancel', authenticateToken, async (req, res) => {
+  try {
+    const { reason, comment } = req.body;
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Замовлення не знайдено' });
+    }
+
+    if (order.user.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: 'Немає доступу до цього замовлення' });
+    }
+
+    if (!['new', 'confirmed'].includes(order.status)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Це замовлення вже обробляється або завершене, тому його не можна скасувати.' 
+      });
+    }
+
+    if (!reason) {
+      return res.status(400).json({ success: false, message: 'Обовʼязково вкажіть причину скасування' });
+    }
+
+    order.status = 'cancelled';
+    order.cancellation = {
+      cancelledBy: 'customer',
+      reason: reason,
+      comment: comment || '',
+      cancelledAt: new Date()
+    };
+    order.history.push({ 
+      status: 'cancelled', 
+      timestamp: new Date(),
+      changedBy: 'customer',
+      reason: reason,
+      comment: comment || ''
+    });
+
+    await order.save();
+
+    res.json({
+      success: true,
+      order,
+      message: 'Замовлення успішно скасовано'
+    });
+  } catch (error) {
+    console.error('Помилка скасування замовлення:', error.message);
+    res.status(500).json({ success: false, message: 'Помилка скасування замовлення' });
+  }
+});
+
 const isAdmin = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();
@@ -282,7 +334,19 @@ router.patch('/:id/status', authenticateToken, isAdmin, async (req, res) => {
     }
 
     order.status = status;
-    order.history.push({ status, timestamp: new Date() });
+    const historyEntry = { status, timestamp: new Date() };
+    
+    if (status === 'cancelled') {
+      if (!order.cancellation || !order.cancellation.cancelledBy) {
+        order.cancellation = {
+          cancelledBy: 'admin',
+          cancelledAt: new Date()
+        };
+      }
+      historyEntry.changedBy = 'admin';
+    }
+    
+    order.history.push(historyEntry);
     await order.save();
 
     res.json({

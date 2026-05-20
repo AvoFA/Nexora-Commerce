@@ -9,13 +9,24 @@ import {
 } from "./orders.constants.js";
 import OrderCard from "./OrderCard.jsx";
 import OrderEmptyState from "./OrderEmptyState.jsx";
+import CancelOrderModal from "../../../components/common/CancelOrderModal/CancelOrderModal.jsx";
+import LeaveReviewModal from "../../../components/common/LeaveReviewModal/LeaveReviewModal.jsx";
+import { cancelOrder } from "../../../services/orderService.js";
+import { createReview } from "../../../services/reviewService.js";
+import { toast } from "sonner";
 
 const OrdersTab = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [activeFilter, setActiveFilter] = useState("all");
   const [loading, setLoading] = useState(!SHOW_DEMO_ORDER_LAYOUT);
   const [error, setError] = useState(null);
+  
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [selectedOrderForCancel, setSelectedOrderForCancel] = useState(null);
+
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [selectedProductForReview, setSelectedProductForReview] = useState(null);
 
   const displayOrders = SHOW_DEMO_ORDER_LAYOUT ? [DEMO_ORDER] : orders;
   const activeFilterConfig = ORDER_FILTERS.find((filter) => filter.key === activeFilter) || ORDER_FILTERS[0];
@@ -54,6 +65,57 @@ const OrdersTab = () => {
     fetchOrders();
   }, [isAuthenticated]);
 
+  const handleOpenCancelModal = (order) => {
+    setSelectedOrderForCancel(order);
+    setIsCancelModalOpen(true);
+  };
+
+  const handleCloseCancelModal = () => {
+    setIsCancelModalOpen(false);
+    setSelectedOrderForCancel(null);
+  };
+
+  const handleCancelConfirm = async ({ reason, comment }) => {
+    if (!selectedOrderForCancel) return;
+    
+    try {
+      const token = localStorage.getItem("token");
+      await cancelOrder(selectedOrderForCancel._id, { reason, comment }, token);
+      
+      toast.success("Замовлення успішно скасовано");
+      handleCloseCancelModal();
+      fetchOrders(); // Refresh orders after cancellation
+    } catch (err) {
+      toast.error(err.message || "Помилка при скасуванні замовлення");
+    }
+  };
+
+  const handleOpenReviewModal = (item) => {
+    // Map order item to a product-like object for the modal
+    const product = {
+      _id: item.product?._id || item.product || item._id,
+      name: item.name
+    };
+    setSelectedProductForReview(product);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedProductForReview(null);
+  };
+
+  const handleReviewSubmit = async (reviewData) => {
+    try {
+      const token = localStorage.getItem("token");
+      await createReview(reviewData, token);
+      toast.success("Відгук надіслано на модерацію!");
+      handleCloseReviewModal();
+    } catch (err) {
+      toast.error(err.message || "Не вдалося надіслати відгук");
+    }
+  };
+
   const renderBoardContent = () => {
     if (!isAuthenticated) return <OrderEmptyState state="unauthenticated" />;
     if (loading) return <OrderEmptyState state="loading" />;
@@ -64,7 +126,12 @@ const OrdersTab = () => {
     return (
       <div className="orders-list">
         {filteredOrders.map((order) => (
-          <OrderCard key={order._id} order={order} />
+          <OrderCard 
+            key={order._id} 
+            order={order} 
+            onCancelRequest={() => handleOpenCancelModal(order)}
+            onReviewRequest={handleOpenReviewModal}
+          />
         ))}
       </div>
     );
@@ -112,6 +179,21 @@ const OrdersTab = () => {
           {renderBoardContent()}
         </div>
       </div>
+
+      <CancelOrderModal
+        isOpen={isCancelModalOpen}
+        onClose={handleCloseCancelModal}
+        onConfirm={handleCancelConfirm}
+        orderNumber={selectedOrderForCancel?._id}
+      />
+
+      <LeaveReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={handleCloseReviewModal}
+        product={selectedProductForReview}
+        onSubmit={handleReviewSubmit}
+        user={user}
+      />
     </div>
   );
 };

@@ -85,3 +85,19 @@ export const updateOrderStatus = async (id, status, token) => {
 
   return data;
 };
+
+export const cancelOrder = async (orderId, payload, token) => {
+  const response = await fetch(`${API_BASE_URL}/orders/${orderId}/cancel`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(token),
+    body: JSON.stringify(payload)
+  });
+
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося скасувати замовлення');
+  }
+
+  return data;
+};

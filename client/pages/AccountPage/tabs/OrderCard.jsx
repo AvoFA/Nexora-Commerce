@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { formatPrice } from "../../../utils/formatPrice.js";
-import { ExpandMore, Inventory2Outlined, RateReviewOutlined } from "@mui/icons-material";
+import { ExpandMore, Inventory2Outlined, RateReviewOutlined, CloseOutlined } from "@mui/icons-material";
 import { STATUS_LABELS } from "./orders.constants.js";
 import OrderTimeline from "./OrderTimeline.jsx";
 import OrderDeliveryBlock from "./OrderDeliveryBlock.jsx";
@@ -41,7 +41,7 @@ const renderProductImage = (item) => {
   return <Inventory2Outlined />;
 };
 
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
   const previewItems = order.items?.slice(0, 3) || [];
   const itemCount = order.items?.length || 0;
   const itemsTotal = getItemsTotal(order);
@@ -95,7 +95,15 @@ const OrderCard = ({ order }) => {
                   <div className="ex-info">
                     <Link to={`/product/${productId}`}>{item.name}</Link>
                   </div>
-                  <button className="ex-review-link" type="button">
+                  <button 
+                    className="ex-review-link" 
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (onReviewRequest) onReviewRequest(item);
+                    }}
+                  >
                     <RateReviewOutlined />
                     Залишити відгук
                   </button>
@@ -118,6 +126,19 @@ const OrderCard = ({ order }) => {
             deliveryPrice={deliveryPrice}
             totalPrice={totalPrice}
           />
+
+          {(order.status === 'new' || order.status === 'confirmed') && (
+            <div className="order-actions-section">
+              <button 
+                type="button" 
+                className="cancel-order-btn"
+                onClick={onCancelRequest}
+              >
+                <CloseOutlined />
+                Скасувати замовлення
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </details>

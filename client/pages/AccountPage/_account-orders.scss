@@ -430,7 +430,7 @@
   font-size: 0.82rem;
   font-weight: 800;
   line-height: 1.25;
-  cursor: default;
+  cursor: pointer;
   text-align: left;
   white-space: nowrap;
 
@@ -601,6 +601,44 @@
 
 .payment-block {
   max-width: 420px;
+}
+
+.order-actions-section {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  margin: 0 -20px -20px;
+  background: lighten($surface-color, 3%);
+  border-top: 1px solid $border-color;
+}
+
+.cancel-order-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 0;
+  background: transparent;
+  color: $danger-color;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: $border-radius;
+  transition: all 0.2s ease;
+
+  .MuiSvgIcon-root {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background: rgba($danger-color, 0.08);
+  }
+
+  &:active {
+    background: rgba($danger-color, 0.12);
+    transform: translateY(1px);
+  }
 }
 
 .payment-table {
