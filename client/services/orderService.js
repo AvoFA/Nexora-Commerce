@@ -52,6 +52,7 @@ export const getAdminOrders = async (token, params = {}) => {
   if (params.page) query.append('page', params.page);
   if (params.limit) query.append('limit', params.limit);
   if (params.status) query.append('status', params.status);
+  if (params.cancelledBy) query.append('cancelledBy', params.cancelledBy);
   if (params.search) query.append('search', params.search);
   if (params.sort) query.append('sort', params.sort);
 

@@ -194,7 +194,6 @@ const isAdmin = (req, res, next) => {
 
 router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
   try {
-    console.log('--- GET /api/orders/admin --- req.query:', req.query);
     let page = parseInt(req.query.page, 10) || 1;
     let limit = parseInt(req.query.limit, 10) || 20;
     if (page < 1) page = 1;
@@ -202,8 +201,9 @@ router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
     if (limit > 100) limit = 100;
 
     const skip = (page - 1) * limit;
-    const { status, search } = req.query;
+    const { status, search, cancelledBy } = req.query;
     const query = {};
+    const validCancelledBy = ['customer', 'admin'].includes(cancelledBy) ? cancelledBy : null;
 
     // 1. Status Filter
     if (status && status !== 'all') {
@@ -212,6 +212,11 @@ router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
       } else {
         query.status = status;
       }
+    }
+
+    if (validCancelledBy) {
+      query.status = 'cancelled';
+      query['cancellation.cancelledBy'] = validCancelledBy;
     }
 
     // 2. Search Filter
@@ -262,7 +267,9 @@ router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
       processing: 0,
       ready_for_pickup: 0,
       received: 0,
-      cancelled: 0
+      cancelled: 0,
+      cancelledCustomer: 0,
+      cancelledAdmin: 0
     };
 
     let totalAll = 0;
@@ -279,6 +286,20 @@ router.get('/admin', authenticateToken, isAdmin, async (req, res) => {
       }
     });
     counts.all = totalAll;
+
+    const cancellationCountsAggregation = await Order.aggregate([
+      { $match: { ...countQuery, status: 'cancelled' } },
+      { $group: { _id: '$cancellation.cancelledBy', count: { $sum: 1 } } }
+    ]);
+
+    cancellationCountsAggregation.forEach(c => {
+      if (c._id === 'customer') {
+        counts.cancelledCustomer = c.count;
+      }
+      if (c._id === 'admin') {
+        counts.cancelledAdmin = c.count;
+      }
+    });
 
     // 4. Sorting
     const sortParam = req.query.sort || 'createdAt_desc';

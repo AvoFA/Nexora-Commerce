@@ -12,14 +12,16 @@ const AdminFilterTabs = ({
     <div className="filter-tabs" aria-label={ariaLabel}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.value;
-        const count = counts[tab.value] || 0;
+        const count = counts[tab.countKey || tab.value] || 0;
 
         return (
           <button
             key={tab.value}
             type="button"
             onClick={() => onChange(tab.value)}
-            className={`filter-tab-button ${isActive ? "active" : ""}`}
+            className={`filter-tab-button ${tab.compact ? "compact-filter-tab" : ""} ${
+              isActive ? "active" : ""
+            }`}
           >
             <span>{tab.label}</span>
             <Chip label={count} size="small" />

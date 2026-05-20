@@ -31,6 +31,7 @@ import {
   getItemKey,
   renderProductThumb,
   IS_TEST_MODE,
+  getCancellationSourceLabel,
 } from "./order.helpers";
 
 const OrdersTable = ({
@@ -175,24 +176,31 @@ const OrdersTable = ({
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <OrderStatusDropdown
-                    status={order.status}
-                    onChange={(newStatus) =>
-                      onStatusChangeAttempt(order, newStatus)
-                    }
-                    disabled={
-                      isUpdating === order._id ||
-                      (IS_TEST_MODE
-                        ? false
-                        : order.status === "cancelled" ||
-                          order.status === "received")
-                    }
-                    isUpdating={isUpdating === order._id}
-                    isOpen={activeDropdownOrderId === order._id}
-                    onToggle={(isOpen) =>
-                      setActiveDropdownOrderId(isOpen ? order._id : null)
-                    }
-                  />
+                  <Box className="status-cell">
+                    <OrderStatusDropdown
+                      status={order.status}
+                      onChange={(newStatus) =>
+                        onStatusChangeAttempt(order, newStatus)
+                      }
+                      disabled={
+                        isUpdating === order._id ||
+                        (IS_TEST_MODE
+                          ? false
+                          : order.status === "cancelled" ||
+                            order.status === "received")
+                      }
+                      isUpdating={isUpdating === order._id}
+                      isOpen={activeDropdownOrderId === order._id}
+                      onToggle={(isOpen) =>
+                        setActiveDropdownOrderId(isOpen ? order._id : null)
+                      }
+                    />
+                    {getCancellationSourceLabel(order) && (
+                      <span className="cancellation-source-badge">
+                        {getCancellationSourceLabel(order)}
+                      </span>
+                    )}
+                  </Box>
                 </TableCell>
                 <TableCell align="right">
                   <Box className="actions-cell">

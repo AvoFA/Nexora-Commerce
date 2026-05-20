@@ -36,6 +36,18 @@ const filterTabs = [
   { value: "ready_for_pickup", label: "Відправлено" },
   { value: "received", label: "Отримано" },
   { value: "cancelled", label: "Скасовано" },
+  {
+    value: "cancelled_customer",
+    label: "Клієнтом",
+    countKey: "cancelledCustomer",
+    compact: true,
+  },
+  {
+    value: "cancelled_admin",
+    label: "Адміном",
+    countKey: "cancelledAdmin",
+    compact: true,
+  },
   { value: "all", label: "Усі" },
 ];
 
@@ -46,12 +58,48 @@ const sortOptions = [
   { value: "totalPrice_asc", label: "Сума: від меншої" },
 ];
 
+const getActiveFilterFromParams = (status, cancelledBy) => {
+  if (status === "cancelled" && cancelledBy === "customer") {
+    return "cancelled_customer";
+  }
+  if (status === "cancelled" && cancelledBy === "admin") {
+    return "cancelled_admin";
+  }
+
+  return status || "new";
+};
+
+const applyFilterToParams = (params, filter) => {
+  params.delete("cancelledBy");
+
+  if (filter === "new") {
+    params.delete("status");
+    return;
+  }
+
+  if (filter === "cancelled_customer") {
+    params.set("status", "cancelled");
+    params.set("cancelledBy", "customer");
+    return;
+  }
+
+  if (filter === "cancelled_admin") {
+    params.set("status", "cancelled");
+    params.set("cancelledBy", "admin");
+    return;
+  }
+
+  params.set("status", filter);
+};
+
 const OrderListPage = () => {
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeFilter = searchParams.get("status") || "new";
+  const statusParam = searchParams.get("status") || "new";
+  const cancelledByParam = searchParams.get("cancelledBy") || "";
+  const activeFilter = getActiveFilterFromParams(statusParam, cancelledByParam);
   const searchQuery = searchParams.get("q") || "";
   const sort = searchParams.get("sort") || "createdAt_desc";
   const [lastActiveTab, setLastActiveTab] = useState(null);
@@ -63,6 +111,8 @@ const OrderListPage = () => {
     ready_for_pickup: 0,
     received: 0,
     cancelled: 0,
+    cancelledCustomer: 0,
+    cancelledAdmin: 0,
   });
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -87,17 +137,14 @@ const OrderListPage = () => {
           if (!localSearchInput.trim()) {
             prev.delete("q");
             if (lastActiveTab) {
-              if (lastActiveTab === "new") {
-                prev.delete("status");
-              } else {
-                prev.set("status", lastActiveTab);
-              }
+              applyFilterToParams(prev, lastActiveTab);
             }
             setLastActiveTab(null);
           } else {
             if (!prev.get("q") && activeFilter !== "all") {
               setLastActiveTab(activeFilter);
               prev.set("status", "all");
+              prev.delete("cancelledBy");
             }
             prev.set("q", localSearchInput.trim());
           }
@@ -120,11 +167,7 @@ const OrderListPage = () => {
   const handleFilterChange = (status) => {
     setSearchParams(
       (prev) => {
-        if (status === "new") {
-          prev.delete("status");
-        } else {
-          prev.set("status", status);
-        }
+        applyFilterToParams(prev, status);
         prev.delete("q"); // Clear search when switching tabs manually
         prev.delete("page"); // Reset page to 1
         return prev;
@@ -145,11 +188,7 @@ const OrderListPage = () => {
         prev.delete("q");
         prev.delete("page");
         if (lastActiveTab) {
-          if (lastActiveTab === "new") {
-            prev.delete("status");
-          } else {
-            prev.set("status", lastActiveTab);
-          }
+          applyFilterToParams(prev, lastActiveTab);
         }
         setLastActiveTab(null);
         return prev;
@@ -212,16 +251,11 @@ const OrderListPage = () => {
       const data = await getAdminOrders(token, {
         page,
         limit,
-        status: activeFilter,
+        status: statusParam,
+        cancelledBy: cancelledByParam,
         search: searchQuery,
         sort,
       });
-      console.log(
-        "--- fetchOrders --- params:",
-        { page, limit, status: activeFilter, search: searchQuery, sort },
-        "response data:",
-        data,
-      );
       if (data.success) {
         setOrders(data.orders || []);
         setTotal(data.total || 0);
@@ -251,7 +285,7 @@ const OrderListPage = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [activeFilter, searchQuery, page, limit, sort]);
+  }, [statusParam, cancelledByParam, searchQuery, page, limit, sort]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {

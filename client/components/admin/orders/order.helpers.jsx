@@ -19,6 +19,16 @@ export const statusLabelMap = {
   cancelled: "Скасовано",
 };
 
+export const cancellationSourceLabelMap = {
+  customer: "Клієнт",
+  admin: "Адмін",
+};
+
+export const cancellationHistoryLabelMap = {
+  customer: "Скасовано клієнтом",
+  admin: "Скасовано адміністратором",
+};
+
 export const terminalStatuses = new Set(["received", "cancelled"]);
 
 export const allowedTransitionsMap = {
@@ -35,6 +45,20 @@ export const IS_TEST_MODE = true;
 export const getOrderNumber = (order) => {
   const raw = order?._id || "";
   return raw ? `#${raw.slice(-6).toUpperCase()}` : "—";
+};
+
+export const getCancellationSourceLabel = (order) => {
+  if (order?.status !== "cancelled") return "";
+
+  return cancellationSourceLabelMap[order.cancellation?.cancelledBy] || "";
+};
+
+export const getHistoryStatusLabel = (entry) => {
+  if (entry?.status === "cancelled" && entry.changedBy) {
+    return cancellationHistoryLabelMap[entry.changedBy] || statusLabelMap.cancelled;
+  }
+
+  return statusLabelMap[entry?.status] || entry?.status;
 };
 
 export const escapeRegExp = (string) => {

@@ -29,6 +29,7 @@ import {
   getDeliveryAddress,
   getItemKey,
   renderProductThumb,
+  getHistoryStatusLabel,
 } from "./order.helpers";
 
 const OrderDetailsModal = ({
@@ -251,9 +252,7 @@ const OrderDetailsModal = ({
                         className={`history-item ${isCurrent ? "is-current" : ""}`}
                       >
                         <span className="history-status">
-                          {entry.changedBy === 'customer' && entry.status === 'cancelled'
-                            ? "Скасовано клієнтом" 
-                            : (statusLabelMap[entry.status] || entry.status)}
+                          {getHistoryStatusLabel(entry)}
                         </span>
                         <span className="history-divider">—</span>
                         <span className="history-timestamp">
