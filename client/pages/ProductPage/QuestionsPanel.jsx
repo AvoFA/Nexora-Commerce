@@ -1,6 +1,19 @@
+import { useMemo, useState } from "react";
 import { CheckCircle, Close } from "@mui/icons-material";
+import CustomSelect from "../../components/common/CustomSelect/CustomSelect.jsx";
 import QuestionForm from "./QuestionForm.jsx";
 import QuestionsList from "./QuestionsList.jsx";
+
+const QUESTION_FILTERS = [
+  { key: "all", label: "Усі питання" },
+  { key: "answered", label: "З відповіддю" },
+  { key: "unanswered", label: "Без відповіді" },
+];
+
+const QUESTION_SORT_OPTIONS = [
+  { value: "newest", label: "Спочатку нові" },
+  { value: "oldest", label: "Спочатку старі" },
+];
 
 const QuestionsPanel = ({
   questions,
@@ -14,7 +27,34 @@ const QuestionsPanel = ({
   setQuestionSuccess,
   isLoadingQuestions,
   handleSubmitQuestion,
+  mode = "full",
+  previewLimit = 3,
 }) => {
+  const [answerFilter, setAnswerFilter] = useState("all");
+  const [questionSort, setQuestionSort] = useState("newest");
+  const isPreview = mode === "preview";
+
+  const visibleQuestions = useMemo(() => {
+    const filteredQuestions = questions.filter((question) => {
+      if (answerFilter === "answered") return question.hasAnswer;
+      if (answerFilter === "unanswered") return !question.hasAnswer;
+      return true;
+    });
+
+    return [...filteredQuestions].sort((firstQuestion, secondQuestion) => {
+      if (questionSort === "oldest") {
+        return (firstQuestion.createdAtTime || 0) - (secondQuestion.createdAtTime || 0);
+      }
+
+      return (secondQuestion.createdAtTime || 0) - (firstQuestion.createdAtTime || 0);
+    });
+  }, [questions, answerFilter, questionSort]);
+  const displayedQuestions = isPreview
+    ? visibleQuestions.slice(0, previewLimit)
+    : visibleQuestions;
+  const emptyMessage =
+    answerFilter === "all" ? undefined : "Немає питань для обраного фільтра.";
+
   return (
     <div className="questions-panel">
       {questionSuccess ? (
@@ -52,7 +92,7 @@ const QuestionsPanel = ({
             ) : (
               <button
                 type="button"
-                className="btn-cta"
+                className="feedback-action-button"
                 onClick={() => {
                   setQuestionSuccess(false);
                   setShowQuestionForm(true);
@@ -76,7 +116,35 @@ const QuestionsPanel = ({
         </form>
       )}
 
-      <QuestionsList questions={questions} isLoading={isLoadingQuestions} />
+      <div className="questions-list-toolbar">
+        <div className="questions-answer-filters" aria-label="Фільтр питань">
+          {QUESTION_FILTERS.map((filter) => (
+            <button
+              key={filter.key}
+              type="button"
+              className={`question-filter-chip ${answerFilter === filter.key ? "active" : ""}`}
+              onClick={() => setAnswerFilter(filter.key)}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
+
+        <CustomSelect
+          id="question-sort"
+          className="feedback-sort-select"
+          label="Сортування"
+          value={questionSort}
+          onChange={setQuestionSort}
+          options={QUESTION_SORT_OPTIONS}
+        />
+      </div>
+
+      <QuestionsList
+        questions={displayedQuestions}
+        isLoading={isLoadingQuestions}
+        emptyMessage={emptyMessage}
+      />
     </div>
   );
 };

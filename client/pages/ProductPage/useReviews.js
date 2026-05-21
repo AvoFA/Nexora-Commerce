@@ -51,6 +51,8 @@ export const useReviews = (productId, user, isAuthenticated) => {
       const mappedReviews = (data.reviews || []).map(r => ({
         id: r._id,
         name: r.name,
+        createdAt: r.createdAt,
+        createdAtTime: new Date(r.createdAt).getTime(),
         date: new Date(r.createdAt).toLocaleDateString("uk-UA", {
           day: "numeric",
           month: "long",

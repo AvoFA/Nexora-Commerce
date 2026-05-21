@@ -780,7 +780,7 @@
   box-sizing: border-box;
 
   @media (min-width: 992px) {
-    min-width: 800px; // Відновлено для стабільності на десктопі
+    min-width: 850px;
   }
 }
 
@@ -835,7 +835,7 @@
   width: 100%;
   min-height: 400px;
   margin: 0;
-  flex-shrink: 0; // Запобігає стисканню
+  flex-shrink: 0;
 
   background-color: transparent;
   border: 2px dashed $border-color;

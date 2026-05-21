@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SubdirectoryArrowRight, VerifiedOutlined } from "@mui/icons-material";
 
-const QuestionsList = ({ questions, isLoading }) => {
+const QuestionsList = ({ questions, isLoading, emptyMessage }) => {
   const [expandedAnswers, setExpandedAnswers] = useState({});
 
   const isAnswerExpanded = (questionId) => expandedAnswers[questionId] ?? true;
@@ -23,7 +23,7 @@ const QuestionsList = ({ questions, isLoading }) => {
   if (questions.length === 0) {
     return (
       <div className="questions-empty-state">
-        Поки немає опублікованих питань про цей товар.
+        {emptyMessage || "Поки немає опублікованих питань про цей товар."}
       </div>
     );
   }

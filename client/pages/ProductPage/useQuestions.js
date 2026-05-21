@@ -34,6 +34,9 @@ export const useQuestions = (productId, user, isAuthenticated) => {
         name: question.name,
         text: question.text,
         answer: question.answer || "",
+        hasAnswer: Boolean(question.answer),
+        createdAt: question.createdAt,
+        createdAtTime: new Date(question.createdAt).getTime(),
         date: new Date(question.createdAt).toLocaleDateString("uk-UA", {
           day: "numeric",
           month: "long",

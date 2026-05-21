@@ -15,6 +15,7 @@ import AddedToCartDrawer from "./components/cart/AddedToCartDrawer/AddedToCartDr
 // сторінки сайту
 import HomePage from "./pages/HomePage/HomePage.jsx";
 import ProductPage from "./pages/ProductPage/ProductPage.jsx";
+import ProductFeedbackPage from "./pages/ProductFeedbackPage/ProductFeedbackPage.jsx";
 import CartPage from "./pages/CartPage/CartPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage/CheckoutPage.jsx";
 import AboutPage from "./pages/AboutPage/AboutPage.jsx";
@@ -108,6 +109,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/home" replace /> },  // "/" переадресація
       { path: "/home", element: <HomePage /> },                    // ← головна "/home"
       { path: "/product/:id", element: <ProductPage /> },
+      { path: "/product/:id/feedback", element: <ProductFeedbackPage /> },
       { path: "/cart", element: <CartPage /> },
       { path: "/checkout", element: <CheckoutPage /> },
       { path: "/catalog", element: <CatalogPage /> },

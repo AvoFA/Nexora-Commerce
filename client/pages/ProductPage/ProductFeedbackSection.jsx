@@ -1,18 +1,39 @@
-import { useState } from "react";
-import { HelpOutline, RateReviewOutlined } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowForward, HelpOutline, RateReviewOutlined } from "@mui/icons-material";
 import ReviewsPanel from "./ReviewsPanel.jsx";
 import QuestionsPanel from "./QuestionsPanel.jsx";
 import { useQuestions } from "./useQuestions.js";
 import "./ProductFeedbackSection.scss";
+
+const PREVIEW_LIMIT = 3;
+const normalizeTab = (tab) => (tab === "questions" ? "questions" : "reviews");
 
 const ProductFeedbackSection = ({
   productId,
   user,
   isAuthenticated,
   reviewState,
+  mode = "full",
+  initialTab = "reviews",
+  feedbackUrl,
+  productName,
+  onTabChange,
 }) => {
-  const [activeTab, setActiveTab] = useState("reviews");
+  const [activeTab, setActiveTab] = useState(() => normalizeTab(initialTab));
   const questionState = useQuestions(productId, user, isAuthenticated);
+  const isPreview = mode === "preview";
+
+  useEffect(() => {
+    setActiveTab(normalizeTab(initialTab));
+  }, [initialTab]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    onTabChange?.(tab);
+  };
+
+  const viewAllUrl = feedbackUrl ? `${feedbackUrl}?tab=${activeTab}` : null;
 
   const tabs = [
     {
@@ -32,7 +53,10 @@ const ProductFeedbackSection = ({
   return (
     <section id="reviews" className="reviews-section bottom-layout product-feedback-section">
       <div className="feedback-heading-row">
-        <h2 className="section-title">Відгуки та питання</h2>
+        <h2 className="section-title">
+          Відгуки та питання
+          {productName && <span className="section-title-product">{productName}</span>}
+        </h2>
       </div>
 
       <div className="feedback-tabs" aria-label="Відгуки та питання товару">
@@ -41,7 +65,7 @@ const ProductFeedbackSection = ({
             key={key}
             type="button"
             className={`feedback-tab ${activeTab === key ? "active" : ""}`}
-            onClick={() => setActiveTab(key)}
+            onClick={() => handleTabChange(key)}
             aria-pressed={activeTab === key}
           >
             <Icon className="feedback-tab-icon" />
@@ -52,9 +76,18 @@ const ProductFeedbackSection = ({
       </div>
 
       {activeTab === "reviews" ? (
-        <ReviewsPanel {...reviewState} />
+        <ReviewsPanel {...reviewState} mode={mode} previewLimit={PREVIEW_LIMIT} />
       ) : (
-        <QuestionsPanel {...questionState} />
+        <QuestionsPanel {...questionState} mode={mode} previewLimit={PREVIEW_LIMIT} />
+      )}
+
+      {isPreview && viewAllUrl && (
+        <div className="feedback-preview-actions">
+          <Link to={viewAllUrl} className="btn-primary feedback-view-all">
+            {activeTab === "questions" ? "Усі питання" : "Усі відгуки"}
+            <ArrowForward className="feedback-view-all-icon" />
+          </Link>
+        </div>
       )}
     </section>
   );

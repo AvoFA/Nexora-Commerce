@@ -173,186 +173,6 @@
     border-left: 3px solid $primary-color;
   }
 
-  .product-purchase-card {
-    background: rgba($surface-color, 0.4);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba($border-color, 0.8);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-
-    .price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-
-      .price {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: $primary-color;
-        margin: 0;
-      }
-
-      .product-actions-icons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-
-        @mixin action-button-large {
-          background: transparent;
-          border: none;
-          width: 44px;
-          height: 44px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          border-radius: 50%;
-          position: relative;
-
-          .MuiSvgIcon-root {
-            font-size: 28px;
-            transition: all 0.2s ease;
-          }
-
-          &:hover {
-            transform: none;
-          }
-        }
-
-        .product-wishlist-button {
-          @include action-button-large;
-
-          .MuiSvgIcon-root {
-            color: $primary-color;
-          }
-
-          &:hover {
-            background: rgba($primary-color, 0.08);
-          }
-
-          &.active {
-            background: $primary-color;
-
-            .MuiSvgIcon-root {
-              color: #ffffff;
-            }
-          }
-        }
-
-        .product-compare-button {
-          @include action-button-large;
-
-          .MuiSvgIcon-root {
-            color: $secondary-color;
-          }
-
-          &:hover {
-            background: rgba($secondary-color, 0.08);
-          }
-
-          &.active {
-            background: $secondary-color;
-
-            .MuiSvgIcon-root {
-              color: #ffffff;
-            }
-          }
-        }
-      }
-    }
-
-    .product-actions-wrapper {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-
-      .btn-primary {
-        width: 100%;
-        padding: 14px 24px;
-        font-size: 1.05rem;
-        border-radius: 12px;
-      }
-    }
-
-    .product-info-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-
-      @media (min-width: 480px) {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .info-card {
-        background: rgba($surface-color, 0.3);
-        border: 1px solid rgba($border-color, 0.5);
-        padding: 14px 16px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        transition: all 0.3s ease;
-
-        &:hover {
-          background: rgba($surface-color, 0.5);
-          border-color: rgba($primary-color, 0.25);
-        }
-
-        .icon-box {
-          width: 40px;
-          height: 40px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-
-          &.delivery {
-            background: rgba($primary-color, 0.1);
-
-            .info-icon {
-              color: $primary-color;
-            }
-          }
-
-          &.warranty {
-            background: rgba($success-color, 0.1);
-
-            .info-icon {
-              color: $success-color;
-            }
-          }
-
-          .info-icon {
-            font-size: 20px;
-          }
-        }
-
-        .info-card-text {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-
-          .info-label {
-            font-size: 0.8rem;
-            color: $text-secondary;
-            font-weight: 500;
-          }
-
-          .info-value {
-            font-size: 0.95rem;
-            color: $text-color;
-            font-weight: 600;
-          }
-        }
-      }
-    }
-  }
 }
 
 @keyframes sectionFadeIn {
@@ -516,7 +336,6 @@
 
 // Секція відгуків (Нижній макет)
 .reviews-section.bottom-layout {
-  margin-top: 40px;
   padding-top: 32px;
   border-top: 1px solid $border-color;
   scroll-margin-top: 100px; // Offsets the scroll to account for the sticky header!
@@ -983,58 +802,6 @@
   }
 }
 
-.review-cta-banner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  background: rgba($surface-color, 0.4);
-  border: 1px solid rgba($border-color, 0.6);
-  padding: 18px 24px;
-  border-radius: $border-radius;
-  margin-bottom: 0; // Margin is now on the parent card
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  animation: sectionFadeIn 0.5s ease-out;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    text-align: center;
-    gap: 16px;
-    padding: 20px;
-  }
-
-  .cta-text {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: white;
-  }
-
-  .btn-cta {
-    background: $primary-color;
-    border: 1px solid $primary-color;
-    color: white;
-    padding: 10px 24px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: filter 0.2s, transform 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-
-    &:hover {
-      filter: brightness(0.9);
-    }
-
-    &:active {
-      transform: scale(0.98);
-    }
-  }
-}
-
 .review-pending-banner {
   display: flex;
   align-items: center;
@@ -1108,28 +875,9 @@
       &:hover {
         background: rgba($primary-color, 0.1);
         color: $primary-color;
-        transform: none !important;
       }
     }
 
-    .btn-cta {
-      @extend .btn-primary;
-      transform: none !important;
-      box-shadow: none !important;
-      transition: background-color 0.2s ease;
-      padding: 10px 24px;
-      border-radius: 8px;
-
-      &:hover {
-        background-color: darken($primary-color, 6%) !important;
-        transform: none !important;
-        box-shadow: none !important;
-      }
-
-      &:active {
-        transform: none !important;
-      }
-    }
   }
 
   // Обертка для форми

@@ -6,7 +6,19 @@
     margin-bottom: 20px;
 
     .section-title {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
       margin-bottom: 0;
+    }
+
+    .section-title-product {
+      min-width: 0;
+      color: rgba($text-secondary, 0.78);
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1.35;
     }
   }
 
@@ -67,6 +79,37 @@
   .reviews-panel {
     display: flex;
     flex-direction: column;
+  }
+
+  .feedback-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 24px;
+    background: $primary-color;
+    border: 1px solid $primary-color;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 6%);
+      border-color: darken($primary-color, 6%);
+    }
+
+    &:active {
+      background-color: darken($primary-color, 9%);
+      border-color: darken($primary-color, 9%);
+    }
   }
 
   .product-review-form {
@@ -200,6 +243,66 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+  }
+
+  .reviews-list-header,
+  .questions-list-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba($border-color, 0.45);
+  }
+
+  .rating-filters,
+  .questions-answer-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .feedback-sort-select {
+    flex-shrink: 0;
+    margin-left: auto;
+
+    .select-relative select {
+      min-width: 180px;
+      background-color: rgba($surface-color, 0.5);
+    }
+  }
+
+  .question-filter-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 7px 16px;
+    border: 1px solid rgba($border-color, 0.65);
+    border-radius: 999px;
+    background: rgba($surface-color, 0.35);
+    color: $text-secondary;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      color: $text-color;
+      border-color: rgba($primary-color, 0.45);
+      background: rgba($primary-color, 0.1);
+    }
+
+    &.active {
+      color: $text-color;
+      border-color: rgba($primary-color, 0.65);
+      background: rgba($primary-color, 0.18);
+    }
   }
 
   .feedback-review-item {
@@ -367,7 +470,33 @@
     border-radius: $border-radius;
   }
 
+  .feedback-preview-actions {
+    margin-top: 28px;
+  }
+
+  .feedback-view-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 58px;
+    gap: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+
+    .feedback-view-all-icon {
+      font-size: 20px;
+    }
+  }
+
   @media (max-width: 640px) {
+    .feedback-heading-row {
+      .section-title-product {
+        flex-basis: 100%;
+        font-size: 1rem;
+      }
+    }
+
     .feedback-tabs {
       display: grid;
       grid-template-columns: 1fr;
@@ -376,6 +505,23 @@
 
     .feedback-tab {
       width: 100%;
+    }
+
+    .reviews-list-header,
+    .questions-list-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .feedback-sort-select {
+      width: 100%;
+      margin-left: 0;
+      align-items: flex-start;
+
+      .select-relative,
+      .select-relative select {
+        width: 100%;
+      }
     }
 
     .product-review-form,

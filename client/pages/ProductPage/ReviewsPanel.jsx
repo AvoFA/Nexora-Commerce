@@ -1,6 +1,15 @@
+import { useMemo, useState } from "react";
 import { Rating } from "@mui/material";
 import { CheckCircle, Close, InfoOutlined, Star } from "@mui/icons-material";
+import CustomSelect from "../../components/common/CustomSelect/CustomSelect.jsx";
 import ReviewForm from "./ReviewForm.jsx";
+
+const REVIEW_SORT_OPTIONS = [
+  { value: "newest", label: "Спочатку нові" },
+  { value: "oldest", label: "Спочатку старі" },
+  { value: "rating-desc", label: "Найвища оцінка" },
+  { value: "rating-asc", label: "Найнижча оцінка" },
+];
 
 const renderDistributionStars = (rating) => (
   <span className="distribution-stars" aria-label={`${rating} з 5`}>
@@ -27,7 +36,12 @@ const ReviewsPanel = ({
   setIsEditing,
   showSuccess,
   setShowSuccess,
+  mode = "full",
+  previewLimit = 3,
 }) => {
+  const [reviewSort, setReviewSort] = useState("newest");
+  const isPreview = mode === "preview";
+
   const handleEditClick = () => {
     if (userReview) {
       setNewReview((prev) => ({
@@ -42,9 +56,30 @@ const ReviewsPanel = ({
     setShowForm(true);
   };
 
-  const filteredReviews = reviews.filter((review) =>
-    ratingFilter ? review.stars === ratingFilter : true
-  );
+  const sortedReviews = useMemo(() => {
+    const filteredReviews = reviews.filter((review) =>
+      ratingFilter ? review.stars === ratingFilter : true
+    );
+
+    return [...filteredReviews].sort((firstReview, secondReview) => {
+      if (reviewSort === "oldest") {
+        return (firstReview.createdAtTime || 0) - (secondReview.createdAtTime || 0);
+      }
+
+      if (reviewSort === "rating-desc") {
+        return secondReview.stars - firstReview.stars;
+      }
+
+      if (reviewSort === "rating-asc") {
+        return firstReview.stars - secondReview.stars;
+      }
+
+      return (secondReview.createdAtTime || 0) - (firstReview.createdAtTime || 0);
+    });
+  }, [reviews, ratingFilter, reviewSort]);
+  const displayedReviews = isPreview
+    ? sortedReviews.slice(0, previewLimit)
+    : sortedReviews;
 
   return (
     <div className="reviews-panel">
@@ -94,7 +129,7 @@ const ReviewsPanel = ({
             ) : userReview?.status === "approved" ? (
               <button
                 type="button"
-                className="btn-cta"
+                className="feedback-action-button"
                 onClick={() => {
                   setShowSuccess(false);
                   handleEditClick();
@@ -105,7 +140,7 @@ const ReviewsPanel = ({
             ) : userReview?.status === "rejected" ? (
               <button
                 type="button"
-                className="btn-cta"
+                className="feedback-action-button"
                 onClick={() => {
                   setShowSuccess(false);
                   handleEditClick();
@@ -116,7 +151,7 @@ const ReviewsPanel = ({
             ) : (
               <button
                 type="button"
-                className="btn-cta"
+                className="feedback-action-button"
                 onClick={() => {
                   setShowSuccess(false);
                   setShowForm(true);
@@ -198,15 +233,23 @@ const ReviewsPanel = ({
             </button>
           ))}
         </div>
+        <CustomSelect
+          id="review-sort"
+          className="feedback-sort-select"
+          label="Сортування"
+          value={reviewSort}
+          onChange={setReviewSort}
+          options={REVIEW_SORT_OPTIONS}
+        />
       </div>
 
       <div className="feedback-reviews-list">
-          {filteredReviews.length === 0 ? (
+          {sortedReviews.length === 0 ? (
             <div className="questions-empty-state">
               Немає відгуків для обраного фільтра.
             </div>
           ) : (
-            filteredReviews.map((review) => (
+            displayedReviews.map((review) => (
               <article key={review.id} className="feedback-review-item">
                 <aside className="review-side-meta">
                   <Rating
