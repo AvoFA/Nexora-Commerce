@@ -107,6 +107,7 @@ const LeaveReviewModal = ({
               formErrors={formErrors}
               setFormErrors={setFormErrors}
               handleSubmitReview={handleSubmit}
+              className="modal-review-form"
             />
           </form>
         </div>
