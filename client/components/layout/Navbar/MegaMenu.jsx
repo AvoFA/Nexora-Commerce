@@ -130,10 +130,9 @@ const MegaMenu = ({ mode = "desktop", onClose }) => {
       <div className="mega-menu-details">
         <div className="mega-menu-details__header">
           <div>
-            <p className="mega-menu-eyebrow">Категорія</p>
             <h3>{getCategoryLabel(category)}</h3>
+            <p className="mega-menu-category-meta">{category.count || 0} товарів у категорії</p>
           </div>
-          <span className="mega-menu-count">{category.count || 0} товарів</span>
         </div>
 
         <div className="mega-menu-section">
@@ -250,8 +249,11 @@ const MegaMenu = ({ mode = "desktop", onClose }) => {
       <div className="mega-menu-shell" role="dialog" aria-label="Каталог товарів">
         <aside className="mega-menu-sidebar">
           <Link to="/catalog" className="mega-menu-all-link" onClick={onClose}>
-            <GridViewIcon />
-            <span>Усі товари</span>
+            <span className="mega-menu-category__content">
+              <GridViewIcon />
+              <span>Усі товари</span>
+            </span>
+            <ChevronRightIcon className="mega-menu-category__arrow" />
           </Link>
 
           {isLoading && <p className="mega-menu-empty">Завантаження категорій...</p>}
