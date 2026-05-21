@@ -11,6 +11,7 @@ export const useProductTableState = (products = [], perPage = DEFAULT_PER_PAGE) 
     key: null,
     direction: null,
   });
+  const sortValue = sortConfig.key ? `${sortConfig.key}_${sortConfig.direction}` : 'default';
 
   const handleSort = (key) => {
     let direction = 'asc';
@@ -19,6 +20,16 @@ export const useProductTableState = (products = [], perPage = DEFAULT_PER_PAGE) 
       direction = 'desc';
     }
 
+    setSortConfig({ key, direction });
+  };
+
+  const setSortValue = (value) => {
+    if (value === 'default') {
+      setSortConfig({ key: null, direction: null });
+      return;
+    }
+
+    const [key, direction] = value.split('_');
     setSortConfig({ key, direction });
   };
 
@@ -65,7 +76,7 @@ export const useProductTableState = (products = [], perPage = DEFAULT_PER_PAGE) 
 
   useEffect(() => {
     if (page !== 1) setPage(1);
-  }, [searchTerm, category, brand]);
+  }, [searchTerm, category, brand, sortValue]);
 
   return {
     searchTerm,
@@ -74,6 +85,7 @@ export const useProductTableState = (products = [], perPage = DEFAULT_PER_PAGE) 
     page,
     perPage,
     sortConfig,
+    sortValue,
     filteredProducts,
     currentProducts,
     totalPages,
@@ -84,5 +96,6 @@ export const useProductTableState = (products = [], perPage = DEFAULT_PER_PAGE) 
     setBrand,
     setPage,
     handleSort,
+    setSortValue,
   };
 };

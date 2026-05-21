@@ -1,0 +1,83 @@
+.product-stats-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+
+  @media (max-width: 1180px) {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-mini-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 78px;
+    padding: 15px 16px;
+    background: rgba($card-bg, 0.62);
+    border: 1px solid rgba($border-color, 0.48);
+    border-radius: $border-radius;
+    box-shadow: none;
+  }
+
+  .stat-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    flex-shrink: 0;
+
+    .MuiSvgIcon-root {
+      color: currentColor;
+      font-size: 23px;
+    }
+  }
+
+  .stat-primary .stat-icon-wrapper {
+    color: $primary-color;
+    background: rgba($primary-color, 0.12);
+  }
+
+  .stat-secondary .stat-icon-wrapper {
+    color: $secondary-color;
+    background: rgba($secondary-color, 0.12);
+  }
+
+  .stat-warning .stat-icon-wrapper {
+    color: #f59e0b;
+    background: rgba(#f59e0b, 0.12);
+  }
+
+  .stat-danger .stat-icon-wrapper {
+    color: $danger-color;
+    background: rgba($danger-color, 0.12);
+  }
+
+  .stat-content {
+    min-width: 0;
+  }
+
+  .stat-value {
+    margin: 0 0 4px;
+    color: $text-color;
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .stat-label {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 0.74rem;
+    font-weight: 750;
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+  }
+}

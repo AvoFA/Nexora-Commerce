@@ -10,7 +10,7 @@ const SortableHeader = ({ label, sortKey, sortConfig, onSort, className = '' }) 
     <span className="product-sort-label">
       {label}
       {sortConfig.key === sortKey && (
-        <span style={{ marginLeft: '4px' }}>
+        <span className="product-sort-direction">
           {sortConfig.direction === 'asc' ? '↑' : '↓'}
         </span>
       )}
@@ -31,7 +31,7 @@ const ProductTable = ({
   onDelete,
   onPageChange,
 }) => (
-  <div className="admin-solid-card">
+  <div className="admin-solid-card product-table-card">
     <div className="mobile-only-view">
       <div className="admin-mobile-products">
         {products.map((product) => (
@@ -47,12 +47,12 @@ const ProductTable = ({
 
     <div className="desktop-only-view">
       <Box sx={{ overflowX: 'auto' }}>
-        <table className="admin-table">
+        <table className="admin-table product-table">
           <thead>
             <tr>
-              <th className="hidden-mobile img-cell">Зображення</th>
+              <th className="img-cell">Фото</th>
               <SortableHeader
-                label="Назва"
+                label="Товар"
                 sortKey="name"
                 sortConfig={sortConfig}
                 onSort={onSort}
@@ -71,7 +71,7 @@ const ProductTable = ({
                 onSort={onSort}
               />
               <SortableHeader
-                label="Наявність (Stock)"
+                label="Залишок"
                 sortKey="stock"
                 sortConfig={sortConfig}
                 onSort={onSort}

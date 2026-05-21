@@ -12,23 +12,11 @@ const ProductPagination = ({
   if (totalPages <= 1) return null;
 
   return (
-    <Box sx={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      mt: 3,
-      mb: 1,
-      px: 1,
-      position: 'relative',
-    }}>
+    <Box className="product-pagination">
       <Typography
         variant="body2"
         color="text.secondary"
-        sx={{
-          position: 'absolute',
-          left: 10,
-          display: { xs: 'none', md: 'block' },
-        }}
+        className="product-pagination-summary"
       >
         Показано {startIndex + 1}-{Math.min(startIndex + perPage, totalProducts)} з {totalProducts}
       </Typography>

@@ -3,7 +3,7 @@ import { Box, FormControl } from '@mui/material';
 import TextField from '@mui/material/TextField';
 
 const ProductPricingStockSection = ({ price, stock, errors, onChange }) => (
-  <Box sx={{ display: 'flex', gap: 2 }}>
+  <Box className="product-form-grid product-form-grid-2">
     <FormControl className="mui-form-control" fullWidth>
       <TextField
         label="Ціна"

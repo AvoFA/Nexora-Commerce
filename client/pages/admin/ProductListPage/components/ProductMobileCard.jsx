@@ -1,42 +1,58 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { formatPrice } from '../../../../utils/formatPrice.js';
+import { getProductStockState } from './productUi.js';
 
-const ProductMobileCard = ({ product, onEdit, onDelete }) => (
-  <div className="admin-product-card">
-    <div className="product-card-header">
-      <img
-        src={product.image || product.imageUrl}
-        alt={product.name}
-        className="mobile-product-image"
-        onError={(event) => {
-          event.target.onerror = null;
-          event.target.src = 'https://placehold.co/60x60?text=No+Image';
-        }}
-      />
-      <div className="product-info">
-        <h4 className="mobile-product-name">{product.name}</h4>
-        <span className="mobile-category">{product.category}</span>
+const ProductMobileCard = ({ product, onEdit, onDelete }) => {
+  const stockState = getProductStockState(product.stock);
+
+  return (
+    <div className="admin-product-card">
+      <div className="product-card-header">
+        <img
+          src={product.image || product.imageUrl}
+          alt={product.name}
+          className="mobile-product-image"
+          onError={(event) => {
+            event.target.onerror = null;
+            event.target.src = 'https://placehold.co/60x60?text=No+Image';
+          }}
+        />
+        <div className="product-info">
+          <h4 className="mobile-product-name">{product.name}</h4>
+          <div className="mobile-product-meta">
+            <span>{product.category}</span>
+            {product.brand && <span>{product.brand}</span>}
+          </div>
+        </div>
       </div>
-    </div>
-    <div className="product-card-details">
-      <div className="mobile-price">{formatPrice(product.price)}</div>
-      <div className="mobile-stock">
-        <span className="stock-badge in-stock">
-          В наявності: {product.stock} шт.
+      <div className="product-card-details">
+        <div className="mobile-price">{formatPrice(product.price)}</div>
+        <span className={`stock-badge stock-${stockState.key}`}>
+          <span>{stockState.label}</span>
+          <small>{stockState.detail}</small>
         </span>
       </div>
+      <div className="product-card-actions">
+        <button
+          type="button"
+          onClick={() => onEdit(product)}
+          className="product-action-button edit"
+        >
+          <Edit fontSize="inherit" />
+          Редагувати
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(product)}
+          className="product-action-button danger"
+        >
+          <Delete fontSize="inherit" />
+          Видалити
+        </button>
+      </div>
     </div>
-    <div className="product-card-actions">
-      <IconButton size="small" onClick={() => onEdit(product)} className="edit-btn">
-        <Edit />
-      </IconButton>
-      <IconButton size="small" onClick={() => onDelete(product)} className="delete-btn">
-        <Delete />
-      </IconButton>
-    </div>
-  </div>
-);
+  );
+};
 
 export default ProductMobileCard;

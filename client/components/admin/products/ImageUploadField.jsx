@@ -1,57 +1,61 @@
 import React, { useState } from 'react';
 import {
-  Box, Typography, Button, TextField, FormControl, IconButton
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
-/**
- * Компонент для загрузки изображений с drag & drop
- */
 const ImageUploadField = ({
   imageUrl,
   onImageChange,
-  label = "Зображення товару"
+  label = 'Зображення товару',
 }) => {
   const [dragActive, setDragActive] = useState(false);
 
-  // Обработчики drag & drop
-  const handleDragOver = (e) => {
-    e.preventDefault();
+  const handleDragOver = (event) => {
+    event.preventDefault();
     setDragActive(true);
   };
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
+  const handleDragLeave = (event) => {
+    event.preventDefault();
     setDragActive(false);
   };
 
-  const handleDrop = (e) => {
-    e.preventDefault();
+  const handleDrop = (event) => {
+    event.preventDefault();
     setDragActive(false);
 
-    const files = e.dataTransfer.files;
+    const files = event.dataTransfer.files;
     if (files && files[0]) {
       const file = files[0];
       if (file.type.startsWith('image/')) {
-        const imageUrl = URL.createObjectURL(file);
-        onImageChange(imageUrl);
+        const nextImageUrl = URL.createObjectURL(file);
+        onImageChange(nextImageUrl);
       }
     }
   };
 
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
-      const imageUrl = URL.createObjectURL(file);
-      onImageChange(imageUrl);
+      const nextImageUrl = URL.createObjectURL(file);
+      onImageChange(nextImageUrl);
     }
   };
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+    <Box className="product-image-field">
+      <Box className="product-form-section-heading">
         <Typography variant="h6">
           {label}
+        </Typography>
+        <Typography variant="body2">
+          Вставте URL або оберіть локальне зображення для попереднього перегляду.
         </Typography>
       </Box>
 
@@ -62,16 +66,10 @@ const ImageUploadField = ({
         onDragLeave={handleDragLeave}
       >
         {imageUrl ? (
-          <Box sx={{ textAlign: 'center', position: 'relative', display: 'inline-block' }}>
+          <Box className="image-preview-wrapper">
             <IconButton
               onClick={() => onImageChange('')}
-              sx={{
-                position: 'absolute',
-                top: 4,
-                right: 4,
-                bgcolor: 'error.main',
-                color: 'white'
-              }}
+              className="image-preview-remove"
               size="small"
             >
               <Close fontSize="small" />
@@ -79,16 +77,10 @@ const ImageUploadField = ({
             <img
               src={imageUrl}
               alt="Preview"
-              style={{
-                maxWidth: '500px',
-                maxHeight: '300px',
-                objectFit: 'contain',
-                borderRadius: '8px',
-                marginBottom: '8px'
-              }}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = 'https://placehold.co/500x300?text=No+Image';
+              className="image-preview"
+              onError={(event) => {
+                event.target.onerror = null;
+                event.target.src = 'https://placehold.co/500x300?text=No+Image';
               }}
             />
             <Typography variant="body2" color="text.secondary">
@@ -96,11 +88,11 @@ const ImageUploadField = ({
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              Перетягніть зображення сюди (Прев'ю)
+          <Box className="image-empty-state">
+            <Typography variant="body1">
+              Перетягніть зображення сюди для превʼю
             </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
+            <Typography variant="body2">
               або
             </Typography>
             <input
@@ -119,13 +111,12 @@ const ImageUploadField = ({
         )}
       </div>
 
-      {/* Текстове поле для вводу URL зображення */}
-      <FormControl className="mui-form-control" sx={{ mt: 2 }} fullWidth>
+      <FormControl className="mui-form-control image-url-control" fullWidth>
         <TextField
-          label="Або введіть URL зображення"
+          label="URL зображення"
           variant="outlined"
           value={imageUrl || ''}
-          onChange={(e) => onImageChange(e.target.value)}
+          onChange={(event) => onImageChange(event.target.value)}
           placeholder="https://example.com/image.jpg"
           fullWidth
         />

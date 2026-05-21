@@ -49,7 +49,7 @@ const ProductFormModal = ({
     >
       <Fade in={open} timeout={250}>
         <Box className="admin-modal-wrapper">
-          <div className="admin-modal-card admin-solid-card">
+          <div className="admin-modal-card admin-solid-card product-form-modal-card">
             <button onClick={onClose} className="admin-modal-close-btn">
               <CloseIcon />
             </button>
@@ -58,6 +58,9 @@ const ProductFormModal = ({
               <Typography variant="h5" component="h2">
                 {editingId ? 'Редагувати товар' : 'Додати новий товар'}
               </Typography>
+              <p className="product-modal-subtitle">
+                Дані товару, ціна, наявність, зображення та характеристики.
+              </p>
             </div>
 
             <div className="admin-modal-content">
@@ -65,7 +68,7 @@ const ProductFormModal = ({
                 id="product-form"
                 component="form"
                 onSubmit={handleSubmit}
-                sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}
+                className="product-form"
               >
                 <ProductBasicInfoSection
                   name={formData.name}

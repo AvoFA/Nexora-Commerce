@@ -24,7 +24,7 @@ const ProductCategoryBrandSection = ({
   onAddNewBrand,
   onNewBrandNameChange,
 }) => (
-  <Box sx={{ display: 'flex', gap: 2 }}>
+  <Box className="product-form-grid product-form-grid-2">
     <FormControl className="mui-form-control" sx={{ flex: 1 }}>
       <InputLabel>Категорія</InputLabel>
       <Select
@@ -62,7 +62,7 @@ const ProductCategoryBrandSection = ({
               autoFocus
             />
           </FormControl>
-          <Box sx={{ display: 'flex', gap: 1, mt: 1.5 }}>
+          <Box className="product-brand-actions">
             <Button
               variant="contained"
               onClick={() => onAddNewBrand(newBrandName)}

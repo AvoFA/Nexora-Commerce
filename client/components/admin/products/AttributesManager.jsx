@@ -1,6 +1,9 @@
 import React from 'react';
 import {
-  Box, Typography, Button, IconButton
+  Box,
+  Button,
+  IconButton,
+  Typography,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -8,57 +11,64 @@ import {
 } from '@mui/icons-material';
 import TextField from '@mui/material/TextField';
 
-/**
- * Компонент для управления характеристиками товара
- */
 const AttributesManager = ({
   attributes,
   onAddAttribute,
   onUpdateAttribute,
-  onRemoveAttribute
+  onRemoveAttribute,
 }) => {
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h6">
-          Характеристики товару
-        </Typography>
-        <Button size="small" startIcon={<AddIcon />} onClick={onAddAttribute}>
+      <Box className="product-attributes-header">
+        <div>
+          <Typography variant="h6">
+            Характеристики товару
+          </Typography>
+          <p>Заповнюються вручну або з атрибутів обраної категорії.</p>
+        </div>
+        <Button
+          size="small"
+          startIcon={<AddIcon />}
+          onClick={onAddAttribute}
+          className="product-add-attribute-btn"
+        >
           Додати
         </Button>
       </Box>
 
-      {attributes.map((attr, index) => (
-        <Box key={index} sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'center' }}>
-          <div className="mui-form-control" style={{ flex: 1 }}>
-            <TextField
-              label="Назва"
-              size="small"
-              value={attr.key}
-              onChange={(e) => onUpdateAttribute(index, 'key', e.target.value)}
-              placeholder="Наприклад: Розмір екрану"
-              fullWidth
-            />
-          </div>
-          <div className="mui-form-control" style={{ flex: 1 }}>
-            <TextField
-              label="Значення"
-              size="small"
-              value={attr.value}
-              onChange={(e) => onUpdateAttribute(index, 'value', e.target.value)}
-              placeholder="Наприклад: 6.1 дюймів"
-              fullWidth
-            />
-          </div>
-          <IconButton
-            color="error"
-            onClick={() => onRemoveAttribute(index)}
-            sx={{ mt: 1 }}
-          >
-            <DeleteOutline />
-          </IconButton>
-        </Box>
-      ))}
+      <div className="product-attributes-list">
+        {attributes.map((attr, index) => (
+          <Box key={index} className="product-attribute-row">
+            <div className="mui-form-control">
+              <TextField
+                label="Назва"
+                size="small"
+                value={attr.key}
+                onChange={(event) => onUpdateAttribute(index, 'key', event.target.value)}
+                placeholder="Наприклад: Розмір екрана"
+                fullWidth
+              />
+            </div>
+            <div className="mui-form-control">
+              <TextField
+                label="Значення"
+                size="small"
+                value={attr.value}
+                onChange={(event) => onUpdateAttribute(index, 'value', event.target.value)}
+                placeholder="Наприклад: 6.1 дюймів"
+                fullWidth
+              />
+            </div>
+            <IconButton
+              color="error"
+              onClick={() => onRemoveAttribute(index)}
+              className="product-remove-attribute-btn"
+            >
+              <DeleteOutline />
+            </IconButton>
+          </Box>
+        ))}
+      </div>
     </Box>
   );
 };

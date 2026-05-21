@@ -7,12 +7,14 @@ const ProductAttributesSection = ({
   onUpdateAttribute,
   onRemoveAttribute,
 }) => (
-  <AttributesManager
-    attributes={attributes}
-    onAddAttribute={onAddAttribute}
-    onUpdateAttribute={onUpdateAttribute}
-    onRemoveAttribute={onRemoveAttribute}
-  />
+  <div className="product-attributes-section">
+    <AttributesManager
+      attributes={attributes}
+      onAddAttribute={onAddAttribute}
+      onUpdateAttribute={onUpdateAttribute}
+      onRemoveAttribute={onRemoveAttribute}
+    />
+  </div>
 );
 
 export default ProductAttributesSection;

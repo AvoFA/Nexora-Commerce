@@ -26,6 +26,7 @@ const ProductListPage = () => {
     updateProduct,
     deleteProduct,
     createBrand,
+    refresh,
   } = useAdminProducts();
 
   const productForm = useProductForm({
@@ -77,6 +78,7 @@ const ProductListPage = () => {
           </Typography>
         </div>
         <button
+          type="button"
           className="btn-primary btn-with-icon"
           onClick={productForm.openCreateModal}
         >
@@ -90,9 +92,17 @@ const ProductListPage = () => {
       <ProductToolbar
         searchTerm={tableState.searchTerm}
         onSearchChange={tableState.setSearchTerm}
+        onSearchClear={() => tableState.setSearchTerm('')}
         category={tableState.category}
         onCategoryChange={tableState.setCategory}
         categories={categories}
+        brand={tableState.brand}
+        onBrandChange={tableState.setBrand}
+        brands={brands}
+        sortValue={tableState.sortValue}
+        onSortChange={tableState.setSortValue}
+        onRefresh={refresh}
+        isLoading={isLoading}
       />
 
       <ProductTable
