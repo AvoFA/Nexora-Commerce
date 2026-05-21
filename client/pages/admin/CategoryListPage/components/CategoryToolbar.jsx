@@ -1,4 +1,3 @@
-import { Add as AddIcon } from "@mui/icons-material";
 import AdminRefreshButton from "../../../../components/admin/common/AdminRefreshButton.jsx";
 import AdminSearchInput from "../../../../components/admin/common/AdminSearchInput.jsx";
 
@@ -6,7 +5,6 @@ const CategoryToolbar = ({
   searchTerm,
   onSearchChange,
   onSearchClear,
-  onAddCategory,
   onRefresh,
   isLoading,
 }) => {
@@ -27,15 +25,6 @@ const CategoryToolbar = ({
             isLoading={isLoading}
             title="Оновити категорії"
           />
-
-          <button
-            type="button"
-            className="btn-primary btn-with-icon"
-            onClick={onAddCategory}
-          >
-            <AddIcon sx={{ width: "20px", height: "20px" }} />
-            Додати категорію
-          </button>
         </div>
       </div>
     </div>

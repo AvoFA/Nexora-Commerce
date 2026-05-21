@@ -2,25 +2,27 @@ import { Category as CategoryIcon, Smartphone } from "@mui/icons-material";
 
 const CategoryStats = ({ categories, totalProducts }) => {
   return (
-    <div className="products-stats-mini category-stats-overview">
-      <div className="stat-mini-card stat-primary">
-        <div className="stat-icon-wrapper">
-          <CategoryIcon sx={{ fontSize: 32 }} />
+    <div className="admin-stats-grid">
+      <div className="admin-stat-card stat-primary">
+        <div className="stat-card-icon">
+          <CategoryIcon />
         </div>
-        <div className="stat-content">
-          <p className="stat-value">{categories.length}</p>
-          <p className="stat-label">Загальна кількість категорій</p>
+        <div className="stat-card-info">
+          <span className="stat-card-label">Категорії</span>
+          <p className="stat-card-subtext">Активні товарні групи</p>
         </div>
+        <div className="stat-card-value">{categories.length}</div>
       </div>
 
-      <div className="stat-mini-card stat-secondary">
-        <div className="stat-icon-wrapper">
-          <Smartphone sx={{ fontSize: 32 }} />
+      <div className="admin-stat-card stat-secondary">
+        <div className="stat-card-icon">
+          <Smartphone />
         </div>
-        <div className="stat-content">
-          <p className="stat-value">{totalProducts}</p>
-          <p className="stat-label">Загальна кількість товарів</p>
+        <div className="stat-card-info">
+          <span className="stat-card-label">Товари</span>
+          <p className="stat-card-subtext">Загальна кількість у категоріях</p>
         </div>
+        <div className="stat-card-value">{totalProducts}</div>
       </div>
     </div>
   );

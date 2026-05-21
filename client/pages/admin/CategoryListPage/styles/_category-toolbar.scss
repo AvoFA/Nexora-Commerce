@@ -1,26 +1,24 @@
+@import '@/styles/variables';
+
 .category-toolbar-card {
-  margin-bottom: 18px;
-  padding: 16px;
+  position: relative;
+  z-index: 8;
+  overflow: visible;
+  margin-bottom: 14px;
+  padding: 12px;
 
   .category-toolbar-layout {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr max-content;
     align-items: center;
-    gap: 14px;
-
-    @media (max-width: 820px) {
-      align-items: stretch;
-      flex-direction: column;
-    }
+    gap: 12px;
+    width: 100%;
   }
 
   .search-input-wrapper {
     position: relative;
-    flex: 1;
-    min-width: 260px;
-
-    @media (max-width: 820px) {
-      min-width: 0;
-    }
+    width: 100%;
+    min-width: 0;
 
     .search-icon-wrapper {
       position: absolute;
@@ -36,23 +34,24 @@
 
     input {
       width: 100%;
-      min-height: 42px;
-      padding: 9px 42px;
+      height: 40px;
+      padding: 8px 40px;
       color: $text-color;
-      background: rgba($bg-color, 0.28);
-      border: 1px solid rgba($border-color, 0.5);
-      border-radius: 10px;
+      background: rgba(15, 23, 41, 0.28) !important;
+      border: 1px solid rgba($border-color, 0.5) !important;
+      border-radius: 9px;
       font-family: inherit;
-      font-size: 0.94rem;
+      font-size: 0.92rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
       &::placeholder {
         color: rgba($text-secondary, 0.72);
       }
 
       &:focus {
-        outline: none;
-        border-color: rgba($primary-color, 0.55);
-        box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
+        outline: none !important;
+        border-color: rgba($primary-color, 0.55) !important;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.12) !important;
       }
     }
 
@@ -87,14 +86,7 @@
   .category-toolbar-actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: 10px;
     flex-shrink: 0;
-
-    @media (max-width: 520px) {
-      align-items: stretch;
-      flex-direction: column;
-    }
   }
 
   .refresh-btn {
@@ -102,19 +94,21 @@
     align-items: center;
     justify-content: center;
     width: 42px;
-    height: 42px;
+    height: 40px;
     padding: 0;
-    color: $text-secondary;
-    background: rgba($surface-color, 0.28);
-    border: 1px solid rgba($border-color, 0.5);
-    border-radius: 10px;
+    outline: none;
+    border-style: solid;
+    background: rgba(29, 38, 56, 0.28) !important;
+    color: $text-secondary !important;
+    border: 1px solid rgba($border-color, 0.5) !important;
+    border-radius: 9px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      color: $primary-color;
-      border-color: rgba($primary-color, 0.45);
-      background: rgba($primary-color, 0.08);
+      color: $primary-color !important;
+      border-color: rgba($primary-color, 0.45) !important;
+      background: rgba($primary-color, 0.08) !important;
     }
 
     &:disabled {
@@ -125,9 +119,6 @@
     &.is-loading svg {
       animation: adminCategoryRefreshSpin 0.8s linear infinite;
     }
-
-    @media (max-width: 520px) {
-      width: 100%;
-    }
   }
 }
+

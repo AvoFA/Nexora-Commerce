@@ -8,9 +8,12 @@ const CategoryAttributesManager = ({
   onRemoveAttribute,
 }) => {
   return (
-    <div className="category-attributes-section">
-      <div className="category-attributes-header">
-        <h3>Характеристики категорії</h3>
+    <div className="category-form-section category-attributes-section">
+      <div className="category-form-section-header">
+        <div className="category-form-section-heading">
+          <h6>Характеристики товарів</h6>
+          <p>Вкажіть назви характеристик за замовчуванням для товарів цієї категорії.</p>
+        </div>
         <Button
           size="small"
           startIcon={<AddIcon />}

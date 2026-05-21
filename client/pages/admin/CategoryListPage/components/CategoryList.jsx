@@ -1,10 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
   Chip,
+  IconButton,
   Typography,
 } from "@mui/material";
 import {
@@ -20,100 +17,108 @@ const getFilledAttributes = (category) =>
     (attr) => attr.key && attr.key.trim() !== "",
   );
 
+const highlightText = (text, search) => {
+  if (!search || !text) return text;
+  const parts = text.split(new RegExp(`(${search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')})`, 'gi'));
+  return parts.map((part, index) => 
+    part.toLowerCase() === search.toLowerCase() ? (
+      <mark key={index} className="search-highlight">{part}</mark>
+    ) : part
+  );
+};
+
 const CategoryListEmpty = ({ children }) => (
   <Typography className="category-list-empty">
     {children}
   </Typography>
 );
 
-const CategoryDesktopItem = ({ category, onEdit, onDelete }) => {
+const CategoryDesktopItem = ({ category, onEdit, onDelete, searchTerm }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const filledAttributes = getFilledAttributes(category);
 
   return (
-    <Accordion
-      key={category.id}
-      className="category-accordion"
-      disableGutters
-    >
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon className="category-accordion-expand-icon" />}
-        className="category-accordion-summary"
-      >
-        <div className="category-accordion-main">
-          {React.cloneElement(getCategoryIcon(category.icon), {
-            className: "category-accordion-icon",
-          })}
-
-          <div className="category-accordion-info">
-            <Typography variant="h6" className="category-accordion-title">
-              {category.name}
-            </Typography>
-            <Typography variant="body2" className="category-accordion-description">
-              {category.description || "Немає опису"}
-            </Typography>
+    <div className={`category-item-wrapper ${isExpanded ? "is-expanded" : ""}`}>
+      <div className="category-item-row">
+        <div className="category-item-main">
+          <div className="category-item-icon-wrapper">
+            {React.cloneElement(getCategoryIcon(category.icon), {
+              className: "category-item-icon",
+            })}
           </div>
 
-          <Chip
-            label={`${category.count || 0} товарів`}
-            size="small"
-            className="category-count-chip"
-          />
+          <div className="category-item-info">
+            <Typography className="category-item-name">
+              {highlightText(category.name, searchTerm)}
+            </Typography>
+            {category.description && (
+              <Typography className="category-item-description">
+                {highlightText(category.description, searchTerm)}
+              </Typography>
+            )}
+          </div>
         </div>
-      </AccordionSummary>
 
-      <AccordionDetails className="category-accordion-details">
-        <div className="category-detail-actions">
-          <Button
-            startIcon={<Delete />}
+        <div className="category-item-meta">
+          <span className="category-products-badge">
+            {category.count || 0} товарів
+          </span>
+          {filledAttributes.length > 0 ? (
+            <button
+              type="button"
+              className="category-attrs-toggle"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {filledAttributes.length} характеристик
+              <ExpandMoreIcon className={`toggle-chevron ${isExpanded ? "rotated" : ""}`} />
+            </button>
+          ) : (
+            <span className="category-attrs-empty">
+              Немає характеристик
+            </span>
+          )}
+        </div>
+
+        <div className="category-item-actions">
+          <IconButton
             size="small"
-            variant="outlined"
-            onClick={() => onDelete(category)}
-            className="category-action-button danger"
-          >
-            Видалити
-          </Button>
-          <Button
-            startIcon={<Edit />}
-            size="small"
-            variant="outlined"
             color="primary"
             onClick={() => onEdit(category)}
-            className="category-action-button"
+            title="Редагувати"
+            className="action-btn edit-btn"
           >
-            Редагувати
-          </Button>
+            <Edit fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => onDelete(category)}
+            title="Видалити"
+            className="action-btn delete-btn"
+          >
+            <Delete fontSize="small" />
+          </IconButton>
         </div>
+      </div>
 
-        {filledAttributes.length > 0 && (
-          <div className="category-attributes-preview">
-            <Typography variant="body2" className="category-attributes-preview-title">
-              Характеристики ({filledAttributes.length})
-            </Typography>
-            <div className="category-attributes-chips">
-              {filledAttributes.slice(0, 5).map((attr, index) => (
-                <Chip
-                  key={`${attr.key}-${index}`}
-                  size="small"
-                  label={attr.key}
-                  variant="outlined"
-                  color="primary"
-                  className="category-attribute-chip"
-                />
-              ))}
-              {filledAttributes.length > 5 && (
-                <Chip
-                  size="small"
-                  label={`+${filledAttributes.length - 5}`}
-                  variant="outlined"
-                  color="default"
-                  className="category-attribute-chip more"
-                />
-              )}
-            </div>
+      {isExpanded && filledAttributes.length > 0 && (
+        <div className="category-expanded-panel">
+          <div className="expanded-panel-header">
+            Характеристики для автозаповнення товарів:
           </div>
-        )}
-      </AccordionDetails>
-    </Accordion>
+          <div className="category-attributes-chips">
+            {filledAttributes.map((attr, index) => (
+              <Chip
+                key={`${attr.key}-${index}`}
+                size="small"
+                label={attr.key}
+                className="category-attribute-chip"
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -158,14 +163,17 @@ const CategoryList = ({
         ) : filteredCategories.length === 0 ? (
           <CategoryListEmpty>{emptyText}</CategoryListEmpty>
         ) : (
-          filteredCategories.map((category) => (
-            <CategoryDesktopItem
-              key={category.id}
-              category={category}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))
+          <div className="admin-solid-card category-list-card">
+            {filteredCategories.map((category) => (
+              <CategoryDesktopItem
+                key={category.id}
+                category={category}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                searchTerm={searchTerm}
+              />
+            ))}
+          </div>
         )}
       </div>
     </>

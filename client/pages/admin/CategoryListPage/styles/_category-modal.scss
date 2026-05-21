@@ -1,3 +1,5 @@
+@import '@/styles/variables';
+
 .category-form-modal-card {
   width: 640px;
 
@@ -14,37 +16,87 @@
   }
 }
 
+.category-modal-subtitle {
+  font-size: 0.84rem;
+  color: $text-secondary;
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
 .category-form {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.category-attributes-section {
+.category-form-section {
+  display: flex;
+  flex-direction: column;
   padding: 16px;
-  background: rgba($bg-color, 0.18);
+  background: rgba(15, 23, 41, 0.18);
   border: 1px solid rgba($border-color, 0.45);
   border-radius: 12px;
+
+  &.category-attributes-section {
+    background: rgba(15, 23, 41, 0.18);
+    border-color: rgba($border-color, 0.45);
+  }
 }
 
-.category-attributes-header {
+.category-form-section-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   margin-bottom: 14px;
 
-  h3 {
-    margin: 0;
-    color: $text-color;
+  .category-form-section-heading {
+    margin-bottom: 0;
+  }
+}
+
+.category-form-section-heading {
+  margin-bottom: 14px;
+
+  h6 {
+    margin: 0 0 4px;
     font-size: 0.98rem;
     font-weight: 750;
+    color: $text-color;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.82rem;
+    color: rgba($text-secondary, 0.78);
+    line-height: 1.4;
+  }
+}
+
+.category-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 580px) {
+    grid-template-columns: 1fr;
   }
 }
 
 .category-add-attribute-btn {
   text-transform: none !important;
   font-weight: 700 !important;
+  border-radius: 8px !important;
+  font-size: 0.78rem !important;
+  padding: 4px 12px !important;
+  color: $primary-color !important;
+  background: rgba($primary-color, 0.06) !important;
+  border: 1px solid rgba($primary-color, 0.15) !important;
+
+  &:hover {
+    background: rgba($primary-color, 0.12) !important;
+    border-color: rgba($primary-color, 0.3) !important;
+  }
 }
 
 .category-attributes-list {
@@ -67,4 +119,22 @@
 .category-remove-attribute-btn {
   width: 38px;
   height: 38px;
+  border-radius: 8px !important;
+  color: rgba($danger-color, 0.75) !important;
+  background: rgba($danger-color, 0.05) !important;
+  border: 1px solid rgba($danger-color, 0.1) !important;
+
+  &:hover {
+    color: $danger-color !important;
+    background: rgba($danger-color, 0.12) !important;
+    border-color: rgba($danger-color, 0.25) !important;
+  }
+
+  &.Mui-disabled {
+    opacity: 0.35;
+    color: rgba($text-secondary, 0.5) !important;
+    background: transparent !important;
+    border-color: rgba($border-color, 0.3) !important;
+  }
 }
+

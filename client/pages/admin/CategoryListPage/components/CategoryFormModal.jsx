@@ -36,9 +36,12 @@ const CategoryFormModal = ({
             </button>
 
             <div className="admin-modal-header">
-              <Typography variant="h5">
+              <Typography variant="h5" component="h2">
                 {editingId ? "Редагувати категорію" : "Додати категорію"}
               </Typography>
+              <p className="category-modal-subtitle">
+                Вкажіть назву, ідентифікатор та характеристики за замовчуванням для цієї категорії товарів.
+              </p>
             </div>
 
             <div className="admin-modal-content">

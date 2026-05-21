@@ -1,143 +1,208 @@
+@import '@/styles/variables';
+
 .category-list-empty {
   padding: 36px 16px;
   color: $text-secondary;
   text-align: center;
+  font-size: 0.9rem;
 }
 
-.category-accordion {
-  margin-bottom: 10px;
-  background: rgba($card-bg, 0.58) !important;
-  border: 1px solid rgba($border-color, 0.5);
-  border-radius: 12px !important;
-  box-shadow: none !important;
+.category-list-card {
+  display: flex;
+  flex-direction: column;
+  background: rgba($card-bg, 0.45);
+  border: 1px solid rgba($border-color, 0.35);
+  border-radius: 12px;
   overflow: hidden;
+}
 
-  &::before {
-    display: none;
+.category-item-wrapper {
+  border-bottom: 1px solid rgba($border-color, 0.18);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:last-child {
+    border-bottom: none;
   }
 
   &:hover {
-    border-color: rgba($primary-color, 0.32);
+    background: rgba(255, 255, 255, 0.015);
+    box-shadow: inset 3px 0 0 $primary-color;
   }
 
-  .category-accordion-summary {
-    min-height: 64px;
-    padding: 0 16px;
-
-    .MuiAccordionSummary-content {
-      margin: 10px 0;
-      min-width: 0;
-    }
-
-    &.Mui-expanded {
-      min-height: 64px;
-
-      .MuiAccordionSummary-content {
-        margin: 10px 0;
-      }
-    }
-  }
-
-  .category-accordion-expand-icon {
-    color: $text-secondary;
-    font-size: 22px;
+  &.is-expanded {
+    background: rgba(255, 255, 255, 0.025);
+    box-shadow: inset 3px 0 0 $primary-color;
   }
 }
 
-.category-accordion-main {
-  display: grid;
-  grid-template-columns: 36px minmax(0, 1fr) max-content;
+.category-item-row {
+  display: flex;
   align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding-right: 10px;
-
-  @media (max-width: 620px) {
-    grid-template-columns: 34px minmax(0, 1fr);
-
-    .category-count-chip {
-      grid-column: 2;
-      justify-self: flex-start;
-      margin-top: 4px;
-    }
-  }
+  justify-content: space-between;
+  padding: 10px 14px;
+  gap: 16px;
 }
 
-.category-accordion-icon {
-  width: 36px !important;
-  height: 36px !important;
-  padding: 8px;
-  color: $primary-color;
-  background: rgba($primary-color, 0.12);
-  border: 1px solid rgba($primary-color, 0.22);
-  border-radius: 10px;
-}
-
-.category-accordion-info {
+.category-item-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
   min-width: 0;
 }
 
-.category-accordion-title {
-  margin: 0;
-  color: $text-color;
-  font-size: 1rem !important;
-  font-weight: 750 !important;
-  line-height: 1.2;
-}
-
-.category-accordion-description {
-  margin-top: 3px !important;
-  color: rgba($text-secondary, 0.78) !important;
-  font-size: 0.84rem !important;
-  line-height: 1.35;
-}
-
-.category-count-chip {
-  height: 26px !important;
-  color: $primary-color !important;
-  background: rgba($primary-color, 0.1) !important;
-  border: 1px solid rgba($primary-color, 0.22);
-  font-weight: 750 !important;
-}
-
-.category-accordion-details {
-  padding: 12px 16px 16px !important;
-  background: rgba($bg-color, 0.16);
-  border-top: 1px solid rgba($border-color, 0.38);
-}
-
-.category-detail-actions {
+.category-item-icon-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 12px;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba($primary-color, 0.08);
+  border: 1px solid rgba($primary-color, 0.15);
+  border-radius: 8px;
+  color: $primary-color;
+  flex-shrink: 0;
+
+  .category-item-icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
 }
 
-.category-action-button {
-  border-radius: 8px !important;
-  text-transform: none !important;
-  font-weight: 700 !important;
+.category-item-info {
+  flex: 1;
+  min-width: 0;
+}
 
-  &.danger {
-    color: $danger-color !important;
-    border-color: rgba($danger-color, 0.35) !important;
+.category-item-name {
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+  color: $text-color;
+  margin: 0 !important;
+}
 
-    &:hover {
-      background: rgba($danger-color, 0.08) !important;
-      border-color: rgba($danger-color, 0.55) !important;
+.category-item-description {
+  font-size: 0.8rem !important;
+  color: rgba($text-secondary, 0.75) !important;
+  margin-top: 1px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.category-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.category-products-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $primary-color;
+  background: rgba($primary-color, 0.08);
+  border: 1px solid rgba($primary-color, 0.18);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.category-attrs-toggle {
+  background: rgba($surface-color, 0.15);
+  border: 1px solid rgba($border-color, 0.45);
+  color: $text-secondary;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.4);
+    color: $primary-color;
+    background: rgba($primary-color, 0.06);
+  }
+
+  .toggle-chevron {
+    font-size: 1.15rem;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.rotated {
+      transform: rotate(180deg);
     }
   }
 }
 
-.category-attributes-preview {
-  padding-top: 2px;
+.category-attrs-empty {
+  font-size: 0.78rem;
+  color: rgba($text-secondary, 0.65);
+  padding: 3px 10px;
+  border: 1px dashed rgba($border-color, 0.4);
+  border-radius: 6px;
+  white-space: nowrap;
 }
 
-.category-attributes-preview-title {
-  margin-bottom: 8px !important;
-  color: $text-secondary !important;
-  font-size: 0.82rem !important;
-  font-weight: 750 !important;
+.category-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+
+    svg {
+      font-size: 18px !important;
+    }
+
+    &.edit-btn {
+      color: $primary-color;
+      background: rgba($primary-color, 0.06);
+      border-color: rgba($primary-color, 0.12);
+
+      &:hover {
+        background: rgba($primary-color, 0.12);
+        border-color: rgba($primary-color, 0.28);
+      }
+    }
+
+    &.delete-btn {
+      color: $danger-color;
+      background: rgba($danger-color, 0.06);
+      border-color: rgba($danger-color, 0.12);
+
+      &:hover {
+        background: rgba($danger-color, 0.12);
+        border-color: rgba($danger-color, 0.28);
+      }
+    }
+  }
+}
+
+.category-expanded-panel {
+  padding: 14px 18px;
+  background: rgba($bg-color, 0.15);
+  border-top: 1px dashed rgba($border-color, 0.25);
+  animation: adminFadeIn 0.2s ease-out;
+
+  .expanded-panel-header {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: $text-secondary;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
 }
 
 .category-attributes-chips {
@@ -147,18 +212,16 @@
 }
 
 .category-attribute-chip {
-  height: 24px !important;
-  color: rgba($text-color, 0.82) !important;
-  border-color: rgba($border-color, 0.7) !important;
-  background: rgba($surface-color, 0.22) !important;
+  background: rgba($surface-color, 0.06) !important;
+  border: 1px solid rgba($border-color, 0.5) !important;
+  color: $text-color !important;
   font-size: 0.74rem !important;
-
-  &.more {
-    color: $text-secondary !important;
-    opacity: 0.85;
-  }
+  font-weight: 500 !important;
+  height: 24px !important;
+  border-radius: 6px !important;
 }
 
+// Mobile overrides
 .admin-mobile-categories {
   display: flex;
   flex-direction: column;
@@ -166,79 +229,148 @@
 }
 
 .admin-category-card {
+  background: rgba($card-bg, 0.45);
+  border: 1px solid rgba($border-color, 0.35);
+  border-radius: 12px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background: rgba($card-bg, 0.58);
-  border: 1px solid rgba($border-color, 0.5);
-  border-radius: 12px;
+  gap: 10px;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: rgba($primary-color, 0.25);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  &.is-expanded {
+    background: rgba($primary-color, 0.02);
+    box-shadow: inset 3px 0 0 $primary-color;
+  }
 
   .category-card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    position: relative;
+    width: 100%;
   }
 
-  .category-icon {
+  .category-icon-wrapper {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba($primary-color, 0.08);
+    border: 1px solid rgba($primary-color, 0.15);
+    border-radius: 8px;
+    color: $primary-color;
     flex-shrink: 0;
-  }
 
-  .category-card-icon-svg {
-    width: 44px !important;
-    height: 44px !important;
-    padding: 10px;
-    color: $primary-color !important;
-    background: rgba($primary-color, 0.12);
-    border: 1px solid rgba($primary-color, 0.22);
-    border-radius: 12px;
+    .category-card-icon {
+      width: 18px !important;
+      height: 18px !important;
+    }
   }
 
   .category-info {
+    flex: 1;
     min-width: 0;
+    padding-right: 74px;
   }
 
   .mobile-category-name {
-    margin: 0 0 4px;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
     color: $text-color;
-    font-size: 1rem;
-    font-weight: 750;
+    margin: 0 !important;
   }
 
   .mobile-category-description {
-    margin: 0;
-    color: rgba($text-secondary, 0.78);
-    font-size: 0.84rem;
-    line-height: 1.35;
-  }
-
-  .category-card-stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid rgba($border-color, 0.38);
-  }
-
-  .category-products-count,
-  .category-attributes-count {
-    padding: 4px 9px;
-    color: $text-secondary;
-    background: rgba($surface-color, 0.22);
-    border: 1px solid rgba($border-color, 0.55);
-    border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: 0.78rem !important;
+    color: rgba($text-secondary, 0.75) !important;
+    margin-top: 1px !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .category-card-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 0 !important;
 
-    @media (max-width: 420px) {
-      grid-template-columns: 1fr;
+    .action-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+
+      svg {
+        font-size: 17px !important;
+      }
+
+      &.MuiIconButton-colorPrimary {
+        color: $primary-color;
+        background: rgba($primary-color, 0.05);
+        border-color: rgba($primary-color, 0.08);
+        &:hover {
+          background: rgba($primary-color, 0.1);
+          border-color: rgba($primary-color, 0.2);
+        }
+      }
+
+      &.MuiIconButton-colorError {
+        color: $danger-color;
+        background: rgba($danger-color, 0.05);
+        border-color: rgba($danger-color, 0.08);
+        &:hover {
+          background: rgba($danger-color, 0.1);
+          border-color: rgba($danger-color, 0.2);
+        }
+      }
     }
+  }
+
+  .category-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid rgba($border-color, 0.25);
+    gap: 12px;
+    margin-top: 0;
+  }
+
+  .category-products-badge {
+    font-size: 0.76rem;
+    padding: 2px 8px;
+    border-radius: 6px !important;
+  }
+
+  .category-attrs-toggle {
+    font-size: 0.76rem;
+    padding: 2px 8px;
+    border-radius: 6px !important;
+  }
+
+  .category-attrs-empty {
+    font-size: 0.76rem;
+    padding: 2px 8px;
+    border-radius: 6px !important;
+  }
+
+  .category-expanded-panel {
+    padding: 8px 0 0;
+    border-top: 1px dashed rgba($border-color, 0.25);
+    background: transparent;
   }
 }

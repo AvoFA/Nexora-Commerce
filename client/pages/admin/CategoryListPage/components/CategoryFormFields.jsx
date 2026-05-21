@@ -10,25 +10,34 @@ const CategoryFormFields = ({
 }) => {
   return (
     <>
-      <FormControl className="mui-form-control" fullWidth>
-        <TextField
-          label="Назва категорії"
-          value={formData.description}
-          onChange={(event) => onFieldChange("description", event.target.value)}
-          helperText="напр. Смартфони"
-          required
-        />
-      </FormControl>
+      <div className="category-form-section">
+        <div className="category-form-section-heading">
+          <h6>Основна інформація</h6>
+          <p>Вкажіть назву категорії та її унікальний ідентифікатор в системі.</p>
+        </div>
 
-      <FormControl className="mui-form-control" fullWidth>
-        <TextField
-          label="ID (Англійською)"
-          value={formData.name}
-          onChange={(event) => onFieldChange("name", event.target.value)}
-          helperText="Унікальний ідентифікатор (напр. phones)"
-          required
-        />
-      </FormControl>
+        <div className="category-form-grid">
+          <FormControl className="mui-form-control" fullWidth>
+            <TextField
+              label="Назва категорії"
+              value={formData.description}
+              onChange={(event) => onFieldChange("description", event.target.value)}
+              helperText="напр. Смартфони"
+              required
+            />
+          </FormControl>
+
+          <FormControl className="mui-form-control" fullWidth>
+            <TextField
+              label="Системний ID (англійською)"
+              value={formData.name}
+              onChange={(event) => onFieldChange("name", event.target.value)}
+              helperText="Унікальний ідентифікатор (напр. phones)"
+              required
+            />
+          </FormControl>
+        </div>
+      </div>
 
       <CategoryAttributesManager
         attributes={formData.defaultAttributes}

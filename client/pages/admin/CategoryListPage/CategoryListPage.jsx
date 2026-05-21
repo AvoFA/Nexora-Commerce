@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { WarningAmber } from "@mui/icons-material";
+import { Add as AddIcon, WarningAmber } from "@mui/icons-material";
 import { toast } from "sonner";
 import ConfirmModal from "../../../components/common/ConfirmModal/ConfirmModal.jsx";
 import "../../../styles/_common.scss";
@@ -10,7 +10,6 @@ import "./CategoryListPage.scss";
 
 import CategoryFormModal from "./components/CategoryFormModal.jsx";
 import CategoryList from "./components/CategoryList.jsx";
-import CategoryOverview from "./components/CategoryOverview.jsx";
 import CategoryStats from "./components/CategoryStats.jsx";
 import CategoryToolbar from "./components/CategoryToolbar.jsx";
 import { useAdminCategories } from "./hooks/useAdminCategories.js";
@@ -67,17 +66,25 @@ const CategoryListPage = () => {
   };
 
   return (
-    <Box>
-      <div className="admin-page-header">
+    <Box className="admin-categories-page">
+      <Box className="admin-page-header">
         <div className="header-title-wrapper">
           <Typography variant="h2" component="h2">
-            Категорії
+            Керування категоріями
           </Typography>
           <Typography variant="body2" className="subtitle">
-            Керування категоріями товарів
+            Налаштування категорій товарів та їх характеристик
           </Typography>
         </div>
-      </div>
+        <button
+          type="button"
+          className="btn-primary btn-with-icon"
+          onClick={categoryForm.openCreateModal}
+        >
+          <AddIcon />
+          Додати категорію
+        </button>
+      </Box>
 
       <CategoryStats categories={categories} totalProducts={totalProducts} />
 
@@ -85,7 +92,6 @@ const CategoryListPage = () => {
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onSearchClear={() => setSearchTerm("")}
-        onAddCategory={categoryForm.openCreateModal}
         onRefresh={loadCategories}
         isLoading={loading}
       />
@@ -112,10 +118,7 @@ const CategoryListPage = () => {
         onDelete={handleDeleteRequest}
       />
 
-      <CategoryOverview
-        categories={categories}
-        totalProducts={totalProducts}
-      />
+
 
       <ConfirmModal
         isOpen={Boolean(categoryToDelete)}
