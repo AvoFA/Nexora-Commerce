@@ -1,6 +1,6 @@
 @import "../../../styles/variables";
 
-.admin-pagination-container {
+.custom-pagination-container {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -9,183 +9,255 @@
   border-top: 1px solid $border-color;
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
-  gap: 16px;
+  gap: 12px;
 
-  @media (max-width: 768px) {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 12px;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 10px;
+    padding: 14px 16px;
 
-    .pagination-left,
-    .pagination-center,
-    .pagination-right {
-      width: 100%;
+    .pagination-left {
       justify-content: center;
-      display: flex;
+    }
+
+    .pagination-right {
+      justify-content: center;
     }
   }
 
-  .pagination-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.82rem;
+  @media (max-width: 560px) {
+    .pagination-btn--nav span {
+      display: none;
+    }
+  }
+}
+
+// ── Left ──────────────────────────────────────────────────────────────
+.pagination-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+
+  .pagination-meta-label {
+    font-size: 0.8rem;
     color: $text-secondary;
-    justify-content: flex-start;
+    white-space: nowrap;
+  }
 
-    .limit-select-wrapper {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
+  .pagination-total-info {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    white-space: nowrap;
 
-      &.is-open {
-        select {
-          border-color: rgba($primary-color, 0.5);
-          box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
-          background-color: rgba(255, 255, 255, 0.08);
+    strong {
+      color: $text-color;
+      font-weight: 600;
+    }
+  }
 
-          &:hover {
-            border-color: rgba($primary-color, 0.7);
-            background-color: rgba(255, 255, 255, 0.1);
+  .limit-select-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
 
-            & + .select-chevron {
-              color: $primary-color;
-              opacity: 1;
-            }
-          }
-        }
-
-        .select-chevron {
-          transform: rotate(180deg);
-          color: $primary-color;
-          opacity: 1;
-        }
-      }
-
+    &.is-open {
       select {
-        background-color: rgba(255, 255, 255, 0.04);
-        border: 1px solid $border-color;
-        border-radius: 6px;
-        color: $text-color;
-        font-size: 0.8rem;
-        font-weight: 600;
-        padding: 4px 24px 4px 8px;
-        height: 28px;
-        min-width: 56px;
-        cursor: pointer;
-        outline: none;
-        appearance: none;
-        transition: all 0.2s ease;
-        font-family: inherit;
-        color-scheme: dark;
-        text-align: left;
-        text-align-last: left;
-
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.08);
-          border-color: rgba(255, 255, 255, 0.16);
-
-          & + .select-chevron {
-            color: $text-color;
-            opacity: 0.95;
-          }
-        }
-
-        &:focus-visible {
-          border-color: rgba($primary-color, 0.5);
-          box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
-          background-color: rgba(255, 255, 255, 0.08);
-        }
-
-        option {
-          background-color: $card-bg;
-          color: $text-color;
-          font-family: inherit;
-          text-align: left;
-        }
+        border-color: rgba($primary-color, 0.5);
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
+        background-color: rgba(255, 255, 255, 0.08);
       }
 
       .select-chevron {
-        position: absolute;
-        right: 6px;
-        color: $text-secondary;
-        font-size: 0.85rem;
-        pointer-events: none;
-        opacity: 0.7;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease, opacity 0.15s ease;
+        transform: rotate(180deg);
+        color: $primary-color;
+        opacity: 1;
       }
     }
-  }
 
-  .pagination-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    select {
+      background-color: rgba(255, 255, 255, 0.04);
+      border: 1px solid $border-color;
+      border-radius: 6px;
+      color: $text-color;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 4px 24px 4px 8px;
+      height: 28px;
+      min-width: 56px;
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      color-scheme: dark;
 
-    .pagination-actions {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+
+      &:focus-visible {
+        border-color: rgba($primary-color, 0.5);
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.15);
+        background-color: rgba(255, 255, 255, 0.08);
+      }
+
+      option {
+        background-color: $card-bg;
+        color: $text-color;
+        font-family: inherit;
+      }
+    }
+
+    .select-chevron {
+      position: absolute;
+      right: 6px;
+      color: $text-secondary;
+      pointer-events: none;
+      opacity: 0.7;
       display: flex;
       align-items: center;
-      gap: 8px;
-
-      .pagination-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        height: 32px;
-        padding: 0 14px;
-        border-radius: 6px;
-        background-color: rgba(255, 255, 255, 0.03);
-        border: 1px solid $border-color;
-        color: $text-color;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-family: inherit;
-        font-weight: 600;
-        font-size: 0.8rem;
-
-        &:hover:not(:disabled) {
-          background-color: rgba(255, 255, 255, 0.08);
-          border-color: rgba($primary-color, 0.3);
-          color: #ffffff;
-        }
-
-        &:disabled {
-          opacity: 0.3;
-          cursor: not-allowed;
-          background-color: transparent;
-          border-color: rgba(255, 255, 255, 0.03);
-          color: $text-secondary;
-        }
-
-        svg {
-          font-size: 1rem;
-        }
-      }
+      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease;
     }
   }
+}
 
-  .pagination-right {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 16px;
+// ── Center ────────────────────────────────────────────────────────────
+.pagination-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .pagination-info {
-      font-size: 0.82rem;
-      color: $text-secondary;
-      font-weight: 500;
-      white-space: nowrap;
+.pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 
-      .total-count {
-        color: $text-color;
-        font-weight: 600;
-      }
+// Prev / Next buttons (with text)
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid $border-color;
+  color: $text-color;
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
+
+  svg {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba($primary-color, 0.35);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.28;
+    cursor: not-allowed;
+    background-color: transparent;
+    border-color: rgba(255, 255, 255, 0.04);
+    color: $text-secondary;
+  }
+
+  // Icon-only (first/last)
+  &--icon {
+    padding: 0 6px;
+    width: 32px;
+  }
+}
+
+// Page number buttons
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin: 0 4px;
+
+  @media (max-width: 480px) {
+    gap: 2px;
+    margin: 0 2px;
+  }
+}
+
+.pagination-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 6px;
+  border-radius: 6px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.82rem;
+
+  &:hover:not(:disabled):not(.is-active) {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: rgba($border-color, 0.8);
+    color: $text-color;
+  }
+
+  &.is-active {
+    background-color: rgba($primary-color, 0.15);
+    border-color: rgba($primary-color, 0.45);
+    color: $primary-color;
+    cursor: default;
+    font-weight: 700;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.pagination-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 32px;
+  font-size: 0.85rem;
+  color: $text-secondary;
+  user-select: none;
+  letter-spacing: 0.05em;
+}
+
+// ── Right ─────────────────────────────────────────────────────────────
+.pagination-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .pagination-page-info {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    white-space: nowrap;
+
+    strong {
+      color: $text-color;
+      font-weight: 600;
     }
   }
 }

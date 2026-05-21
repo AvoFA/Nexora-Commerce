@@ -1,40 +1,25 @@
 import React from 'react';
-import { Box, Pagination, Typography } from '@mui/material';
+import Pagination from '../../../../components/common/Pagination/Pagination.jsx';
 
 const ProductPagination = ({
   page,
   perPage,
   totalPages,
   totalProducts,
-  startIndex,
   onPageChange,
-}) => {
-  if (totalPages <= 1) return null;
-
-  return (
-    <Box className="product-pagination">
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        className="product-pagination-summary"
-      >
-        Показано {startIndex + 1}-{Math.min(startIndex + perPage, totalProducts)} з {totalProducts}
-      </Typography>
-
-      <Pagination
-        count={totalPages}
-        page={page}
-        onChange={(event, value) => {
-          onPageChange(value);
-          window.scrollTo(0, 0);
-        }}
-        color="primary"
-        shape="rounded"
-        showFirstButton
-        showLastButton
-      />
-    </Box>
-  );
-};
+  onPerPageChange,
+}) => (
+  <Pagination
+    page={page}
+    totalPages={totalPages}
+    total={totalProducts}
+    limit={perPage}
+    limitOptions={[10, 20, 50]}
+    itemLabel="товарів"
+    onPageChange={onPageChange}
+    onLimitChange={onPerPageChange}
+    showLimitSelector={!!onPerPageChange}
+  />
+);
 
 export default ProductPagination;

@@ -9,7 +9,6 @@ import {
   InputAdornment,
   Button,
   Box,
-  Pagination,
   Typography,
   Chip,
 } from "@mui/material";
@@ -22,6 +21,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
+import Pagination from "../../components/common/Pagination/Pagination.jsx";
 import "./CatalogPage.scss";
 
 import CatalogToolbar from "./CatalogToolbar.jsx";
@@ -61,7 +61,7 @@ const CatalogPage = () => {
 
   // State для пагинації
   const [page, setPage] = useState(1);
-  const perPage = 12; // Кількість товарів на сторінці
+  const [perPage, setPerPage] = useState(12); // Кількість товарів на сторінці
 
   const sortOptions = [
     { value: "priceAsc", label: "Від дешевих до дорогих" },
@@ -457,48 +457,23 @@ const CatalogPage = () => {
 
               {/* Пагінація */}
               {totalPages > 1 && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    mt: 4,
-                    mb: 2,
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  total={filteredProducts.length}
+                  limit={perPage}
+                  itemLabel="товарів"
+                  onPageChange={(p) => {
+                    setPage(p);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
-                >
-                  {/* Текст зліва */}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      position: "absolute",
-                      left: 0,
-                      display: { xs: "none", md: "block" },
-                      color: "rgba(255, 255, 255, 0.6)",
-                    }}
-                  >
-                    Показано {startIndex + 1}-
-                    {Math.min(startIndex + perPage, filteredProducts.length)} із{" "}
-                    {filteredProducts.length}
-                  </Typography>
-
-                  {/* Пагинація по центру */}
-                  <Pagination
-                    count={totalPages}
-                    page={page}
-                    onChange={(e, value) => {
-                      setPage(value);
-                      window.scrollTo(0, 0);
-                    }}
-                    color="primary"
-                    shape="rounded"
-                    showFirstButton
-                    showLastButton
-                    sx={{
-                      mx: "auto",
-                    }}
-                    aria-label="Catalog pagination"
-                  />
-                </Box>
+                  onLimitChange={(l) => {
+                    setPerPage(l);
+                    setPage(1);
+                  }}
+                  isLoading={isLoading}
+                  className="catalog-pagination"
+                />
               )}
             </>
           ) : (

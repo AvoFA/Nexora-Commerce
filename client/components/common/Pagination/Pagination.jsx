@@ -1,10 +1,45 @@
 import React, { useState } from "react";
 import {
   ExpandMore as ExpandMoreIcon,
-  ArrowBack as ArrowBackIcon,
-  ArrowForward as ArrowForwardIcon,
+  FirstPage as FirstPageIcon,
+  LastPage as LastPageIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
 } from "@mui/icons-material";
 import "./Pagination.scss";
+
+/**
+ * Generates the array of page numbers / ellipsis strings to render.
+ * E.g. [1, '...', 4, 5, 6, '...', 23]
+ */
+const buildPages = (current, total) => {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  const pages = [];
+  const addPage = (p) => pages.push(p);
+  const addDots = () => {
+    if (pages[pages.length - 1] !== "...") pages.push("...");
+  };
+
+  addPage(1);
+
+  if (current <= 4) {
+    for (let i = 2; i <= Math.min(5, total - 1); i++) addPage(i);
+    addDots();
+  } else if (current >= total - 3) {
+    addDots();
+    for (let i = Math.max(total - 4, 2); i <= total - 1; i++) addPage(i);
+  } else {
+    addDots();
+    for (let i = current - 1; i <= current + 1; i++) addPage(i);
+    addDots();
+  }
+
+  addPage(total);
+  return pages;
+};
 
 const Pagination = ({
   page,
@@ -18,19 +53,25 @@ const Pagination = ({
   isLoading = false,
   className = "",
   showLimitSelector = true,
-  prevLabel = "Попередня",
-  nextLabel = "Наступна",
 }) => {
   const [isLimitOpen, setIsLimitOpen] = useState(false);
 
   if (totalPages <= 0 || total <= 0) return null;
 
+  const pages = buildPages(page, totalPages);
+
+  const go = (p) => {
+    if (p < 1 || p > totalPages || p === page || isLoading) return;
+    onPageChange?.(p);
+  };
+
   return (
-    <div className={`admin-pagination-container ${className}`}>
+    <div className={`custom-pagination-container ${className}`}>
+      {/* ── Left: limit selector + total info ── */}
       <div className="pagination-left">
-        {showLimitSelector && (
+        {showLimitSelector && onLimitChange && (
           <>
-            <span>Показувати по:</span>
+            <span className="pagination-meta-label">Показувати по:</span>
             <div className={`limit-select-wrapper ${isLimitOpen ? "is-open" : ""}`}>
               <select
                 value={limit}
@@ -38,9 +79,7 @@ const Pagination = ({
                 onMouseDown={(e) => {
                   setIsLimitOpen((prev) => {
                     const next = !prev;
-                    if (!next) {
-                      setTimeout(() => e.target.blur(), 0);
-                    }
+                    if (!next) setTimeout(() => e.target.blur(), 0);
                     return next;
                   });
                 }}
@@ -51,60 +90,99 @@ const Pagination = ({
                 }}
                 onBlur={() => setIsLimitOpen(false)}
                 onKeyDown={(e) => {
-                  if (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowUp") {
-                    setIsLimitOpen(true);
-                  }
-                  if (e.key === "Escape" || e.key === "Enter") {
-                    setIsLimitOpen(false);
-                  }
+                  if (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowUp") setIsLimitOpen(true);
+                  if (e.key === "Escape" || e.key === "Enter") setIsLimitOpen(false);
                 }}
               >
                 {limitOptions.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
+                  <option key={opt} value={opt}>{opt}</option>
                 ))}
               </select>
-              <span className="select-chevron">
-                <ExpandMoreIcon />
-              </span>
+              <span className="select-chevron"><ExpandMoreIcon /></span>
             </div>
           </>
         )}
+        <span className="pagination-total-info">
+          Всього: <strong>{total}</strong>{itemLabel ? ` ${itemLabel}` : ""}
+        </span>
       </div>
 
+      {/* ── Center: page buttons ── */}
       <div className="pagination-center">
         <div className="pagination-actions">
+          {/* First */}
           <button
             type="button"
-            className="pagination-btn"
-            onClick={() => onPageChange?.(page - 1)}
+            className="pagination-btn pagination-btn--icon"
+            onClick={() => go(1)}
             disabled={page <= 1 || isLoading}
-            title={`${prevLabel} сторінка`}
+            title="Перша сторінка"
           >
-            <ArrowBackIcon />
-            <span>{prevLabel}</span>
+            <FirstPageIcon />
           </button>
+
+          {/* Prev */}
           <button
             type="button"
-            className="pagination-btn"
-            onClick={() => onPageChange?.(page + 1)}
-            disabled={page >= totalPages || isLoading}
-            title={`${nextLabel} сторінка`}
+            className="pagination-btn pagination-btn--nav"
+            onClick={() => go(page - 1)}
+            disabled={page <= 1 || isLoading}
+            title="Попередня сторінка"
           >
-            <span>{nextLabel}</span>
-            <ArrowForwardIcon />
+            <ChevronLeftIcon />
+            <span>Назад</span>
+          </button>
+
+          {/* Page numbers */}
+          <div className="pagination-pages">
+            {pages.map((p, idx) =>
+              p === "..." ? (
+                <span key={`dots-${idx}`} className="pagination-dots">…</span>
+              ) : (
+                <button
+                  key={p}
+                  type="button"
+                  className={`pagination-page-btn${p === page ? " is-active" : ""}`}
+                  onClick={() => go(p)}
+                  disabled={isLoading}
+                  aria-current={p === page ? "page" : undefined}
+                >
+                  {p}
+                </button>
+              )
+            )}
+          </div>
+
+          {/* Next */}
+          <button
+            type="button"
+            className="pagination-btn pagination-btn--nav"
+            onClick={() => go(page + 1)}
+            disabled={page >= totalPages || isLoading}
+            title="Наступна сторінка"
+          >
+            <span>Вперед</span>
+            <ChevronRightIcon />
+          </button>
+
+          {/* Last */}
+          <button
+            type="button"
+            className="pagination-btn pagination-btn--icon"
+            onClick={() => go(totalPages)}
+            disabled={page >= totalPages || isLoading}
+            title="Остання сторінка"
+          >
+            <LastPageIcon />
           </button>
         </div>
       </div>
 
+      {/* ── Right: page counter ── */}
       <div className="pagination-right">
-        <div className="pagination-info">
-          Сторінка <span className="total-count">{page}</span> з{" "}
-          <span className="total-count">{totalPages || 1}</span> (всього:{" "}
-          <span className="total-count">{total}</span>
-          {itemLabel ? ` ${itemLabel}` : ""})
-        </div>
+        <span className="pagination-page-info">
+          Стор. <strong>{page}</strong> / <strong>{totalPages}</strong>
+        </span>
       </div>
     </div>
   );

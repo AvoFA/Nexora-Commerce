@@ -897,6 +897,21 @@
     }
   }
 }
+
+// Спеціальні стилі для пагінації в каталозі
+.custom-pagination-container.catalog-pagination {
+  margin-top: 32px;
+  background-color: rgba($surface-color, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  
+  @media (max-width: 900px) {
+    margin-top: 24px;
+    border-radius: 12px;
+  }
+}
+
 @keyframes slideUp {
   from {
     opacity: 0;
