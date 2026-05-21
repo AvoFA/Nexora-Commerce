@@ -219,6 +219,16 @@
   }
 }
 
+.product-sort-label {
+  white-space: nowrap;
+}
+
+.product-empty-state {
+  text-align: center;
+  padding: 40px;
+  color: $text-secondary;
+}
+
 // Кнопки з неактивним станом
 
 .btn-secondary,
