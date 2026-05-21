@@ -9,9 +9,10 @@ const ReviewForm = ({
   formErrors,
   setFormErrors,
   handleSubmitReview,
+  className = "",
 }) => {
   return (
-    <div className="review-form-fields-wrapper">
+    <div className={`review-form-fields-wrapper ${className}`.trim()}>
       <div className="review-form-header-simple">
         <Tooltip
           title={
@@ -38,7 +39,7 @@ const ReviewForm = ({
       </div>
 
       <div className="review-form-fields">
-        <div className="form-field rating-field">
+        <div className="form-field rating-field review-rating-field">
           <label>Оцінити товар*</label>
           <div className="star-picker">
             <Rating
@@ -73,7 +74,7 @@ const ReviewForm = ({
           )}
         </div>
 
-        <div className="form-group">
+        <div className="form-group review-name-field">
           <label htmlFor="review-name">Ім'я*</label>
           <input
             id="review-name"
@@ -89,7 +90,7 @@ const ReviewForm = ({
           {formErrors.name && <div className="error-message">{formErrors.name}</div>}
         </div>
 
-        <div className="form-group">
+        <div className="form-group review-text-field">
           <label htmlFor="review-text">Ваш коментар*</label>
           <textarea
             id="review-text"
@@ -145,8 +146,8 @@ const ReviewForm = ({
         </div>
       </div>
 
-      <button type="submit" className="btn-primary btn-with-icon" style={{ marginTop: "24px" }}>
-        Надіслати відгук
+      <button type="submit" className="btn-primary btn-with-icon review-submit-button">
+        Додати відгук
       </button>
     </div>
   );

@@ -33,7 +33,7 @@ import { useProductData } from "./useProductData.js";
 import { useReviews } from "./useReviews.js";
 import ProductSpecsTable from "./ProductSpecsTable.jsx";
 import SimilarProducts from "./SimilarProducts.jsx";
-import ProductReviews from "./ProductReviews.jsx";
+import ProductFeedbackSection from "./ProductFeedbackSection.jsx";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -83,6 +83,26 @@ const ProductPage = () => {
     showSuccess,
     setShowSuccess,
   } = useReviews(id, user, isAuthenticated);
+
+  const reviewState = {
+    reviews,
+    showForm,
+    setShowForm,
+    newReview,
+    setNewReview,
+    formErrors,
+    setFormErrors,
+    ratingFilter,
+    setRatingFilter,
+    avgRating,
+    stats,
+    handleSubmitReview,
+    userReview,
+    isEditing,
+    setIsEditing,
+    showSuccess,
+    setShowSuccess,
+  };
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -302,24 +322,11 @@ const ProductPage = () => {
       </div>
 
       {/* Секція відгуків на всю ширину внизу */}
-      <ProductReviews
-        avgRating={avgRating}
-        reviews={reviews}
-        stats={stats}
-        showForm={showForm}
-        setShowForm={setShowForm}
-        newReview={newReview}
-        setNewReview={setNewReview}
-        formErrors={formErrors}
-        setFormErrors={setFormErrors}
-        ratingFilter={ratingFilter}
-        setRatingFilter={setRatingFilter}
-        handleSubmitReview={handleSubmitReview}
-        userReview={userReview}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        showSuccess={showSuccess}
-        setShowSuccess={setShowSuccess}
+      <ProductFeedbackSection
+        productId={id}
+        user={user}
+        isAuthenticated={isAuthenticated}
+        reviewState={reviewState}
       />
 
       {/* Схожі товари */}
