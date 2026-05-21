@@ -1,0 +1,69 @@
+.category-stats-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-mini-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 82px;
+  padding: 16px 18px;
+  background: rgba($card-bg, 0.62);
+  border: 1px solid rgba($border-color, 0.48);
+  border-radius: $border-radius;
+  box-shadow: none;
+
+  .stat-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    flex-shrink: 0;
+
+    .MuiSvgIcon-root {
+      color: currentColor;
+      font-size: 24px;
+    }
+  }
+
+  &.stat-primary .stat-icon-wrapper {
+    color: $primary-color;
+    background: rgba($primary-color, 0.12);
+  }
+
+  &.stat-secondary .stat-icon-wrapper {
+    color: $secondary-color;
+    background: rgba($secondary-color, 0.12);
+  }
+
+  .stat-content {
+    min-width: 0;
+
+    .stat-value {
+      margin: 0 0 4px;
+      color: $text-color;
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-label {
+      margin: 0;
+      color: $text-secondary;
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.25;
+      text-transform: uppercase;
+      letter-spacing: 0.045em;
+    }
+  }
+}
