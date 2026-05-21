@@ -5,6 +5,7 @@ import ProductList from '../../components/catalog/ProductList/ProductList.jsx';
 import { Link } from 'react-router-dom';
 import HeroSection from '../../components/common/HeroSection/HeroSection.jsx';
 import CategoryCards from '../../components/common/CategoryCards/CategoryCards.jsx';
+import RecentlyViewedSection from '../../components/product/RecentlyViewedSection/RecentlyViewedSection.jsx';
 import Benefits from '../../components/common/Benefits/Benefits.jsx';
 import './HomePage.scss';
 
@@ -53,6 +54,9 @@ const HomePage = () => {
 
       {/* Категорії товарів */}
       <CategoryCards />
+
+      {/* Останні переглянуті товари */}
+      <RecentlyViewedSection />
 
       {/* Секція популярних товарів */}
       <section className="product-section">

@@ -51,6 +51,28 @@
   }
 }
 
+// Кнопка-текст небезпечна
+.btn-text-danger {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+
+  &:hover {
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 
 // Кругла кнопка-іконка (на основі btn-primary)
 .btn-icon-round {

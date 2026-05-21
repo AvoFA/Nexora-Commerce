@@ -6,6 +6,7 @@ import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPurchaseCard from "../../components/product/ProductPurchaseCard/ProductPurchaseCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getCategoryDisplay } from "../../utils/categories.js";
+import { addRecentlyViewed } from "../../utils/recentlyViewed.utils.js";
 import ProductFeedbackSection from "./ProductFeedbackSection.jsx";
 import "./ProductPage.scss";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
@@ -19,6 +20,12 @@ const ProductPage = () => {
   const location = useLocation();
   const { product, similarProducts, isLoading, error } = useProductData(id);
   const { isAuthenticated, user } = useAuth();
+
+  useEffect(() => {
+    if (product && !isLoading) {
+      addRecentlyViewed(product);
+    }
+  }, [product, isLoading]);
 
   const {
     reviews,

@@ -27,6 +27,7 @@ import OrdersTab from "./pages/AccountPage/tabs/OrdersTab.jsx";
 import WishlistTab from "./pages/AccountPage/tabs/WishlistTab.jsx";
 import ProfileTab from "./pages/AccountPage/tabs/ProfileTab.jsx";
 import ReviewsTab from "./pages/AccountPage/tabs/ReviewsTab.jsx";
+import RecentlyViewedTab from "./pages/AccountPage/tabs/RecentlyViewedTab.jsx";
 import AccountPlaceholderTab from "./pages/AccountPage/tabs/AccountPlaceholderTab.jsx";
 
 // сторінки адмінки
@@ -127,12 +128,7 @@ export const router = createBrowserRouter([
           { path: "wishlist", element: <WishlistTab /> },
           {
             path: "viewed",
-            element: (
-              <AccountPlaceholderTab
-                title="Переглянуті товари"
-                description="Тут з'являться товари, які ви нещодавно переглядали."
-              />
-            ),
+            element: <RecentlyViewedTab />,
           },
           {
             path: "reviews",

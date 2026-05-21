@@ -276,3 +276,26 @@
     line-height: 1.6;
   }
 }
+
+.account-tab-viewed {
+  .tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    
+    .tab-title {
+      margin: 0;
+      color: $text-color;
+      font-size: 1.5rem;
+
+      span {
+        background: linear-gradient(90deg, $primary-color, $secondary-color);
+        background-clip: text;
+        color: transparent;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+  }
+}
