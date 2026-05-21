@@ -6,6 +6,16 @@
 .mui-form-control {
   width: 100%;
 
+  input[type="number"] {
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
   .MuiInputBase-root {
     background: $bg-color;
     border: 1px solid $border-color;
@@ -71,6 +81,95 @@
 
     &:hover .MuiSvgIcon-root {
       color: $text-color;
+    }
+  }
+}
+
+// Стилі для Autocomplete випадаючих списків
+.MuiAutocomplete-popper {
+  z-index: 1300 !important;
+
+  .MuiPaper-root {
+    background-color: hsl(217, 33%, 17%) !important;
+    color: $text-color !important;
+    border: 1px solid rgba($border-color, 0.8) !important;
+    border-radius: $border-radius !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32) !important;
+    backdrop-filter: blur(10px);
+
+    .MuiAutocomplete-listbox {
+      padding: 6px 0 !important;
+      background-color: transparent !important;
+
+      .MuiAutocomplete-option {
+        font-size: 0.88rem !important;
+        padding: 8px 12px !important;
+        color: rgba($text-color, 0.86) !important;
+        font-weight: 600 !important;
+
+        &[aria-selected="true"] {
+          background-color: rgba($primary-color, 0.2) !important;
+          color: $primary-color !important;
+
+          &.Mui-focused {
+            background-color: rgba($primary-color, 0.3) !important;
+          }
+        }
+
+        &.Mui-focused {
+          background-color: rgba($primary-color, 0.08) !important;
+          color: $text-color !important;
+        }
+
+        &:hover {
+          background-color: rgba($primary-color, 0.08) !important;
+          color: $text-color !important;
+        }
+      }
+    }
+
+    .MuiAutocomplete-noOptions {
+      color: $text-secondary !important;
+      font-size: 0.86rem !important;
+      padding: 12px 16px !important;
+    }
+  }
+}
+
+// Стилі для іконок Autocomplete всередині полів вводу
+.MuiAutocomplete-root {
+  .MuiAutocomplete-endAdornment {
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    right: 8px !important;
+
+    .MuiIconButton-root {
+      color: $text-secondary !important;
+      padding: 4px !important;
+
+      &:hover {
+        color: $text-color !important;
+        background-color: rgba(255, 255, 255, 0.08) !important;
+      }
+    }
+  }
+}
+
+// Стилі для Autocomplete input контейнера
+.mui-form-control {
+  .MuiAutocomplete-inputRoot[class*="MuiOutlinedInput-root"] {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 36px !important;
+    height: 45px !important;
+    display: flex !important;
+    align-items: center !important;
+
+    .MuiAutocomplete-input {
+      padding: 0 !important;
+      color: $text-color !important;
+      font-size: 0.9rem !important;
     }
   }
 }

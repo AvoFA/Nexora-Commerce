@@ -1,13 +1,11 @@
 import React from 'react';
 import {
+  Autocomplete,
   Box,
   Button,
   FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
+  TextField,
 } from '@mui/material';
-import TextField from '@mui/material/TextField';
 import BrandSelector from '../../../../components/admin/products/BrandSelector.jsx';
 
 const ProductCategoryBrandSection = ({
@@ -26,19 +24,23 @@ const ProductCategoryBrandSection = ({
 }) => (
   <Box className="product-form-grid product-form-grid-2">
     <FormControl className="mui-form-control" sx={{ flex: 1 }}>
-      <InputLabel>Категорія</InputLabel>
-      <Select
-        label="Категорія"
-        value={category}
-        onChange={(event) => onChange('category', event.target.value)}
-        MenuProps={{ className: 'mui-select-menu' }}
-      >
-        {categories.map((cat) => (
-          <MenuItem key={cat.id} value={cat.name}>
-            {cat.description}
-          </MenuItem>
-        ))}
-      </Select>
+      <Autocomplete
+        options={categories}
+        getOptionLabel={(option) => option.description || ''}
+        isOptionEqualToValue={(option, value) => option.name === value.name}
+        value={categories.find((cat) => cat.name === category) || null}
+        onChange={(event, newValue) => {
+          onChange('category', newValue ? newValue.name : '');
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Категорія"
+            required
+          />
+        )}
+        noOptionsText="Нічого не знайдено"
+      />
     </FormControl>
 
     <Box sx={{ flex: 1 }}>

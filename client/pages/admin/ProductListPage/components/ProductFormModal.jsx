@@ -68,52 +68,56 @@ const ProductFormModal = ({
                 id="product-form"
                 component="form"
                 onSubmit={handleSubmit}
-                className="product-form"
+                className="product-form-grid-layout"
               >
-                <ProductBasicInfoSection
-                  name={formData.name}
-                  error={errors.name}
-                  onChange={onChange}
-                />
+                <div className="product-form-left-col">
+                  <ProductBasicInfoSection
+                    name={formData.name}
+                    error={errors.name}
+                    onChange={onChange}
+                  />
 
-                <ProductCategoryBrandSection
-                  category={formData.category}
-                  brand={formData.brand}
-                  categories={categories}
-                  availableBrands={availableBrands}
-                  errors={errors}
-                  showAddBrandField={showAddBrandField}
-                  newBrandName={newBrandName}
-                  onChange={onChange}
-                  onAddBrandClick={onAddBrandClick}
-                  onCancelAddBrand={onCancelAddBrand}
-                  onAddNewBrand={onAddNewBrand}
-                  onNewBrandNameChange={onNewBrandNameChange}
-                />
+                  <ProductCategoryBrandSection
+                    category={formData.category}
+                    brand={formData.brand}
+                    categories={categories}
+                    availableBrands={availableBrands}
+                    errors={errors}
+                    showAddBrandField={showAddBrandField}
+                    newBrandName={newBrandName}
+                    onChange={onChange}
+                    onAddBrandClick={onAddBrandClick}
+                    onCancelAddBrand={onCancelAddBrand}
+                    onAddNewBrand={onAddNewBrand}
+                    onNewBrandNameChange={onNewBrandNameChange}
+                  />
 
-                <ProductPricingStockSection
-                  price={formData.price}
-                  stock={formData.stock}
-                  errors={errors}
-                  onChange={onChange}
-                />
+                  <ProductPricingStockSection
+                    price={formData.price}
+                    stock={formData.stock}
+                    errors={errors}
+                    onChange={onChange}
+                  />
 
-                <ProductMediaSection
-                  imageUrl={formData.imageUrl}
-                  onChange={onChange}
-                />
+                  <ProductDescriptionSection
+                    description={formData.description}
+                    onChange={onChange}
+                  />
 
-                <ProductAttributesSection
-                  attributes={formData.attributes}
-                  onAddAttribute={onAddAttribute}
-                  onUpdateAttribute={onUpdateAttribute}
-                  onRemoveAttribute={onRemoveAttribute}
-                />
+                  <ProductAttributesSection
+                    attributes={formData.attributes}
+                    onAddAttribute={onAddAttribute}
+                    onUpdateAttribute={onUpdateAttribute}
+                    onRemoveAttribute={onRemoveAttribute}
+                  />
+                </div>
 
-                <ProductDescriptionSection
-                  description={formData.description}
-                  onChange={onChange}
-                />
+                <div className="product-form-right-col">
+                  <ProductMediaSection
+                    imageUrl={formData.imageUrl}
+                    onChange={onChange}
+                  />
+                </div>
               </Box>
             </div>
 
