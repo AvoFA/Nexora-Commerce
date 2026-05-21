@@ -41,6 +41,7 @@ const ProductListPage = () => {
   const tableState = useProductTableState(products);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [lowStockFilterActive, setLowStockFilterActive] = useState(false);
 
   const handleDeleteClick = (product) => {
     setProductToDelete(product);
@@ -66,6 +67,28 @@ const ProductListPage = () => {
     setProductToDelete(null);
   };
 
+  const handleUpdateStock = async (productId, newStock) => {
+    if (newStock < 0) return;
+    const product = products.find((p) => p.id === productId);
+    if (!product) return;
+
+    try {
+      await updateProduct(productId, { ...product, stock: newStock });
+      toast.success(`Залишок товару "${product.name}" оновлено до ${newStock}`);
+    } catch (error) {
+      toast.error('Помилка при оновленні залишку товару');
+    }
+  };
+
+  const handleToggleLowStockFilter = () => {
+    setLowStockFilterActive((prev) => !prev);
+  };
+
+  // Apply low-stock filter on top of the normal table state if active
+  const displayedProducts = lowStockFilterActive
+    ? tableState.currentProducts.filter((p) => Number(p.stock || 0) <= 5)
+    : tableState.currentProducts;
+
   return (
     <Box>
       <Box className="admin-page-header">
@@ -87,7 +110,12 @@ const ProductListPage = () => {
         </button>
       </Box>
 
-      <ProductStats products={tableState.filteredProducts} />
+      <ProductStats
+        products={products}
+        lowStockFilterActive={lowStockFilterActive}
+        onToggleLowStockFilter={handleToggleLowStockFilter}
+        onEditProduct={productForm.openEditModal}
+      />
 
       <ProductToolbar
         searchTerm={tableState.searchTerm}
@@ -106,7 +134,7 @@ const ProductListPage = () => {
       />
 
       <ProductTable
-        products={tableState.currentProducts}
+        products={displayedProducts}
         isLoading={isLoading}
         sortConfig={tableState.sortConfig}
         page={tableState.page}
@@ -118,6 +146,8 @@ const ProductListPage = () => {
         onEdit={productForm.openEditModal}
         onDelete={handleDeleteClick}
         onPageChange={tableState.setPage}
+        onPerPageChange={tableState.setPerPage}
+        onUpdateStock={handleUpdateStock}
       />
 
       <ProductFormModal

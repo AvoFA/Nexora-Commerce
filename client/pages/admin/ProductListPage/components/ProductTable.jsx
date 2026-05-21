@@ -30,6 +30,8 @@ const ProductTable = ({
   onEdit,
   onDelete,
   onPageChange,
+  onPerPageChange,
+  onUpdateStock,
 }) => (
   <div className="admin-solid-card product-table-card">
     <div className="mobile-only-view">
@@ -40,6 +42,7 @@ const ProductTable = ({
             product={product}
             onEdit={onEdit}
             onDelete={onDelete}
+            onUpdateStock={onUpdateStock}
           />
         ))}
       </div>
@@ -89,6 +92,7 @@ const ProductTable = ({
                   product={product}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  onUpdateStock={onUpdateStock}
                 />
               ))
             )}
@@ -104,6 +108,7 @@ const ProductTable = ({
       totalProducts={totalProducts}
       startIndex={startIndex}
       onPageChange={onPageChange}
+      onPerPageChange={onPerPageChange}
     />
   </div>
 );

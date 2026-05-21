@@ -3,7 +3,7 @@ import { Delete, Edit } from '@mui/icons-material';
 import { formatPrice } from '../../../../utils/formatPrice.js';
 import { getProductStockState } from './productUi.js';
 
-const ProductRow = ({ product, onEdit, onDelete }) => {
+const ProductRow = ({ product, onEdit, onDelete, onUpdateStock }) => {
   const stockState = getProductStockState(product.stock);
 
   return (
@@ -32,10 +32,35 @@ const ProductRow = ({ product, onEdit, onDelete }) => {
       </td>
       <td className="product-price-cell">{formatPrice(product.price)}</td>
       <td>
-        <span className={`stock-badge stock-${stockState.key}`}>
-          <span>{stockState.label}</span>
-          <small>{stockState.detail}</small>
-        </span>
+        <div className="product-stock-inline-edit">
+          <button
+            type="button"
+            className="stock-inline-btn decrease"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdateStock(product.id, Math.max(0, Number(product.stock || 0) - 1));
+            }}
+            disabled={Number(product.stock || 0) <= 0}
+            title="Зменшити залишок"
+          >
+            –
+          </button>
+          <span className={`stock-badge stock-${stockState.key}`}>
+            <span>{stockState.label}</span>
+            <small>{stockState.detail}</small>
+          </span>
+          <button
+            type="button"
+            className="stock-inline-btn increase"
+            onClick={(e) => {
+              e.stopPropagation();
+              onUpdateStock(product.id, Number(product.stock || 0) + 1);
+            }}
+            title="Збільшити залишок"
+          >
+            +
+          </button>
+        </div>
       </td>
       <td className="actions-cell">
         <button

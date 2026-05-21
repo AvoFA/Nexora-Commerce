@@ -4,11 +4,11 @@
   gap: 14px;
   margin-bottom: 16px;
 
-  @media (max-width: 1180px) {
-    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
   }
 
-  @media (max-width: 620px) {
+  @media (max-width: 520px) {
     grid-template-columns: 1fr;
   }
 
@@ -49,6 +49,11 @@
     background: rgba($secondary-color, 0.12);
   }
 
+  .stat-info .stat-icon-wrapper {
+    color: #38bdf8;
+    background: rgba(#38bdf8, 0.12);
+  }
+
   .stat-warning .stat-icon-wrapper {
     color: #f59e0b;
     background: rgba(#f59e0b, 0.12);
@@ -61,6 +66,12 @@
 
   .stat-content {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex-grow: 1;
+    margin-right: 12px;
   }
 
   .stat-value {
@@ -79,5 +90,223 @@
     line-height: 1.25;
     text-transform: uppercase;
     letter-spacing: 0.045em;
+  }
+
+  // ─── Low Stock clickable card ──────────────────────────────────────
+  .stat-low-stock-card {
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease;
+    user-select: none;
+
+    &:hover {
+      background: rgba(#f59e0b, 0.07);
+      border-color: rgba(#f59e0b, 0.35);
+    }
+
+    // Active state — filter is on
+    &--active {
+      background: rgba(#f59e0b, 0.11);
+      border-color: rgba(#f59e0b, 0.5);
+
+      .stat-value,
+      .stat-label {
+        color: #f59e0b;
+      }
+    }
+  }
+
+  // Small pill showing the filter is active
+  .stat-filter-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: rgba(#f59e0b, 0.2);
+    color: #f59e0b;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  // ─── Popover wrapper (anchors to card) ────────────────────────────
+  .low-stock-popover-wrapper {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    z-index: 120;
+    padding-top: 10px;
+  }
+}
+
+// ─── Popover panel ────────────────────────────────────────────────────
+.low-stock-popover {
+  width: 100%;
+  background: hsl(222, 47%, 13%);
+  border: 1px solid rgba(#f59e0b, 0.25);
+  border-radius: $border-radius;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  animation: lowStockPopoverIn 0.16s ease;
+
+  @keyframes lowStockPopoverIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba($border-color, 0.5);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  &__title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #f59e0b;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background: rgba(#f59e0b, 0.18);
+    color: #f59e0b;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+    max-height: 300px;
+    overflow-y: auto;
+
+    // Thin scrollbar
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba($border-color, 0.6);
+      border-radius: 4px;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 14px;
+    cursor: default;
+    transition: background 0.14s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+
+      .low-stock-popover__edit-btn {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__img {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba($border-color, 0.4);
+    flex-shrink: 0;
+    background: rgba($card-bg, 0.5);
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $text-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__price {
+    font-size: 0.72rem;
+    color: $text-secondary;
+    margin-top: 1px;
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+
+    &--low {
+      background: rgba(#f59e0b, 0.15);
+      color: #f59e0b;
+    }
+
+    &--out {
+      background: rgba($danger-color, 0.15);
+      color: $danger-color;
+    }
+  }
+
+  &__edit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: transparent;
+    border: 1px solid rgba($border-color, 0.5);
+    color: $text-secondary;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.14s ease, background 0.14s ease, color 0.14s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: rgba($primary-color, 0.15);
+      border-color: rgba($primary-color, 0.4);
+      color: $primary-color;
+    }
+  }
+
+  &__empty {
+    margin: 0;
+    padding: 16px 14px;
+    font-size: 0.8rem;
+    color: $text-secondary;
+    text-align: center;
   }
 }
