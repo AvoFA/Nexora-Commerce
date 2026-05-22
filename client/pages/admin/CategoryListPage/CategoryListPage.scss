@@ -9,14 +9,9 @@
 @import '@/pages/admin/CategoryListPage/styles/_category-modal.scss';
 
 .admin-categories-page {
-  max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
-  padding: 0 16px;
 
   .admin-page-header {
-    margin-bottom: 18px;
-
     .header-title-wrapper {
       h2 {
         font-size: 1.75rem;
@@ -24,13 +19,3 @@
     }
   }
 }
-
-@keyframes adminCategoryRefreshSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-

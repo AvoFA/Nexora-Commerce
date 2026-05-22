@@ -1,2 +1,23 @@
-// Category stats styles handled by global admin-stats-grid classes
+.admin-categories-page {
+  .admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(240px, 320px));
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 16px;
 
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .admin-stat-card {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+    background: rgba($card-bg, 0.45);
+    border: 1px solid rgba($border-color, 0.4);
+    box-shadow: none;
+  }
+}

@@ -9,7 +9,7 @@ const CategoryToolbar = ({
   isLoading,
 }) => {
   return (
-    <div className="admin-solid-card category-toolbar-card">
+    <div className="category-toolbar-card">
       <div className="category-toolbar-layout">
         <AdminSearchInput
           value={searchTerm}

@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Box, IconButton } from "@mui/material";
 import {
   Category,
   Close as X,
+  Dashboard as DashboardIcon,
   Inventory as Package,
   Logout,
   Menu as MenuIcon,
+  People as PeopleIcon,
   ReceiptLong as OrdersIcon,
   Reviews as ReviewsIcon,
   Store,
@@ -18,7 +20,12 @@ import {
 } from "../../../config/adminAccess";
 
 const navigationMeta = {
-  "/admin/products": { name: "Товари", href: "/admin", icon: Package },
+  "/admin/dashboard": {
+    name: "Дашборд",
+    href: "/admin/dashboard",
+    icon: DashboardIcon,
+  },
+  "/admin/products": { name: "Товари", href: "/admin/products", icon: Package },
   "/admin/categories": {
     name: "Категорії",
     href: "/admin/categories",
@@ -33,6 +40,11 @@ const navigationMeta = {
     name: "Відгуки та питання",
     href: "/admin/reviews",
     icon: ReviewsIcon,
+  },
+  "/admin/customers": {
+    name: "Покупці",
+    href: "/admin/customers",
+    icon: PeopleIcon,
   },
 };
 
@@ -50,8 +62,8 @@ export const AdminLayout = () => {
   }, [location.pathname]);
 
   const isActive = (path) => {
-    if (path === "/admin") {
-      return location.pathname === "/admin/products";
+    if (path === "/admin/dashboard") {
+      return location.pathname === "/admin" || location.pathname === "/admin/dashboard";
     }
 
     return location.pathname.startsWith(path);
@@ -66,13 +78,13 @@ export const AdminLayout = () => {
     <>
       <div className="admin-sidebar-logo">
         <div className="logo-wrapper">
-          <div className="logo-icon-bg">
-            <Store sx={{ width: "24px", height: "24px" }} />
-          </div>
-          <div className="logo-text">
-            <h1>ElectroLux</h1>
-            <p>Admin Panel</p>
-          </div>
+          <Link to="/home" className="admin-logo-link">
+            <img src="/assets/logo/nexora-symbol.svg" alt="Nexora" className="admin-logo-symbol" />
+            <div className="logo-text">
+              <h1>Nexora</h1>
+              <p>Admin Panel</p>
+            </div>
+          </Link>
         </div>
         <IconButton
           className="admin-mobile-menu-btn"
@@ -92,7 +104,7 @@ export const AdminLayout = () => {
             <NavLink
               key={item.href}
               to={item.href}
-              end={item.href === "/admin"}
+              end={item.href === "/admin/dashboard" || item.href === "/admin"}
               className={active ? "active" : ""}
               onClick={() => setSidebarOpen(false)}
             >

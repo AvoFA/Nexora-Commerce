@@ -11,21 +11,12 @@ import {
 } from "@mui/icons-material";
 import CategoryCard from "./CategoryCard.jsx";
 import { getCategoryIcon } from "./categoryIcons.jsx";
+import { highlightMatch } from "../../../../utils/searchHighlight.jsx";
 
 const getFilledAttributes = (category) =>
   (category.defaultAttributes || []).filter(
     (attr) => attr.key && attr.key.trim() !== "",
   );
-
-const highlightText = (text, search) => {
-  if (!search || !text) return text;
-  const parts = text.split(new RegExp(`(${search.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')})`, 'gi'));
-  return parts.map((part, index) => 
-    part.toLowerCase() === search.toLowerCase() ? (
-      <mark key={index} className="search-highlight">{part}</mark>
-    ) : part
-  );
-};
 
 const CategoryListEmpty = ({ children }) => (
   <Typography className="category-list-empty">
@@ -49,11 +40,11 @@ const CategoryDesktopItem = ({ category, onEdit, onDelete, searchTerm }) => {
 
           <div className="category-item-info">
             <Typography className="category-item-name">
-              {highlightText(category.name, searchTerm)}
+              {highlightMatch(category.name, searchTerm)}
             </Typography>
             {category.description && (
               <Typography className="category-item-description">
-                {highlightText(category.description, searchTerm)}
+                {highlightMatch(category.description, searchTerm)}
               </Typography>
             )}
           </div>
@@ -163,7 +154,7 @@ const CategoryList = ({
         ) : filteredCategories.length === 0 ? (
           <CategoryListEmpty>{emptyText}</CategoryListEmpty>
         ) : (
-          <div className="admin-solid-card category-list-card">
+          <div className="category-list-card">
             {filteredCategories.map((category) => (
               <CategoryDesktopItem
                 key={category.id}

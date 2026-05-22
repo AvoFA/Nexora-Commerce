@@ -31,11 +31,13 @@ import RecentlyViewedTab from "./pages/AccountPage/tabs/RecentlyViewedTab.jsx";
 import AccountPlaceholderTab from "./pages/AccountPage/tabs/AccountPlaceholderTab.jsx";
 
 // сторінки адмінки
+import DashboardPage from "./pages/admin/DashboardPage/DashboardPage.jsx";
 import ProductListPage from "./pages/admin/ProductListPage/ProductListPage.jsx";
 import CategoryListPage from "./pages/admin/CategoryListPage/CategoryListPage.jsx";
 import ReviewListPage from "./pages/admin/ReviewListPage/ReviewListPage.jsx";
 import OrderListPage from "./pages/admin/OrderListPage/OrderListPage.jsx";
 import AdminLoginPage from "./components/admin/auth/AdminLoginPage/AdminLoginPage.jsx";
+import CustomersPage from "./pages/admin/CustomersPage/CustomersPage.jsx";
 
 // компоненти захисту
 import AdminProtectedRoute from "./components/common/AdminProtectedRoute/AdminProtectedRoute.jsx";
@@ -159,10 +161,12 @@ export const router = createBrowserRouter([
         index: true,
         element: <AdminIndexRedirect />,
       },
+      { path: "/admin/dashboard", element: <DashboardPage /> },
       { path: "/admin/products", element: <ProductListPage /> },
       { path: "/admin/categories", element: <CategoryListPage /> },
       { path: "/admin/reviews", element: <ReviewListPage /> },
       { path: "/admin/orders", element: <OrderListPage /> },
+      { path: "/admin/customers", element: <CustomersPage /> },
     ],
   },
 ]);
