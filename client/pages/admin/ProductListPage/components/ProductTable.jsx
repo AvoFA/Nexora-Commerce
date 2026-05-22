@@ -20,6 +20,7 @@ const SortableHeader = ({ label, sortKey, sortConfig, onSort, className = '' }) 
 
 const ProductTable = ({
   products,
+  searchTerm,
   sortConfig,
   page,
   perPage,
@@ -33,13 +34,14 @@ const ProductTable = ({
   onPerPageChange,
   onUpdateStock,
 }) => (
-  <div className="admin-solid-card product-table-card">
+  <div className="product-table-card">
     <div className="mobile-only-view">
       <div className="admin-mobile-products">
         {products.map((product) => (
           <ProductMobileCard
             key={product.id}
             product={product}
+            searchTerm={searchTerm}
             onEdit={onEdit}
             onDelete={onDelete}
             onUpdateStock={onUpdateStock}
@@ -90,6 +92,7 @@ const ProductTable = ({
                 <ProductRow
                   key={product.id}
                   product={product}
+                  searchTerm={searchTerm}
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onUpdateStock={onUpdateStock}

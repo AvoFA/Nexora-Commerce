@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { Add as AddIcon, WarningAmber } from '@mui/icons-material';
 import { toast } from 'sonner';
@@ -41,7 +42,8 @@ const ProductListPage = () => {
   const tableState = useProductTableState(products);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
-  const [lowStockFilterActive, setLowStockFilterActive] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const lowStockFilterActive = searchParams.get('lowStock') === 'true';
 
   const handleDeleteClick = (product) => {
     setProductToDelete(product);
@@ -81,13 +83,22 @@ const ProductListPage = () => {
   };
 
   const handleToggleLowStockFilter = () => {
-    setLowStockFilterActive((prev) => !prev);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (next.get('lowStock') === 'true') {
+          next.delete('lowStock');
+        } else {
+          next.set('lowStock', 'true');
+        }
+        return next;
+      },
+      { replace: true }
+    );
   };
 
   // Apply low-stock filter on top of the normal table state if active
-  const displayedProducts = lowStockFilterActive
-    ? tableState.currentProducts.filter((p) => Number(p.stock || 0) <= 5)
-    : tableState.currentProducts;
+  const displayedProducts = tableState.currentProducts;
 
   return (
     <Box>
@@ -135,6 +146,7 @@ const ProductListPage = () => {
 
       <ProductTable
         products={displayedProducts}
+        searchTerm={tableState.searchTerm}
         isLoading={isLoading}
         sortConfig={tableState.sortConfig}
         page={tableState.page}

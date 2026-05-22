@@ -1,9 +1,42 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const DEFAULT_PER_PAGE = 20;
 
 export const useProductTableState = (products = []) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const querySearch = searchParams.get('search') || '';
+  const lowStock = searchParams.get('lowStock') === 'true';
+
+  const [searchTerm, setSearchTerm] = useState(querySearch);
+
+  // Sync search parameter from URL -> local state (for browser back/forward and dashboard navigation)
+  useEffect(() => {
+    const q = searchParams.get('search') || '';
+    if (q !== searchTerm) {
+      setSearchTerm(q);
+    }
+  }, [searchParams]);
+
+  // Sync local state -> URL search parameter
+  useEffect(() => {
+    const q = searchParams.get('search') || '';
+    if (searchTerm !== q) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (searchTerm) {
+            next.set('search', searchTerm);
+          } else {
+            next.delete('search');
+          }
+          return next;
+        },
+        { replace: true }
+      );
+    }
+  }, [searchTerm, setSearchParams]);
+
   const [category, setCategory] = useState('all');
   const [brand, setBrand] = useState('all');
   const [page, setPage] = useState(1);
@@ -53,10 +86,14 @@ export const useProductTableState = (products = []) => {
     return sortedProducts.filter((product) => {
       const matchesCategory = category === 'all' || product.category === category;
       const matchesBrand = brand === 'all' || product.brand === brand;
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesCategory && matchesBrand && matchesSearch;
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesLowStock = !lowStock || Number(product.stock || 0) <= 5;
+      return matchesCategory && matchesBrand && matchesSearch && matchesLowStock;
     });
-  }, [sortedProducts, searchTerm, category, brand]);
+  }, [sortedProducts, searchTerm, category, brand, lowStock]);
 
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const startIndex = (page - 1) * perPage;
@@ -65,7 +102,7 @@ export const useProductTableState = (products = []) => {
   // Reset to page 1 when any filter or page size changes
   useEffect(() => {
     if (page !== 1) setPage(1);
-  }, [searchTerm, category, brand, sortValue, perPage]);
+  }, [searchTerm, category, brand, sortValue, perPage, lowStock]);
 
   return {
     searchTerm,

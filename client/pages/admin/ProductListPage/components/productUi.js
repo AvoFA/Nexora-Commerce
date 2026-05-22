@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const getProductStockState = (stockValue) => {
   const stock = Number(stockValue) || 0;
 
@@ -23,3 +25,5 @@ export const getProductStockState = (stockValue) => {
     detail: `${stock} шт.`,
   };
 };
+
+export { escapeRegExp, highlightMatch } from "../../../../utils/searchHighlight";

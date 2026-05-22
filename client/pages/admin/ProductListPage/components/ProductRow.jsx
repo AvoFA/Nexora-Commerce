@@ -1,11 +1,10 @@
 import React from 'react';
 import { Delete, Edit } from '@mui/icons-material';
 import { formatPrice } from '../../../../utils/formatPrice.js';
-import { getProductStockState } from './productUi.js';
+import { highlightMatch } from './productUi.js';
+import StockInlineEditor from '@/components/admin/common/StockInlineEditor';
 
-const ProductRow = ({ product, onEdit, onDelete, onUpdateStock }) => {
-  const stockState = getProductStockState(product.stock);
-
+const ProductRow = ({ product, searchTerm, onEdit, onDelete, onUpdateStock }) => {
   return (
     <tr>
       <td className="product-thumb-cell">
@@ -21,46 +20,23 @@ const ProductRow = ({ product, onEdit, onDelete, onUpdateStock }) => {
       </td>
       <td className="product-name-cell">
         <div className="product-row-main">
-          <span className="product-row-name">{product.name}</span>
-          {product.brand && <span className="product-row-brand">{product.brand}</span>}
+          <span className="product-row-name">{highlightMatch(product.name, searchTerm)}</span>
+          {product.brand && <span className="product-row-brand">{highlightMatch(product.brand, searchTerm)}</span>}
         </div>
       </td>
       <td className="hidden-mobile hidden-tablet">
         <span className="category-badge">
-          {product.category}
+          {highlightMatch(product.category, searchTerm)}
         </span>
       </td>
       <td className="product-price-cell">{formatPrice(product.price)}</td>
       <td>
-        <div className="product-stock-inline-edit">
-          <button
-            type="button"
-            className="stock-inline-btn decrease"
-            onClick={(e) => {
-              e.stopPropagation();
-              onUpdateStock(product.id, Math.max(0, Number(product.stock || 0) - 1));
-            }}
-            disabled={Number(product.stock || 0) <= 0}
-            title="Зменшити залишок"
-          >
-            –
-          </button>
-          <span className={`stock-badge stock-${stockState.key}`}>
-            <span>{stockState.label}</span>
-            <small>{stockState.detail}</small>
-          </span>
-          <button
-            type="button"
-            className="stock-inline-btn increase"
-            onClick={(e) => {
-              e.stopPropagation();
-              onUpdateStock(product.id, Number(product.stock || 0) + 1);
-            }}
-            title="Збільшити залишок"
-          >
-            +
-          </button>
-        </div>
+        <StockInlineEditor
+          initialStock={product.stock ?? 0}
+          onSave={async (newStock) => {
+            await onUpdateStock(product.id, newStock);
+          }}
+        />
       </td>
       <td className="actions-cell">
         <button

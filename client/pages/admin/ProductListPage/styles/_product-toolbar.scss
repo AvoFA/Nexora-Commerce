@@ -1,15 +1,21 @@
+@import '@/styles/variables';
+
 .product-toolbar-card {
   position: relative;
   z-index: 8;
   overflow: visible;
-  margin-bottom: 14px;
-  padding: 12px;
+  margin-bottom: 16px;
+  padding: 20px;
+  background: var(--card-bg, #1a2235);
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
 
   .product-toolbar-layout {
     display: grid;
     grid-template-columns: minmax(340px, 1fr) minmax(390px, max-content) max-content;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     overflow: visible;
 
     @media (max-width: 1180px) {
@@ -43,20 +49,27 @@
       height: 40px;
       padding: 8px 40px;
       color: $text-color;
-      background: rgba($bg-color, 0.28);
-      border: 1px solid rgba($border-color, 0.5);
+      background: $bg-color;
+      border: 1px solid $border-color;
       border-radius: 9px;
       font-family: inherit;
       font-size: 0.92rem;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
       &::placeholder {
         color: rgba($text-secondary, 0.72);
       }
 
+      &:hover {
+        background-color: lighten($bg-color, 3%);
+        border-color: rgba($text-secondary, 0.35);
+      }
+
       &:focus {
         outline: none;
-        border-color: rgba($primary-color, 0.55);
-        box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
+        background-color: $bg-color;
+        border-color: $primary-color;
+        box-shadow: 0 0 12px rgba($primary-color, 0.08);
       }
     }
 
@@ -118,8 +131,8 @@
     height: 40px;
     padding: 0 34px 0 12px;
     color: $text-color;
-    background: rgba($bg-color, 0.26);
-    border: 1px solid rgba($border-color, 0.5);
+    background: $bg-color;
+    border: 1px solid $border-color;
     border-radius: 9px;
     cursor: pointer;
     font-family: inherit;
@@ -140,8 +153,8 @@
     }
 
     &:hover:not(:disabled) {
+      background-color: lighten($bg-color, 3%);
       border-color: rgba($text-secondary, 0.35);
-      background: rgba($bg-color, 0.34);
     }
 
     &:disabled {
@@ -163,8 +176,8 @@
 
   .product-filter-combobox.is-open {
     .product-filter-trigger {
-      border-color: rgba($primary-color, 0.5);
-      background: rgba($bg-color, 0.34);
+      background-color: $bg-color;
+      border-color: $primary-color;
       box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
     }
 
@@ -218,27 +231,28 @@
       padding-top: 8px;
       padding-bottom: 8px;
       color: $text-color;
-      background: rgba($bg-color, 0.26);
-      border-color: rgba($border-color, 0.5);
+      background: $bg-color;
+      border: 1px solid $border-color;
       border-radius: 9px;
       font-size: 0.86rem;
       font-weight: 650;
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 
       &:hover {
-        background: rgba($bg-color, 0.34);
+        background-color: lighten($bg-color, 3%);
         border-color: rgba($text-secondary, 0.35);
       }
 
       &:focus-visible {
-        border-color: rgba($primary-color, 0.5);
-        background: rgba($bg-color, 0.34);
+        background-color: $bg-color;
+        border-color: $primary-color;
         box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
       }
     }
 
     .select-relative.is-open select {
-      border-color: rgba($primary-color, 0.5);
-      background: rgba($bg-color, 0.34);
+      background-color: $bg-color;
+      border-color: $primary-color;
       box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
     }
   }
@@ -263,16 +277,16 @@
     height: 40px;
     padding: 0;
     color: $text-secondary;
-    background: rgba($surface-color, 0.28);
-    border: 1px solid rgba($border-color, 0.5);
+    background: $bg-color;
+    border: 1px solid $border-color;
     border-radius: 9px;
     cursor: pointer;
     transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      color: $primary-color;
-      border-color: rgba($primary-color, 0.45);
-      background: rgba($primary-color, 0.08);
+      color: $text-color;
+      border-color: rgba($text-secondary, 0.35);
+      background-color: lighten($bg-color, 3%);
     }
 
     &:disabled {
@@ -281,7 +295,7 @@
     }
 
     &.is-loading svg {
-      animation: adminProductRefreshSpin 0.8s linear infinite;
+      animation: adminRefreshSpin 0.8s linear infinite;
     }
 
     @media (max-width: 520px) {
@@ -306,15 +320,22 @@
     margin-bottom: 6px;
     padding: 7px 10px;
     color: $text-color;
-    background: rgba($bg-color, 0.35);
-    border: 1px solid rgba($border-color, 0.5);
+    background: $bg-color;
+    border: 1px solid $border-color;
     border-radius: 8px;
     font-family: inherit;
     font-size: 0.86rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      background-color: lighten($bg-color, 3%);
+      border-color: rgba($text-secondary, 0.35);
+    }
 
     &:focus {
       outline: none;
-      border-color: rgba($primary-color, 0.5);
+      background-color: $bg-color;
+      border-color: $primary-color;
       box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
     }
   }

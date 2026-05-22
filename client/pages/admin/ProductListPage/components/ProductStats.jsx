@@ -101,8 +101,8 @@ const ProductStats = ({ products, lowStockFilterActive, onToggleLowStockFilter, 
           <Inventory />
         </div>
         <div className="stat-content">
-          <p className="stat-value">{totalProducts}</p>
           <p className="stat-label">Всього товарів</p>
+          <p className="stat-value">{totalProducts}</p>
         </div>
       </div>
 
@@ -112,8 +112,8 @@ const ProductStats = ({ products, lowStockFilterActive, onToggleLowStockFilter, 
           <CheckCircle />
         </div>
         <div className="stat-content">
-          <p className="stat-value">{inStock}</p>
           <p className="stat-label">В наявності</p>
+          <p className="stat-value">{inStock}</p>
         </div>
       </div>
 
@@ -123,14 +123,14 @@ const ProductStats = ({ products, lowStockFilterActive, onToggleLowStockFilter, 
           <Storefront />
         </div>
         <div className="stat-content">
-          <p className="stat-value">{outOfStock}</p>
           <p className="stat-label">Немає в наявності</p>
+          <p className="stat-value">{outOfStock}</p>
         </div>
       </div>
 
       {/* Low stock — with popover */}
       <div
-        className={`stat-mini-card stat-warning stat-low-stock-card${lowStockFilterActive ? ' stat-low-stock-card--active' : ''}`}
+        className={`stat-mini-card stat-warning stat-low-stock-card is-clickable${lowStockFilterActive ? ' stat-low-stock-card--active' : ''}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={onToggleLowStockFilter}
@@ -143,8 +143,8 @@ const ProductStats = ({ products, lowStockFilterActive, onToggleLowStockFilter, 
           <ReportProblem />
         </div>
         <div className="stat-content">
-          <p className="stat-value">{lowStock}</p>
           <p className="stat-label">Низький залишок</p>
+          <p className="stat-value">{lowStock}</p>
         </div>
         {lowStockFilterActive && (
           <span className="stat-filter-badge">

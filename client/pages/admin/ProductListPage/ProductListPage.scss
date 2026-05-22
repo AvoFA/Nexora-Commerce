@@ -8,12 +8,3 @@
 @import '@/pages/admin/ProductListPage/styles/_product-table.scss';
 @import '@/pages/admin/ProductListPage/styles/_product-modal.scss';
 @import '@/pages/admin/ProductListPage/styles/_product-mobile.scss';
-
-@keyframes adminProductRefreshSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}

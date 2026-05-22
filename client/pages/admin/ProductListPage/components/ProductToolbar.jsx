@@ -45,7 +45,7 @@ const ProductToolbar = ({
   ];
 
   return (
-    <div className="admin-solid-card product-toolbar-card">
+    <div className="product-toolbar-card">
       <div className="product-toolbar-layout">
         <AdminSearchInput
           value={searchTerm}
