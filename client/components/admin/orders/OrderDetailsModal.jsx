@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -18,6 +19,7 @@ import {
   History as HistoryIcon,
 } from "@mui/icons-material";
 import { formatPrice } from "../../../utils/formatPrice";
+import { formatCustomerName } from "../../../utils/customerFormatters";
 import {
   statusColorMap,
   statusLabelMap,
@@ -109,10 +111,30 @@ const OrderDetailsModal = ({
                 <span className="section-label">Клієнт</span>
               </div>
               <Typography variant="body2" className="section-title">
-                {order.customer?.name || "—"}
+                {formatCustomerName(
+                  order.user && order.user.surname !== undefined ? order.user : order.customer,
+                  'full'
+                )}
               </Typography>
               <span>{order.customer?.email || "—"}</span>
               <span className="customer-phone">{order.customer?.phone || "—"}</span>
+              {order.user && (
+                <Link 
+                  to={`/admin/orders?customer=${typeof order.user === 'object' ? order.user._id : order.user}&customerName=${encodeURIComponent(formatCustomerName(order.user && order.user.surname !== undefined ? order.user : order.customer, 'compact') || order.customer?.email || "")}&status=all`}
+                  onClick={onClose}
+                  style={{ 
+                    display: 'inline-block', 
+                    marginTop: '10px', 
+                    fontSize: '13px', 
+                    fontWeight: 600, 
+                    color: 'var(--primary-color)',
+                    textDecoration: 'none'
+                  }}
+                  className="hover-underline"
+                >
+                  Усі замовлення клієнта &rarr;
+                </Link>
+              )}
             </div>
 
             <div className="modal-section-card">

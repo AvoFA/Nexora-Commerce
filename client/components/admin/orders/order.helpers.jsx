@@ -1,5 +1,6 @@
 import React from "react";
 import { Inventory2Outlined } from "@mui/icons-material";
+import { formatDate, formatTime } from "../../../utils/dateFormatters";
 
 export const statusColorMap = {
   new: "info",
@@ -17,6 +18,15 @@ export const statusLabelMap = {
   ready_for_pickup: "Відправлено",
   received: "Отримано",
   cancelled: "Скасовано",
+};
+
+export const statusBadgeClassMap = {
+  new: "badge-new",
+  confirmed: "badge-confirmed",
+  packing: "badge-confirmed",
+  ready_for_pickup: "badge-confirmed",
+  received: "badge-received",
+  cancelled: "badge-cancelled",
 };
 
 export const cancellationSourceLabelMap = {
@@ -61,38 +71,15 @@ export const getHistoryStatusLabel = (entry) => {
   return statusLabelMap[entry?.status] || entry?.status;
 };
 
-export const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
+export const getStatusLabel = (status) => statusLabelMap[status] || status;
 
-export const highlightMatch = (text, query) => {
-  if (!text) return "";
-  if (!query || !query.trim()) return text;
+export const getStatusBadgeClass = (status) => statusBadgeClassMap[status] || "";
 
-  const trimmedQuery = query.trim();
-  const parts = String(text).split(
-    new RegExp(`(${escapeRegExp(trimmedQuery)})`, "gi"),
-  );
+export { escapeRegExp, highlightMatch } from "../../../utils/searchHighlight";
 
-  return (
-    <>
-      {parts.map((part, i) =>
-        part.toLowerCase() === trimmedQuery.toLowerCase() ? (
-          <mark key={i} className="search-highlight">
-            {part}
-          </mark>
-        ) : (
-          part
-        ),
-      )}
-    </>
-  );
-};
 
 export const formatOrderDate = (date) => {
-  if (!date) return "—";
-
-  return new Date(date).toLocaleDateString("uk-UA", {
+  return formatDate(date, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -100,9 +87,7 @@ export const formatOrderDate = (date) => {
 };
 
 export const formatOrderTime = (date) => {
-  if (!date) return "";
-
-  return new Date(date).toLocaleTimeString("uk-UA", {
+  return formatTime(date, {
     hour: "2-digit",
     minute: "2-digit",
   });

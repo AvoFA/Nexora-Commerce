@@ -19,6 +19,7 @@ import {
   PaymentsOutlined,
 } from "@mui/icons-material";
 import { formatPrice } from "../../../utils/formatPrice";
+import { formatCustomerName } from "../../../utils/customerFormatters";
 import Pagination from "../../../components/common/Pagination/Pagination";
 import OrderStatusDropdown from "./OrderStatusDropdown";
 import {
@@ -130,7 +131,7 @@ const OrdersTable = ({
                   <Box className="customer-cell">
                     <Typography variant="body2" className="customer-name">
                       {highlightMatch(
-                        order.customer?.name || "—",
+                        formatCustomerName(order.user && order.user.surname !== undefined ? order.user : order.customer, 'compact'),
                         searchQuery,
                       )}
                     </Typography>

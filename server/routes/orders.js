@@ -2,6 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const User = require('../models/User');
+const Product = require('../models/Product');
+const Review = require('../models/Review');
+const Question = require('../models/Question');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
@@ -120,9 +123,9 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
     }
 
     if (!['new', 'confirmed'].includes(order.status)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Це замовлення вже обробляється або завершене, тому його не можна скасувати.' 
+      return res.status(400).json({
+        success: false,
+        message: 'Це замовлення вже обробляється або завершене, тому його не можна скасувати.'
       });
     }
 
@@ -137,8 +140,8 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
       comment: comment || '',
       cancelledAt: new Date()
     };
-    order.history.push({ 
-      status: 'cancelled', 
+    order.history.push({
+      status: 'cancelled',
       timestamp: new Date(),
       changedBy: 'customer',
       reason: reason,
@@ -158,6 +161,104 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/admin/dashboard-data', authenticateToken, adminOnly, async (req, res) => {
+  try {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const [
+      ordersTodayCount,
+      todayTurnoverAggregation,
+      totalTurnoverAggregation,
+      newOrdersCount,
+      unansweredQuestionsCount,
+      pendingReviewsCount,
+      lowStockProductsCount,
+      recentOrders,
+      pendingReviews,
+      unansweredQuestions,
+      lowStockProducts
+    ] = await Promise.all([
+      // 1. Stats
+      Order.countDocuments({ createdAt: { $gte: startOfToday } }),
+      Order.aggregate([
+        { $match: { createdAt: { $gte: startOfToday }, status: { $ne: 'cancelled' } } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+      ]),
+      Order.aggregate([
+        { $match: { status: { $ne: 'cancelled' } } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+      ]),
+      Order.countDocuments({ status: 'new' }),
+      Question.countDocuments({
+        $or: [
+          { answer: { $exists: false } },
+          { answer: '' }
+        ]
+      }),
+      Review.countDocuments({ status: 'pending' }),
+      Product.countDocuments({ stock: { $lte: 5 } }),
+
+      // 2. Recent Orders (7)
+      Order.find()
+        .populate('user', 'name surname patronymic email')
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean(),
+
+      // 3. Pending Reviews (5)
+      Review.find({ status: 'pending' })
+        .populate('product', 'name image')
+        .sort({ createdAt: -1 })
+        .limit(7)
+        .lean(),
+
+      // 4. Unanswered Questions (5)
+      Question.find({
+        $or: [
+          { answer: { $exists: false } },
+          { answer: '' }
+        ]
+      })
+        .populate('product', 'name image')
+        .sort({ createdAt: -1 })
+        .limit(5)
+        .lean(),
+
+      // 5. Low Stock Products (7)
+      Product.find({ stock: { $lte: 5 } })
+        .sort({ stock: 1, name: 1 })
+        .limit(7)
+        .lean()
+    ]);
+
+    const stats = {
+      ordersToday: ordersTodayCount,
+      turnoverToday: todayTurnoverAggregation[0]?.total || 0,
+      turnoverTotal: totalTurnoverAggregation[0]?.total || 0,
+      newOrders: newOrdersCount,
+      unansweredQuestions: unansweredQuestionsCount,
+      pendingReviews: pendingReviewsCount,
+      lowStock: lowStockProductsCount
+    };
+
+    res.json({
+      success: true,
+      stats,
+      recentOrders,
+      pendingReviews,
+      unansweredQuestions,
+      lowStockProducts
+    });
+  } catch (error) {
+    console.error('Помилка отримання даних дашборду:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка отримання даних дашборду'
+    });
+  }
+});
+
 router.get('/admin', authenticateToken, adminOnly, async (req, res) => {
   try {
     let page = parseInt(req.query.page, 10) || 1;
@@ -167,9 +268,15 @@ router.get('/admin', authenticateToken, adminOnly, async (req, res) => {
     if (limit > 100) limit = 100;
 
     const skip = (page - 1) * limit;
-    const { status, search, cancelledBy } = req.query;
+    const { status, search, cancelledBy, customer } = req.query;
     const query = {};
+    const countQuery = {};
     const validCancelledBy = ['customer', 'admin'].includes(cancelledBy) ? cancelledBy : null;
+
+    if (customer && mongoose.Types.ObjectId.isValid(customer)) {
+      query.user = new mongoose.Types.ObjectId(customer);
+      countQuery.user = new mongoose.Types.ObjectId(customer);
+    }
 
     // 1. Status Filter
     if (status && status !== 'all') {
@@ -217,7 +324,6 @@ router.get('/admin', authenticateToken, adminOnly, async (req, res) => {
     }
 
     // 3. Counts Aggregation (must match search conditions but NOT status and pagination)
-    const countQuery = {};
     if (searchConditions.length > 0) {
       countQuery.$or = searchConditions;
     }
@@ -280,7 +386,7 @@ router.get('/admin', authenticateToken, adminOnly, async (req, res) => {
 
     // 5. Fetch orders and total
     const orders = await Order.find(query)
-      .populate('user', 'name email')
+      .populate('user', 'name surname patronymic email')
       .sort(sortObj)
       .skip(skip)
       .limit(limit)
@@ -310,7 +416,7 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
   try {
     const { status } = req.body;
     const validStatuses = ['new', 'confirmed', 'packing', 'ready_for_pickup', 'received', 'cancelled'];
-    
+
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ success: false, message: 'Недопустимий статус' });
     }
@@ -322,7 +428,7 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
 
     order.status = status;
     const historyEntry = { status, timestamp: new Date() };
-    
+
     if (status === 'cancelled') {
       if (!order.cancellation || !order.cancellation.cancelledBy) {
         order.cancellation = {
@@ -332,7 +438,7 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
       }
       historyEntry.changedBy = 'admin';
     }
-    
+
     order.history.push(historyEntry);
     await order.save();
 

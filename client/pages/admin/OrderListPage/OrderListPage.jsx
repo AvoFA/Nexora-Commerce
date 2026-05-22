@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { ReportProblemOutlined } from "@mui/icons-material";
+import { Box, CircularProgress, Typography, Button } from "@mui/material";
+import { ReportProblemOutlined, PersonOutlineOutlined, CloseOutlined } from "@mui/icons-material";
 import { toast } from "sonner";
 import {
   getAdminOrders,
@@ -99,6 +99,8 @@ const OrderListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const statusParam = searchParams.get("status") || "new";
   const cancelledByParam = searchParams.get("cancelledBy") || "";
+  const customerParam = searchParams.get("customer") || "";
+  const customerNameParam = searchParams.get("customerName") || "";
   const activeFilter = getActiveFilterFromParams(statusParam, cancelledByParam);
   const searchQuery = searchParams.get("q") || "";
   const sort = searchParams.get("sort") || "createdAt_desc";
@@ -255,6 +257,7 @@ const OrderListPage = () => {
         cancelledBy: cancelledByParam,
         search: searchQuery,
         sort,
+        customer: customerParam,
       });
       if (data.success) {
         setOrders(data.orders || []);
@@ -285,7 +288,8 @@ const OrderListPage = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [statusParam, cancelledByParam, searchQuery, page, limit, sort]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit, statusParam, cancelledByParam, searchQuery, sort, customerParam]);
 
   const handleStatusChange = async (id, newStatus) => {
     try {
@@ -340,15 +344,76 @@ const OrderListPage = () => {
   return (
     <Box className="order-list-page">
       <Box className="admin-page-header">
-        <div className="header-title-wrapper">
-          <Typography variant="h2" component="h2">
-            Керування замовленнями
-          </Typography>
-          <Typography variant="body2" className="subtitle">
-            Огляд, фільтрація та оновлення статусів клієнтських замовлень
-          </Typography>
+        <div className="header-title-wrapper" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <Typography variant="h2" component="h2">
+              Керування замовленнями
+            </Typography>
+            <Typography variant="body2" className="subtitle">
+              Огляд, фільтрація та оновлення статусів клієнтських замовлень
+            </Typography>
+          </div>
         </div>
       </Box>
+
+      {customerParam && (
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            p: '12px 16px', 
+            mb: 3, 
+            borderRadius: '12px',
+            border: '1px solid var(--border-color)',
+            bgcolor: 'var(--card-bg)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                width: 36, 
+                height: 36, 
+                borderRadius: '8px',
+                bgcolor: 'rgba(var(--primary-color-rgb), 0.1)',
+                color: 'var(--primary-color)'
+              }}
+            >
+              <PersonOutlineOutlined fontSize="small" />
+            </Box>
+            <Box>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'var(--text-color)', lineHeight: 1.2, mb: 0.25 }}>
+                Замовлення клієнта
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'var(--text-secondary)', lineHeight: 1.2 }}>
+                {customerNameParam || customerParam}
+              </Typography>
+            </Box>
+          </Box>
+          
+          <Button 
+            variant="outlined" 
+            size="small" 
+            color="error" 
+            endIcon={<CloseOutlined fontSize="small" />}
+            onClick={() => {
+              setSearchParams((prev) => {
+                prev.delete('customer');
+                prev.delete('customerName');
+                prev.delete('page');
+                return prev;
+              }, { replace: true });
+            }}
+            sx={{ textTransform: 'none', fontWeight: 500 }}
+          >
+            Скинути фільтр
+          </Button>
+        </Box>
+      )}
 
       <OrdersStats
         newCount={serverCounts.new || 0}

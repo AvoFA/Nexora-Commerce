@@ -55,6 +55,7 @@ export const getAdminOrders = async (token, params = {}) => {
   if (params.cancelledBy) query.append('cancelledBy', params.cancelledBy);
   if (params.search) query.append('search', params.search);
   if (params.sort) query.append('sort', params.sort);
+  if (params.customer) query.append('customer', params.customer);
 
   const queryString = query.toString() ? `?${query.toString()}` : '';
 
@@ -98,6 +99,20 @@ export const cancelOrder = async (orderId, payload, token) => {
 
   if (!response.ok) {
     throw new Error(data.message || 'Не вдалося скасувати замовлення');
+  }
+
+  return data;
+};
+
+export const getAdminDashboardData = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/orders/admin/dashboard-data`, {
+    headers: getAuthHeaders(token)
+  });
+
+  const data = await parseJsonResponse(response);
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Не вдалося завантажити дані дашборду');
   }
 
   return data;
