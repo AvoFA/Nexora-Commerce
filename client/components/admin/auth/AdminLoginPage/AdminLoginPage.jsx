@@ -136,7 +136,10 @@ const AdminLoginPage = () => {
 
           {/* Підказка для розробки (можна прибрати в продакшні) */}
           <div className="login-footer">
-            <p>Для входу використовуйте: admin / admin123</p>
+            <p>
+              Admin: admin / admin123<br />
+              Moderator: moderator@electrolux.test / Moderator123!
+            </p>
           </div>
         </div>
       </div>

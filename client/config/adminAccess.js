@@ -4,16 +4,21 @@ export const ADMIN_ROLES = {
 };
 
 export const ADMIN_DEFAULT_PATHS = {
-  [ADMIN_ROLES.ADMIN]: "/admin/products",
+  [ADMIN_ROLES.ADMIN]: "/admin/dashboard",
   [ADMIN_ROLES.MODERATOR]: "/admin/reviews",
 };
 
 const ADMIN_ROUTE_ACCESS = [
+  { path: "/admin/dashboard", roles: [ADMIN_ROLES.ADMIN] },
   { path: "/admin/products", roles: [ADMIN_ROLES.ADMIN] },
   { path: "/admin/categories", roles: [ADMIN_ROLES.ADMIN] },
   { path: "/admin/orders", roles: [ADMIN_ROLES.ADMIN] },
   {
     path: "/admin/reviews",
+    roles: [ADMIN_ROLES.ADMIN, ADMIN_ROLES.MODERATOR],
+  },
+  {
+    path: "/admin/customers",
     roles: [ADMIN_ROLES.ADMIN, ADMIN_ROLES.MODERATOR],
   },
 ];
