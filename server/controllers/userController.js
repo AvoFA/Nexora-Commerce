@@ -139,6 +139,11 @@ class UserController {
         throw new Error('Невірний email або пароль');
       }
 
+      // Перевірка чи акаунт заблоковано
+      if (user.status === 'blocked') {
+        throw new Error('Ваш акаунт заблоковано. Будь ласка, зверніться до підтримки.');
+      }
+
       // Перевірка паролю
       const isPasswordValid = await this.comparePassword(password, user.password);
       if (!isPasswordValid) {

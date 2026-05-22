@@ -13,6 +13,7 @@ const wishlistRoutes = require('./routes/wishlist');
 const reviewRoutes = require('./routes/reviews');
 const questionRoutes = require('./routes/questions');
 const deliveryRoutes = require('./routes/delivery');
+const customerRoutes = require('./routes/customers');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/delivery', deliveryRoutes);
+app.use('/api/customers', customerRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

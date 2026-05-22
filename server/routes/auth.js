@@ -105,13 +105,11 @@ router.post('/login', async (req, res) => {
 
   } catch (error) {
     console.error('Помилка авторизації клієнта:', error.message);
+    return res.status(401).json({
+      success: false,
+      message: error.message || 'Невірний email або пароль'
+    });
   }
-
-  // Якщо щось пішло не так
-  res.status(401).json({
-    success: false,
-    message: 'Невірний email або пароль'
-  });
 });
 
 // Роут для реєстрації адміністраторів (username)
@@ -198,6 +196,8 @@ router.patch('/profile', authenticateToken, async (req, res) => {
   try {
     const updatedUser = await UserController.updateClientProfile(req.user.id, {
       name: req.body.name,
+      surname: req.body.surname,
+      patronymic: req.body.patronymic,
       phone: req.body.phone
     });
 

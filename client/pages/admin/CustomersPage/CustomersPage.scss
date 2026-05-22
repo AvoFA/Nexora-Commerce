@@ -1,0 +1,982 @@
+@import "../../../styles/variables";
+
+.customer-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 1. Stats Overview styling */
+.customer-stats-overview {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 580px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-mini-card {
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.22s ease,
+                box-shadow 0.22s ease,
+                background-color 0.22s ease;
+  }
+}
+
+/* 2. Customer Toolbar */
+.customer-toolbar-card {
+  position: relative;
+  z-index: 8;
+  overflow: visible;
+  margin-bottom: 16px;
+  padding: 20px;
+  background: var(--card-bg, #1a2235);
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+
+  .customer-toolbar-layout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: visible;
+
+    @media (max-width: 1120px) {
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 12px;
+    }
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    flex: 0 1 900px;
+    width: min(560px, 100%);
+    max-width: 900px;
+    min-width: 0;
+
+    @media (max-width: 1320px) {
+      flex-basis: 500px;
+      width: min(500px, 100%);
+      max-width: 500px;
+    }
+
+    @media (max-width: 1120px) {
+      flex: 1 1 100%;
+      width: 100%;
+      max-width: none;
+    }
+
+    @media (max-width: 620px) {
+      min-width: 0;
+    }
+
+    .search-icon-wrapper {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: $text-secondary;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      height: 40px;
+      padding: 8px 40px;
+      color: $text-color;
+      background: $bg-color;
+      border: 1px solid $border-color;
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+      &::placeholder {
+        color: rgba($text-secondary, 0.72);
+      }
+
+      &:hover {
+        background-color: lighten($bg-color, 3%);
+        border-color: rgba($text-secondary, 0.35);
+      }
+
+      &:focus {
+        outline: none;
+        background-color: $bg-color;
+        border-color: $primary-color;
+        box-shadow: 0 0 12px rgba($primary-color, 0.08);
+      }
+    }
+
+    .clear-search-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      color: $text-secondary;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transform: translateY(-50%);
+
+      &:hover {
+        color: $text-color;
+        background: rgba($text-color, 0.08);
+      }
+
+      svg {
+        font-size: 18px;
+      }
+    }
+  }
+
+  .customer-toolbar-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    min-width: 0;
+    width: auto;
+    overflow: visible;
+
+    @media (max-width: 1120px) {
+      flex: 1 1 auto;
+      width: auto;
+    }
+
+    @media (max-width: 760px) {
+      align-items: stretch;
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+
+  .customer-filter-select {
+    flex: 0 0 144px;
+    width: 144px;
+    min-width: 144px;
+
+    &.customer-sort-select {
+      flex-basis: 196px;
+      width: 196px;
+      min-width: 196px;
+    }
+
+    @media (max-width: 1120px) {
+      flex: 1 1 180px;
+      width: 100%;
+      min-width: 0;
+
+      &.customer-sort-select {
+        flex: 1 1 220px;
+        width: 100%;
+        min-width: 0;
+      }
+    }
+
+    .select-label {
+      display: none;
+    }
+
+    .select-relative,
+    select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    select {
+      height: 40px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      color: $text-color;
+      background: $bg-color;
+      border: 1px solid $border-color;
+      border-radius: 9px;
+      font-size: 0.86rem;
+      font-weight: 650;
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:hover {
+        background-color: lighten($bg-color, 3%);
+        border-color: rgba($text-secondary, 0.35);
+      }
+
+      &:focus-visible {
+        background-color: $bg-color;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
+      }
+    }
+
+    .select-relative.is-open select {
+      background-color: $bg-color;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.12);
+    }
+  }
+
+  .customer-toolbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 0 42px;
+    margin-left: auto;
+    width: 42px;
+    min-width: 42px;
+    gap: 8px;
+
+    @media (max-width: 1120px) {
+      flex: 0 0 42px;
+      margin-left: 0;
+      width: 100%;
+      min-width: 0;
+    }
+
+    @media (max-width: 520px) {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  }
+
+  .refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 40px;
+    padding: 0;
+    color: $text-secondary;
+    background: $bg-color;
+    border: 1px solid $border-color;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      color: $text-color;
+      border-color: rgba($text-secondary, 0.35);
+      background-color: lighten($bg-color, 3%);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &.is-loading svg {
+      animation: adminRefreshSpin 0.8s linear infinite;
+    }
+
+    @media (max-width: 520px) {
+      width: 100%;
+    }
+  }
+}
+
+/* 3. Tables styling and headers */
+.customer-table-card {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  background: var(--card-bg, #1a2235);
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.16);
+  margin-bottom: 24px;
+}
+
+.customer-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 14px 16px;
+    text-align: left;
+    vertical-align: middle;
+    color: var(--text-secondary, #94a3b8);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  td {
+    padding: 12px 16px;
+    text-align: left;
+    vertical-align: middle;
+    color: $text-secondary;
+    font-weight: 650;
+  }
+
+  thead {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  thead tr {
+    border-bottom: 1px solid $border-color;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border-color;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.is-blocked {
+      opacity: 0.72;
+      background-color: rgba(239, 68, 68, 0.10);
+
+      .customer-name {
+        color: rgba(255, 255, 255, 0.5);
+        text-decoration: line-through;
+      }
+    }
+  }
+
+  .sortable-header {
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $primary-color;
+    }
+
+    &.is-active {
+      color: $text-color;
+    }
+  }
+
+  .customer-sort-label {
+    white-space: nowrap;
+  }
+
+  .customer-sort-direction {
+    margin-left: 5px;
+    color: $primary-color;
+  }
+
+  .customer-info-cell {
+    min-width: 260px;
+  }
+
+  .customer-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .customer-avatar {
+      background: linear-gradient(135deg, $primary-color, lighten($primary-color, 12%));
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .customer-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .customer-name {
+        color: var(--text-color, #ffffff);
+        font-size: 0.95rem;
+        font-weight: 750;
+        line-height: 1.25;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .customer-contacts {
+        color: var(--text-secondary, #94a3b8);
+        font-size: 0.78rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+
+  .customer-status-cell {
+    min-width: 110px;
+  }
+
+  .customer-orders-cell {
+    min-width: 90px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: $text-secondary;
+  }
+
+  .customer-spent-cell {
+    min-width: 110px;
+    font-size: 0.95rem;
+    font-weight: 760;
+    color: var(--text-color, #ffffff);
+  }
+
+  .customer-avg-cell {
+    min-width: 100px;
+    font-size: 0.85rem;
+  }
+
+  .customer-last-order-cell,
+  .customer-registered-cell {
+    min-width: 120px;
+    font-size: 0.85rem;
+  }
+
+  .customer-actions-cell {
+    min-width: 90px;
+
+    .action-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    button.action-btn {
+      color: $text-secondary;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+      width: 32px;
+      height: 32px;
+      padding: 0;
+
+      svg {
+        font-size: 19px;
+      }
+
+      &.view-btn:hover {
+        color: $primary-color;
+        background: rgba($primary-color, 0.08);
+        border-color: rgba($primary-color, 0.22);
+      }
+
+      &.block-btn:hover {
+        color: $danger-color;
+        background: rgba($danger-color, 0.08);
+        border-color: rgba($danger-color, 0.24);
+      }
+
+      &.unblock-btn:hover {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.24);
+      }
+    }
+  }
+}
+
+/* 4. Badges Styling */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+  border: 1px solid transparent;
+
+  &.status-active {
+    background-color: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.22);
+  }
+
+  &.status-blocked {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.22);
+  }
+}
+
+/* 5. Mobile Cards View */
+.customer-mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customer-mobile-card {
+  padding: 16px;
+  background: rgba($card-bg, 0.62);
+  border: 1px solid rgba($border-color, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  &.is-blocked {
+    opacity: 0.75;
+    background-color: rgba(239, 68, 68, 0.01);
+
+    .customer-name {
+      text-decoration: line-through;
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    .customer-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+
+      .customer-avatar {
+        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 12%));
+        color: #ffffff;
+        font-weight: 700;
+        width: 36px;
+        height: 36px;
+      }
+
+      .customer-details {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        .customer-name {
+          color: var(--text-color, #ffffff);
+          font-size: 0.88rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .customer-email {
+          color: var(--text-secondary, #94a3b8);
+          font-size: 0.72rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .customer-phone {
+          color: var(--text-secondary, #94a3b8);
+          font-size: 0.72rem;
+        }
+      }
+    }
+  }
+
+  .card-body {
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px 16px;
+      background: rgba(0, 0, 0, 0.12);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+
+      .metric-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .metric-label {
+          font-size: 0.68rem;
+          color: var(--text-secondary, #94a3b8);
+        }
+
+        .metric-value {
+          font-size: 0.8rem;
+          color: var(--text-color, #ffffff);
+        }
+      }
+    }
+
+    .card-footer-meta {
+      font-size: 0.68rem;
+      color: rgba(148, 163, 184, 0.6);
+      text-align: right;
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      background: transparent;
+      font-family: inherit;
+
+      &.btn-view {
+        color: #3b82f6;
+        border-color: rgba(59, 130, 246, 0.15);
+        background-color: rgba(59, 130, 246, 0.03);
+
+        &:hover {
+          background-color: rgba(59, 130, 246, 0.08);
+          border-color: rgba(59, 130, 246, 0.35);
+        }
+      }
+
+      &.btn-block {
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.15);
+        background-color: rgba(239, 68, 68, 0.03);
+
+        &:hover {
+          background-color: rgba(239, 68, 68, 0.08);
+          border-color: rgba(239, 68, 68, 0.35);
+        }
+      }
+
+      &.btn-unblock {
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.15);
+        background-color: rgba(16, 185, 129, 0.03);
+
+        &:hover {
+          background-color: rgba(16, 185, 129, 0.08);
+          border-color: rgba(16, 185, 129, 0.35);
+        }
+      }
+    }
+  }
+}
+
+/* 6. Visibility Helpers */
+.desktop-only-view {
+  display: block;
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.mobile-only-view {
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+/* 7. Details Modal styling */
+.customer-details-dialog {
+  .MuiDialog-container {
+  }
+
+  .MuiPaper-root {
+    background-color: var(--card-bg, #1a2235);
+    border: 1px solid $border-color;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
+    color: var(--text-color, #ffffff);
+  }
+
+  .customer-status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 2px 4px;
+    user-select: none;
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+
+      &.is-active {
+        background-color: #10b981;
+        color: #10b981;
+        box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+        animation: statusDotBreathe 2s infinite ease-in-out;
+      }
+
+      &.is-blocked {
+        background-color: #ef4444;
+        color: #ef4444;
+        box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+        animation: statusDotBreathe 2s infinite ease-in-out;
+      }
+    }
+
+    .status-text {
+      font-size: 0.82rem;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+
+      &.is-active {
+        color: #10b981;
+      }
+
+      &.is-blocked {
+        color: #ef4444;
+      }
+    }
+  }
+
+  .customer-modal-header {
+    border-bottom: 1px solid $border-color;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+
+      .modal-header-actions {
+        width: 100%;
+        margin-top: 12px;
+
+        .header-action-btn {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .customer-modal-content {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .customer-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  .customer-section-card {
+    background-color: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba($border-color, 0.4);
+    border-radius: 10px;
+    padding: 16px;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: $primary-color;
+
+      .section-icon {
+        font-size: 1.15rem;
+      }
+
+      .section-label {
+        font-size: 0.72rem;
+        font-weight: 750;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: $text-secondary;
+      }
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      margin-top: 8px;
+
+      .row-icon {
+        font-size: 1.1rem;
+        color: rgba($text-secondary, 0.7);
+      }
+
+      .info-label {
+        color: var(--text-secondary, #94a3b8);
+        font-weight: 600;
+      }
+
+      .info-value {
+        color: var(--text-color, #ffffff);
+        font-weight: 700;
+      }
+    }
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+    color: var(--text-color, #ffffff);
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: 750;
+  }
+
+  .modal-orders-table-container {
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba($border-color, 0.5);
+
+    .MuiTableHead-root {
+      background-color: rgba(0, 0, 0, 0.2);
+      .MuiTableCell-head {
+        color: var(--text-secondary, #94a3b8);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        border-bottom: 1px solid rgba($border-color, 0.5);
+        padding: 10px 14px;
+        letter-spacing: 0.02em;
+      }
+    }
+
+    .MuiTableBody-root {
+      .MuiTableRow-root {
+        border-bottom: 1px solid rgba($border-color, 0.3);
+        transition: background-color 0.15s ease;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.015);
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .MuiTableCell-body {
+          color: var(--text-color, #ffffff);
+          border-bottom: none;
+          padding: 10px 14px;
+          font-weight: 650;
+        }
+      }
+    }
+
+    .order-status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+
+      &.status-new {
+        background-color: rgba(245, 158, 11, 0.12);
+        color: #f59e0b;
+        border-color: rgba(245, 158, 11, 0.22);
+      }
+
+      &.status-processing {
+        background-color: rgba(59, 130, 246, 0.12);
+        color: #3b82f6;
+        border-color: rgba(59, 130, 246, 0.22);
+      }
+
+      &.status-pickup {
+        background-color: rgba(6, 182, 212, 0.12);
+        color: #06b6d4;
+        border-color: rgba(6, 182, 212, 0.22);
+      }
+
+      &.status-received {
+        background-color: rgba(16, 185, 129, 0.12);
+        color: #10b981;
+        border-color: rgba(16, 185, 129, 0.22);
+      }
+
+      &.status-cancelled {
+        background-color: rgba(239, 68, 68, 0.12);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.22);
+      }
+    }
+  }
+
+  .header-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 750;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    background: transparent;
+    font-family: inherit;
+
+    &.btn-block {
+      color: $danger-color;
+      border-color: rgba($danger-color, 0.2);
+      background-color: rgba($danger-color, 0.04);
+
+      &:hover {
+        background-color: rgba($danger-color, 0.08);
+        border-color: rgba($danger-color, 0.35);
+      }
+    }
+
+    &.btn-unblock {
+      color: #10b981;
+      border-color: rgba(16, 185, 129, 0.2);
+      background-color: rgba(16, 185, 129, 0.04);
+
+      &:hover {
+        background-color: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.35);
+      }
+    }
+  }
+}
