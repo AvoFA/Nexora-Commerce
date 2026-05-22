@@ -1,32 +1,6 @@
-import React from "react";
+import { formatDate, formatDateTime } from "../../../utils/dateFormatters";
 
-export const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-};
-
-export const highlightMatch = (text, query) => {
-  if (!text) return "";
-  if (!query || !query.trim()) return text;
-
-  const trimmedQuery = query.trim();
-  const parts = String(text).split(
-    new RegExp(`(${escapeRegExp(trimmedQuery)})`, "gi"),
-  );
-
-  return (
-    <>
-      {parts.map((part, i) =>
-        part.toLowerCase() === trimmedQuery.toLowerCase() ? (
-          <mark key={i} className="search-highlight">
-            {part}
-          </mark>
-        ) : (
-          part
-        ),
-      )}
-    </>
-  );
-};
+export { escapeRegExp, highlightMatch } from "../../../utils/searchHighlight";
 
 export const renderStars = (rating) => {
   const numRating = Number(rating) || 0;
@@ -56,3 +30,25 @@ export const statusLabelMap = {
   approved: "Опубліковано",
   rejected: "Відхилено",
 };
+
+export const formatModerationListDate = (date) =>
+  formatDate(date, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+export const formatModerationDetailsDate = (date) =>
+  formatDateTime(
+    date,
+    {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    },
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+    "Невідомо",
+  );

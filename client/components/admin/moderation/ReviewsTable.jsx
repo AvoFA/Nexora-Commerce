@@ -17,6 +17,7 @@ import {
 } from "@mui/icons-material";
 import {
   highlightMatch,
+  formatModerationListDate,
   renderStars,
   statusColorMap,
   statusLabelMap,
@@ -52,11 +53,7 @@ const ReviewsTable = ({
                 )}
                 {review.createdAt && (
                   <Typography variant="caption" className="user-date">
-                    {new Date(review.createdAt).toLocaleDateString("uk-UA", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formatModerationListDate(review.createdAt)}
                   </Typography>
                 )}
               </Box>

@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import {
+  formatModerationDetailsDate,
   statusColorMap,
   statusLabelMap,
 } from "./moderation.helpers";
@@ -91,24 +92,7 @@ const QuestionDetailsModal = ({
                 <div className="meta-item">
                   <span className="meta-label">Дата створення:</span>
                   <span className="meta-val">
-                    {question.createdAt
-                      ? new Date(question.createdAt).toLocaleDateString(
-                          "uk-UA",
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          }
-                        ) +
-                        " " +
-                        new Date(question.createdAt).toLocaleTimeString(
-                          "uk-UA",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )
-                      : "Невідомо"}
+                    {formatModerationDetailsDate(question.createdAt)}
                   </span>
                 </div>
                 <div className="meta-item">

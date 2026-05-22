@@ -16,6 +16,7 @@ import {
 } from "@mui/icons-material";
 import {
   highlightMatch,
+  formatModerationListDate,
   statusColorMap,
   statusLabelMap,
 } from "./moderation.helpers";
@@ -52,11 +53,7 @@ const QuestionsTable = ({
                   )}
                   {question.createdAt && (
                     <Typography variant="caption" className="user-date">
-                      {new Date(question.createdAt).toLocaleDateString("uk-UA", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
+                      {formatModerationListDate(question.createdAt)}
                     </Typography>
                   )}
                 </Box>

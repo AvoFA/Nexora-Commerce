@@ -12,6 +12,7 @@ import {
 import { Close as CloseIcon } from "@mui/icons-material";
 import {
   renderStars,
+  formatModerationDetailsDate,
   statusColorMap,
   statusLabelMap,
 } from "./moderation.helpers";
@@ -87,24 +88,7 @@ const ReviewDetailsModal = ({
                 <div className="meta-item">
                   <span className="meta-label">Дата створення:</span>
                   <span className="meta-val">
-                    {review.createdAt
-                      ? new Date(review.createdAt).toLocaleDateString(
-                          "uk-UA",
-                          {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                          }
-                        ) +
-                        " " +
-                        new Date(review.createdAt).toLocaleTimeString(
-                          "uk-UA",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )
-                      : "Невідомо"}
+                    {formatModerationDetailsDate(review.createdAt)}
                   </span>
                 </div>
                 <div className="meta-item">
