@@ -61,9 +61,25 @@ const ProfileTab = () => {
   const isPersonalEditing = editingSection === "personal";
   const isContactsEditing = editingSection === "contacts";
 
+  // Regex: starts with uppercase Cyrillic, followed by Cyrillic letters, hyphen, apostrophe
+  const CYRILLIC_NAME_RE = /^[А-ЯЄІЇҐ][а-яєіїґА-ЯЄІЇҐʼ''\-]*$/;
+  const NAME_HINT = "Тільки літери кирилиці, тире, апостроф. З великої літери.";
+
+  const validateField = (value, required = true) => {
+    const v = value.trim();
+    if (required && v.length < 2) return "Мінімум 2 символи";
+    if (v && !CYRILLIC_NAME_RE.test(v)) return NAME_HINT;
+    return null;
+  };
+
   const validate = () => {
     const nextErrors = {};
-    if (name.trim().length < 2) nextErrors.name = "Мінімум 2 символи";
+    const nameErr = validateField(name, true);
+    if (nameErr) nextErrors.name = nameErr;
+    const surnameErr = validateField(surname, false);
+    if (surnameErr) nextErrors.surname = surnameErr;
+    const patronymicErr = validateField(patronymic, false);
+    if (patronymicErr) nextErrors.patronymic = patronymicErr;
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
@@ -183,15 +199,57 @@ const ProfileTab = () => {
                   <div className="edit-grid-compact">
                     <div className="field-group">
                       <label>Прізвище</label>
-                      <input type="text" value={surname} onChange={(e) => setSurname(e.target.value)} placeholder="Прізвище" />
+                      <input
+                        type="text"
+                        value={surname}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setSurname(val);
+                          const err = validateField(val, false);
+                          setErrors(prev => ({ ...prev, surname: err }));
+                        }}
+                        placeholder="Прізвище"
+                        className={errors.surname ? 'has-error' : ''}
+                      />
+                      {errors.surname && (
+                        <span className="field-hint field-hint--error">{errors.surname}</span>
+                      )}
                     </div>
                     <div className="field-group">
                       <label>Ім'я *</label>
-                      <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Ім'я" className={errors.name ? 'has-error' : ''} />
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setName(val);
+                          const err = validateField(val, true);
+                          setErrors(prev => ({ ...prev, name: err }));
+                        }}
+                        placeholder="Ім'я"
+                        className={errors.name ? 'has-error' : ''}
+                      />
+                      {errors.name && (
+                        <span className="field-hint field-hint--error">{errors.name}</span>
+                      )}
                     </div>
                     <div className="field-group">
                       <label>По батькові</label>
-                      <input type="text" value={patronymic} onChange={(e) => setPatronymic(e.target.value)} placeholder="По батькові" />
+                      <input
+                        type="text"
+                        value={patronymic}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setPatronymic(val);
+                          const err = validateField(val, false);
+                          setErrors(prev => ({ ...prev, patronymic: err }));
+                        }}
+                        placeholder="По батькові"
+                        className={errors.patronymic ? 'has-error' : ''}
+                      />
+                      {errors.patronymic && (
+                        <span className="field-hint field-hint--error">{errors.patronymic}</span>
+                      )}
                     </div>
                   </div>
                   <div className="profile-actions-row">
@@ -294,16 +352,16 @@ const ProfileTab = () => {
                 </div>
               </div>
               <div className="profile-section-body vertical-stack">
-                <div className="view-line-stack">
-                  <span className="label">Дата</span>
+                <div className="view-line">
+                  <span className="label">Дата доставки</span>
                   <span className="value">{formatShortDate(lastOrder.createdAt)}</span>
                 </div>
-                <div className="view-line-stack">
-                  <span className="label">Одержувач</span>
+                <div className="view-line">
+                  <span className="label">ПІБ отримувача</span>
                   <span className="value">{lastOrder.customer?.name || "—"}</span>
                 </div>
-                <div className="view-line-stack">
-                  <span className="label">Тел.</span>
+                <div className="view-line">
+                  <span className="label">Тел. отримувача</span>
                   <span className="value">{lastOrder.customer?.phone || "—"}</span>
                 </div>
               </div>

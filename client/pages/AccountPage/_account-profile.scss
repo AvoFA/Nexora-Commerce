@@ -113,6 +113,10 @@
   &.readonly .value { opacity: 0.5; }
 }
 
+.last-delivery-section {
+  .view-line .label { min-width: 130px; }
+}
+
 .vertical-stack {
   display: flex;
   flex-direction: column;
@@ -163,6 +167,19 @@
     &:focus { border-color: rgba($primary-color, 0.5); }
     &.has-error { border-color: rgba($danger-color, 0.5); }
     &:disabled { opacity: 0.4; }
+  }
+}
+
+.field-hint {
+  font-size: 0.72rem;
+  color: $text-secondary;
+  opacity: 0.55;
+  padding-left: 1px;
+  line-height: 1.3;
+
+  &--error {
+    opacity: 1;
+    color: $danger-color;
   }
 }
 

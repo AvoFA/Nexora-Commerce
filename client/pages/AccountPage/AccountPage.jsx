@@ -31,7 +31,7 @@ const accountNavItems = [
   },
   {
     to: "/account/reviews",
-    label: "Мої відгуки",
+    label: "Відгуки та Питання",
     icon: RateReviewOutlined,
   },
   {
