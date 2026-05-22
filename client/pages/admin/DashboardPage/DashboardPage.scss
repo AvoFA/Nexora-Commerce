@@ -1,0 +1,268 @@
+@import '../../../styles/variables';
+@import '../../../styles/_mui-theme.scss';
+@import '../../../styles/_common.scss';
+@import '../../../styles/_admin.scss';
+
+.admin-dashboard-page {
+  padding-bottom: 24px;
+
+  .refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 40px;
+    padding: 0;
+    color: $text-secondary;
+    background: rgba($surface-color, 0.28);
+    border: 1px solid rgba($border-color, 0.5);
+    border-radius: 9px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+    &:hover:not(:disabled) {
+      color: $primary-color;
+      border-color: rgba($primary-color, 0.45);
+      background: rgba($primary-color, 0.08);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    &.is-loading svg {
+      animation: adminRefreshSpin 0.8s linear infinite;
+    }
+  }
+
+  .dashboard-bento-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+    margin-top: 24px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  // Bento pieces
+  .dashboard-bento-cell {
+    background: rgba($card-bg, 0.65);
+    border: 1px solid rgba($border-color, 0.45);
+    border-radius: $border-radius;
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    &.recent-orders-cell {
+      grid-column: span 7;
+      min-height: 480px;
+    }
+
+    &.moderation-cell {
+      grid-column: span 5;
+      min-height: 480px;
+    }
+
+    &.low-stock-cell {
+      grid-column: span 12;
+      min-height: 380px;
+    }
+  }
+
+  // Common Widget Styles
+  .widget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba($border-color, 0.4);
+    background: rgba(0, 0, 0, 0.15);
+
+    .widget-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: $text-color;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0;
+    }
+
+    .widget-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: $primary-color;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+      text-decoration: none;
+
+      &:hover {
+        background: rgba($primary-color, 0.1);
+        color: lighten($primary-color, 8%);
+      }
+    }
+  }
+
+  .widget-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  // Compact Tables
+  .widget-table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+
+      th {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: $text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba($border-color, 0.3);
+
+        &.actions-cell {
+          text-align: right;
+        }
+      }
+
+      td {
+        padding: 14px;
+        border-bottom: 1px solid rgba($border-color, 0.2);
+        font-size: 0.85rem;
+        color: $text-color;
+        vertical-align: middle;
+
+        &.actions-cell {
+          text-align: right;
+        }
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+
+      tr {
+        transition: background-color 0.15s ease;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.02);
+        }
+      }
+    }
+  }
+
+  // Empty state container with secondary color (not black)
+  .widget-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+    color: rgba($text-color, 0.5);
+    text-align: center;
+    padding: 24px;
+    font-size: 0.9rem;
+    width: 100%;
+    height: 100%;
+
+    p {
+      color: inherit;
+    }
+  }
+
+
+  // Category badge style
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 10px;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  // Badges & Quick States
+  .widget-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    &.badge-new {
+      background: rgba($primary-color, 0.15);
+      color: $primary-color;
+    }
+
+    &.badge-confirmed {
+      background: rgba(#38bdf8, 0.15);
+      color: #38bdf8;
+    }
+
+    &.badge-received {
+      background: rgba(#10b981, 0.15);
+      color: #10b981;
+    }
+
+    &.badge-cancelled {
+      background: rgba($danger-color, 0.15);
+      color: $danger-color;
+    }
+  }
+
+  .widget-loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+    color: $text-secondary;
+
+    .spinner {
+      border: 3px solid rgba($border-color, 0.25);
+      border-top: 3px solid $primary-color;
+      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      animation: adminRefreshSpin 1s linear infinite;
+    }
+  }
+
+  .widget-error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 16px;
+    color: $danger-color;
+    text-align: center;
+    padding: 24px;
+  }
+}
