@@ -1,4 +1,5 @@
 @import '../../../styles/variables';
+@import '../../../styles/common';
 
 /* Анімація появи (Fade In) */
 @keyframes fadeIn {
@@ -64,10 +65,7 @@
 }
 
 .hero-gradient-text {
-  background: linear-gradient(90deg, $primary-color, $secondary-color);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  @include apply-gradient-text;
 }
 
 .hero-subtitle {

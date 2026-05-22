@@ -61,7 +61,7 @@ const QuestionsPanel = ({
         <div className="review-success-banner">
           <CheckCircle className="success-icon" />
           <div className="banner-text">
-            <strong>Дякуємо за ваше питання.</strong>
+            <strong>Дякуємо за ваше запитання.</strong>
             <span>Після перевірки модератором воно з'явиться на сайті.</span>
           </div>
           <button

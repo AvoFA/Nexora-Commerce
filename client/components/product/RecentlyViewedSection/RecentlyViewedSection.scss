@@ -1,4 +1,5 @@
 @import "../../../styles/variables";
+@import "../../../styles/common";
 
 .recently-viewed-section {
   padding: 32px 0;
@@ -26,11 +27,7 @@
     }
 
     span {
-      background: linear-gradient(90deg, $primary-color, $secondary-color);
-      background-clip: text;
-      color: transparent;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      @include apply-gradient-text;
     }
   }
 

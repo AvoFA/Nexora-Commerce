@@ -1,5 +1,5 @@
 // src/components/common/Benefits/Benefits.scss
-@import "../../../styles/variables";
+@import "../../../styles/common";
 
 .benefits-section {
     margin-top: 60px;
@@ -14,10 +14,7 @@
         max-width: 600px;
 
         span {
-            background: linear-gradient(90deg, $primary-color, $secondary-color);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            @include apply-gradient-text;
         }
     }
 }

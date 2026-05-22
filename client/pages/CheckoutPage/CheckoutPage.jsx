@@ -647,7 +647,12 @@ const CheckoutPage = () => {
       }, token);
 
       setIsOrderCompleted(true);
-      updateUserData?.({ phone });
+      updateUserData?.({ 
+        phone,
+        ...(name && { name }),
+        ...(surname && { surname }),
+        ...(patronymic && { patronymic }),
+      });
       dispatch({ type: "CLEAR_CART" });
 
       toast.success("Дякуємо за замовлення!", {

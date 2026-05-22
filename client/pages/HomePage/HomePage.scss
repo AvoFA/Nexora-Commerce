@@ -30,9 +30,6 @@
   font-weight: 700;
 
   span {
-    background: linear-gradient(90deg, $primary-color, $secondary-color);
-    color: transparent;
-    -webkit-background-clip: text;
-    background-clip: text;
+    @include apply-gradient-text;
   }
 }

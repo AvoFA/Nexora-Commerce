@@ -4,6 +4,17 @@
 @import './_mui-theme.scss';
 @import './_admin.scss';
 
+:root {
+  --primary-color: #{$primary-color};
+  --secondary-color: #{$secondary-color};
+  --success-color: #{$success-color};
+  --danger-color: #{$danger-color};
+  --warning-color: #{$warning-color};
+  --bg-color: #{$bg-color};
+  --card-bg: #{$card-bg};
+  --border-color: #{$border-color};
+}
+
 // Загальні стилі для всіх елементів
 * {
   box-sizing: border-box;

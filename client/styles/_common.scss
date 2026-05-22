@@ -120,12 +120,15 @@
 
 // Міксіни для градієнтного тексту
 @mixin apply-gradient-text {
-  background: linear-gradient(90deg, $primary-color, $secondary-color);
+  // Вертикальний градієнт: верх кожної букви білий, низ — синій Nexora.
+  // Це забезпечує симетрію та об'єм для кожного слова.
+  background: linear-gradient(180deg, #FFFFFF 20%, #3658F3 110%);
   background-clip: text;
   color: transparent;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-}
+  text-shadow: none;
+  }
 
 // Клас для градієнтного тексту
 .gradient-text {

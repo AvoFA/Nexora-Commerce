@@ -136,12 +136,11 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0;
-  background: linear-gradient(90deg, $primary-color, $secondary-color);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
 
+  span {
+    @include apply-gradient-text;
+  }
+}
 .auth-card-description {
   font-size: 0.95rem;
   color: $text-secondary;
