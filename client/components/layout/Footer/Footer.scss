@@ -21,14 +21,12 @@
 }
 
 .footer-logo-section {
-    h3 {
-        // Логотип з градієнтом
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0 0 16px 0;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
-        background-clip: text;
-        color: transparent;
+    .footer-logo {
+        height: 40px; // Increased from 32px
+        width: auto;
+        object-fit: contain;
+        display: block;
+        margin-bottom: 16px;
     }
 
     p {

@@ -14,7 +14,7 @@ const Footer = () => {
         <div className="footer-content">
           {/* Логотип та слоган */}
           <div className="footer-logo-section">
-            <h3>ElectroLux</h3>
+            <img src="/assets/logo/nexora-full.svg" alt="Nexora" className="footer-logo" />
             <p>Ваше надійне джерело преміум електроніки. Якісні товари, винятковий сервіс.</p>
           </div>
 
@@ -33,7 +33,7 @@ const Footer = () => {
             <h4>Компанія</h4>
             <ul>
               <li><Link to="/about">Про нас</Link></li>
-              <li><a href="mailto:support@ElectroLux.com">Контакти</a></li>
+              <li><a href="mailto:support@nexora.com">Контакти</a></li>
               <li><a href="tel:+380991234567">+380 (99) 123-45-67</a></li>
             </ul>
           </div>
@@ -60,7 +60,7 @@ const Footer = () => {
 
         {/* Нижня частина */}
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} ElectroLux. Всі права захищені.</p>
+          <p>&copy; {new Date().getFullYear()} Nexora. Всі права захищені.</p>
         </div>
       </div>
     </footer>

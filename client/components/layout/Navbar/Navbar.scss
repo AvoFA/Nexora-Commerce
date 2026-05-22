@@ -25,21 +25,35 @@
 // Логотип
 
 .navbar-logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+
     a {
-        font-size: 1.5rem;
-        font-weight: 700;
+        display: flex;
+        align-items: center;
         text-decoration: none;
         transition: all 0.3s ease;
-        background: linear-gradient(90deg, $primary-color, $secondary-color);
-        background-clip: text;
-        color: transparent;
+        padding: 0;
+        margin: 0;
 
         &:hover {
             transform: scale(1.05);
-            filter: drop-shadow(0 0 10px rgba($primary-color, 0.5));
+            filter: drop-shadow(0 0 20px rgba($primary-color, 0.5));
         }
     }
+
+    .logo-img {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
 }
+
 
 // Навігаційні посилання
 
@@ -317,7 +331,7 @@
         width: 24px;
         height: 24px;
         font-size: 0.75rem;
-        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 12%));
         color: white;
         border-radius: 50%;
         display: flex;
@@ -325,6 +339,9 @@
         justify-content: center;
         font-weight: 800;
         margin-bottom: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: none;
+        transition: all 0.3s ease;
     }
 
     span {
@@ -339,8 +356,11 @@
         transition: color 0.2s ease;
     }
 
-    &:hover span {
-        color: $primary-color;
+    &:hover {
+        .desktop-user-avatar-icon {
+            transform: translateY(-1px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
     }
 }
 
@@ -389,7 +409,9 @@
         font-size: 1rem;
         border-radius: 50%;
         color: #fff;
-        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 12%));
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        box-shadow: none;
         display: flex;
         align-items: center;
         justify-content: center;

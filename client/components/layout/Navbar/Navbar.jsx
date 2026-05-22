@@ -110,7 +110,7 @@ const Navbar = ({ openAuth }) => {
         <div className="navbar-container">
           <div className="navbar-logo">
             <Link to="/home" onClick={handleLinkClick}>
-              ElectroLux
+              <img src="/assets/logo/nexora-full.svg" alt="Nexora" className="logo-img" />
             </Link>
           </div>
 
@@ -199,7 +199,7 @@ const Navbar = ({ openAuth }) => {
                     aria-label="Відкрити форму входу"
                   >
                     <AccountCircleIcon />
-                    <span className="action-button-label">Кабінет</span>
+                    <span className="action-button-label">Увійти</span>
                   </button>
                   <button
                     onClick={openAuth}
@@ -318,7 +318,7 @@ const Navbar = ({ openAuth }) => {
                     }}
                   >
                     <AccountCircleIcon />
-                    <span>Вхід / Реєстрація</span>
+                    <span>Увійти</span>
                   </button>
                   <button
                     className="mobile-menu-action"
