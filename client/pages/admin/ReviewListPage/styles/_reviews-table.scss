@@ -1,0 +1,165 @@
+.review-list-page {
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .admin-table-container {
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    background-color: var(--card-bg, #1a2235);
+    overflow: hidden;
+
+    .MuiTableHead-root {
+      background-color: rgba(0, 0, 0, 0.2);
+
+      .MuiTableCell-head {
+        font-weight: 600;
+        color: var(--text-secondary, #94a3b8);
+        border-bottom: 1px solid $border-color;
+      }
+    }
+
+    .MuiTableBody-root {
+      .MuiTableRow-root {
+        .MuiTableCell-body {
+          padding: 8px 16px;
+          border-bottom: 1px solid $border-color;
+          color: var(--text-primary, #f8fafc);
+
+          .user-name {
+            color: var(--text-primary, #f8fafc);
+            font-weight: 600;
+          }
+
+          .user-email {
+            color: var(--text-secondary, #94a3b8);
+            font-size: 0.80rem;
+          }
+
+          .user-date {
+            color: var(--text-secondary, #94a3b8);
+            font-size: 0.75rem;
+            opacity: 0.70;
+          }
+
+          .action-btn {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border-radius: 8px !important;
+            padding: 6px !important;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+            svg {
+              font-size: 1.1rem;
+            }
+
+            &.action-btn-view {
+              color: #94a3b8 !important;
+              &:hover {
+                background-color: rgba(148, 163, 184, 0.08) !important;
+                border-color: rgba(148, 163, 184, 0.25) !important;
+                color: #f1f5f9 !important;
+              }
+            }
+
+            &.action-btn-reply {
+              color: $primary-color !important;
+              &:hover {
+                background-color: rgba($primary-color, 0.08) !important;
+                border-color: rgba($primary-color, 0.25) !important;
+                color: lighten($primary-color, 12%) !important;
+                box-shadow: 0 0 10px rgba($primary-color, 0.15);
+              }
+            }
+
+            &.action-btn-approve {
+              color: #10b981 !important;
+              &:hover {
+                background-color: rgba(16, 185, 129, 0.08) !important;
+                border-color: rgba(16, 185, 129, 0.25) !important;
+                color: #34d399 !important;
+                box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
+              }
+            }
+
+            &.action-btn-reject {
+              color: #ef4444 !important;
+              &:hover {
+                background-color: rgba(239, 68, 68, 0.08) !important;
+                border-color: rgba(239, 68, 68, 0.25) !important;
+                color: #fca5a5 !important;
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.15);
+              }
+            }
+
+            &.action-btn-delete {
+              color: #f43f5e !important;
+              &:hover {
+                background-color: rgba(244, 63, 94, 0.08) !important;
+                border-color: rgba(244, 63, 94, 0.25) !important;
+                color: #fda4af !important;
+                box-shadow: 0 0 10px rgba(244, 63, 94, 0.15);
+              }
+            }
+
+            &.action-btn-undo {
+              color: #f59e0b !important;
+              &:hover {
+                background-color: rgba(245, 158, 11, 0.08) !important;
+                border-color: rgba(245, 158, 11, 0.25) !important;
+                color: #fef08a !important;
+                box-shadow: 0 0 10px rgba(245, 158, 11, 0.15);
+              }
+            }
+          }
+
+
+          .review-cell-interactive-wrapper {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+
+            .review-text-clickable {
+              color: $text-secondary;
+              opacity: 0.8;
+              transition: opacity 0.15s ease;
+            }
+
+            .review-more-link {
+              .arrow {
+                display: inline-block;
+                transition: transform 0.2s ease;
+              }
+
+              .text-label {
+                transition: text-decoration 0.2s ease;
+              }
+            }
+
+            &:hover {
+              .review-text-clickable {
+                opacity: 1;
+              }
+
+              .review-more-link {
+                .text-label {
+                  text-decoration: underline;
+                }
+
+                .arrow {
+                  transform: translateX(3px);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

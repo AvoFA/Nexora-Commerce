@@ -1,0 +1,100 @@
+.review-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .admin-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    .header-title-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .moderation-header-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+
+      .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        user-select: none;
+
+        &.rating {
+          background-color: rgba($rating-color, 0.03);
+          border: 1px solid rgba($rating-color, 0.15);
+
+          .stat-icon-wrapper {
+            background-color: rgba($rating-color, 0.1);
+            color: $rating-color;
+          }
+        }
+
+        &.unanswered {
+          background-color: rgba($danger-color, 0.03);
+          border: 1px solid rgba($danger-color, 0.15);
+
+          .stat-icon-wrapper {
+            background-color: rgba($danger-color, 0.1);
+            color: lighten($danger-color, 5%);
+          }
+        }
+
+        &.all {
+          background-color: rgba($primary-color, 0.03);
+          border: 1px solid rgba($primary-color, 0.15);
+
+          .stat-icon-wrapper {
+            background-color: rgba($primary-color, 0.1);
+            color: lighten($primary-color, 5%);
+          }
+        }
+
+        .stat-icon-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+
+          svg {
+            font-size: 1.15rem;
+          }
+        }
+
+        .stat-info {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+
+          .stat-label {
+            font-size: 0.72rem;
+            color: $text-secondary;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+          }
+
+          .stat-value {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: $text-color;
+            line-height: 1.2;
+          }
+        }
+      }
+    }
+  }
+}
