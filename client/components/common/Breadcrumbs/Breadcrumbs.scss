@@ -9,10 +9,18 @@
 .breadcrumbs-list {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow-x: auto; // Дозволяємо горизонтальний скрол на мобільних
+  white-space: nowrap; // Забороняємо перенос рядків
+  scrollbar-width: none; // Приховуємо скролбар для Firefox
+  -ms-overflow-style: none; // Приховуємо скролбар для IE/Edge
+  padding-bottom: 4px;
+
+  &::-webkit-scrollbar {
+    display: none; // Приховуємо скролбар для Chrome/Safari
+  }
 }
 
 .breadcrumbs-item {
