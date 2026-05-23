@@ -1,12 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { CheckCircle, ChevronRight, RateReview, Star } from "@mui/icons-material";
+import { CheckCircle, ChevronRight, RateReview, Star, ShoppingCart } from "@mui/icons-material";
 import { Rating } from "@mui/material";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPurchaseCard from "../../components/product/ProductPurchaseCard/ProductPurchaseCard.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { getCategoryDisplay } from "../../utils/categories.js";
 import { addRecentlyViewed } from "../../utils/recentlyViewed.utils.js";
+import { formatPrice } from "../../utils/formatPrice.js";
 import ProductFeedbackSection from "./ProductFeedbackSection.jsx";
 import "./ProductPage.scss";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
@@ -21,10 +22,37 @@ const ProductPage = () => {
   const { product, similarProducts, isLoading, error } = useProductData(id);
   const { isAuthenticated, user } = useAuth();
 
+  // Рефи та стейт для липкої панелі (Senior approach)
+  const mainPurchaseRef = useRef(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
   useEffect(() => {
     if (product && !isLoading) {
       addRecentlyViewed(product);
     }
+  }, [product, isLoading]);
+
+  // Логіка спостереження за кнопкою покупки
+  useEffect(() => {
+    if (isLoading || !product) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Показуємо липку панель, лише якщо основна кнопка пішла вгору за межі екрана
+        if (window.innerWidth <= 768) {
+          setShowStickyBar(!entry.isIntersecting && entry.boundingClientRect.top < 0);
+        } else {
+          setShowStickyBar(false);
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (mainPurchaseRef.current) {
+      observer.observe(mainPurchaseRef.current);
+    }
+
+    return () => observer.disconnect();
   }, [product, isLoading]);
 
   const {
@@ -88,6 +116,10 @@ const ProductPage = () => {
     {
       label: getCategoryDisplay(product.category),
       path: `/catalog?category=${product.category}`,
+    },
+    {
+      label: product.brand,
+      path: `/catalog?brand=${encodeURIComponent(product.brand)}`,
     },
     { label: product.name },
   ];
@@ -157,8 +189,36 @@ const ProductPage = () => {
             </Link>
           </div>
 
-          <p className="description-short">{product.description}</p>
-          <ProductPurchaseCard product={product} variant="full" />
+          {/* Обгортка для IntersectionObserver */}
+          <div ref={mainPurchaseRef}>
+            <ProductPurchaseCard product={product} variant="full" />
+          </div>
+
+          <div className="product-highlights">
+            <div className="trust-block">
+              <div className="trust-item">
+                <span className="trust-icon">🚚</span>
+                <div className="trust-text">
+                  <strong>Доставка</strong>
+                  <span>Нова Пошта, Самовивіз</span>
+                </div>
+              </div>
+              <div className="trust-item">
+                <span className="trust-icon">🛡️</span>
+                <div className="trust-text">
+                  <strong>Гарантія</strong>
+                  <span>12 місяців від виробника</span>
+                </div>
+              </div>
+              <div className="trust-item">
+                <span className="trust-icon">🔄</span>
+                <div className="trust-text">
+                  <strong>Повернення</strong>
+                  <span>Протягом 14 днів</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -188,6 +248,21 @@ const ProductPage = () => {
       />
 
       <SimilarProducts similarProducts={similarProducts} />
+
+      {/* Мобільна липка панель (Senior UI) */}
+      <div className={`mobile-sticky-purchase-bar ${showStickyBar ? 'is-visible' : ''}`}>
+        <div className="sticky-info">
+          <span className="sticky-name">{product.name}</span>
+          <span className="sticky-price">{formatPrice(product.price)}</span>
+        </div>
+        <button
+          className="btn-primary"
+          onClick={() => mainPurchaseRef.current?.scrollIntoView({ behavior: 'smooth' })}
+        >
+          <ShoppingCart sx={{ fontSize: '18px' }} />
+          Купити
+        </button>
+      </div>
     </div>
   );
 };
