@@ -61,68 +61,16 @@ export const getProductById = async (id) => {
 // Шукаємо схожі товари для рекомендацій на сторінці товару
 export const getSimilarProducts = async (currentProductId) => {
   try {
-    console.log("Шукаю схожі товари для товару:", currentProductId);
+    const response = await fetch(`${API_BASE_URL}/products/${currentProductId}/similar`);
 
-    // спочатку отримуємо сам товар
-    const currentProduct = await getProductById(currentProductId);
-
-    // отримуємо всі товари
-    const allProducts = await getProducts();
-
-    // вилучаємо сам товар, щоб не рекомендувати його
-    const otherProducts = allProducts.filter(p => p.id !== currentProductId);
-
-    // алгоритм пошуку схожих товарів
-    let candidates = [];
-
-    // 1. з тим самим брендом та категорією
-    const sameBrandAndCategory = otherProducts.filter(p =>
-      p.brand === currentProduct.brand && p.category === currentProduct.category
-    );
-    candidates.push(...sameBrandAndCategory);
-
-    // 2. тієї ж категорії але інший бренд
-    if (candidates.length < 3) {
-      const sameCategory = otherProducts.filter(p =>
-        p.category === currentProduct.category &&
-        p.brand !== currentProduct.brand &&
-        !candidates.some(c => c.id === p.id)
-      );
-      candidates.push(...sameCategory);
+    if (!response.ok) {
+      throw new Error(`Помилка сервера: ${response.status}`);
     }
 
-    // 3. того ж бренду але інша категорія
-    if (candidates.length < 3) {
-      const sameBrand = otherProducts.filter(p =>
-        p.brand === currentProduct.brand &&
-        p.category !== currentProduct.category &&
-        !candidates.some(c => c.id === p.id)
-      );
-      candidates.push(...sameBrand);
-    }
-
-    // 4. якщо мало товарів - додаємо за ціною
-    if (candidates.length < 3) {
-      const priceRange = currentProduct.price * 0.2; // ±20% від ціни
-      const similarPrice = otherProducts.filter(p =>
-        Math.abs(p.price - currentProduct.price) <= priceRange &&
-        !candidates.some(c => c.id === p.id)
-      );
-      candidates.push(...similarPrice);
-    }
-
-    // сортуємо за близькістю ціни
-    candidates.sort((a, b) => {
-      const diffA = Math.abs(a.price - currentProduct.price);
-      const diffB = Math.abs(b.price - currentProduct.price);
-      return diffA - diffB;
-    });
-
-    console.log(`Знайшов ${candidates.slice(0, 3).length} схожих товарів`);
-    return candidates.slice(0, 3);
-
+    const { data } = await response.json();
+    return data.map(normalizeProduct);
   } catch (error) {
-    console.warn("Не вдалося знайти схожі товари:", error.message);
+    console.warn("Не вдалося завантажити схожі товари:", error.message);
     return [];
   }
 };

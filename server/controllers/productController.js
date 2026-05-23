@@ -1,6 +1,27 @@
 // Контролер для роботи з товарами
 
 const Product = require('../models/Product');
+const recommendationService = require('../services/recommendations/similarProductsService');
+
+// ... (rest of imports)
+
+// Get similar products for recommendations
+const getSimilarProducts = async (req, res) => {
+  try {
+    const similar = await recommendationService.getSimilarProducts(req.params.id);
+
+    res.json({
+      success: true,
+      data: similar
+    });
+  } catch (error) {
+    const status = error.message === 'Product not found' ? 404 : 500;
+    res.status(status).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
 // Отримати всі товари
 const getProducts = async (req, res) => {
@@ -141,6 +162,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   getProducts,
   getProductById,
+  getSimilarProducts,
   createProduct,
   updateProduct,
   deleteProduct

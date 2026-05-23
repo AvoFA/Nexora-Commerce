@@ -3,6 +3,7 @@ const express = require('express');
 const {
   getProducts,
   getProductById,
+  getSimilarProducts,
   createProduct,
   updateProduct,
   deleteProduct
@@ -15,6 +16,8 @@ const adminOnly = requireRole('admin');
 router.route('/')
   .get(getProducts)
   .post(authenticateToken, adminOnly, createProduct);
+
+router.get('/:id/similar', getSimilarProducts);
 
 router.route('/:id')
   .get(getProductById)
