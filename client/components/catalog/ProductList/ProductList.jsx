@@ -2,6 +2,8 @@ import ProductCard from '../ProductCard/ProductCard.jsx';
 import ProductCardSkeleton from '../ProductCard/ProductCardSkeleton.jsx';
 import './ProductList.scss';
 
+const getProductId = (product) => product?._id || product?.id;
+
 // Відображає сітку карток товарів або скелетони
 const ProductList = ({ products = [], isLoading = false }) => {
   // Режим завантаження: показуємо 8 скелетонів
@@ -28,7 +30,7 @@ const ProductList = ({ products = [], isLoading = false }) => {
     <div className="product-list">
       {products.map(product => (
         <ProductCard
-          key={product.id}
+          key={getProductId(product)}
           product={product}
         />
       ))}
