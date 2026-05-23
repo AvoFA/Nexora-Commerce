@@ -3,34 +3,50 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const UserController = require('../controllers/userController');
 const { authenticateToken, requireRole } = require('../middleware/auth');
-const adminOnly = requireRole('admin');
 
-// Логін для адмінів (username)
+const adminOnly = requireRole('admin');
+const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-for-course-work';
+
+const getPublicAuthErrorMessage = (error, fallback) => {
+  const message = error?.message || '';
+
+  if (
+    error?.code === 11000 ||
+    message.includes('E11000') ||
+    message.includes('duplicate key') ||
+    message.includes('username_1')
+  ) {
+    return 'Користувач з такими даними вже існує';
+  }
+
+  if (message.includes('validation failed') || message.includes('Cast to')) {
+    return fallback;
+  }
+
+  return message || fallback;
+};
+
 router.post('/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // Валідація входу
     if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Ім\'я користувача та пароль обов\'язкові'
+        message: "Ім'я користувача та пароль обов'язкові"
       });
     }
 
-    // Перевірка користувача через контролер
     const user = await UserController.loginUser(username, password);
 
-    // Якщо користувач знайдений та пароль вірний
     if (user) {
-      // Створюємо JWT токен
       const token = jwt.sign(
         {
           id: user.id,
           username: user.username,
           role: user.role
         },
-        process.env.JWT_SECRET || 'super-secret-key-for-course-work',
+        JWT_SECRET,
         { expiresIn: '24h' }
       );
 
@@ -45,37 +61,30 @@ router.post('/admin/login', async (req, res) => {
         message: 'Успішний вхід адміністратора'
       });
     }
-
   } catch (error) {
     console.error('Помилка авторизації:', error.message);
   }
 
-  // Якщо щось пішло не так
   res.status(401).json({
     success: false,
-    message: 'Невірне ім\'я користувача або пароль'
+    message: "Невірне ім'я користувача або пароль"
   });
 });
 
-// Логін для звичайних клієнтів (email)
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Валідація входу
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email та пароль обов\'язкові'
+        message: "Email та пароль обов'язкові"
       });
     }
 
-    // Перевірка клієнта через контролер
     const user = await UserController.loginClientUser(email, password);
 
-    // Якщо користувач знайдений та пароль вірний
     if (user) {
-      // Створюємо JWT токен
       const token = jwt.sign(
         {
           id: user.id,
@@ -84,7 +93,7 @@ router.post('/login', async (req, res) => {
           phone: user.phone || '',
           role: user.role
         },
-        process.env.JWT_SECRET || 'super-secret-key-for-course-work',
+        JWT_SECRET,
         { expiresIn: '24h' }
       );
 
@@ -102,17 +111,15 @@ router.post('/login', async (req, res) => {
         message: 'Успішний вхід'
       });
     }
-
   } catch (error) {
     console.error('Помилка авторизації клієнта:', error.message);
     return res.status(401).json({
       success: false,
-      message: error.message || 'Невірний email або пароль'
+      message: getPublicAuthErrorMessage(error, 'Невірний email або пароль')
     });
   }
 });
 
-// Роут для реєстрації адміністраторів (username)
 router.post('/admin/register', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -120,7 +127,7 @@ router.post('/admin/register', async (req, res) => {
     if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Ім\'я користувача та пароль обов\'язкові'
+        message: "Ім'я користувача та пароль обов'язкові"
       });
     }
 
@@ -131,17 +138,15 @@ router.post('/admin/register', async (req, res) => {
       user: newUser,
       message: 'Адміністратора успішно створено'
     });
-
   } catch (error) {
     console.error('Помилка реєстрації:', error.message);
     res.status(500).json({
       success: false,
-      message: error.message || 'Помилка створення адміністратора'
+      message: getPublicAuthErrorMessage(error, 'Помилка створення адміністратора')
     });
   }
 });
 
-// Роут для реєстрації звичайних клієнтів (email + name)
 router.post('/register', async (req, res) => {
   try {
     const { email, name, password } = req.body;
@@ -149,13 +154,12 @@ router.post('/register', async (req, res) => {
     if (!email || !name || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email, ім\'я та пароль обов\'язкові'
+        message: "Email, ім'я та пароль обов'язкові"
       });
     }
 
     const newUser = await UserController.createClientUser(email, name, password);
 
-    // Створюємо токен одразу після реєстрації
     const token = jwt.sign(
       {
         id: newUser.id,
@@ -165,7 +169,7 @@ router.post('/register', async (req, res) => {
         role: newUser.role,
         wishlistProductIds: newUser.wishlistProductIds || []
       },
-      process.env.JWT_SECRET || 'super-secret-key-for-course-work',
+      JWT_SECRET,
       { expiresIn: '24h' }
     );
 
@@ -182,12 +186,11 @@ router.post('/register', async (req, res) => {
       },
       message: 'Користувача успішно зареєстровано'
     });
-
   } catch (error) {
     console.error('Помилка реєстрації:', error.message);
     res.status(500).json({
       success: false,
-      message: error.message || 'Помилка створення користувача'
+      message: getPublicAuthErrorMessage(error, 'Не вдалося створити акаунт')
     });
   }
 });
@@ -207,24 +210,22 @@ router.patch('/profile', authenticateToken, async (req, res) => {
       message: 'Профіль оновлено'
     });
   } catch (error) {
+    console.error('Помилка оновлення профілю:', error.message);
     res.status(400).json({
       success: false,
-      message: error.message || 'Не вдалося оновити профіль'
+      message: getPublicAuthErrorMessage(error, 'Не вдалося оновити профіль')
     });
   }
 });
 
-// Роут для отримання всіх користувачів (тільки для адмінів)
 router.get('/users', authenticateToken, adminOnly, async (req, res) => {
   try {
-    // Тут можна додати перевірку JWT токена з middleware
     const users = await UserController.getAllUsers();
 
     res.json({
       success: true,
       users
     });
-
   } catch (error) {
     console.error('Помилка отримання користувачів:', error.message);
     res.status(500).json({

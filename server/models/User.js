@@ -27,8 +27,6 @@ const userSchema = new mongoose.Schema({
     required: function() {
       return this.role === 'admin';
     },
-    unique: true,
-    sparse: true,
     minlength: [3, 'Імʼя користувача має бути мінімум 3 символи'],
     maxlength: [50, 'Імʼя користувача має бути максимум 50 символів']
   },
@@ -85,6 +83,14 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+userSchema.index(
+  { username: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { username: { $type: 'string' } }
+  }
+);
 
 userSchema.methods.comparePassword = async function(candidatePassword) {
   try {

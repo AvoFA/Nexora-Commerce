@@ -8,6 +8,27 @@ import {
   CloseOutlined,
 } from "@mui/icons-material";
 import { useAuth } from "../../../context/AuthContext.jsx";
+import {
+  formatPhone,
+  isCompletePhone,
+  NAME_HINT,
+  validateNamePart,
+} from "../../../utils/userValidation.js";
+
+const normalizeNameError = (error) => {
+  if (!error) return null;
+  if (error === "Поле обов'язкове." || error === "Мінімум 2 символи.") {
+    return "Мінімум 2 символи";
+  }
+  if (error === NAME_HINT) return NAME_HINT;
+  return error;
+};
+
+const validatePhone = (value) => {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  return isCompletePhone(trimmed) ? null : "Вкажіть номер у форматі +380 (XX) XXX-XX-XX";
+};
 
 const ProfileTab = () => {
   const { isAuthenticated, user, updateUserData } = useAuth();
@@ -18,7 +39,6 @@ const ProfileTab = () => {
   const [editingSection, setEditingSection] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
-
   const [lastOrder, setLastOrder] = useState(null);
 
   useEffect(() => {
@@ -29,29 +49,32 @@ const ProfileTab = () => {
   }, [user]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const fetchLastOrder = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch("http://localhost:5000/api/orders/my", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await response.json();
-          if (data.success && data.orders?.length > 0) {
-            setLastOrder(data.orders[0]);
-          }
-        } catch (error) {
-          console.error("Failed to fetch last order:", error);
+    if (!isAuthenticated) return;
+
+    const fetchLastOrder = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:5000/api/orders/my", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        if (data.success && data.orders?.length > 0) {
+          setLastOrder(data.orders[0]);
         }
-      };
-      fetchLastOrder();
-    }
+      } catch (error) {
+        console.error("Failed to fetch last order:", error);
+      }
+    };
+
+    fetchLastOrder();
   }, [isAuthenticated]);
 
   const isPersonalDirty = useMemo(() => {
-    return name.trim() !== (user?.name || "") || 
-           surname.trim() !== (user?.surname || "") || 
-           patronymic.trim() !== (user?.patronymic || "");
+    return (
+      name.trim() !== (user?.name || "") ||
+      surname.trim() !== (user?.surname || "") ||
+      patronymic.trim() !== (user?.patronymic || "")
+    );
   }, [name, surname, patronymic, user]);
 
   const isContactsDirty = useMemo(() => {
@@ -61,31 +84,34 @@ const ProfileTab = () => {
   const isPersonalEditing = editingSection === "personal";
   const isContactsEditing = editingSection === "contacts";
 
-  // Regex: starts with uppercase Cyrillic, followed by Cyrillic letters, hyphen, apostrophe
-  const CYRILLIC_NAME_RE = /^[А-ЯЄІЇҐ][а-яєіїґА-ЯЄІЇҐʼ''\-]*$/;
-  const NAME_HINT = "Тільки літери кирилиці, тире, апостроф. З великої літери.";
-
   const validateField = (value, required = true) => {
-    const v = value.trim();
-    if (required && v.length < 2) return "Мінімум 2 символи";
-    if (v && !CYRILLIC_NAME_RE.test(v)) return NAME_HINT;
-    return null;
+    return normalizeNameError(validateNamePart(value, { required }));
   };
 
-  const validate = () => {
+  const validatePersonal = () => {
     const nextErrors = {};
     const nameErr = validateField(name, true);
-    if (nameErr) nextErrors.name = nameErr;
     const surnameErr = validateField(surname, false);
-    if (surnameErr) nextErrors.surname = surnameErr;
     const patronymicErr = validateField(patronymic, false);
+
+    if (nameErr) nextErrors.name = nameErr;
+    if (surnameErr) nextErrors.surname = surnameErr;
     if (patronymicErr) nextErrors.patronymic = patronymicErr;
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
   const handleSave = async (section) => {
-    if (section === "personal" && !validate()) return;
+    if (section === "personal" && !validatePersonal()) return;
+
+    if (section === "contacts") {
+      const phoneErr = validatePhone(phone);
+      if (phoneErr) {
+        setErrors((prev) => ({ ...prev, phone: phoneErr }));
+        return;
+      }
+    }
 
     try {
       setIsSaving(true);
@@ -117,6 +143,7 @@ const ProfileTab = () => {
         patronymic: data.user.patronymic || "",
         phone: data.user.phone || "",
       });
+      setErrors({});
       setEditingSection(null);
       toast.success("Дані оновлено");
     } catch (error) {
@@ -175,15 +202,14 @@ const ProfileTab = () => {
         </div>
 
         <div className="profile-board">
-          {/* Section: Personal Info */}
-          <div className={`profile-section-compact ${isPersonalEditing ? 'is-editing' : ''}`}>
+          <div className={`profile-section-compact ${isPersonalEditing ? "is-editing" : ""}`}>
             <div className="profile-section-head">
               <div className="head-title-group">
                 <h3>Особисті дані</h3>
                 {!isPersonalEditing && (
-                  <button 
-                    type="button" 
-                    className="profile-edit-icon-btn" 
+                  <button
+                    type="button"
+                    className="profile-edit-icon-btn"
                     onClick={() => setEditingSection("personal")}
                     title="Редагувати"
                   >
@@ -202,14 +228,13 @@ const ProfileTab = () => {
                       <input
                         type="text"
                         value={surname}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setSurname(val);
-                          const err = validateField(val, false);
-                          setErrors(prev => ({ ...prev, surname: err }));
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setSurname(value);
+                          setErrors((prev) => ({ ...prev, surname: validateField(value, false) }));
                         }}
                         placeholder="Прізвище"
-                        className={errors.surname ? 'has-error' : ''}
+                        className={errors.surname ? "has-error" : ""}
                       />
                       {errors.surname && (
                         <span className="field-hint field-hint--error">{errors.surname}</span>
@@ -220,14 +245,13 @@ const ProfileTab = () => {
                       <input
                         type="text"
                         value={name}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setName(val);
-                          const err = validateField(val, true);
-                          setErrors(prev => ({ ...prev, name: err }));
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setName(value);
+                          setErrors((prev) => ({ ...prev, name: validateField(value, true) }));
                         }}
                         placeholder="Ім'я"
-                        className={errors.name ? 'has-error' : ''}
+                        className={errors.name ? "has-error" : ""}
                       />
                       {errors.name && (
                         <span className="field-hint field-hint--error">{errors.name}</span>
@@ -238,14 +262,13 @@ const ProfileTab = () => {
                       <input
                         type="text"
                         value={patronymic}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setPatronymic(val);
-                          const err = validateField(val, false);
-                          setErrors(prev => ({ ...prev, patronymic: err }));
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setPatronymic(value);
+                          setErrors((prev) => ({ ...prev, patronymic: validateField(value, false) }));
                         }}
                         placeholder="По батькові"
-                        className={errors.patronymic ? 'has-error' : ''}
+                        className={errors.patronymic ? "has-error" : ""}
                       />
                       {errors.patronymic && (
                         <span className="field-hint field-hint--error">{errors.patronymic}</span>
@@ -257,10 +280,10 @@ const ProfileTab = () => {
                       <CloseOutlined />
                       <span>Скасувати</span>
                     </button>
-                    <button 
-                      type="button" 
-                      className="btn-primary" 
-                      onClick={() => handleSave("personal")} 
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={() => handleSave("personal")}
                       disabled={isSaving || !isPersonalDirty}
                     >
                       <CheckOutlined />
@@ -272,8 +295,8 @@ const ProfileTab = () => {
                 <div className="view-line">
                   <span className="label">ПІБ</span>
                   <span className="value">
-                    {user?.surname || user?.name || user?.patronymic 
-                      ? `${user.surname || ''} ${user.name || ''} ${user.patronymic || ''}`.trim() 
+                    {user?.surname || user?.name || user?.patronymic
+                      ? `${user.surname || ""} ${user.name || ""} ${user.patronymic || ""}`.trim()
                       : "Не вказано"}
                   </span>
                 </div>
@@ -281,15 +304,14 @@ const ProfileTab = () => {
             </div>
           </div>
 
-          {/* Section: Contacts */}
-          <div className={`profile-section-compact ${isContactsEditing ? 'is-editing' : ''}`}>
+          <div className={`profile-section-compact ${isContactsEditing ? "is-editing" : ""}`}>
             <div className="profile-section-head">
               <div className="head-title-group">
                 <h3>Контакти</h3>
                 {!isContactsEditing && (
-                  <button 
-                    type="button" 
-                    className="profile-edit-icon-btn" 
+                  <button
+                    type="button"
+                    className="profile-edit-icon-btn"
                     onClick={() => setEditingSection("contacts")}
                     title="Редагувати"
                   >
@@ -305,7 +327,21 @@ const ProfileTab = () => {
                   <div className="edit-grid-compact">
                     <div className="field-group">
                       <label>Телефон</label>
-                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+380..." />
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(event) => {
+                          const formatted = formatPhone(event.target.value);
+                          setPhone(formatted);
+                          setErrors((prev) => ({ ...prev, phone: validatePhone(formatted) }));
+                        }}
+                        placeholder="+380 (__) ___-__-__"
+                        inputMode="tel"
+                        className={errors.phone ? "has-error" : ""}
+                      />
+                      {errors.phone && (
+                        <span className="field-hint field-hint--error">{errors.phone}</span>
+                      )}
                     </div>
                     <div className="field-group readonly">
                       <label>Email</label>
@@ -317,10 +353,10 @@ const ProfileTab = () => {
                       <CloseOutlined />
                       <span>Скасувати</span>
                     </button>
-                    <button 
-                      type="button" 
-                      className="btn-primary" 
-                      onClick={() => handleSave("contacts")} 
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={() => handleSave("contacts")}
                       disabled={isSaving || !isContactsDirty}
                     >
                       <CheckOutlined />
@@ -334,7 +370,7 @@ const ProfileTab = () => {
                     <span className="label">Телефон</span>
                     <span className="value">{user?.phone || "Не вказано"}</span>
                   </div>
-                  <div className="view-line readonly" style={{ marginTop: '12px' }}>
+                  <div className="view-line readonly" style={{ marginTop: "12px" }}>
                     <span className="label">Email</span>
                     <span className="value">{user?.email}</span>
                   </div>
@@ -343,7 +379,6 @@ const ProfileTab = () => {
             </div>
           </div>
 
-          {/* Section: History */}
           {lastOrder && (
             <div className="profile-section-compact last-delivery-section">
               <div className="profile-section-head">

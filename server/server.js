@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const User = require('./models/User');
 
 // Import routes
 const productRoutes = require('./routes/products');
@@ -17,9 +18,51 @@ const customerRoutes = require('./routes/customers');
 
 const app = express();
 
+const TECHNICAL_ERROR_PATTERNS = [
+  'E11000',
+  'duplicate key',
+  'MongoServerError',
+  'ValidationError',
+  'validation failed',
+  'Cast to',
+  'ObjectId',
+  'username_1'
+];
+
+const sanitizePublicErrorText = (value) => {
+  if (typeof value !== 'string') return value;
+
+  if (!TECHNICAL_ERROR_PATTERNS.some((pattern) => value.includes(pattern))) {
+    return value;
+  }
+
+  if (value.includes('E11000') || value.includes('duplicate key') || value.includes('username_1')) {
+    return 'Запис з такими даними вже існує.';
+  }
+
+  return 'Помилка сервера. Спробуйте пізніше.';
+};
+
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  const json = res.json.bind(res);
+
+  res.json = (body) => {
+    if (body && typeof body === 'object' && body.success === false) {
+      return json({
+        ...body,
+        message: sanitizePublicErrorText(body.message),
+        error: sanitizePublicErrorText(body.error)
+      });
+    }
+
+    return json(body);
+  };
+
+  next();
+});
 
 // Routes
 app.use('/api/products', productRoutes);
@@ -47,7 +90,19 @@ app.get('/', (req, res) => {
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/eshop-admin')
-  .then(() => console.log('✅ MongoDB connected'))
+  .then(async () => {
+    console.log('✅ MongoDB connected');
+
+    try {
+      await User.collection.dropIndex('username_1');
+    } catch (error) {
+      if (error.codeName !== 'IndexNotFound') {
+        console.warn('Could not drop username_1 index:', error.message);
+      }
+    }
+
+    await User.syncIndexes();
+  })
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Start server

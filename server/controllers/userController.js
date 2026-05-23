@@ -1,6 +1,11 @@
 // Контролер для роботи з користувачами
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const {
+  validateEmail,
+  validateNamePart,
+  validatePhone
+} = require('../utils/userValidation');
 
 const getWishlistProductIds = (wishlistLists = []) => {
   const ids = new Set();
@@ -32,7 +37,7 @@ class UserController {
       // Перевірка чи користувач вже існує
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        throw new Error('Користувач з таким ім\'ям вже існує');
+        throw new Error("Користувач з таким ім'ям вже існує");
       }
 
       // Хешування паролю
@@ -63,13 +68,13 @@ class UserController {
       // Пошук користувача за ім'ям
       const user = await User.findOne({ username });
       if (!user) {
-        throw new Error('Невірне ім\'я користувача або пароль');
+        throw new Error("Невірне ім'я користувача або пароль");
       }
 
       // Перевірка паролю
       const isPasswordValid = await this.comparePassword(password, user.password);
       if (!isPasswordValid) {
-        throw new Error('Невірне ім\'я користувача або пароль');
+        throw new Error("Невірне ім'я користувача або пароль");
       }
 
       return {
@@ -95,8 +100,16 @@ class UserController {
   // Функція для створення користувача-клієнта (email замість username)
   static async createClientUser(email, name, password) {
     try {
+      const normalizedEmail = (email || '').trim().toLowerCase();
+      const normalizedName = (name || '').trim();
+      const emailError = validateEmail(normalizedEmail);
+      const nameError = validateNamePart(normalizedName, { label: "Ім'я" });
+
+      if (emailError) throw new Error(emailError);
+      if (nameError) throw new Error(nameError);
+
       // Перевірка чи email вже існує
-      const existingUser = await User.findOne({ email });
+      const existingUser = await User.findOne({ email: normalizedEmail });
       if (existingUser) {
         throw new Error('Користувач з таким email вже існує');
       }
@@ -106,8 +119,8 @@ class UserController {
 
       // Створення нового користувача-клієнта
       const newUser = new User({
-        email,
-        name,
+        email: normalizedEmail,
+        name: normalizedName,
         password: hashedPassword,
         role: 'user',
         wishlistLists: [{ name: 'Обране', products: [] }]
@@ -207,10 +220,16 @@ class UserController {
       const surname = (updates.surname || '').trim();
       const patronymic = (updates.patronymic || '').trim();
       const phone = (updates.phone || '').trim();
+      const nameError = validateNamePart(name, { label: "Ім'я" });
+      const surnameError = validateNamePart(surname, { required: false, label: 'Прізвище' });
+      const patronymicError = validateNamePart(patronymic, { required: false, label: 'По батькові' });
+      const phoneError = validatePhone(phone);
 
-      if (name.length < 2) {
-        throw new Error('Імʼя має бути мінімум 2 символи');
-      }
+      if (nameError) throw new Error(nameError);
+      if (surnameError) throw new Error(surnameError);
+      if (patronymicError) throw new Error(patronymicError);
+      if (phoneError) throw new Error(phoneError);
+
 
       const user = await User.findById(id);
       if (!user) {

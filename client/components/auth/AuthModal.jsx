@@ -1,5 +1,4 @@
-// Модальне вікно для входу та реєстрації користувачів
-import React, { useState, useEffect } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { toast } from 'sonner';
 import './AuthModal.scss';
@@ -9,295 +8,398 @@ import {
   LockOutlined,
   PersonOutlined,
   Visibility,
-  VisibilityOff
+  VisibilityOff,
 } from '@mui/icons-material';
+import { validateEmail, validateNamePart } from '../../utils/userValidation.js';
 
-// Основний компонент модального вікна авторизації
+const initialLoginData = {
+  email: '',
+  password: '',
+};
+
+const initialRegisterData = {
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+};
+
 const AuthModal = ({ isOpen, onClose }) => {
-  const { login, register, loading, error } = useAuth();
+  const { login, register, loading, error, clearError } = useAuth();
+  const firstInputRef = useRef(null);
 
-  // Стан UI
   const [tab, setTab] = useState('login');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loginData, setLoginData] = useState(initialLoginData);
+  const [registerData, setRegisterData] = useState(initialRegisterData);
+  const [fieldErrors, setFieldErrors] = useState({});
 
-  // Стан форм
-  const [loginData, setLoginData] = useState({
-    email: '',
-    password: ''
-  });
+  const passwordsMatch = useMemo(() => {
+    if (!registerData.password || !registerData.confirmPassword) return null;
+    return registerData.password === registerData.confirmPassword;
+  }, [registerData.password, registerData.confirmPassword]);
 
-  const [registerData, setRegisterData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  // Скидання форми при відкритті модалки
   useEffect(() => {
-    if (isOpen) {
-      setTab('login');
-      setShowPassword(false);
-      setShowConfirmPassword(false);
-      setLoginData({ email: '', password: '' });
-      setRegisterData({ name: '', email: '', password: '', confirmPassword: '' });
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
 
-  // Блокування прокрутки фону при відкритому вікні
+    setTab('login');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    setLoginData(initialLoginData);
+    setRegisterData(initialRegisterData);
+    setFieldErrors({});
+    if (clearError) clearError();
+
+    window.setTimeout(() => firstInputRef.current?.focus(), 0);
+  }, [isOpen]); // Removed clearError from dependencies
+
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
+    if (!isOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
     };
-  }, [isOpen]);
 
-  // Обробник зміни даних форми входу
-  const handleLoginChange = (e) => {
-    setLoginData({
-      ...loginData,
-      [e.target.name]: e.target.value
-    });
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  const switchTab = (nextTab) => {
+    setTab(nextTab);
+    setFieldErrors({});
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+    if (clearError) clearError();
   };
 
-  // Обробник зміни даних форми реєстрації
-  const handleRegisterChange = (e) => {
-    setRegisterData({
-      ...registerData,
-      [e.target.name]: e.target.value
-    });
+  const handleLoginChange = (event) => {
+    const { name, value } = event.target;
+    setLoginData((current) => ({ ...current, [name]: value }));
+    setFieldErrors((current) => ({ ...current, [name]: '' }));
   };
 
-  // Якщо модалка закрита, не рендеримо нічого (оптимізація)
-  if (!isOpen) return null;
+  const handleRegisterChange = (event) => {
+    const { name, value } = event.target;
+    setRegisterData((current) => ({ ...current, [name]: value }));
+    setFieldErrors((current) => ({ ...current, [name]: '' }));
+  };
 
-  // Обробка входу
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const validateLogin = () => {
+    const errors = {};
+    const emailError = validateEmail(loginData.email);
+    if (emailError) errors.email = emailError;
+    if (!loginData.password) errors.password = 'Вкажіть пароль.';
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
-    const result = await login(loginData.email, loginData.password);
+  const validateRegister = () => {
+    const errors = {};
+    const nameError = validateNamePart(registerData.name);
+    const emailError = validateEmail(registerData.email);
+    if (nameError) errors.name = nameError;
+    if (emailError) errors.email = emailError;
+    if (!registerData.password) errors.password = 'Створіть пароль.';
+    if (!registerData.confirmPassword) errors.confirmPassword = 'Повторіть пароль.';
+    if (
+      registerData.password &&
+      registerData.confirmPassword &&
+      registerData.password !== registerData.confirmPassword
+    ) {
+      errors.confirmPassword = 'Паролі не співпадають.';
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    if (!validateLogin()) return;
+
+    const result = await login(loginData.email.trim().toLowerCase(), loginData.password);
     if (result.success) {
       toast.success('Успішний вхід!');
       onClose();
     }
   };
 
-  // Обробка реєстрації
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const handleRegister = async (event) => {
+    event.preventDefault();
+    if (!validateRegister()) return;
 
-    if (registerData.password !== registerData.confirmPassword) {
-      toast.error('Паролі не співпадають!');
-      return;
-    }
-
-    const result = await register(registerData.email, registerData.name, registerData.password);
+    const result = await register(
+      registerData.email.trim().toLowerCase(),
+      registerData.name.trim(),
+      registerData.password
+    );
     if (result.success) {
       toast.success('Акаунт створено успішно!');
       onClose();
     }
   };
 
-  return (
-    // Оверлей модального вікна з розмитим фоном
-    <div className="auth-modal-overlay" onClick={onClose}>
-      {/* Контейнер модалки - запобігає закриттю при кліку всередині */}
-      <div className="auth-modal" onClick={(e) => e.stopPropagation()}>
-        {/* Обгортка для кращого позиціонування */}
-        <div className="auth-wrapper">
-          {/* Перемикач вкладок */}
-          <div className="auth-tabs">
-            <button
-              className={tab === "login" ? "active" : ""}
-              onClick={() => setTab("login")}
-            >
-              Вхід
-            </button>
-            <button
-              className={tab === "register" ? "active" : ""}
-              onClick={() => setTab("register")}
-            >
-              Реєстрація
-            </button>
-          </div>
+  if (!isOpen) return null;
 
-          {/* Основна картка модалки з формою */}
+  return (
+    <div className="auth-modal-overlay" onMouseDown={onClose}>
+      <div
+        className="auth-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-modal-title"
+        aria-describedby="auth-modal-description"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <div className="auth-wrapper">
           <div className="auth-card">
-            {/* Кнопка закриття модалки */}
-            <button className="auth-modal-close" onClick={onClose}>
+            <button
+              type="button"
+              className="auth-modal-close"
+              onClick={onClose}
+              aria-label="Закрити вікно авторизації"
+            >
               <CloseIcon />
             </button>
 
-            {/* Динамічний заголовок */}
             <div className="auth-card-header">
-              <h2 className="auth-card-title">
-                {tab === "login" ? "З поверненням!" : "Створити акаунт"}
-              </h2>
-              <p className="auth-card-description">
-                {tab === "login"
-                  ? "Увійдіть у свій акаунт, щоб продовжити."
-                  : "Зареєструйтесь, щоб почати покупки."}
-              </p>
+              <div className="auth-title-row">
+                <div className="auth-logo-mark" aria-hidden="true">
+                  <img src="/assets/logo/nexora-symbol.svg" alt="" />
+                </div>
+                <div>
+                  <h2 className="auth-card-title" id="auth-modal-title">
+                    {tab === 'login' ? 'З поверненням!' : 'Створити акаунт'}
+                  </h2>
+                  <p className="auth-card-description" id="auth-modal-description">
+                    {tab === 'login'
+                      ? 'Увійдіть, щоб швидше оформляти замовлення.'
+                      : 'Створіть профіль для замовлень, обраного та історії.'}
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Відображення помилки якщо є */}
             {error && (
-              <div className="error-message" style={{color: '#ff4757', textAlign: 'center', marginBottom: '1rem'}}>
+              <div className="error-message" role="alert">
                 {error}
               </div>
             )}
 
-            {/* Контент з формами */}
             <div className="auth-card-content">
-              {/* Форма авторизації */}
-              <div className={`auth-form ${tab === "login" ? "active" : ""}`}>
-                <form onSubmit={handleLogin}>
-                  {/* Група поля email з іконкою */}
-                  <div className="form-group">
-                    <label>Email</label>
-                    <EmailOutlined className="form-icon" />
+              <div
+                id="auth-panel-login"
+                className={`auth-form ${tab === 'login' ? 'active' : ''}`}
+                hidden={tab !== 'login'}
+              >
+                <form onSubmit={handleLogin} noValidate>
+                  <div className={`form-group ${fieldErrors.email ? 'has-error' : ''}`}>
+                    <label htmlFor="login-email">Email</label>
+                    <EmailOutlined className="form-icon" aria-hidden="true" />
                     <input
+                      ref={firstInputRef}
+                      id="login-email"
                       type="email"
                       name="email"
                       placeholder="ivanenko@example.com"
                       value={loginData.email}
                       onChange={handleLoginChange}
+                      autoComplete="email"
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      aria-describedby={fieldErrors.email ? 'login-email-error' : undefined}
                       required
                     />
+                    {fieldErrors.email && (
+                      <span className="field-error" id="login-email-error">
+                        {fieldErrors.email}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Група поля пароля з перемикачем видимості */}
-                  <div className="form-group">
-                    <label>Пароль</label>
-                    <LockOutlined className="form-icon" />
+                  <div className={`form-group ${fieldErrors.password ? 'has-error' : ''}`}>
+                    <label htmlFor="login-password">Пароль</label>
+                    <LockOutlined className="form-icon" aria-hidden="true" />
                     <input
-                      type={showPassword ? "text" : "password"}
+                      id="login-password"
+                      type={showPassword ? 'text' : 'password'}
                       name="password"
                       placeholder="••••••••"
                       value={loginData.password}
                       onChange={handleLoginChange}
+                      autoComplete="current-password"
+                      aria-invalid={Boolean(fieldErrors.password)}
+                      aria-describedby={fieldErrors.password ? 'login-password-error' : undefined}
                       required
                     />
                     <button
                       type="button"
                       className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword((isVisible) => !isVisible)}
+                      aria-label={showPassword ? 'Приховати пароль' : 'Показати пароль'}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </button>
+                    {fieldErrors.password && (
+                      <span className="field-error" id="login-password-error">
+                        {fieldErrors.password}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Посилання на відновлення пароля */}
-                  <a
-                    href="#"
-                    className="forgot-password-link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("Forgot password flow");
-                    }}
-                  >
-                    Забули пароль?
-                  </a>
+                  <p className="forgot-password-note">
+                    Відновлення пароля буде доступне після підключення email-підтверджень.
+                  </p>
 
-                  {/* Кнопка відправки форми входу */}
-                  <button
-                    type="submit"
-                    className="auth-button btn-primary"
-                    disabled={loading}
-                  >
-                    {loading ? "Входимо..." : "Увійти"}
+                  <button type="submit" className="auth-button btn-primary" disabled={loading}>
+                    {loading ? 'Входимо...' : 'Увійти'}
                   </button>
+
+                  <p className="auth-switch-text">
+                    Немає акаунта?
+                    <button type="button" onClick={() => switchTab('register')}>
+                      Створити акаунт
+                    </button>
+                  </p>
                 </form>
               </div>
 
-              {/* Форма реєстрації - показується тільки при активній вкладці register */}
               <div
-                className={`auth-form ${tab === "register" ? "active" : ""}`}
+                id="auth-panel-register"
+                className={`auth-form ${tab === 'register' ? 'active' : ''}`}
+                hidden={tab !== 'register'}
               >
-                <form onSubmit={handleRegister}>
-                  {/* Особисті дані */}
-                  <div className="form-group">
-                    <label>Ім'я</label>
-                    <PersonOutlined className="form-icon" />
+                <form onSubmit={handleRegister} noValidate>
+                  <div className={`form-group ${fieldErrors.name ? 'has-error' : ''}`}>
+                    <label htmlFor="register-name">Ім'я</label>
+                    <PersonOutlined className="form-icon" aria-hidden="true" />
                     <input
+                      id="register-name"
                       type="text"
                       name="name"
                       placeholder="Іван Петренко"
                       value={registerData.name}
                       onChange={handleRegisterChange}
+                      autoComplete="name"
+                      aria-invalid={Boolean(fieldErrors.name)}
+                      aria-describedby={fieldErrors.name ? 'register-name-error' : undefined}
                       required
                     />
+                    {fieldErrors.name && (
+                      <span className="field-error" id="register-name-error">
+                        {fieldErrors.name}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Поле email */}
-                  <div className="form-group">
-                    <label>Email</label>
-                    <EmailOutlined className="form-icon" />
+                  <div className={`form-group ${fieldErrors.email ? 'has-error' : ''}`}>
+                    <label htmlFor="register-email">Email</label>
+                    <EmailOutlined className="form-icon" aria-hidden="true" />
                     <input
+                      id="register-email"
                       type="email"
                       name="email"
                       placeholder="ivanenko@example.com"
                       value={registerData.email}
                       onChange={handleRegisterChange}
+                      autoComplete="email"
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      aria-describedby={fieldErrors.email ? 'register-email-error' : undefined}
                       required
                     />
+                    {fieldErrors.email && (
+                      <span className="field-error" id="register-email-error">
+                        {fieldErrors.email}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Поле пароля */}
-                  <div className="form-group">
-                    <label>Пароль</label>
-                    <LockOutlined className="form-icon" />
+                  <div className={`form-group ${fieldErrors.password ? 'has-error' : ''}`}>
+                    <label htmlFor="register-password">Пароль</label>
+                    <LockOutlined className="form-icon" aria-hidden="true" />
                     <input
-                      type={showPassword ? "text" : "password"}
+                      id="register-password"
+                      type={showPassword ? 'text' : 'password'}
                       name="password"
                       placeholder="••••••••"
                       value={registerData.password}
                       onChange={handleRegisterChange}
+                      autoComplete="new-password"
+                      aria-invalid={Boolean(fieldErrors.password)}
+                      aria-describedby="register-password-help"
                       required
                     />
                     <button
                       type="button"
                       className="password-toggle"
-                      onClick={() => setShowPassword(!showPassword)}
+                      onClick={() => setShowPassword((isVisible) => !isVisible)}
+                      aria-label={showPassword ? 'Приховати пароль' : 'Показати пароль'}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </button>
+                    {fieldErrors.password && (
+                      <span className="field-error">{fieldErrors.password}</span>
+                    )}
                   </div>
 
-                  {/* Поле підтвердження пароля */}
-                  <div className="form-group">
-                    <label>Підтвердіть пароль</label>
-                    <LockOutlined className="form-icon" />
+                  <div className={`form-group ${fieldErrors.confirmPassword ? 'has-error' : ''}`}>
+                    <label htmlFor="register-confirm-password">Підтвердіть пароль</label>
+                    <LockOutlined className="form-icon" aria-hidden="true" />
                     <input
-                      type={showConfirmPassword ? "text" : "password"}
+                      id="register-confirm-password"
+                      type={showConfirmPassword ? 'text' : 'password'}
                       name="confirmPassword"
                       placeholder="••••••••"
                       value={registerData.confirmPassword}
                       onChange={handleRegisterChange}
+                      autoComplete="new-password"
+                      aria-invalid={Boolean(fieldErrors.confirmPassword)}
+                      aria-describedby="register-confirm-password-status"
                       required
                     />
                     <button
                       type="button"
                       className="password-toggle"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() => setShowConfirmPassword((isVisible) => !isVisible)}
+                      aria-label={showConfirmPassword ? 'Приховати пароль' : 'Показати пароль'}
                     >
                       {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                     </button>
+                    {passwordsMatch !== null && (
+                      <span
+                        className={`password-match ${
+                          passwordsMatch === true ? 'is-success' : 'is-error'
+                        }`}
+                        id="register-confirm-password-status"
+                        aria-live="polite"
+                      >
+                        {passwordsMatch === true ? 'Паролі співпадають.' : 'Паролі не співпадають.'}
+                      </span>
+                    )}
+                    {fieldErrors.confirmPassword && (
+                      <span className="field-error">{fieldErrors.confirmPassword}</span>
+                    )}
                   </div>
 
-                  {/* Кнопка відправки форми реєстрації */}
-                  <button
-                    type="submit"
-                    className="auth-button btn-primary"
-                    disabled={loading}
-                  >
-                    {loading ? "Створюємо..." : "Створити акаунт"}
+                  <button type="submit" className="auth-button btn-primary" disabled={loading}>
+                    {loading ? 'Створюємо...' : 'Створити акаунт'}
                   </button>
+
+                  <p className="auth-switch-text">
+                    Вже маєте акаунт?
+                    <button type="button" onClick={() => switchTab('login')}>
+                      Увійти
+                    </button>
+                  </p>
                 </form>
               </div>
             </div>

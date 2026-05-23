@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useReducer, useCallback } from 'react';
 import { getWishlist } from '../services/wishlistService.js';
 
 const initialState = {
@@ -19,6 +19,26 @@ const AuthActionTypes = {
 };
 
 const normalizeIds = (ids = []) => Array.from(new Set(ids.map((id) => String(id))));
+
+const getPublicAuthMessage = (message, fallback) => {
+  if (!message || typeof message !== 'string') return fallback;
+
+  const technicalPatterns = [
+    'E11000',
+    'duplicate key',
+    'username_1',
+    'Cast to',
+    'ValidationError',
+    'validation failed',
+    'MongoServerError'
+  ];
+
+  if (technicalPatterns.some((pattern) => message.includes(pattern))) {
+    return fallback;
+  }
+
+  return message;
+};
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -161,8 +181,9 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
 
-      dispatch({ type: AuthActionTypes.SET_ERROR, payload: data.message });
-      return { success: false, message: data.message };
+      const message = getPublicAuthMessage(data.message, 'Невірний email або пароль.');
+      dispatch({ type: AuthActionTypes.SET_ERROR, payload: message });
+      return { success: false, message };
     } catch (error) {
       const message = 'Помилка зʼєднання. Спробуйте пізніше.';
       dispatch({ type: AuthActionTypes.SET_ERROR, payload: message });
@@ -182,7 +203,11 @@ export const AuthProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, name, password }),
+        body: JSON.stringify({
+          email: email.trim().toLowerCase(),
+          name: name.trim(),
+          password
+        }),
       });
 
       const data = await response.json();
@@ -211,8 +236,9 @@ export const AuthProvider = ({ children }) => {
         return { success: true };
       }
 
-      dispatch({ type: AuthActionTypes.SET_ERROR, payload: data.message });
-      return { success: false, message: data.message };
+      const message = getPublicAuthMessage(data.message, 'Не вдалося створити акаунт.');
+      dispatch({ type: AuthActionTypes.SET_ERROR, payload: message });
+      return { success: false, message };
     } catch (error) {
       const message = 'Помилка реєстрації. Спробуйте пізніше.';
       dispatch({ type: AuthActionTypes.SET_ERROR, payload: message });
@@ -229,6 +255,10 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AuthActionTypes.LOGOUT });
   };
 
+  const clearError = useCallback(() => {
+    dispatch({ type: AuthActionTypes.SET_ERROR, payload: null });
+  }, []);
+
   const isWishlisted = (productId) => {
     if (!productId) return false;
     return state.wishlistProductIds.includes(String(productId));
@@ -243,6 +273,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    clearError,
     isWishlisted,
     refreshWishlistProductIds,
     updateUserData,
