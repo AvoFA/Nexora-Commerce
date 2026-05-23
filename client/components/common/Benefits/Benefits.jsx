@@ -1,4 +1,3 @@
-// client/components/common/Benefits/Benefits.jsx
 import "./Benefits.scss";
 import SecurityIcon from "@mui/icons-material/Security";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
@@ -8,35 +7,35 @@ import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 const features = [
   {
     icon: <VerifiedUserIcon />,
-    title: "Чиста автентичність",
+    title: "Оригінальні товари",
     description:
-      "Тільки оригінальні Tech-пристрої з повною заводською гарантією. Жодних компромісів із якістю.",
+      "У каталозі представлені технічні пристрої з описом, характеристиками та цінами для зручного порівняння.",
   },
   {
     icon: <LocalShippingIcon />,
-    title: "Стрімка логістика",
+    title: "Доставка по Україні",
     description:
-      "Швидке та надійне відправлення замовлень по всій території України.",
+      "Оформлення замовлення підтримує сценарії доставки, які потрібні для повного e-commerce процесу.",
   },
   {
     icon: <SecurityIcon />,
-    title: "Неоновий захист",
+    title: "Зручне оформлення",
     description:
-      "Фінансові транзакції захищені сучасними криптографічними протоколами.",
+      "Кошик, авторизація та особистий кабінет допомагають пройти шлях від вибору товару до замовлення.",
   },
   {
     icon: <HeadsetMicIcon />,
-    title: "Персональний супровід",
-    description: "Команда експертів готова відповісти на ваші запитання 24/7.",
+    title: "Особистий кабінет",
+    description:
+      "Користувач може переглядати замовлення, обране, нещодавно переглянуті товари та власні відгуки.",
   },
 ];
 
 const Benefits = () => {
   return (
     <section className="benefits-section">
-      {/* Ми не використовуємо .container, бо він вже є у HomePage */}
       <h2 className="section-title">
-        <span>Чому обирають нас</span>
+        <span>Чому обирають Nexora</span>
       </h2>
 
       <div className="benefits-grid">

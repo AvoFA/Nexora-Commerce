@@ -1,35 +1,132 @@
-// src/pages/HomePage.scss
 @import '../../styles/variables';
 @import '../../styles/common';
 
+.homepage {
+  width: 100%;
+}
+
+.home-section-heading {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
 .product-section {
-  margin-top: 60px;
+  margin-top: 64px;
   padding-top: 40px;
   border-top: 1px solid $border-color;
-
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-  border-bottom: 1px solid $border-color;
-  padding-bottom: 16px;
-
-  // Модифікатор для центрування
-  &.centered {
-    justify-content: center;
-    border-bottom: none;
-  }
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 26px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba($border-color, 0.85);
 }
 
 .section-title {
   margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
+  color: $text-color;
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: 0;
 
   span {
     @include apply-gradient-text;
+  }
+}
+
+.section-description {
+  max-width: 680px;
+  margin: 10px 0 0;
+  color: $text-secondary;
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.product-section {
+  .product-list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+}
+
+@media (max-width: 1399px) {
+  .product-section {
+    .product-list {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}
+
+@media (max-width: 1100px) {
+  .product-section {
+    .product-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+.home-error-state {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: 22px;
+  border: 1px solid rgba($danger-color, 0.28);
+  border-radius: $border-radius;
+  background: rgba($danger-color, 0.07);
+  color: $text-secondary;
+
+  strong {
+    color: $text-color;
+    font-size: 1.05rem;
+  }
+}
+
+.homepage--strong {
+  .product-section {
+    padding: 34px;
+    border: 1px solid rgba($primary-color, 0.18);
+    border-radius: $border-radius * 1.5;
+    background: rgba($card-bg, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .section-header {
+    border-bottom-color: rgba($primary-color, 0.18);
+  }
+}
+
+@media (max-width: 768px) {
+  .product-section {
+    margin-top: 46px;
+    padding-top: 30px;
+
+    .product-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .section-header-link {
+    width: 100%;
+  }
+
+  .homepage--strong {
+    .product-section {
+      padding: 22px 16px;
+      border-radius: $border-radius;
+    }
   }
 }
