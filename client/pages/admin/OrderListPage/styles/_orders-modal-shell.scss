@@ -1,0 +1,74 @@
+.order-detail-dialog.MuiDialog-root {
+  .MuiBackdrop-root {
+    background-color: rgba(10, 10, 20, 0.85);
+  }
+
+  .MuiDialog-paper.MuiPaper-root {
+    position: relative;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    color: $text-color;
+    max-width: 860px;
+    width: 100%;
+  }
+
+  .admin-modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: $text-secondary;
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &:hover {
+      background: rgba($primary-color, 0.1);
+      color: $primary-color;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .MuiDialogTitle-root.MuiDialogTitle-root {
+    padding: 0;
+    color: $text-color;
+    border-bottom: none;
+  }
+
+  .MuiDialogContent-root.MuiDialogContent-root {
+    padding: 24px;
+    max-height: min(70vh, 720px);
+    overflow-y: auto;
+    background-color: transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+  }
+}

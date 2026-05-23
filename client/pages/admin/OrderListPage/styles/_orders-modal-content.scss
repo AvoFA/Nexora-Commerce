@@ -1,0 +1,180 @@
+.order-detail-dialog.MuiDialog-root {
+  .order-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .modal-header-compact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 64px 16px 24px;
+    border-bottom: 1px solid $border-color;
+    background: rgba(0, 0, 0, 0.1);
+
+    .modal-header-main {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      width: 100%;
+
+      .modal-header-title-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        .modal-title-text {
+          font-size: 1.32rem;
+          font-weight: 850;
+          color: $text-color;
+          margin: 0;
+          letter-spacing: -0.01em;
+          line-height: 1;
+        }
+
+        .modal-header-status-wrapper {
+          display: inline-flex;
+          align-items: center;
+          flex-shrink: 0;
+
+          .order-status-chip.MuiChip-root {
+            font-weight: 700;
+            font-size: 0.68rem;
+            border-radius: 5px;
+            height: 22px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            border: 1px solid transparent;
+
+            &.order-status-new {
+              background-color: rgba(245, 158, 11, 0.12);
+              color: #f59e0b;
+              border-color: rgba(245, 158, 11, 0.22);
+            }
+            &.order-status-confirmed {
+              background-color: rgba(59, 130, 246, 0.12);
+              color: #3b82f6;
+              border-color: rgba(59, 130, 246, 0.22);
+            }
+            &.order-status-packing {
+              background-color: rgba(168, 85, 247, 0.12);
+              color: #a855f7;
+              border-color: rgba(168, 85, 247, 0.22);
+            }
+            &.order-status-ready_for_pickup {
+              background-color: rgba(6, 182, 212, 0.12);
+              color: #06b6d4;
+              border-color: rgba(6, 182, 212, 0.22);
+            }
+            &.order-status-received {
+              background-color: rgba(16, 185, 129, 0.12);
+              color: #10b981;
+              border-color: rgba(16, 185, 129, 0.22);
+            }
+            &.order-status-cancelled {
+              background-color: rgba(239, 68, 68, 0.12);
+              color: #ef4444;
+              border-color: rgba(239, 68, 68, 0.22);
+            }
+          }
+        }
+      }
+
+      .modal-header-created-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+
+        .modal-created-label {
+          color: rgba(255, 255, 255, 0.35);
+          font-size: 0.78rem;
+          font-weight: 500;
+        }
+
+        .modal-subtitle-divider {
+          color: rgba(255, 255, 255, 0.15);
+          font-size: 0.8rem;
+          font-weight: 500;
+        }
+
+        .terminal-note {
+          color: $text-secondary;
+          font-size: 0.68rem;
+          background: rgba(255, 255, 255, 0.04);
+          padding: 2px 6px;
+          border-radius: 4px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-date {
+          color: $text-secondary;
+          font-size: 0.78rem;
+          display: inline-flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+
+  .modal-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+
+    @media (max-width: 760px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .modal-section-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.035);
+    color: $text-secondary;
+    font-size: 0.86rem;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+
+      .section-icon {
+        width: 16px;
+        height: 16px;
+        color: var(--text-secondary, #94a3b8);
+        opacity: 0.75;
+      }
+    }
+
+    .section-title {
+      color: $text-color;
+      font-weight: 700;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .customer-phone {
+      color: $text-color;
+    }
+  }
+
+  .section-label {
+    color: $text-secondary;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+  }
+
+
+}

@@ -1,0 +1,255 @@
+.order-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  .order-toolbar-card {
+    margin-bottom: 16px;
+    padding: 20px;
+    background: var(--card-bg, #1a2235);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+
+      .filter-tab-button {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        background-color: $bg-color;
+        color: $text-secondary;
+        border: 1px solid $border-color;
+        user-select: none;
+        font-family: inherit;
+
+        &:hover {
+          background-color: lighten($bg-color, 3%);
+          color: $text-color;
+          border-color: rgba($text-secondary, 0.35);
+        }
+
+        &.active {
+          background-color: rgba($primary-color, 0.15);
+          color: $text-color;
+          border-color: rgba($primary-color, 0.3);
+          box-shadow: 0 0 12px rgba($primary-color, 0.1);
+
+          div.MuiChip-root {
+            background-color: rgba($primary-color, 0.25);
+            color: #ffffff;
+          }
+        }
+
+        &.compact-filter-tab {
+          padding: 6px 10px;
+          font-size: 0.78rem;
+          color: rgba($text-secondary, 0.85);
+          background-color: rgba(255, 255, 255, 0.015);
+
+          &::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba($text-secondary, 0.45);
+          }
+
+          &.active {
+            background-color: rgba(255, 255, 255, 0.045);
+            border-color: rgba($text-secondary, 0.24);
+            box-shadow: none;
+
+            &::before {
+              background: rgba($text-color, 0.72);
+            }
+          }
+        }
+
+        div.MuiChip-root {
+          height: 22px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          background-color: $border-color;
+          color: $text-secondary;
+          cursor: pointer;
+          border-radius: 6px;
+          transition: all 0.2s ease;
+
+          span.MuiChip-label {
+            padding-left: 6px;
+            padding-right: 6px;
+          }
+        }
+      }
+    }
+
+    .toolbar-divider {
+      height: 1px;
+      background-color: $border-color;
+      width: 100%;
+    }
+
+    .table-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      @media (max-width: 768px) {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 12px;
+
+        .search-wrapper {
+          width: 100%;
+          order: 1;
+        }
+
+        .filter-select-wrapper {
+          flex-grow: 1;
+          order: 2;
+          justify-content: flex-start;
+
+          .select-relative {
+            flex-grow: 1;
+            select {
+              width: 100%;
+            }
+          }
+        }
+
+        .refresh-table-btn {
+          order: 3;
+        }
+      }
+
+
+
+      .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+
+        .search-input {
+          background-color: $bg-color;
+          border: 1px solid $border-color;
+          border-radius: 8px;
+          color: $text-color;
+          font-size: 0.85rem;
+          padding: 6px 32px 6px 36px;
+          height: 38px;
+          width: 100%;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          font-family: inherit;
+
+          &::placeholder {
+            color: $text-secondary;
+            opacity: 0.6;
+          }
+
+          &:hover {
+            background-color: lighten($bg-color, 3%);
+            border-color: rgba($text-secondary, 0.35);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            background-color: $bg-color;
+            box-shadow: 0 0 12px rgba($primary-color, 0.08);
+          }
+        }
+
+        .search-icon {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          color: $text-secondary;
+          font-size: 1.15rem;
+          pointer-events: none;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .clear-search-btn {
+          position: absolute;
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: transparent;
+          border: none;
+          padding: 2px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: $text-secondary;
+          border-radius: 50%;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: $text-color;
+            background-color: rgba(255, 255, 255, 0.06);
+          }
+
+          svg {
+            font-size: 0.95rem;
+          }
+        }
+      }
+
+      .refresh-table-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        cursor: pointer;
+        background-color: $bg-color;
+        color: $text-secondary;
+        border: 1px solid $border-color;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &:hover:not(:disabled) {
+          background-color: lighten($bg-color, 3%);
+          border-color: rgba($text-secondary, 0.35);
+          color: $text-color;
+        }
+
+        &:disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
+        }
+
+        .refresh-icon {
+          font-size: 1.10rem;
+          transition: transform 0.2s ease;
+        }
+
+        &.is-loading {
+          .refresh-icon {
+            animation: adminRefreshSpin 0.8s linear infinite;
+          }
+        }
+      }
+    }
+  }
+}

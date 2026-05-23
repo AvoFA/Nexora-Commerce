@@ -1,0 +1,256 @@
+.order-detail-dialog.MuiDialog-root {
+  .modal-products-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .products-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+
+      .products-summary-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+
+        .summary-qty {
+          color: $text-secondary;
+        }
+
+        .summary-divider {
+          color: rgba(255, 255, 255, 0.15);
+        }
+
+        .summary-total {
+          color: #f8fafc;
+        }
+      }
+    }
+  }
+
+  .modal-products-list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    max-height: 260px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+  }
+
+  .modal-product-row {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.012);
+    border-bottom: 1px solid $border-color;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    @media (max-width: 620px) {
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      gap: 6px 12px;
+      padding: 10px 12px;
+    }
+  }
+
+  .modal-product-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+
+    .MuiSvgIcon-root {
+      color: #64748b;
+    }
+
+    @media (max-width: 620px) {
+      width: 44px;
+      height: 44px;
+      grid-column: 1;
+      grid-row: 1 / span 2;
+    }
+  }
+
+  .modal-product-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    .MuiTypography-root {
+      color: $text-color;
+      font-weight: 650;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .product-unit-price {
+      font-size: 0.74rem;
+      color: $text-secondary;
+      font-weight: 500;
+    }
+
+    @media (max-width: 620px) {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+
+  .modal-product-qty {
+    color: $text-color;
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 9999px;
+    align-self: center;
+    justify-self: center;
+
+    @media (max-width: 620px) {
+      grid-column: 2;
+      grid-row: 2;
+      justify-self: start;
+      align-self: center;
+      margin-top: 0;
+    }
+  }
+
+  .modal-product-total {
+    color: #f8fafc;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+    align-self: center;
+
+    @media (max-width: 620px) {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+  }
+
+  .comment-card {
+    transition: all 0.25s ease;
+
+    .MuiTypography-root {
+      color: $text-color;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    &.has-comment {
+      background: rgba(245, 158, 11, 0.02);
+      border: 1px dashed rgba(245, 158, 11, 0.25);
+
+      .section-header .section-icon,
+      .section-header .section-label {
+        color: #f59e0b;
+      }
+
+      .MuiTypography-root.MuiTypography-root {
+        color: $text-color;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .history-card {
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: $text-secondary;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border-bottom: 1px solid $border-color;
+      transition: all 0.15s ease;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .history-status {
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.75);
+      }
+
+      .history-divider {
+        color: rgba(255, 255, 255, 0.15);
+      }
+
+      .history-timestamp {
+        color: $text-secondary;
+        font-size: 0.78rem;
+      }
+
+      &.is-current {
+        background: rgba(59, 130, 246, 0.04);
+        border: 1px solid rgba(59, 130, 246, 0.1);
+
+        .history-status {
+          color: #60a5fa;
+          font-weight: 700;
+        }
+
+        .history-timestamp {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+    }
+  }
+}
