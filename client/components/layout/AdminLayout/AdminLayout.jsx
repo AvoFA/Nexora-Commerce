@@ -12,6 +12,7 @@ import {
   ReceiptLong as OrdersIcon,
   Reviews as ReviewsIcon,
   Store,
+  MenuOpen,
 } from "@mui/icons-material";
 import {
   clearAdminSession,
@@ -50,6 +51,9 @@ const navigationMeta = {
 
 export const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    return localStorage.getItem("adminSidebarCollapsed") === "true";
+  });
   const location = useLocation();
   const navigate = useNavigate();
   const role = getStoredAdminRole();
@@ -61,6 +65,12 @@ export const AdminLayout = () => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
+  const toggleSidebarCollapse = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem("adminSidebarCollapsed", newState);
+  };
+
   const isActive = (path) => {
     if (path === "/admin/dashboard") {
       return location.pathname === "/admin" || location.pathname === "/admin/dashboard";
@@ -71,21 +81,35 @@ export const AdminLayout = () => {
 
   const handleLogout = () => {
     clearAdminSession();
-    navigate("/");
+    navigate("/admin/login");
   };
 
   const sidebarContent = (
     <>
       <div className="admin-sidebar-logo">
         <div className="logo-wrapper">
-          <Link to="/home" className="admin-logo-link">
+          <div className="admin-logo-link">
             <img src="/assets/logo/nexora-symbol.svg" alt="Nexora" className="admin-logo-symbol" />
             <div className="logo-text">
               <h1>Nexora</h1>
               <p>Admin Panel</p>
             </div>
-          </Link>
+          </div>
         </div>
+
+        <IconButton
+          className="admin-sidebar-toggle-btn mobile-hidden"
+          onClick={toggleSidebarCollapse}
+          sx={{ color: "rgba(255,255,255,0.7)", ml: 1 }}
+          title={isCollapsed ? "Розгорнути" : "Згорнути"}
+        >
+          {isCollapsed ? (
+            <MenuIcon sx={{ width: "24px", height: "24px" }} />
+          ) : (
+            <MenuOpen sx={{ width: "24px", height: "24px" }} />
+          )}
+        </IconButton>
+
         <IconButton
           className="admin-mobile-menu-btn"
           onClick={() => setSidebarOpen(false)}
@@ -107,27 +131,28 @@ export const AdminLayout = () => {
               end={item.href === "/admin/dashboard" || item.href === "/admin"}
               className={active ? "active" : ""}
               onClick={() => setSidebarOpen(false)}
+              title={isCollapsed ? item.name : ""}
             >
               <div className="nav-icon-wrapper">
                 <Icon sx={{ width: "20px", height: "20px" }} />
               </div>
-              <span className="font-medium text-base">{item.name}</span>
+              <span className="nav-text">{item.name}</span>
             </NavLink>
           );
         })}
       </nav>
 
       <div className="admin-sidebar-footer">
-        <button className="admin-logout-btn" onClick={handleLogout}>
+        <button className="admin-logout-btn" onClick={handleLogout} title={isCollapsed ? "Вийти" : ""}>
           <Logout sx={{ width: "20px", height: "20px" }} />
-          <span>Вийти</span>
+          <span className="logout-text">Вийти</span>
         </button>
       </div>
     </>
   );
 
   return (
-    <div className="admin-layout">
+    <div className={`admin-layout ${isCollapsed ? "sidebar-collapsed" : ""}`}>
       {sidebarOpen && (
         <Box
           sx={{
@@ -144,7 +169,7 @@ export const AdminLayout = () => {
 
       <Box
         component="aside"
-        className={`admin-sidebar ${sidebarOpen ? "is-open" : ""}`}
+        className={`admin-sidebar ${sidebarOpen ? "is-open" : ""} ${isCollapsed ? "is-collapsed" : ""}`}
       >
         {sidebarContent}
       </Box>
@@ -152,7 +177,7 @@ export const AdminLayout = () => {
       <div className="admin-content-area">
         <Box component="header" className="admin-header">
           <IconButton
-            className="admin-mobile-menu-btn"
+            className="admin-mobile-menu-btn lg-hidden"
             onClick={() => setSidebarOpen(true)}
           >
             <MenuIcon sx={{ width: "24px", height: "24px" }} />
@@ -163,8 +188,7 @@ export const AdminLayout = () => {
 
         <Box component="main" sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
           <Outlet />
-        </Box>
-      </div>
+        </Box>      </div>
     </div>
   );
 };
