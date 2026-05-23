@@ -14,6 +14,7 @@ import { formatPrice } from "../../utils/formatPrice.js";
 import EmptyState from "../../components/common/EmptyState/EmptyState.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import WishlistPickerModal from "../../components/common/WishlistPickerModal/WishlistPickerModal.jsx";
+import { openAuthModal } from "../../utils/authModalEvents.js";
 import "./CartPage.scss";
 
 const CartPage = () => {
@@ -58,7 +59,7 @@ const CartPage = () => {
   // Додати товар до списку бажань
   const handleOpenWishlist = (item) => {
     if (!isAuthenticated) {
-      toast.error("Увійдіть, щоб додати товар до списку бажань");
+      openAuthModal();
       return;
     }
     setSelectedProductForWishlist(item);

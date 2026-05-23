@@ -1,23 +1,23 @@
-import { memo, useState, useEffect } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import {
   Balance,
   Favorite,
   FavoriteBorder,
+  RateReview,
   ShoppingCartOutlined,
   Star,
-  RateReview,
 } from "@mui/icons-material";
-import { useCart } from "../../../hooks/useCart.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
+import { useCart } from "../../../hooks/useCart.js";
 import { useCompare } from "../../../hooks/useCompare.js";
-import WishlistPickerModal from "../../common/WishlistPickerModal/WishlistPickerModal.jsx";
-import { formatPrice } from "../../../utils/formatPrice.js";
 import { getProductReviews } from "../../../services/reviewService.js";
+import { formatPrice } from "../../../utils/formatPrice.js";
+import { openAuthModal } from "../../../utils/authModalEvents.js";
+import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notifications.js";
+import WishlistPickerModal from "../../common/WishlistPickerModal/WishlistPickerModal.jsx";
 import "./ProductCard.scss";
 
-// Premium custom shopping cart with checkmark badge icon
 const CartAddedIcon = ({ style, ...props }) => (
   <svg
     width="20"
@@ -31,11 +31,9 @@ const CartAddedIcon = ({ style, ...props }) => (
     style={{ display: "block", ...style }}
     {...props}
   >
-    {/* Shopping Cart Body */}
     <circle cx="9" cy="21" r="1" fill="currentColor" stroke="none" />
     <circle cx="20" cy="21" r="1" fill="currentColor" stroke="none" />
     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    {/* Small badge/checkmark */}
     <circle className="cart-added-badge-outline" cx="18" cy="11" r="5.5" fill="currentColor" />
     <path d="M16 11l1.3 1.3 2.2-2.2" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
@@ -43,6 +41,10 @@ const CartAddedIcon = ({ style, ...props }) => (
 
 const ProductCard = memo(({ product, onWishlistChange }) => {
   const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
+  const [isAuthTooltipVisible, setIsAuthTooltipVisible] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [count, setCount] = useState(0);
+  const authTooltipTimerRef = useRef(null);
   const navigate = useNavigate();
   const { state, dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
@@ -50,45 +52,55 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
 
   const productId = product._id || product.id;
   const imgSrc = product.image || product.imageUrl || null;
-
   const isInCart = state?.items?.some(
     (item) => item.id === productId || item._id === productId
   );
 
-  const [rating, setRating] = useState(0);
-  const [count, setCount] = useState(0);
-
   useEffect(() => {
     let isMounted = true;
+
     if (productId) {
       getProductReviews(productId)
         .then((data) => {
           if (!isMounted) return;
           const reviewsList = data.reviews || [];
+
           if (reviewsList.length > 0) {
-            const sum = reviewsList.reduce((acc, r) => acc + (r.rating || 0), 0);
-            const avg = Number((sum / reviewsList.length).toFixed(1));
-            setRating(avg);
+            const sum = reviewsList.reduce((acc, review) => acc + (review.rating || 0), 0);
+            setRating(Number((sum / reviewsList.length).toFixed(1)));
             setCount(reviewsList.length);
           } else {
             setRating(0);
             setCount(0);
           }
         })
-        .catch((err) => {
-          console.error("Failed to load reviews for product card:", err);
+        .catch((error) => {
+          console.error("Failed to load reviews for product card:", error);
         });
     }
+
     return () => {
       isMounted = false;
+      window.clearTimeout(authTooltipTimerRef.current);
     };
   }, [productId]);
+
+  const showAuthTooltip = () => {
+    window.clearTimeout(authTooltipTimerRef.current);
+    setIsAuthTooltipVisible(true);
+  };
+
+  const hideAuthTooltip = () => {
+    window.clearTimeout(authTooltipTimerRef.current);
+    authTooltipTimerRef.current = window.setTimeout(() => {
+      setIsAuthTooltipVisible(false);
+    }, 350);
+  };
 
   const handleAddToCart = (event) => {
     event.preventDefault();
     event.stopPropagation();
     dispatch({ type: "ADD_ITEM", payload: { ...product, id: productId } });
-    toast.success(`${product.name} додано в кошик!`);
   };
 
   const handleOpenWishlist = (event) => {
@@ -96,7 +108,7 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
     event.stopPropagation();
 
     if (!isAuthenticated) {
-      toast.error("Увійдіть, щоб додати товар до списку бажань");
+      openAuthModal();
       return;
     }
 
@@ -109,9 +121,9 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
 
     if (isCompared(productId)) {
       removeFromCompare(productId);
-      toast.success("Видалено з порівняння");
+      showCompareRemovedToast(getAnchorRect(event));
     } else {
-      addToCompare(product);
+      addToCompare(product, { anchor: getAnchorRect(event) });
     }
   };
 
@@ -129,6 +141,10 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
         <button
           className={`action-btn wishlist-button${isWishlisted(productId) ? " active" : ""}`}
           onClick={handleOpenWishlist}
+          onMouseEnter={!isAuthenticated ? showAuthTooltip : undefined}
+          onMouseLeave={!isAuthenticated ? hideAuthTooltip : undefined}
+          onFocus={!isAuthenticated ? showAuthTooltip : undefined}
+          onBlur={!isAuthenticated ? hideAuthTooltip : undefined}
           title={isWishlisted(productId) ? "Додати в інший список" : "Додати до списку бажань"}
           aria-pressed={isWishlisted(productId)}
         >
@@ -138,6 +154,23 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
             <FavoriteBorder sx={{ fontSize: "20px" }} />
           )}
         </button>
+        {!isAuthenticated && (
+          <div
+            className={`wishlist-auth-tooltip${isAuthTooltipVisible ? " visible" : ""}`}
+            role="tooltip"
+            onMouseEnter={showAuthTooltip}
+            onMouseLeave={hideAuthTooltip}
+          >
+            <button
+              type="button"
+              onClick={handleOpenWishlist}
+              className="wishlist-auth-tooltip__link"
+            >
+              Авторизуйтесь
+            </button>
+            <span>, щоб додати товар до обраного</span>
+          </div>
+        )}
 
         <button
           className={`action-btn compare-button${isCompared(productId) ? " active" : ""}`}
@@ -159,7 +192,7 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
         <Link
           to={`/product/${productId}#reviews`}
           className="card-rating"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(event) => event.stopPropagation()}
         >
           <Star className="rating-star" />
           <span className="rating-value">{rating}</span>
@@ -180,9 +213,9 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
             {isInCart ? (
               <button
                 className="btn-cart-round added"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
                   navigate("/cart", { state: { fromProduct: productId } });
                 }}
                 aria-label="Перейти до кошика"

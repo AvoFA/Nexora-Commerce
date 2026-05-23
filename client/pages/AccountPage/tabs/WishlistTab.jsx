@@ -16,6 +16,7 @@ import {
 import WishlistListBar from "./WishlistListBar.jsx";
 import WishlistBoard from "./WishlistBoard.jsx";
 import WishlistListDialog from "./WishlistListDialog.jsx";
+import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notifications.js";
 
 const getProductId = (product) => product?._id || product?.id;
 const isAuthError = (error) => error?.status === 401 || error?.status === 403;
@@ -195,17 +196,16 @@ const WishlistTab = () => {
 
   const handleAddToCart = (product) => {
     dispatch({ type: "ADD_ITEM", payload: { ...product, id: getProductId(product) } });
-    toast.success(`${product.name} додано в кошик!`);
   };
 
-  const handleToggleCompare = (product) => {
+  const handleToggleCompare = (product, event) => {
     const productId = getProductId(product);
 
     if (isCompared(productId)) {
       removeFromCompare(productId);
-      toast.success("Видалено з порівняння");
+      showCompareRemovedToast(getAnchorRect(event));
     } else {
-      addToCompare(product);
+      addToCompare(product, { anchor: getAnchorRect(event) });
     }
   };
 

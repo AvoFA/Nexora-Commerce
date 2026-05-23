@@ -10,8 +10,8 @@ export const useCompare = () => {
 
   const { state, dispatch } = context;
 
-  const addToCompare = (product) => {
-    dispatch({ type: 'ADD_ITEM', payload: product });
+  const addToCompare = (product, options = {}) => {
+    dispatch({ type: 'ADD_ITEM', payload: product, anchor: options.anchor || null });
   };
 
   const removeFromCompare = (productId) => {

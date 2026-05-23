@@ -10,7 +10,7 @@ const getProductId = (product) => product?._id || product?.id;
 const WishlistProductRow = ({ product, onAddToCart, onRemove, onToggleCompare, isCompared }) => {
   const productId = getProductId(product);
   const imgSrc = product.image || product.imageUrl;
-  
+
   const [rating, setRating] = useState(0);
   const [count, setCount] = useState(0);
 
@@ -86,17 +86,17 @@ const WishlistProductRow = ({ product, onAddToCart, onRemove, onToggleCompare, i
           type="button"
           className="wishlist-row-remove"
           onClick={() => onRemove(productId)}
-          aria-label="Р’РёРґР°Р»РёС‚Рё Р·С– СЃРїРёСЃРєСѓ"
-          title="Р’РёРґР°Р»РёС‚Рё Р·С– СЃРїРёСЃРєСѓ"
+          aria-label="Видалити зі списку"
+          title="Видалити зі списку"
         >
           <DeleteOutline />
         </button>
         <button
           type="button"
           className={`wishlist-row-compare${isCompared(productId) ? " active" : ""}`}
-          onClick={() => onToggleCompare(product)}
-          aria-label={isCompared(productId) ? "РЈ РїРѕСЂС–РІРЅСЏРЅРЅС–" : "РџРѕСЂС–РІРЅСЏС‚Рё"}
-          title={isCompared(productId) ? "РЈ РїРѕСЂС–РІРЅСЏРЅРЅС–" : "РџРѕСЂС–РІРЅСЏС‚Рё"}
+          onClick={(event) => onToggleCompare(product, event)}
+          aria-label={isCompared(productId) ? "У порівнянні" : "Порівняти"}
+          title={isCompared(productId) ? "У порівнянні" : "Порівняти"}
         >
           <Balance />
         </button>

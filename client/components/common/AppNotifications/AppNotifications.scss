@@ -1,0 +1,133 @@
+@import '../../../styles/variables';
+
+.app-notification {
+  position: fixed;
+  z-index: 2200;
+  width: min(360px, calc(100vw - 32px));
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 17px 16px 18px;
+  color: $text-color;
+  background: linear-gradient(135deg, rgba($card-bg, 0.98), rgba($bg-color, 0.98));
+  border: 1px solid rgba($primary-color, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  animation: app-notification-in 0.18s ease-out;
+}
+
+.app-notification__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.app-notification__text {
+  color: $text-color;
+  font-size: 0.92rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.app-notification__action {
+  width: fit-content;
+  color: $primary-color;
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 800;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &:hover,
+  &:focus-visible {
+    color: lighten($primary-color, 8%);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+.app-notification__close {
+  position: relative;
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-color;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: #ffffff;
+    outline: none;
+
+    .app-notification__timer-progress {
+      stroke: lighten($primary-color, 8%);
+    }
+  }
+}
+
+.app-notification__timer {
+  position: absolute;
+  inset: 4px;
+  width: 34px;
+  height: 34px;
+  transform: rotate(-90deg);
+}
+
+.app-notification__timer-track,
+.app-notification__timer-progress {
+  fill: none;
+  stroke-width: 2;
+}
+
+.app-notification__timer-track {
+  stroke: rgba(255, 255, 255, 0.18);
+}
+
+.app-notification__timer-progress {
+  stroke: $primary-color;
+  stroke-linecap: round;
+  stroke-dasharray: 94;
+  stroke-dashoffset: 0;
+  animation: app-notification-timer var(--notification-duration) linear forwards;
+}
+
+.app-notification__close-icon {
+  position: relative;
+  z-index: 1;
+  font-size: 19px !important;
+}
+
+@keyframes app-notification-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes app-notification-timer {
+  to {
+    stroke-dashoffset: 94;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-notification {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto;
+  }
+}

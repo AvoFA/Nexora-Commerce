@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCompare } from "../../../hooks/useCompare.js";
 import { useCart } from "../../../hooks/useCart.js";
+import { openAuthModal } from "../../../utils/authModalEvents.js";
+import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notifications.js";
 
 const getProductId = (product) => product?._id || product?.id;
 
@@ -29,8 +30,7 @@ export const useProductActions = (product) => {
 
   const handleAddToCart = () => {
     if (!product) return;
-    dispatch({ type: "ADD_ITEM", payload: product });
-    toast.success(`${product.name} додано в кошик!`);
+    dispatch({ type: "ADD_ITEM", payload: { ...product, id: productId } });
   };
 
   const handleGoToCart = () => {
@@ -40,7 +40,7 @@ export const useProductActions = (product) => {
 
   const handleOpenWishlist = () => {
     if (!isAuthenticated) {
-      toast.error("Увійдіть, щоб додати товар до списку бажань");
+      openAuthModal();
       return;
     }
 
@@ -51,20 +51,21 @@ export const useProductActions = (product) => {
     setIsWishlistModalOpen(false);
   };
 
-  const handleToggleCompare = () => {
+  const handleToggleCompare = (event) => {
     if (!product || !productId) return;
 
     if (checkIsCompared(productId)) {
       removeFromCompare(productId);
-      toast.success("Видалено з порівняння");
+      showCompareRemovedToast(getAnchorRect(event));
     } else {
-      addToCompare(product);
+      addToCompare(product, { anchor: getAnchorRect(event) });
     }
   };
 
   return {
     productId,
     isInCart,
+    isAuthenticated,
     isWishlisted,
     isCompared,
     isWishlistModalOpen,

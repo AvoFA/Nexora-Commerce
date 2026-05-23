@@ -1,14 +1,10 @@
-// Контекст для порівняння товарів
+import { createContext, useEffect, useReducer, useRef } from 'react';
+import { showCompareAddedToast, showCompareExistsToast } from '../utils/notifications.js';
 
-import { createContext, useReducer, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
-
-// Створюємо контекст порівняння
 export const CompareContext = createContext();
 
 const STORAGE_KEY = 'compare_items';
 
-// Завантажуємо початковий стан з localStorage один раз
 const loadFromStorage = () => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -17,65 +13,57 @@ const loadFromStorage = () => {
       if (Array.isArray(parsed)) return { items: parsed };
     }
   } catch {
-    // ігноруємо помилки
+    // Ignore broken localStorage data and start with an empty list.
   }
+
   return { items: [] };
 };
 
-// Reducer для керування станом порівняння
+const getProductId = (product) => product?._id || product?.id;
+
 const compareReducer = (state, action) => {
   switch (action.type) {
     case 'ADD_ITEM': {
       const itemToAdd = action.payload;
-      const itemId = itemToAdd._id || itemToAdd.id;
+      const itemId = getProductId(itemToAdd);
 
-      // Перевіряємо чи товар вже в списку
-      const alreadyExists = state.items.some(item => {
-        const id = item._id || item.id;
-        return id === itemId;
-      });
+      const alreadyExists = state.items.some((item) => getProductId(item) === itemId);
 
       if (alreadyExists) {
-        toast.info('Цей товар вже додано до порівняння');
+        showCompareExistsToast(action.anchor);
         return state;
       }
 
-      toast.success('Товар додано до порівняння');
+      showCompareAddedToast(action.anchor);
       return { ...state, items: [...state.items, itemToAdd] };
     }
 
     case 'REMOVE_ITEM': {
       const idToRemove = action.payload;
-      const newItems = state.items.filter(item => {
-        const id = item._id || item.id;
-        return id !== idToRemove;
-      });
-      return { ...state, items: newItems };
+      return {
+        ...state,
+        items: state.items.filter((item) => getProductId(item) !== idToRemove)
+      };
     }
 
-    case 'CLEAR_COMPARE': {
+    case 'CLEAR_COMPARE':
       return { ...state, items: [] };
-    }
 
     default:
       return state;
   }
 };
 
-// Провайдер контексту порівняння
 export const CompareProvider = ({ children }) => {
-  // Ініціалізуємо з localStorage одразу (без useEffect, без мерехтіння)
   const [state, dispatch] = useReducer(compareReducer, undefined, loadFromStorage);
-
-  // Відстежуємо чи це перший рендер
   const isFirstRender = useRef(true);
 
-  // Зберігаємо стан в localStorage після кожної зміни (крім першого рендеру)
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
+
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
     } catch (error) {

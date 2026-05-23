@@ -1,34 +1,33 @@
 import { History, VisibilityOutlined } from "@mui/icons-material";
-import { toast } from "sonner";
 import { useRecentlyViewed } from "../../../hooks/useRecentlyViewed.js";
 import { useCart } from "../../../hooks/useCart.js";
 import { useCompare } from "../../../hooks/useCompare.js";
 import EmptyState from "../../../components/common/EmptyState/EmptyState.jsx";
 import WishlistProductRow from "./WishlistProductRow.jsx";
+import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notifications.js";
 import "../AccountPage.scss"; // Reuse account page styles
 
 const RecentlyViewedTab = () => {
-  const { products, clearRecentlyViewed, removeRecentlyViewed } = useRecentlyViewed();
+  const { items, clearRecentlyViewed } = useRecentlyViewed();
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
 
   const handleAddToCart = (product) => {
     const productId = product?._id || product?.id;
     dispatch({ type: "ADD_ITEM", payload: { ...product, id: productId } });
-    toast.success(`${product.name} додано в кошик!`);
   };
 
-  const handleToggleCompare = (product) => {
+  const handleToggleCompare = (product, event) => {
     const productId = product?._id || product?.id;
     if (isCompared(productId)) {
       removeFromCompare(productId);
-      toast.success("Видалено з порівняння");
+      showCompareRemovedToast(getAnchorRect(event));
     } else {
-      addToCompare(product);
+      addToCompare(product, { anchor: getAnchorRect(event) });
     }
   };
 
-  if (products.length === 0) {
+  if (!items.length) {
     return (
       <EmptyState
         icon={History}
@@ -42,9 +41,9 @@ const RecentlyViewedTab = () => {
   }
 
   return (
-    <div className="account-tab-viewed">
-      <div className="wishlist-module"> {/* Reuse wishlist-module for styling */}
-        <div className="wishlist-toolbar">
+    <div className="wishlist-tab">
+      <div className="wishlist-toolbar">
+        <div className="wishlist-toolbar-main">
           <div className="wishlist-heading">
             <h2 className="tab-title">
               <VisibilityOutlined sx={{ verticalAlign: 'middle', mr: 1.5, color: 'var(--primary-color)' }} />
@@ -53,24 +52,27 @@ const RecentlyViewedTab = () => {
             <p>Товари, якими ви цікавилися останнім часом.</p>
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
-            <button 
-              className="btn-text-danger" 
+            <button
+              className="btn-text-danger"
               onClick={clearRecentlyViewed}
             >
               Очистити історію
             </button>
           </div>
         </div>
+      </div>
 
-        <div className="wishlist-product-list">
-          {products.map((product) => (
-            <WishlistProductRow 
-              key={product._id || product.id} 
+      <div className="wishlist-board">
+        <div className="wishlist-products-list">
+          {items.map((product) => (
+            <WishlistProductRow
+              key={product._id || product.id}
               product={product}
               onAddToCart={handleAddToCart}
-              onRemove={removeRecentlyViewed}
+              onRemove={() => {}}
               onToggleCompare={handleToggleCompare}
               isCompared={isCompared}
+              hideRemove
             />
           ))}
         </div>

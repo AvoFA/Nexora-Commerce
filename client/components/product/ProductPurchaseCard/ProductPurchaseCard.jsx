@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import {
   Balance,
   CheckCircle,
@@ -15,8 +16,26 @@ const getProductImage = (product) => product?.image || product?.imageUrl || null
 
 const ProductPurchaseCard = ({ product, variant = "full" }) => {
   const actions = useProductActions(product);
+  const [isAuthTooltipVisible, setIsAuthTooltipVisible] = useState(false);
+  const authTooltipTimerRef = useRef(null);
   const isCompact = variant === "compact";
   const imgSrc = getProductImage(product);
+
+  useEffect(() => () => {
+    window.clearTimeout(authTooltipTimerRef.current);
+  }, []);
+
+  const showAuthTooltip = () => {
+    window.clearTimeout(authTooltipTimerRef.current);
+    setIsAuthTooltipVisible(true);
+  };
+
+  const hideAuthTooltip = () => {
+    window.clearTimeout(authTooltipTimerRef.current);
+    authTooltipTimerRef.current = window.setTimeout(() => {
+      setIsAuthTooltipVisible(false);
+    }, 350);
+  };
 
   if (!product) return null;
 
@@ -47,6 +66,10 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
             <button
               className={`product-wishlist-button${actions.isWishlisted ? " active" : ""}`}
               onClick={actions.handleOpenWishlist}
+              onMouseEnter={!actions.isAuthenticated ? showAuthTooltip : undefined}
+              onMouseLeave={!actions.isAuthenticated ? hideAuthTooltip : undefined}
+              onFocus={!actions.isAuthenticated ? showAuthTooltip : undefined}
+              onBlur={!actions.isAuthenticated ? hideAuthTooltip : undefined}
               title={
                 actions.isWishlisted
                   ? "Додати в інший список"
@@ -59,6 +82,23 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
                 <FavoriteBorder sx={{ fontSize: "28px" }} />
               )}
             </button>
+            {!actions.isAuthenticated && (
+              <div
+                className={`product-wishlist-tooltip${isAuthTooltipVisible ? " visible" : ""}`}
+                role="tooltip"
+                onMouseEnter={showAuthTooltip}
+                onMouseLeave={hideAuthTooltip}
+              >
+                <button
+                  type="button"
+                  className="product-wishlist-tooltip__link"
+                  onClick={actions.handleOpenWishlist}
+                >
+                  Авторизуйтесь
+                </button>
+                <span>, щоб додати товар до обраного</span>
+              </div>
+            )}
             <button
               className={`product-compare-button${actions.isCompared ? " active" : ""}`}
               onClick={actions.handleToggleCompare}

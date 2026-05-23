@@ -17,7 +17,6 @@ import {
   ShoppingCartOutlined,
   Star,
 } from "@mui/icons-material";
-import { toast } from "sonner";
 import { useCart } from "../../hooks/useCart.js";
 import { useCompare } from "../../hooks/useCompare.js";
 import {
@@ -297,8 +296,7 @@ const ComparePage = () => {
   };
 
   const handleAddToCart = (product) => {
-    dispatch({ type: "ADD_ITEM", payload: product });
-    toast.success(`${product.name} додано в кошик!`);
+    dispatch({ type: "ADD_ITEM", payload: { ...product, id: product._id || product.id } });
   };
 
   const handleClearGroup = (items) => {

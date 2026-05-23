@@ -1,7 +1,7 @@
 // конфігурація маршрутизації додатку
 
-import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { createBrowserRouter, Outlet, Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 
 // імпорти компонентів
@@ -11,6 +11,8 @@ import Footer from "./components/layout/Footer/Footer.jsx";
 import AuthModal from "./components/auth/AuthModal.jsx";
 import ScrollToTop from "./components/common/ScrollToTop/ScrollToTop.jsx";
 import AddedToCartDrawer from "./components/cart/AddedToCartDrawer/AddedToCartDrawer.jsx";
+import AppNotifications from "./components/common/AppNotifications/AppNotifications.jsx";
+import { NEXORA_NAVIGATE_EVENT, OPEN_AUTH_MODAL_EVENT } from "./utils/authModalEvents.js";
 
 // сторінки сайту
 import HomePage from "./pages/HomePage/HomePage.jsx";
@@ -46,6 +48,31 @@ import AdminIndexRedirect from "./components/common/AdminProtectedRoute/AdminInd
 // компонент основного макету сайту
 const SiteLayout = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleOpenAuth = () => setIsAuthOpen(true);
+    window.addEventListener(OPEN_AUTH_MODAL_EVENT, handleOpenAuth);
+
+    return () => {
+      window.removeEventListener(OPEN_AUTH_MODAL_EVENT, handleOpenAuth);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleNavigate = (event) => {
+      if (typeof event.detail === "string") {
+        navigate(event.detail);
+      }
+    };
+
+    window.addEventListener(NEXORA_NAVIGATE_EVENT, handleNavigate);
+
+    return () => {
+      window.removeEventListener(NEXORA_NAVIGATE_EVENT, handleNavigate);
+    };
+  }, [navigate]);
+
   return (
     <div
       style={{
@@ -57,8 +84,6 @@ const SiteLayout = () => {
       <Toaster
         position="top-right"
         theme="dark"
-        richColors
-        closeButton
         style={{
           top: "85px",
           right: "24px"
@@ -82,6 +107,7 @@ const SiteLayout = () => {
       <Footer />
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
       <AddedToCartDrawer />
+      <AppNotifications />
     </div>
   );
 };
