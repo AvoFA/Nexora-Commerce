@@ -1,59 +1,33 @@
 .review-detail-dialog {
   .MuiBackdrop-root {
-    background-color: rgba(10, 10, 20, 0.85) !important;
+    background-color: rgba(10, 10, 20, 0.85);
   }
 
   .MuiPaper-root {
-    position: relative !important;
-    background: linear-gradient(135deg, #1e293b, #0f172a) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5) !important;
-    color: $text-color !important;
-    max-width: 720px !important;
-    width: 100% !important;
-  }
-
-  .admin-modal-close-btn {
-    position: absolute !important;
-    top: 16px !important;
-    right: 16px !important;
-    color: $text-secondary !important;
-    background: transparent !important;
-    border: none !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    cursor: pointer !important;
-    z-index: 10 !important;
-    transition: background-color 0.15s ease, color 0.15s ease !important;
-
-    &:hover {
-      background: rgba($primary-color, 0.1) !important;
-      color: $primary-color !important;
-    }
-
-    // Removed active scale transform to prevent jumpiness as requested by user
-
+    position: relative;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    color: $text-color;
+    max-width: 720px;
+    width: 100%;
   }
 
   .MuiDialogTitle-root {
-    font-weight: 700 !important;
-    font-size: 1.25rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 18px 24px !important;
-    color: $text-color !important;
+    font-weight: 700;
+    font-size: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 18px 24px;
+    color: $text-color;
   }
 
   .MuiDialogContent-root {
-    padding: 24px !important;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: transparent !important;
+    background-color: transparent;
 
     .modal-section {
       display: flex;
@@ -253,11 +227,11 @@
 
       .MuiButton-root.MuiButton-root {
         height: 30px;
-        padding: 4px 8px !important;
+        padding: 4px 8px;
         min-width: auto;
         color: rgba($danger-color, 0.78);
-        font-size: 0.78rem !important;
-        font-weight: 600 !important;
+        font-size: 0.78rem;
+        font-weight: 600;
 
         &:hover {
           background: rgba($danger-color, 0.08);
@@ -268,76 +242,8 @@
   }
 
   .MuiDialogActions-root {
-    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 14px 24px !important;
-    background: rgba(0, 0, 0, 0.15) !important;
-
-    .MuiButton-root {
-      text-transform: none !important;
-      font-weight: 600 !important;
-      font-size: 0.875rem !important;
-      padding: 6px 16px !important;
-      border-radius: 8px !important;
-      height: 38px !important;
-      box-sizing: border-box !important;
-    }
-
-    .question-modal-workflow-actions {
-      .MuiButton-root.MuiButton-root {
-        transition: all 0.2s ease !important;
-      }
-
-      .MuiButton-outlinedError {
-        border: 1px solid rgba($danger-color, 0.2) !important;
-        color: rgba($danger-color, 0.85) !important;
-        background: rgba($danger-color, 0.02) !important;
-
-        &:hover {
-          background: rgba($danger-color, 0.08) !important;
-          border-color: rgba($danger-color, 0.4) !important;
-          color: $danger-color !important;
-        }
-      }
-
-      .MuiButton-outlinedWarning {
-        border: 1px solid rgba($warning-color, 0.2) !important;
-        color: rgba($warning-color, 0.9) !important;
-        background: rgba($warning-color, 0.02) !important;
-
-        &:hover {
-          background: rgba($warning-color, 0.08) !important;
-          border-color: rgba($warning-color, 0.4) !important;
-          color: $warning-color !important;
-        }
-      }
-
-      .MuiButton-containedPrimary {
-        background: rgba($primary-color, 0.16) !important;
-        color: #60a5fa !important;
-        border: 1px solid rgba($primary-color, 0.3) !important;
-        box-shadow: 0 4px 12px rgba($primary-color, 0.1) !important;
-
-        &:hover {
-          background: rgba($primary-color, 0.25) !important;
-          border-color: rgba($primary-color, 0.5) !important;
-          color: #60a5fa !important;
-          box-shadow: 0 6px 16px rgba($primary-color, 0.15) !important;
-        }
-      }
-
-      .MuiButton-containedSuccess {
-        background: rgba(16, 185, 129, 0.16) !important;
-        color: #34d399 !important;
-        border: 1px solid rgba(16, 185, 129, 0.3) !important;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1) !important;
-
-        &:hover {
-          background: rgba(16, 185, 129, 0.25) !important;
-          border-color: rgba(16, 185, 129, 0.5) !important;
-          color: #34d399 !important;
-          box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15) !important;
-        }
-      }
-    }
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 14px 24px;
+    background: rgba(0, 0, 0, 0.15);
   }
 }

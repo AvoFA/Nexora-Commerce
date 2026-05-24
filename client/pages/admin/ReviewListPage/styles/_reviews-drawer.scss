@@ -1,9 +1,8 @@
-// РљРѕРјРїР°РєС‚РЅРёР№ РїСЂР°РІРёР№ Drawer РґР»СЏ РЅР°РїРёСЃР°РЅРЅСЏ С€РІРёРґРєРѕС— РІС–РґРїРѕРІС–РґС–
+// Компактний правий drawer для швидкої відповіді
 .quick-reply-drawer {
-  .MuiPaper-root {
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(10px);
-    overflow: hidden !important;
+  &.MuiPaper-root {
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
   }
 
   .drawer-product-info {
@@ -33,7 +32,7 @@
   .drawer-question-text {
     transition: background-color 0.2s;
     &:hover {
-      background-color: rgba(0, 0, 0, 0.25) !important;
+      background-color: rgba(0, 0, 0, 0.25);
     }
   }
 
@@ -81,45 +80,12 @@
     margin-left: -28px;
     margin-right: -28px;
     margin-bottom: -28px;
-    background: rgba(15, 23, 42, 0.75) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(15, 23, 42, 0.96);
     border-top: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
     position: sticky;
     bottom: 0;
     z-index: 10;
 
-    .MuiButton-root {
-      text-transform: none !important;
-      font-weight: 600 !important;
-      height: 40px;
-      border-radius: 8px;
-    }
-
-    .MuiButton-outlined {
-      border-color: rgba(255, 255, 255, 0.15) !important;
-      color: var(--text-primary) !important;
-      background: rgba(255, 255, 255, 0.015) !important;
-
-      &:hover {
-        border-color: rgba(255, 255, 255, 0.3) !important;
-        background: rgba(255, 255, 255, 0.05) !important;
-      }
-    }
-
-    .MuiButton-containedPrimary {
-      background: rgba($primary-color, 0.16) !important;
-      color: #60a5fa !important;
-      border: 1px solid rgba($primary-color, 0.3) !important;
-      box-shadow: 0 4px 12px rgba($primary-color, 0.1) !important;
-
-      &:hover {
-        background: rgba($primary-color, 0.25) !important;
-        border-color: rgba($primary-color, 0.5) !important;
-        color: #60a5fa !important;
-        box-shadow: 0 6px 16px rgba($primary-color, 0.15) !important;
-      }
-    }
   }
 }
