@@ -1,15 +1,30 @@
 .review-list-page {
   .moderation-toolbar-card {
+    position: relative;
+    overflow: visible;
     padding: 20px !important;
-    background: var(--card-bg, #1a2235) !important;
-    border: 1px solid $border-color !important;
+    background:
+      linear-gradient(135deg, rgba($card-bg, 0.74), rgba($bg-color, 0.32)),
+      var(--card-bg, #1a2235) !important;
+    border: 1px solid rgba($border-color, 0.58) !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2) !important;
     display: flex;
     flex-direction: column;
     gap: 18px;
 
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 44%);
+    }
+
     .toolbar-header-row {
+      position: relative;
+      z-index: 1;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -139,12 +154,16 @@
     }
 
     .toolbar-divider {
+      position: relative;
+      z-index: 1;
       height: 1px;
       background-color: $border-color;
       width: 100%;
     }
 
     .review-filters-toolbar {
+      position: relative;
+      z-index: 1;
       display: flex;
       justify-content: space-between;
       align-items: center;

@@ -50,10 +50,21 @@
 
           .action-btn {
             background-color: rgba(255, 255, 255, 0.02) !important;
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba($border-color, 0.35) !important;
             border-radius: 8px !important;
+            width: 34px !important;
+            height: 34px !important;
             padding: 6px !important;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease !important;
+
+            &:hover {
+              transform: translateY(-1px);
+            }
+
+            &:focus-visible {
+              outline: none !important;
+              box-shadow: 0 0 0 2px rgba($primary-color, 0.18) !important;
+            }
 
             svg {
               font-size: 1.1rem;
