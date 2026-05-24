@@ -209,7 +209,7 @@ const CustomerDetailsModal = ({
           </div>
         </Box>
 
-        <Divider sx={{ my: 3 }} />
+        <Divider sx={{ my: 1.5 }} />
 
         {/* Client's Orders Table */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>

@@ -4,6 +4,8 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* 1. Stats Overview styling */
@@ -37,12 +39,24 @@
   overflow: visible;
   margin-bottom: 16px;
   padding: 20px;
-  background: var(--card-bg, #1a2235);
-  border: 1px solid $border-color;
+  background:
+    linear-gradient(135deg, rgba($card-bg, 0.74), rgba($bg-color, 0.32)),
+    var(--card-bg, #1a2235);
+  border: 1px solid rgba($border-color, 0.58);
   border-radius: $border-radius;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 44%);
+  }
 
   .customer-toolbar-layout {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -295,6 +309,8 @@
 .customer-table-card {
   position: relative;
   z-index: 1;
+  min-width: 0;
+  max-width: 100%;
   overflow: hidden;
   background: var(--card-bg, #1a2235);
   border: 1px solid $border-color;
@@ -307,8 +323,24 @@
   width: 100%;
   border-collapse: collapse;
 
+  @media (max-width: 1280px) {
+    th:nth-child(5),
+    td:nth-child(5),
+    th:nth-child(7),
+    td:nth-child(7) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1120px) {
+    th:nth-child(6),
+    td:nth-child(6) {
+      display: none;
+    }
+  }
+
   th {
-    padding: 14px 16px;
+    padding: 14px 12px;
     text-align: left;
     vertical-align: middle;
     color: var(--text-secondary, #94a3b8);
@@ -319,7 +351,7 @@
   }
 
   td {
-    padding: 12px 16px;
+    padding: 12px;
     text-align: left;
     vertical-align: middle;
     color: $text-secondary;
@@ -375,7 +407,7 @@
   }
 
   .customer-info-cell {
-    min-width: 260px;
+    min-width: 220px;
   }
 
   .customer-identity {
@@ -410,47 +442,58 @@
       }
 
       .customer-contacts {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
         color: var(--text-secondary, #94a3b8);
         font-size: 0.78rem;
         font-weight: 700;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+
+        .customer-email,
+        .customer-phone {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .customer-phone {
+          opacity: 0.78;
+        }
       }
     }
   }
 
   .customer-status-cell {
-    min-width: 110px;
+    min-width: 96px;
   }
 
   .customer-orders-cell {
-    min-width: 90px;
+    min-width: 82px;
     font-size: 0.95rem;
     font-weight: 700;
     color: $text-secondary;
   }
 
   .customer-spent-cell {
-    min-width: 110px;
+    min-width: 100px;
     font-size: 0.95rem;
     font-weight: 760;
     color: var(--text-color, #ffffff);
   }
 
   .customer-avg-cell {
-    min-width: 100px;
+    min-width: 88px;
     font-size: 0.85rem;
   }
 
   .customer-last-order-cell,
   .customer-registered-cell {
-    min-width: 120px;
+    min-width: 104px;
     font-size: 0.85rem;
   }
 
   .customer-actions-cell {
-    min-width: 90px;
+    min-width: 80px;
 
     .action-buttons {
       display: flex;
@@ -460,17 +503,26 @@
 
     button.action-btn {
       color: $text-secondary;
-      background: transparent;
-      border: 1px solid transparent;
+      background: rgba(255, 255, 255, 0.018);
+      border: 1px solid rgba($border-color, 0.35);
       border-radius: 8px;
       cursor: pointer;
-      transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-      width: 32px;
-      height: 32px;
+      transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      width: 34px;
+      height: 34px;
       padding: 0;
 
       svg {
         font-size: 19px;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba($primary-color, 0.18);
       }
 
       &.view-btn:hover {
@@ -709,14 +761,13 @@
 
 /* 7. Details Modal styling */
 .customer-details-dialog {
-  .MuiDialog-container {
-  }
-
   .MuiPaper-root {
-    background-color: var(--card-bg, #1a2235);
-    border: 1px solid $border-color;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
-    border-radius: 12px;
+    background:
+      linear-gradient(135deg, rgba($card-bg, 0.96), rgba($bg-color, 0.94)),
+      var(--card-bg, #1a2235);
+    border: 1px solid rgba($border-color, 0.62);
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.42);
+    border-radius: 16px;
     color: var(--text-color, #ffffff);
   }
 
@@ -766,6 +817,7 @@
   .customer-modal-header {
     border-bottom: 1px solid $border-color;
     padding: 20px 24px;
+    background: rgba($bg-color, 0.22);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -788,7 +840,7 @@
   }
 
   .customer-modal-content {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: transparent;
   }
 
   .customer-stats-grid {
@@ -881,11 +933,6 @@
     .MuiTableBody-root {
       .MuiTableRow-root {
         border-bottom: 1px solid rgba($border-color, 0.3);
-        transition: background-color 0.15s ease;
-
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.015);
-        }
 
         &:last-child {
           border-bottom: none;

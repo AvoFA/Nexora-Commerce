@@ -25,7 +25,10 @@ const CustomerRow = ({ customer, onViewDetails, onToggleBlock, isActionLoading }
               {formatCustomerName(customer, 'compact')}
             </span>
             <span className="customer-contacts text-secondary text-xs">
-              {customer.email} {customer.phone && `• ${customer.phone}`}
+              <span className="customer-email">{customer.email}</span>
+              {customer.phone && (
+                <span className="customer-phone">{customer.phone}</span>
+              )}
             </span>
           </div>
         </div>
