@@ -1,8 +1,17 @@
-import { Category as CategoryIcon, Smartphone } from "@mui/icons-material";
+import {
+  Category as CategoryIcon,
+  Inventory2Outlined as ProductsIcon,
+  TimelineOutlined as AverageIcon,
+} from "@mui/icons-material";
 
 const CategoryStats = ({ categories, totalProducts }) => {
+  const categoryCount = categories.length;
+  const averageProducts = categoryCount > 0
+    ? Math.round(totalProducts / categoryCount)
+    : 0;
+
   return (
-    <div className="admin-stats-grid">
+    <div className="admin-stats-grid category-stats-rail">
       <div className="admin-stat-card stat-primary">
         <div className="stat-card-icon">
           <CategoryIcon />
@@ -14,9 +23,18 @@ const CategoryStats = ({ categories, totalProducts }) => {
         <div className="stat-card-value">{categories.length}</div>
       </div>
 
+      <div className="category-stats-connector" aria-hidden="true">
+        <span className="connector-line" />
+        <div className="category-stats-pulse">
+          <AverageIcon />
+          <span>{averageProducts}</span>
+        </div>
+        <span className="connector-label">товарів / категорія</span>
+      </div>
+
       <div className="admin-stat-card stat-secondary">
         <div className="stat-card-icon">
-          <Smartphone />
+          <ProductsIcon />
         </div>
         <div className="stat-card-info">
           <span className="stat-card-label">Товари</span>

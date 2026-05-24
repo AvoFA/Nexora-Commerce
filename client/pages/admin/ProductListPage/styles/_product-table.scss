@@ -115,7 +115,7 @@
   }
 
   .actions-cell {
-    width: 76px;
+    width: 84px;
     text-align: right;
     white-space: nowrap;
   }
@@ -144,18 +144,27 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   padding: 0;
   color: $text-secondary;
-  background: transparent;
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.018);
+  border: 1px solid rgba($border-color, 0.35);
   border-radius: 8px;
   cursor: pointer;
-  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 
   svg {
     font-size: 19px;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba($primary-color, 0.18);
   }
 
   &.edit:hover {
@@ -168,6 +177,10 @@
     color: $danger-color;
     background: rgba($danger-color, 0.08);
     border-color: rgba($danger-color, 0.24);
+  }
+
+  & + .product-action-button {
+    margin-left: 6px;
   }
 }
 

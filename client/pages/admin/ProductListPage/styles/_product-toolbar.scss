@@ -6,12 +6,24 @@
   overflow: visible;
   margin-bottom: 16px;
   padding: 20px;
-  background: var(--card-bg, #1a2235);
-  border: 1px solid $border-color;
+  background:
+    linear-gradient(135deg, rgba($card-bg, 0.74), rgba($bg-color, 0.32)),
+    var(--card-bg, #1a2235);
+  border: 1px solid rgba($border-color, 0.58);
   border-radius: $border-radius;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.045), transparent 44%);
+  }
 
   .product-toolbar-layout {
+    position: relative;
     display: grid;
     grid-template-columns: minmax(340px, 1fr) minmax(390px, max-content) max-content;
     align-items: center;
