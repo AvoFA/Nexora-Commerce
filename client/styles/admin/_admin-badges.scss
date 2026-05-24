@@ -1,0 +1,78 @@
+// Уніфікований стиль виділення знайденого тексту при пошуку в адмінці
+mark.search-highlight {
+  background-color: rgba(59, 130, 246, 0.25);
+  color: #60a5fa;
+  padding: 1px 3px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+
+
+@keyframes statusDotBreathe {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(0.9);
+    box-shadow: 0 0 2px currentColor;
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+    box-shadow: 0 0 8px currentColor;
+  }
+}
+
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 750;
+  white-space: nowrap;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+    flex-shrink: 0;
+    animation: statusDotBreathe 3s infinite ease-in-out;
+  }
+
+  &:has(svg),
+  &:has(.MuiSvgIcon-root) {
+    &::before {
+      display: none;
+    }
+  }
+
+  small {
+    color: inherit;
+    font-size: 0.72rem;
+    font-weight: 700;
+    opacity: 0.72;
+  }
+
+  &.stock-in {
+    color: rgba(#2ecc71, 0.92);
+    background: rgba(#2ecc71, 0.075);
+    border: 1px solid rgba(#2ecc71, 0.16);
+  }
+
+  &.stock-low {
+    color: rgba(#f59e0b, 0.95);
+    background: rgba(#f59e0b, 0.09);
+    border: 1px solid rgba(#f59e0b, 0.18);
+  }
+
+  &.stock-out {
+    color: rgba($danger-color, 0.95);
+    background: rgba($danger-color, 0.075);
+    border: 1px solid rgba($danger-color, 0.16);
+  }
+}

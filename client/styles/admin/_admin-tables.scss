@@ -1,0 +1,219 @@
+// Адаптивність для таблиць адмінки
+
+.admin-table {
+  // Скрываем колонки на малых экранах
+  th.hidden-mobile, td.hidden-mobile {
+    @media (max-width: 767px) {
+      display: none;
+    }
+  }
+
+  // Скрываем дополнительные колонки на планшетах
+  th.hidden-tablet, td.hidden-tablet {
+    @media (max-width: 1023px) {
+      display: none;
+    }
+  }
+
+  .img-cell {
+    @media (max-width: 767px) {
+      width: 40px;
+    }
+  }
+
+  .product-name-cell {
+    @media (max-width: 767px) {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+// Мобильная версия - карточки продуктов
+.mobile-only-view {
+  @media (min-width: 769px) {
+    display: none;
+  }
+}
+
+.desktop-only-view {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.admin-mobile-products {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-product-card {
+  background: linear-gradient(135deg, hsl(224 46% 12%), hsl(224 46% 10%));
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.2);
+  }
+
+  .product-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .mobile-product-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .product-info {
+      flex: 1;
+      min-width: 0;
+
+      .mobile-product-name {
+        font-size: 1rem;
+        font-weight: 600;
+        @include apply-gradient-text;
+        margin: 0 0 4px 0;
+        word-break: break-word;
+      }
+
+      .mobile-category {
+        font-size: 0.85rem;
+        color: $text-secondary;
+        background: rgba($primary-color, 0.1);
+        padding: 2px 8px;
+        border-radius: 12px;
+        border: 1px solid rgba($primary-color, 0.2);
+        display: inline-block;
+      }
+    }
+  }
+
+  .product-card-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    .mobile-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: $text-color;
+    }
+
+    .mobile-stock {
+      .stock-badge {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .product-card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    .edit-btn {
+      color: #2196f3;
+    }
+
+    .delete-btn {
+      color: #f44336;
+    }
+  }
+}
+
+// Мобильной версии категорий - карточки
+.admin-mobile-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-category-card {
+  background: linear-gradient(135deg, hsl(224 46% 12%), hsl(224 46% 10%));
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: $primary-color;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.2);
+  }
+
+  .category-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .category-icon {
+      flex-shrink: 0;
+    }
+
+    .category-info {
+      flex: 1;
+      min-width: 0;
+
+      .mobile-category-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        @include apply-gradient-text;
+        margin: 0 0 4px 0;
+        word-break: break-word;
+      }
+
+      .mobile-category-description {
+        font-size: 0.85rem;
+        color: $text-secondary;
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .category-card-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-top: 1px solid rgba($border-color, 0.5);
+
+    .category-products-count,
+    .category-attributes-count {
+      font-size: 0.85rem;
+      color: $text-secondary;
+      background: rgba($primary-color, 0.1);
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba($primary-color, 0.2);
+    }
+  }
+
+  .category-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+
+    .MuiButton-root {
+      text-transform: none;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+// Основний макет адмін панелі
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: $bg-color;
+  color: $text-color;
+
+  .MuiTypography-root {
+    color: $text-color;
+  }
+
+  .lg-hidden {
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
+}

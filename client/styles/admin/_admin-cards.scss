@@ -1,0 +1,7 @@
+// Стильні картки для адмінки
+.admin-solid-card {
+  background: linear-gradient(135deg, hsl(224 46% 12%), hsl(224 46% 10%));
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  overflow: hidden;
+}

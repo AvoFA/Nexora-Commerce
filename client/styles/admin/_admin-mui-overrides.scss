@@ -1,0 +1,43 @@
+@keyframes adminRefreshSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Глобальні стилі для MUI компонентів в адмінці
+.admin-layout,
+.admin-modal-wrapper {
+  .MuiFormControl-root {
+    .MuiFormHelperText-root {
+      color: $text-secondary;
+    }
+
+    .MuiInputLabel-root {
+      color: $text-secondary;
+
+      &.Mui-focused {
+        color: $primary-color;
+      }
+    }
+
+    .MuiInputBase-root {
+      color: $text-color;
+    }
+
+    .MuiOutlinedInput-notchedOutline {
+      border-color: rgba($border-color, 0.5);
+    }
+
+    .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+      border-color: $text-secondary;
+    }
+
+    .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+      border-color: $primary-color;
+    }
+  }
+}
