@@ -51,13 +51,29 @@
 
   // Bento pieces
   .dashboard-bento-cell {
-    background: rgba($card-bg, 0.65);
-    border: 1px solid rgba($border-color, 0.45);
+    position: relative;
+    background:
+      linear-gradient(135deg, rgba($card-bg, 0.72), rgba($bg-color, 0.32)),
+      rgba($card-bg, 0.58);
+    border: 1px solid rgba($border-color, 0.54);
     border-radius: $border-radius;
-    backdrop-filter: blur(12px);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.035), transparent 45%);
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
 
     &.recent-orders-cell {
       grid-column: span 7;
@@ -82,7 +98,7 @@
     justify-content: space-between;
     padding: 18px 20px;
     border-bottom: 1px solid rgba($border-color, 0.4);
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba($bg-color, 0.28);
 
     .widget-title {
       font-size: 0.95rem;
@@ -93,6 +109,21 @@
       margin: 0;
     }
 
+    .widget-title-note {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      color: #f59e0b;
+      background: rgba(#f59e0b, 0.1);
+      border: 1px solid rgba(#f59e0b, 0.18);
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
     .widget-action-btn {
       display: inline-flex;
       align-items: center;
@@ -101,15 +132,16 @@
       font-weight: 600;
       color: $primary-color;
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 6px;
-      transition: background 0.2s, color 0.2s;
+      padding: 5px 9px;
+      border-radius: 8px;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
       text-decoration: none;
 
       &:hover {
-        background: rgba($primary-color, 0.1);
+        background: rgba($primary-color, 0.08);
+        border-color: rgba($primary-color, 0.16);
         color: lighten($primary-color, 8%);
       }
     }
@@ -131,14 +163,19 @@
       border-collapse: collapse;
       text-align: left;
 
+      thead {
+        background: rgba($bg-color, 0.34);
+        box-shadow: inset 0 -1px 0 rgba($border-color, 0.42);
+      }
+
       th {
         font-size: 0.72rem;
         font-weight: 700;
-        color: $text-secondary;
+        color: rgba($text-secondary, 0.88);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        padding: 12px 14px;
-        border-bottom: 1px solid rgba($border-color, 0.3);
+        padding: 13px 14px;
+        border-bottom: 1px solid rgba($border-color, 0.48);
 
         &.actions-cell {
           text-align: right;
@@ -162,9 +199,28 @@
       }
 
       tr {
-        transition: background-color 0.15s ease;
+        background-color: transparent;
+      }
+
+      .MuiIconButton-root {
+        width: 34px;
+        height: 34px;
+        color: $text-secondary !important;
+        background: rgba(255, 255, 255, 0.018) !important;
+        border: 1px solid rgba($border-color, 0.35) !important;
+        border-radius: 8px !important;
+        transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease !important;
+
         &:hover {
-          background-color: rgba(255, 255, 255, 0.02);
+          transform: translateY(-1px);
+          color: $primary-color !important;
+          background: rgba($primary-color, 0.08) !important;
+          border-color: rgba($primary-color, 0.24) !important;
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 2px rgba($primary-color, 0.18);
         }
       }
     }
@@ -183,9 +239,56 @@
     font-size: 0.9rem;
     width: 100%;
     height: 100%;
+    background: rgba($bg-color, 0.18);
+    border-radius: 10px;
 
     p {
       color: inherit;
+    }
+  }
+
+  .low-stock-product-image {
+    display: block;
+    width: 42px;
+    height: 42px;
+    padding: 3px;
+    object-fit: contain;
+    background: rgba($bg-color, 0.32);
+    border: 1px solid rgba($border-color, 0.45);
+    border-radius: 8px;
+  }
+
+  .low-stock-product-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .low-stock-product-name {
+    max-width: 360px;
+    color: $text-color;
+    font-size: 0.86rem;
+    font-weight: 650;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .low-stock-editor-cell {
+    .product-stock-inline-edit {
+      border-color: rgba(#f59e0b, 0.28);
+      background: rgba(#f59e0b, 0.06);
+    }
+  }
+
+  .low-stock-empty-state {
+    color: rgba($text-color, 0.62);
+
+    .empty-state-icon {
+      color: #10b981;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      opacity: 0.9;
     }
   }
 

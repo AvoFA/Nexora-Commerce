@@ -41,7 +41,8 @@ const LowStockWidget = ({ products = [], onRefresh }) => {
       <div className="widget-header">
         <h3 className="widget-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <WarningAmber fontSize="small" style={{ opacity: 0.9, color: '#f59e0b' }} />
-          Низький залишок товарів (Stock &le; 5)
+          <span>Низький залишок товарів</span>
+          <span className="widget-title-note">&le; 5 шт.</span>
         </h3>
         <button
           className="widget-action-btn"
@@ -53,7 +54,8 @@ const LowStockWidget = ({ products = [], onRefresh }) => {
 
       <div className="widget-content" style={{ padding: 0 }}>
         {products.length === 0 ? (
-          <div className="widget-empty-state">
+          <div className="widget-empty-state low-stock-empty-state">
+            <WarningAmber className="empty-state-icon" />
             <p style={{ margin: 0, fontSize: '0.9rem' }}>Всі товари в достатній кількості</p>
           </div>
         ) : (
@@ -74,23 +76,16 @@ const LowStockWidget = ({ products = [], onRefresh }) => {
 
                   return (
                     <tr key={productId}>
-                      <td style={{ width: '60px' }}>
+                      <td style={{ width: '64px' }}>
                         <img
                           src={product.image || 'https://via.placeholder.com/40'}
                           alt={product.name}
-                          style={{
-                            width: '40px',
-                            height: '40px',
-                            objectFit: 'contain',
-                            borderRadius: '4px',
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            padding: '2px'
-                          }}
+                          className="low-stock-product-image"
                         />
                       </td>
                       <td>
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                          <span style={{ fontWeight: 500, fontSize: '0.85rem' }}>{product.name}</span>
+                        <div className="low-stock-product-info">
+                          <span className="low-stock-product-name">{product.name}</span>
                         </div>
                       </td>
                       <td>
@@ -98,7 +93,7 @@ const LowStockWidget = ({ products = [], onRefresh }) => {
                           {product.category?.name || (typeof product.category === 'string' ? product.category : '') || 'Без категорії'}
                         </span>
                       </td>
-                      <td>
+                      <td className="low-stock-editor-cell">
                         <StockInlineEditor
                           initialStock={product.stock ?? 0}
                           onSave={async (newStock) => {
