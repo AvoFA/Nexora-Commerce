@@ -416,6 +416,14 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
   try {
     const { status } = req.body;
     const validStatuses = ['new', 'confirmed', 'packing', 'ready_for_pickup', 'received', 'cancelled'];
+    const allowedTransitionsMap = {
+      new: ['confirmed', 'cancelled'],
+      confirmed: ['packing', 'cancelled'],
+      packing: ['ready_for_pickup', 'cancelled'],
+      ready_for_pickup: ['received', 'cancelled'],
+      received: [],
+      cancelled: []
+    };
 
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ success: false, message: 'Недопустимий статус' });
@@ -424,6 +432,22 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (!order) {
       return res.status(404).json({ success: false, message: 'Замовлення не знайдено' });
+    }
+
+    if (order.status === status) {
+      return res.json({
+        success: true,
+        order,
+        message: 'Статус замовлення не змінено'
+      });
+    }
+
+    const allowedTransitions = allowedTransitionsMap[order.status] || [];
+    if (!allowedTransitions.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Недопустимий перехід статусу'
+      });
     }
 
     order.status = status;

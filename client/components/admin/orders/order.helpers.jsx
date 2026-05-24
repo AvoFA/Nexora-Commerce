@@ -15,7 +15,7 @@ export const statusLabelMap = {
   new: "Нове",
   confirmed: "Підтверджено",
   packing: "Комплектується",
-  ready_for_pickup: "Відправлено",
+  ready_for_pickup: "Готово до отримання",
   received: "Отримано",
   cancelled: "Скасовано",
 };
@@ -50,7 +50,7 @@ export const allowedTransitionsMap = {
   cancelled: [],
 };
 
-export const IS_TEST_MODE = true;
+export const IS_TEST_MODE = false;
 
 export const getOrderNumber = (order) => {
   const raw = order?._id || "";
