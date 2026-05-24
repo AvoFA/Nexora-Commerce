@@ -47,7 +47,6 @@
     background-color: $bg-color;
     color: $text-color;
     border: 1px solid $border-color;
-    backdrop-filter: blur(10px);
     border-radius: $border-radius;
 
     .MuiMenuItem-root {
@@ -95,7 +94,6 @@
     border: 1px solid rgba($border-color, 0.8) !important;
     border-radius: $border-radius !important;
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.32) !important;
-    backdrop-filter: blur(10px);
 
     .MuiAutocomplete-listbox {
       padding: 6px 0 !important;

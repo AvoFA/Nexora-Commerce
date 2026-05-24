@@ -5,7 +5,6 @@
 // ─── Основний контейнер ────────────────────────────────────────────────────
 .filter-sidebar {
   background: rgba($surface-color, 0.4);
-  backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: $border-radius;
   padding: 8px 0;

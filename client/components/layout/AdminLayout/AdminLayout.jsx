@@ -159,7 +159,6 @@ export const AdminLayout = () => {
             position: "fixed",
             inset: 0,
             backgroundColor: "rgba(0,0,0,0.5)",
-            backdropFilter: "blur(2px)",
             zIndex: 9,
           }}
           onClick={() => setSidebarOpen(false)}

@@ -9,7 +9,6 @@
 
 .about-hero-glass {
   background: $glass-gradient;
-  backdrop-filter: $glass-blur;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   padding: 60px 32px;
@@ -74,7 +73,6 @@
 
   .feature-card {
     background: $glass-gradient;
-    backdrop-filter: $glass-blur;
     border: 1px solid $border-color;
     border-radius: $border-radius;
     padding: 32px 24px;
