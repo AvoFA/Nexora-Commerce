@@ -328,7 +328,7 @@ const OrderDetailsModal = ({
                   color="secondary"
                   disabled={isUpdating}
                 >
-                  Передати в доставку
+                  Позначити як готове
                 </Button>
               )}
               {order.status === "ready_for_pickup" && (

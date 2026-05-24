@@ -24,8 +24,8 @@ const OrdersStats = ({ newCount = 0, shippedCount = 0, cancelledCount = 0, allCo
           <LocalShippingOutlined />
         </div>
         <div className="stat-card-info">
-          <span className="stat-card-label">Відправлено</span>
-          <span className="stat-card-subtext">Замовлення в дорозі</span>
+          <span className="stat-card-label">Готові</span>
+          <span className="stat-card-subtext">Готові до видачі</span>
         </div>
         <span className="stat-card-value">{shippedCount}</span>
       </div>
