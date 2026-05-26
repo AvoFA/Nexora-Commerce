@@ -9,7 +9,7 @@ import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { formatPrice } from "../../utils/formatPrice.js";
 import EmptyState from "../../components/common/EmptyState/EmptyState.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -29,6 +29,30 @@ const CartPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const fromProduct = location.state?.fromProduct || state.lastAddedProductId;
+
+  const totalsRef = useRef(null);
+  const [isTotalsVisible, setIsTotalsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsTotalsVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+      }
+    );
+
+    if (totalsRef.current) {
+      observer.observe(totalsRef.current);
+    }
+
+    return () => {
+      if (totalsRef.current) {
+        observer.unobserve(totalsRef.current);
+      }
+    };
+  }, [items]);
 
   // Розумна кнопка "Назад"
   const handleBack = () => {
@@ -54,6 +78,11 @@ const CartPage = () => {
   const handleRemove = (id, name) => {
     dispatch({ type: "CLEAR_ITEM", payload: id });
     toast.success(`"${name}" видалено з кошика`);
+  };
+
+  // Перемикання вибору товару
+  const handleToggleSelection = (id) => {
+    dispatch({ type: "TOGGLE_ITEM_SELECTION", payload: id });
   };
 
   // Додати товар до списку бажань
@@ -84,15 +113,39 @@ const CartPage = () => {
     setIsClearModalOpen(false);
   };
 
-  // Рахуємо загальну вартість замовлення
+  // Функція для відмінювання слів (товар, товари, товарів)
+  const getPlural = (count, one, few, many) => {
+    const n = Math.abs(count) % 100;
+    const n1 = n % 10;
+    if (n > 10 && n < 20) return many;
+    if (n1 > 1 && n1 < 5) return few;
+    if (n1 === 1) return one;
+    return many;
+  };
+
+  // Рахуємо загальну вартість замовлення (тільки для вибраних товарів)
   const totalPrice = items.reduce((total, item) => {
+    if (item.selected === false) return total;
     return total + item.price * item.quantity;
   }, 0);
 
-  // Рахуємо загальну кількість одиниць (не просто товарів, а штук)
+  // Рахуємо загальну кількість одиниць (тільки для вибраних товарів)
+  const selectedItemsCount = items.reduce((total, item) => {
+    if (item.selected === false) return total;
+    return total + item.quantity;
+  }, 0);
+
+  // Рахуємо загальну кількість одиниць (всього в кошику)
   const totalItems = items.reduce((total, item) => {
     return total + item.quantity;
   }, 0);
+
+  const handleCheckoutClick = (e) => {
+    if (selectedItemsCount === 0) {
+      e.preventDefault();
+      toast.error("Будь ласка, оберіть хоча б один товар для оформлення");
+    }
+  };
 
   // Стан пустого кошика
   if (items.length === 0) {
@@ -112,24 +165,22 @@ const CartPage = () => {
   return (
     <div className="cart-page">
       <div className="cart-title-row">
-        <button 
-          className="cart-back-btn" 
-          onClick={handleBack} 
+        <button
+          className="cart-back-btn"
+          onClick={handleBack}
           title={fromProduct ? "Назад до товару" : "Назад до покупок"}
         >
           <ArrowBackIcon />
         </button>
-        <h1 className="page-title">Ваш кошик</h1>
+        <h1 className="page-title">
+          Ваш кошик <span className="cart-title-count">{totalItems} {getPlural(totalItems, "товар", "товари", "товарів")}</span>
+        </h1>
       </div>
 
       <div className="cart-container">
         {/* Список товарів */}
         <div className="cart-items-list">
           <div className="cart-header">
-            <p className="cart-items-count">
-              Товарів у кошику{" "}
-              <span className="cart-count-number">{totalItems}</span>
-            </p>
             <button
               className="btn-clear-cart"
               onClick={handleClearAllCart}
@@ -144,7 +195,11 @@ const CartPage = () => {
             return (
               <div key={item.id} className="cart-item-card">
                 <div className="cart-item-checkbox">
-                  <input type="checkbox" defaultChecked />
+                  <input
+                    type="checkbox"
+                    checked={item.selected !== false}
+                    onChange={() => handleToggleSelection(item.id)}
+                  />
                 </div>
 
                 <div className="cart-item-image">
@@ -155,9 +210,9 @@ const CartPage = () => {
                   <Link to={`/product/${productId}`} className="cart-item-title">
                     {item.name}
                   </Link>
-                  
+
                   <div className="cart-item-actions">
-                    <button 
+                    <button
                       className={`cart-item-action-btn wishlist${isWishlisted(productId) ? " active" : ""}`}
                       onClick={() => handleOpenWishlist(item)}
                       title="В обране"
@@ -169,8 +224,8 @@ const CartPage = () => {
                       )}
                       <span>В обране</span>
                     </button>
-                    
-                    <button 
+
+                    <button
                       className="cart-item-action-btn remove"
                       onClick={() => handleRemove(item.id, item.name)}
                       title="Видалити товар"
@@ -183,7 +238,7 @@ const CartPage = () => {
 
                 <div className="cart-item-right-block">
                   <p className="cart-item-price">{formatPrice(item.price)}</p>
-                  
+
                   <div className="cart-item-quantity">
                     <button
                       onClick={() => handleDecrease(item.id)}
@@ -206,16 +261,12 @@ const CartPage = () => {
         </div>
 
         {/* Підсумок замовлення */}
-        <div className="cart-summary">
+        <div className="cart-summary" ref={totalsRef}>
           <h2>Підсумок замовлення</h2>
           <div className="card-content">
             <div className="summary-row">
-              <span>Вартість товарів:</span>
+              <span>{selectedItemsCount} {getPlural(selectedItemsCount, "товар", "товари", "товарів")} на суму:</span>
               <span>{formatPrice(totalPrice)}</span>
-            </div>
-            <div className="summary-row">
-              <span>Доставка:</span>
-              <span>Безкоштовно</span>
             </div>
 
             <div className="summary-total">
@@ -223,7 +274,11 @@ const CartPage = () => {
               <strong>{formatPrice(totalPrice)}</strong>
             </div>
 
-            <Link to="/checkout" className="btn-checkout">
+            <Link
+              to="/checkout"
+              className={`btn-checkout${selectedItemsCount === 0 ? " disabled" : ""}`}
+              onClick={handleCheckoutClick}
+            >
               Оформити замовлення
             </Link>
             <Link to="/catalog" className="btn-continue-shopping">
@@ -232,6 +287,21 @@ const CartPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Мобільна липка кнопка оформлення */}
+      {selectedItemsCount > 0 && (
+        <div className={`cart-mobile-sticky-checkout ${isTotalsVisible ? "is-hidden" : ""}`}>
+          <Link
+            to="/checkout"
+            className="btn-checkout-sticky"
+            onClick={handleCheckoutClick}
+          >
+            <span>Оформити замовлення</span>
+            <span className="sticky-divider">|</span>
+            <span className="sticky-price-value">{formatPrice(totalPrice)}</span>
+          </Link>
+        </div>
+      )}
 
       {/* Діалог підтвердження очищення кошика */}
       <ClearCartConfirmModal

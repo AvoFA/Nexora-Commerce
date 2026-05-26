@@ -66,11 +66,27 @@
 
 .cart-page .page-title {
   margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .cart-title-count {
+    font-size: 1.1rem;
+    color: $text-secondary;
+    font-weight: 500;
+    margin-left: 10px;
+    opacity: 0.85;
+
+    @media (max-width: 480px) {
+      font-size: 0.95rem;
+      margin-left: 6px;
+    }
+  }
 }
 
 // Заголовок кошика з рахунком і кнопкою очищення
 .cart-header {
-  background: $glass-gradient;
+  background: $card-bg;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   padding: 16px 24px;
@@ -82,24 +98,12 @@
   max-width: 750px;
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
     gap: 12px;
     max-width: none;
-    padding: 16px;
-  }
-}
-
-.cart-items-count {
-  color: $text-secondary;
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin: 0;
-  text-align: left;
-
-  .cart-count-number {
-    color: $primary-color;
-    font-weight: 700;
+    padding: 12px 16px;
   }
 }
 
@@ -130,9 +134,10 @@
   }
 
   @media (max-width: 768px) {
-    align-self: stretch;
-    justify-content: center;
+    align-self: flex-start;
+    justify-content: flex-start;
     gap: 6px;
+    padding: 8px 0;
   }
 }
 
@@ -154,7 +159,7 @@
 // Картка товару в кошику
 
 .cart-item-card {
-  background: $glass-gradient;
+  background: $card-bg;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   padding: 24px;
@@ -328,7 +333,7 @@
 // Підсумок замовлення
 
 .cart-summary {
-  background: $glass-gradient;
+  background: $card-bg;
   border: 1px solid $border-color;
   border-radius: $border-radius;
   padding: 24px;
@@ -346,7 +351,7 @@
     font-weight: 600;
     margin-bottom: 24px;
     padding-bottom: 16px;
-    border-bottom: 1px solid $border-color;
+    border-bottom: 2px solid $border-color;
   }
 
   .summary-row {
@@ -365,7 +370,7 @@
     color: $text-color;
     padding-top: 16px;
     margin-top: 16px;
-    border-top: 1px solid $border-color;
+    border-top: 2px solid $border-color;
 
     strong:last-child {
       color: $primary-color;
@@ -378,6 +383,12 @@
     font-size: 1.1rem;
     margin-top: 24px;
     text-align: center;
+
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
   }
 
   .btn-continue-shopping {
@@ -385,5 +396,66 @@
     width: 100%;
     margin-top: 12px;
     text-align: center;
+  }
+}
+
+// Мобільна липка кнопка оформлення
+.cart-mobile-sticky-checkout {
+  display: none;
+
+  @media (max-width: 991px) {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba($bg-color, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    z-index: 999;
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+
+    &.is-hidden {
+      transform: translateY(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-checkout-sticky {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 48px;
+      background: $primary-color;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba($primary-color, 0.4);
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      .sticky-divider {
+        opacity: 0.4;
+        margin: 0 12px;
+        font-weight: 300;
+      }
+
+      .sticky-price-value {
+        font-weight: 700;
+      }
+
+      &:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 10px rgba($primary-color, 0.2);
+        opacity: 0.95;
+      }
+    }
   }
 }

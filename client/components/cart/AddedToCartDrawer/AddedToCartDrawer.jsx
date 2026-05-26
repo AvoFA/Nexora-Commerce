@@ -71,43 +71,44 @@ const AddedToCartDrawer = () => {
         {/* Вміст із доданим товаром */}
         <div className="drawer-content">
           <div className="added-product-card">
-            <div className="product-image-container">
-              {imgSrc ? (
-                <img src={imgSrc} alt={addedProduct.name} className="product-image" />
-              ) : (
-                <div className="product-image-placeholder">Ні</div>
-              )}
-            </div>
+            <div className="added-product-card-top">
+              <div className="product-image-container">
+                {imgSrc ? (
+                  <img src={imgSrc} alt={addedProduct.name} className="product-image" />
+                ) : (
+                  <div className="product-image-placeholder">Ні</div>
+                )}
+              </div>
 
-            <div className="product-info-container">
               <h3 className="product-name" title={addedProduct.name}>
                 {addedProduct.name}
               </h3>
-              <div className="product-finance">
-                <span className="product-price">
-                  {formatPrice(addedProduct.price)}
-                </span>
+            </div>
 
-                {/* Селектор кількості всередині швидкого кошика */}
-                <div className="quantity-selector">
-                  <button 
-                    className="quantity-btn decrease" 
-                    onClick={handleDecrease}
-                    disabled={quantity <= 1}
-                    title="Зменшити"
-                  >
-                    <Remove fontSize="small" />
-                  </button>
-                  <span className="quantity-value">{quantity}</span>
-                  <button 
-                    className="quantity-btn increase" 
-                    onClick={handleIncrease}
-                    title="Збільшити"
-                  >
-                    <Add fontSize="small" />
-                  </button>
-                </div>
+            <div className="added-product-card-bottom">
+              {/* Селектор кількості всередині швидкого кошика */}
+              <div className="quantity-selector">
+                <button
+                  className="quantity-btn decrease"
+                  onClick={handleDecrease}
+                  disabled={quantity <= 1}
+                  title="Зменшити"
+                >
+                  <Remove fontSize="small" />
+                </button>
+                <span className="quantity-value">{quantity}</span>
+                <button
+                  className="quantity-btn increase"
+                  onClick={handleIncrease}
+                  title="Збільшити"
+                >
+                  <Add fontSize="small" />
+                </button>
               </div>
+
+              <span className="product-price">
+                {formatPrice(addedProduct.price * quantity)}
+              </span>
             </div>
           </div>
         </div>
@@ -118,7 +119,7 @@ const AddedToCartDrawer = () => {
             <ShoppingCart fontSize="small" />
             Перейти до кошика
           </button>
-          
+
           <button className="btn-drawer-action btn-checkout" onClick={handleCheckout}>
             Оформити замовлення
           </button>
