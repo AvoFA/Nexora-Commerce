@@ -23,6 +23,7 @@ import { getOrderNumber } from '../../../components/admin/orders/order.helpers';
 import { updateOrderStatus } from '../../../services/orderService';
 import { updateReviewStatus } from '../../../services/reviewService';
 import { updateQuestionStatus, answerQuestion, deleteQuestion } from '../../../services/questionService';
+import { getAnyAuthToken } from '../../../utils/authStorage';
 
 import './DashboardPage.scss';
 
@@ -56,7 +57,7 @@ const DashboardPage = () => {
   const handleOrderStatusChange = async (id, newStatus) => {
     try {
       setIsUpdating(id);
-      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const token = getAnyAuthToken();
       const res = await updateOrderStatus(id, newStatus, token);
       if (res.success) {
         toast.success(res.message || 'Статус замовлення оновлено');
@@ -94,7 +95,7 @@ const DashboardPage = () => {
   const handleReviewStatusChange = async (id, newStatus) => {
     try {
       setIsUpdating(id);
-      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const token = getAnyAuthToken();
       const res = await updateReviewStatus(id, newStatus, token);
       if (res.success) {
         if (newStatus === 'approved') {
@@ -118,7 +119,7 @@ const DashboardPage = () => {
   const handleQuestionStatusChange = async (id, newStatus) => {
     try {
       setIsUpdating(id);
-      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const token = getAnyAuthToken();
       const res = await updateQuestionStatus(id, newStatus, token);
       if (res.success) {
         if (newStatus === 'approved') {
@@ -150,7 +151,7 @@ const DashboardPage = () => {
     }
     try {
       setIsAnswering(true);
-      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const token = getAnyAuthToken();
       const res = await answerQuestion(selectedQuestionForAnswer._id, answerText, token);
       if (res.success) {
         toast.success('Відповідь успішно опубліковано!');
@@ -179,7 +180,7 @@ const DashboardPage = () => {
     if (!questionDeleteTarget?._id) return;
     try {
       setIsUpdating(questionDeleteTarget._id);
-      const token = localStorage.getItem('adminToken') || localStorage.getItem('token');
+      const token = getAnyAuthToken();
       const res = await deleteQuestion(questionDeleteTarget._id, token);
       if (res.success) {
         toast.success('Запитання успішно видалено!');
@@ -243,7 +244,7 @@ const DashboardPage = () => {
             Центр управління магазином
           </Typography>
           <Typography variant="body2" className="subtitle" sx={{ color: "var(--text-secondary, #94a3b8)", opacity: 0.85, mt: 0.5 }}>
-            Оперативний огляд та швидкі дії для адміністратора ElectroLux
+            Оперативний огляд та швидкі дії для адміністратора Nexora
           </Typography>
         </div>
 
@@ -266,7 +267,7 @@ const DashboardPage = () => {
       {/* Bento Grid layout for Operational Control */}
       <div className="dashboard-bento-grid">
         {/* Recent Orders (7) - left widget (span 7) */}
-        <RecentOrdersWidget 
+        <RecentOrdersWidget
           orders={recentOrders}
           onViewOrder={setSelectedOrderForModal}
         />
