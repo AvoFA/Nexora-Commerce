@@ -5,9 +5,11 @@ import DashboardStats from './components/DashboardStats';
 import RecentOrdersWidget from './components/RecentOrdersWidget';
 import ModerationWidget from './components/ModerationWidget';
 import LowStockWidget from './components/LowStockWidget';
+import ModeratorDashboard from './components/ModeratorDashboard';
 import AdminRefreshButton from '../../../components/admin/common/AdminRefreshButton';
 import { toast } from 'sonner';
 import { ReportProblemOutlined } from '@mui/icons-material';
+import { ADMIN_ROLES, getStoredAdminRole } from '../../../config/adminAccess';
 
 // Modals & Drawers
 import OrderDetailsModal from '../../../components/admin/orders/OrderDetailsModal';
@@ -25,7 +27,11 @@ import { updateQuestionStatus, answerQuestion, deleteQuestion } from '../../../s
 import './DashboardPage.scss';
 
 const DashboardPage = () => {
-  const { data, isLoading, error, refresh } = useDashboardData();
+  const adminRole = getStoredAdminRole();
+  const isModeratorDashboard = adminRole === ADMIN_ROLES.MODERATOR;
+  const { data, isLoading, error, refresh } = useDashboardData({
+    enabled: !isModeratorDashboard,
+  });
 
   // Modals & Drawers States
   const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
@@ -41,6 +47,10 @@ const DashboardPage = () => {
   const [isAnswering, setIsAnswering] = useState(false);
   const [questionDeleteTarget, setQuestionDeleteTarget] = useState(null);
   const [isUpdating, setIsUpdating] = useState(null);
+
+  if (isModeratorDashboard) {
+    return <ModeratorDashboard />;
+  }
 
   // Handlers for Orders
   const handleOrderStatusChange = async (id, newStatus) => {
