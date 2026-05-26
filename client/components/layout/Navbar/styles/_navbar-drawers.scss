@@ -1,0 +1,468 @@
+@import '../../../../styles/variables';
+
+.bottom-mobile-menu-tab-card {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 2000;
+    pointer-events: none;
+    visibility: hidden;
+    background: $bg-color;
+    opacity: 0;
+    transition: visibility 0.2s ease, opacity 0.2s ease;
+
+    &.is-open {
+        visibility: visible;
+        pointer-events: auto;
+        opacity: 1;
+
+        .drawer-backdrop {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-catalog-drawer-wrapper {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-catalog-drawer-wrapper.is-profile-wrapper,
+        .mobile-catalog-drawer-wrapper.is-wishlist-wrapper {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .drawer-backdrop {
+        position: absolute;
+        inset: 0;
+        background-color: $bg-color;
+        opacity: 0;
+        transition: opacity 0.18s ease;
+        pointer-events: none;
+    }
+
+    .mobile-catalog-drawer-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: $bg-color;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(12px);
+        opacity: 0;
+        transition:
+            transform 0.2s ease,
+            opacity 0.2s ease;
+        pointer-events: auto;
+        overflow: hidden;
+        overscroll-behavior: contain;
+
+        &.is-profile-wrapper,
+        &.is-wishlist-wrapper {
+            top: 0;
+            bottom: auto;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            max-height: none;
+            border: 0;
+            border-radius: 0;
+            transform: translateY(12px);
+            background: $bg-color;
+            backdrop-filter: none;
+        }
+    }
+
+    .drawer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba($border-color, 0.5);
+        background: $surface-color;
+        flex-shrink: 0;
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: $text-color;
+            margin: 0;
+        }
+    }
+
+    .drawer-close {
+        background: none;
+        border: none;
+        color: $text-secondary;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background 0.2s;
+
+        &:hover {
+            background: rgba($primary-color, 0.1);
+            color: $primary-color;
+        }
+
+        svg {
+            font-size: 24px;
+        }
+    }
+
+    .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+    }
+}
+
+// Drawer Profile specific styles
+.drawer-profile-user {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: rgba($primary-color, 0.05);
+    border: 1px solid rgba($primary-color, 0.15);
+    border-radius: 12px;
+    margin-bottom: 20px;
+
+    .drawer-profile-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, $primary-color, $secondary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
+    .drawer-profile-info {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        strong {
+            font-size: 1.05rem;
+            color: white;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        span {
+            font-size: 0.8rem;
+            color: $text-secondary;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+    }
+}
+
+.drawer-profile-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .drawer-profile-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: rgba($surface-color, 0.4);
+        color: rgba($text-secondary, 0.9);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s ease;
+
+        svg {
+            color: rgba($text-secondary, 0.65);
+            font-size: 20px;
+            transition: color 0.2s;
+        }
+
+        &:hover, &:focus-visible {
+            background: rgba($primary-color, 0.08);
+            color: $primary-color;
+            border-color: rgba($primary-color, 0.15);
+
+            svg {
+                color: $primary-color;
+            }
+        }
+
+        &.logout-btn {
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba($danger-color, 0.9);
+
+            svg {
+                color: currentColor;
+            }
+
+            &:hover {
+                background: rgba($danger-color, 0.1);
+                color: $danger-color;
+                border-color: rgba($danger-color, 0.2);
+            }
+        }
+    }
+}
+
+.mobile-profile-drawer {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 14px;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.mobile-profile-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 2px 2px 14px;
+}
+
+.mobile-profile-drawer__logo {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+
+    img {
+        display: block;
+        height: 32px;
+        width: auto;
+    }
+}
+
+.mobile-profile-drawer__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba($border-color, 0.75);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    color: $text-secondary;
+    cursor: pointer;
+
+    svg {
+        font-size: 22px;
+    }
+}
+
+.mobile-profile-card {
+    display: grid;
+    grid-template-columns: 52px minmax(0, 1fr) 38px;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid rgba($border-color, 0.78);
+    border-radius: 16px;
+    background: rgba($surface-color, 0.78);
+    color: $text-color;
+    text-decoration: none;
+
+    > svg {
+        width: 38px;
+        height: 38px;
+        padding: 8px;
+        border: 1px solid rgba($primary-color, 0.28);
+        border-radius: 12px;
+        background: rgba($primary-color, 0.12);
+        color: $primary-color;
+        box-sizing: border-box;
+    }
+}
+
+.mobile-profile-card__avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 1.15rem;
+}
+
+.mobile-profile-card__meta {
+    min-width: 0;
+
+    strong,
+    span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    strong {
+        color: $text-color;
+        font-size: 1rem;
+        font-weight: 850;
+    }
+
+    span {
+        margin-top: 4px;
+        color: $text-secondary;
+        font-size: 0.82rem;
+    }
+}
+
+.mobile-profile-links {
+    display: grid;
+    gap: 8px;
+    padding-top: 12px;
+}
+
+.mobile-profile-link {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 46px;
+    padding: 0 12px;
+    border: 1px solid rgba($border-color, 0.55);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.035);
+    color: $text-color;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+
+    svg {
+        color: $primary-color;
+        font-size: 21px;
+    }
+
+    span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    em {
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        border-radius: 999px;
+        background: $primary-color;
+        color: #fff;
+        font-size: 0.72rem;
+        font-style: normal;
+        font-weight: 850;
+        line-height: 20px;
+        text-align: center;
+    }
+}
+
+.mobile-profile-link--danger {
+    color: $danger-color;
+
+    svg {
+        color: currentColor;
+    }
+}
+
+.mobile-wishlist-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.mobile-wishlist-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-shrink: 0;
+    padding: 14px 14px 12px;
+    border-bottom: 1px solid rgba($border-color, 0.65);
+    background: $bg-color;
+
+    h2 {
+        margin: 0;
+        color: $text-color;
+        font-size: 1.2rem;
+        font-weight: 850;
+        line-height: 1.15;
+    }
+}
+
+.mobile-wishlist-panel__body {
+    min-height: 0;
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    padding: 14px 12px calc(72px + env(safe-area-inset-bottom));
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .wishlist-tab--mobile-panel,
+    .wishlist-module {
+        min-height: 0;
+    }
+
+    .wishlist-tab--mobile-panel {
+        padding: 0;
+    }
+
+    .wishlist-module {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .wishlist-toolbar {
+        gap: 12px;
+        padding: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    .wishlist-heading {
+        display: none;
+    }
+
+    .wishlist-board {
+        background: rgba($surface-color, 0.72);
+    }
+}

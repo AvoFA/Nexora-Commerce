@@ -1,0 +1,260 @@
+@import '../../../../styles/variables';
+
+// Навігаційні посилання
+
+.navbar-nav {
+    display: none;
+
+    @media (min-width: 901px) {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+    }
+}
+
+.nav-link {
+    text-decoration: none;
+    color: $text-color;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+
+    &:hover {
+        color: $primary-color;
+        transform: translateX(4px);
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, $primary-color, $secondary-color);
+        transition: width 0.3s ease;
+    }
+
+    &:hover::after {
+        width: 100%;
+    }
+}
+
+.nav-link-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid rgba($primary-color, 0.24);
+    border-radius: $border-radius;
+    background: rgba($primary-color, 0.08);
+    color: $text-color;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    transition: all 0.2s ease;
+
+    svg {
+        font-size: 20px;
+    }
+
+    &:hover {
+        border-color: rgba($primary-color, 0.52);
+        background: rgba($primary-color, 0.14);
+        color: $primary-color;
+        transform: none;
+    }
+
+    &.is-active {
+        border-color: rgba($primary-color, 0.7);
+        background: $primary-color;
+        color: white;
+    }
+}
+
+// Іконки дій
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.desktop-actions {
+    align-items: center;
+    gap: 8px;
+}
+
+.action-button {
+    position: relative;
+    background: none;
+    border: none;
+    color: $text-color;
+    cursor: pointer;
+    min-width: 72px;
+    min-height: 46px;
+    padding: 5px 8px;
+    border-radius: $border-radius;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &:hover {
+        background-color: rgba($primary-color, 0.1);
+        color: $primary-color;
+    }
+
+    .MuiSvgIcon-root {
+        font-size: 23px;
+    }
+}
+
+.action-button-label {
+    max-width: none;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: nowrap;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+    color: rgba($text-secondary, 0.86);
+    transition: color 0.2s ease;
+}
+
+.action-button:hover {
+    .action-button-label {
+        color: $primary-color;
+    }
+}
+
+.cart-link {
+    position: relative;
+}
+
+.cart-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 112px;
+    min-height: 46px;
+    padding: 6px 13px;
+    border: 1px solid rgba($primary-color, 0.34);
+    border-radius: $border-radius;
+    background: rgba($primary-color, 0.1);
+    color: $text-color;
+    text-decoration: none;
+    font-weight: 800;
+    line-height: 1;
+    transition: all 0.2s ease;
+
+    .MuiSvgIcon-root {
+        font-size: 23px;
+        flex-shrink: 0;
+    }
+
+    &:hover {
+        background: rgba($primary-color, 0.16);
+        border-color: rgba($primary-color, 0.56);
+        color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.08);
+    }
+}
+
+.cart-cta-filled {
+    justify-content: flex-start;
+    min-width: 122px;
+    padding-right: 16px;
+    background: rgba($primary-color, 0.12);
+}
+
+.cart-cta-text {
+    display: grid;
+    gap: 2px;
+
+    small {
+        color: rgba($text-secondary, 0.86);
+        font-size: 0.66rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    strong {
+        color: $primary-color;
+        font-size: 0.9rem;
+        line-height: 1;
+        white-space: nowrap;
+    }
+}
+
+.compare-link {
+    position: relative;
+    min-width: 88px;
+}
+
+.cart-count {
+    position: absolute;
+    top: 0;
+    right: 7px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background-color: $primary-color;
+    color: white;
+    font-size: 0.64rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: none;
+    pointer-events: none;
+}
+
+.cart-cta {
+    .cart-count {
+        top: -5px;
+        right: -5px;
+    }
+}
+
+// Інформація про користувача
+
+.user-info {
+    margin-right: 16px;
+
+    .user-name {
+        font-size: 0.9rem;
+        color: $text-secondary;
+        font-weight: 500;
+    }
+}
+
+// Мобільні елементи
+
+.hamburger-button {
+    display: block;
+
+    @media (min-width: 901px) {
+        display: none;
+    }
+}
+
+.desktop-only {
+    display: none;
+
+    @media (min-width: 901px) {
+        display: flex;
+    }
+}

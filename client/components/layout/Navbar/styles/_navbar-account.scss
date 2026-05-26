@@ -1,0 +1,196 @@
+@import '../../../../styles/variables';
+
+// Інформація про користувача (desktop)
+
+.account-menu-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 8px 0 10px;
+}
+
+.desktop-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-width: 72px;
+    min-height: 48px;
+    padding: 5px 8px;
+    border: 1px solid transparent;
+    border-radius: $border-radius;
+    background: none;
+    color: $text-color;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: rgba($primary-color, 0.1);
+        border-color: rgba($primary-color, 0.18);
+        color: $primary-color;
+    }
+
+    .desktop-user-avatar-icon {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+        transition: all 0.3s ease;
+    }
+
+    span {
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: nowrap;
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1;
+        color: rgba($text-secondary, 0.86);
+        transition: color 0.2s ease;
+    }
+
+    &:hover {
+        .desktop-user-avatar-icon {
+            transform: translateY(-1px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+    }
+}
+
+.user-initial-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    box-shadow: none;
+    color: white;
+    font-weight: 800;
+    user-select: none;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: 100%;
+    left: -8px;
+    width: 280px;
+    padding: 10px;
+    background: $surface-color;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+    z-index: 80;
+
+    &.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+.account-dropdown-user {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 10px 10px 12px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .dropdown-user-avatar {
+        width: 38px;
+        height: 38px;
+        font-size: 1rem;
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+    }
+
+    strong,
+    span {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    strong {
+        color: $text-color;
+        font-size: 0.92rem;
+        line-height: 1.25;
+    }
+
+    span {
+        margin-top: 2px;
+        color: rgba($text-secondary, 0.72);
+        font-size: 0.78rem;
+    }
+}
+
+.account-dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba($text-secondary, 0.82);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 650;
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+    .MuiSvgIcon-root {
+        color: rgba($text-secondary, 0.64);
+        font-size: 20px;
+        transition: color 0.2s ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
+        border-color: rgba($primary-color, 0.18);
+        outline: none;
+
+        .MuiSvgIcon-root {
+            color: $primary-color;
+        }
+    }
+}
+
+.account-dropdown-logout {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    color: rgba($danger-color, 0.9);
+
+    .MuiSvgIcon-root {
+        color: currentColor;
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: $danger-color;
+        background: rgba($danger-color, 0.1);
+        border-color: rgba($danger-color, 0.24);
+
+        .MuiSvgIcon-root {
+            color: $danger-color;
+        }
+    }
+}

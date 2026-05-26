@@ -1,0 +1,66 @@
+@import '../../../../styles/variables';
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000; // Достатній рівень, щоб бути поверх карток
+    width: 100%;
+    background: $glass-gradient;
+    border-bottom: 1px solid $border-color;
+}
+
+// Контейнер навбару
+
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 72px;
+}
+
+// Логотип
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+
+    a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        padding: 0;
+        margin: 0;
+
+        &:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba($primary-color, 0.5));
+        }
+    }
+
+    .logo-desktop {
+        display: block;
+    }
+
+    .logo-mobile {
+        display: none !important;
+    }
+
+    .logo-img {
+        height: 32px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+.body-lock-scroll {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
+}
