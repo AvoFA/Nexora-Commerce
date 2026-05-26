@@ -26,67 +26,9 @@ import {
 import { formatPrice } from "../../utils/formatPrice.js";
 import "./ComparePage.scss";
 
-const CARD_WIDTH = 235;
-
-const getStubRating = (id) => {
-  if (!id) return { rating: 4.2, count: 28 };
-
-  const hash = String(id)
-    .split("")
-    .reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  const rating = (3.5 + (hash % 15) / 10).toFixed(1);
-  const count = 8 + (hash % 120);
-
-  return { rating: parseFloat(rating), count };
-};
-
-const EMPTY_VALUE = "—";
-
-const getAttrValue = (product, key) => {
-  if (!product.attributes || !Array.isArray(product.attributes)) {
-    return EMPTY_VALUE;
-  }
-
-  const attr = product.attributes.find((item) => item.key === key);
-  return attr?.value != null ? String(attr.value) : EMPTY_VALUE;
-};
-
-const hasDiff = (values) => {
-  if (values.length <= 1) return false;
-  const normalized = values.map((value) => String(value).trim().toLowerCase());
-  return new Set(normalized).size > 1;
-};
-
-const SpecRow = ({ label, values, showDiffOnly, totalCount }) => {
-  const isDiff = hasDiff(values);
-  if (showDiffOnly && !isDiff) return null;
-
-  return (
-    <div className={`cmp-spec-block${isDiff ? " cmp-spec-block--diff" : ""}`}>
-      <div className="cmp-attrs__header">
-        <span className="cmp-attrs__name">{label}</span>
-      </div>
-      <div className="cmp-attrs__values">
-        {values.map((value, index) => (
-          <div
-            key={`${label}-${index}`}
-            className={`cmp-attr-val${isDiff ? " cmp-attr-val--diff" : ""}`}
-          >
-            {value}
-          </div>
-        ))}
-        {Array.from({ length: totalCount - values.length }).map(
-          (_, index) => (
-            <div
-              key={`${label}-empty-${index}`}
-              className="cmp-attr-val cmp-attr-val--empty"
-            />
-          ),
-        )}
-      </div>
-    </div>
-  );
-};
+import { CARD_WIDTH, EMPTY_VALUE } from "./compare.constants.js";
+import { getStubRating, normalizeAttributes, hasDiff } from "./compare.utils.js";
+import SpecRow from "./components/SpecRow.jsx";
 
 const ComparePage = () => {
   const { compareItems, removeFromCompare } = useCompare();
@@ -107,10 +49,17 @@ const ComparePage = () => {
   const normalProductsRef = useRef(null);
   const isSyncingScroll = useRef(false);
 
+  const normalizedCompareItems = useMemo(() => {
+    return compareItems.map((product) => ({
+      ...product,
+      attributes: normalizeAttributes(product.attributes),
+    }));
+  }, [compareItems]);
+
   const compareGroups = useMemo(() => {
     const groups = new Map();
 
-    compareItems.forEach((product) => {
+    normalizedCompareItems.forEach((product) => {
       const categoryKey = getProductCategoryKey(product);
       const current = groups.get(categoryKey) || {
         key: categoryKey,
@@ -122,7 +71,7 @@ const ComparePage = () => {
     });
 
     return Array.from(groups.values());
-  }, [compareItems]);
+  }, [normalizedCompareItems]);
 
   const activeGroup = useMemo(
     () =>
@@ -319,41 +268,102 @@ const ComparePage = () => {
     setIsListOpen(false);
   };
 
-  const attrKeys = useMemo(() => {
-    const keys = new Set();
-    activeCompareItems.forEach((product) => {
-      (product.attributes || []).forEach((attr) => {
-        if (attr.key) keys.add(attr.key);
-      });
-    });
-    return Array.from(keys);
-  }, [activeCompareItems]);
-
-  const allSpecs = useMemo(() => {
-    const basic = [
+  const allSpecsGrouped = useMemo(() => {
+    const basicSpecs = [
       {
+        key: "price",
         label: "Ціна",
         values: activeCompareItems.map((product) =>
-          product.price != null ? formatPrice(product.price) : EMPTY_VALUE,
+          product.price != null ? formatPrice(product.price) : EMPTY_VALUE
         ),
       },
       {
+        key: "brand",
         label: "Бренд",
         values: activeCompareItems.map((product) => product.brand || EMPTY_VALUE),
       },
     ];
 
-    const attrs = attrKeys.map((key) => ({
-      label: key,
-      values: activeCompareItems.map((product) => getAttrValue(product, key)),
+    const groupsMap = new Map();
+
+    activeCompareItems.forEach((product, productIdx) => {
+      if (!product.attributes || !Array.isArray(product.attributes)) return;
+
+      product.attributes.forEach((group) => {
+        const groupName = (group.groupName || "").trim();
+        if (!groupName) return;
+
+        const groupKey = groupName.toLowerCase();
+        if (!groupsMap.has(groupKey)) {
+          groupsMap.set(groupKey, {
+            groupName,
+            keysMap: new Map(),
+          });
+        }
+
+        const groupData = groupsMap.get(groupKey);
+        const items = group.items || [];
+
+        items.forEach((item) => {
+          const keyName = (item.key || "").trim();
+          if (!keyName) return;
+
+          const keyKey = keyName.toLowerCase();
+          if (!groupData.keysMap.has(keyKey)) {
+            const values = Array(activeCompareItems.length).fill(EMPTY_VALUE);
+            groupData.keysMap.set(keyKey, {
+              keyName,
+              values,
+            });
+          }
+
+          const specData = groupData.keysMap.get(keyKey);
+          specData.values[productIdx] = item.value != null && String(item.value).trim() !== ""
+            ? String(item.value)
+            : EMPTY_VALUE;
+        });
+      });
+    });
+
+    const technicalGroups = Array.from(groupsMap.values()).map((g) => ({
+      groupName: g.groupName,
+      specs: Array.from(g.keysMap.values()).map((s) => ({
+        label: s.keyName,
+        values: s.values,
+      })),
     }));
 
-    return [...basic, ...attrs];
-  }, [activeCompareItems, attrKeys]);
+    return {
+      basicSpecs,
+      technicalGroups,
+    };
+  }, [activeCompareItems]);
 
-  const visibleSpecs = showDiffOnly
-    ? allSpecs.filter((spec) => hasDiff(spec.values))
-    : allSpecs;
+  const visibleSpecsGrouped = useMemo(() => {
+    const { basicSpecs, technicalGroups } = allSpecsGrouped;
+
+    const filteredBasic = showDiffOnly
+      ? basicSpecs.filter((spec) => hasDiff(spec.values))
+      : basicSpecs;
+
+    const filteredGroups = technicalGroups
+      .map((group) => {
+        const filteredSpecs = showDiffOnly
+          ? group.specs.filter((spec) => hasDiff(spec.values))
+          : group.specs;
+
+        return {
+          groupName: group.groupName,
+          specs: filteredSpecs,
+        };
+      })
+      .filter((group) => group.specs.length > 0);
+
+    return {
+      basicSpecs: filteredBasic,
+      technicalGroups: filteredGroups,
+    };
+  }, [allSpecsGrouped, showDiffOnly]);
 
   const renderProductCards = (isCompact = false) => (
     <>
@@ -654,14 +664,20 @@ const ComparePage = () => {
                     </div>
 
                     <div className="cmp-tbl__attrs">
-                      {visibleSpecs.length === 0 ? (
-                        <div className="cmp-no-diff">
-                          Усі характеристики однакові — товари ідентичні
-                        </div>
-                      ) : (
-                        visibleSpecs.map((spec) => (
+                      {visibleSpecsGrouped.basicSpecs.map((spec) => (
+                        <SpecRow
+                          key={`basic-${spec.key}`}
+                          label={spec.label}
+                          values={spec.values}
+                          showDiffOnly={showDiffOnly}
+                          totalCount={totalCount}
+                        />
+                      ))}
+
+                      {visibleSpecsGrouped.technicalGroups.map((group) =>
+                        group.specs.map((spec) => (
                           <SpecRow
-                            key={spec.label}
+                            key={`spec-${group.groupName}-${spec.label}`}
                             label={spec.label}
                             values={spec.values}
                             showDiffOnly={showDiffOnly}
@@ -669,6 +685,13 @@ const ComparePage = () => {
                           />
                         ))
                       )}
+
+                      {visibleSpecsGrouped.basicSpecs.length === 0 &&
+                        visibleSpecsGrouped.technicalGroups.length === 0 && (
+                          <div className="cmp-no-diff">
+                            Усі характеристики однакові — товари ідентичні
+                          </div>
+                        )}
                     </div>
                   </div>
                 </div>
