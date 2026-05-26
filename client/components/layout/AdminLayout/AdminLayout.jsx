@@ -18,6 +18,7 @@ import {
   clearAdminSession,
   getAdminNavigationItems,
   getStoredAdminRole,
+  getStoredAdminUser,
 } from "../../../config/adminAccess";
 
 const navigationMeta = {
@@ -57,6 +58,7 @@ export const AdminLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const role = getStoredAdminRole();
+  const adminUser = getStoredAdminUser();
   const navigation = getAdminNavigationItems(role)
     .map(({ path }) => navigationMeta[path])
     .filter(Boolean);
@@ -143,6 +145,34 @@ export const AdminLayout = () => {
       </nav>
 
       <div className="admin-sidebar-footer">
+        {!isCollapsed && adminUser && (
+          <div className="admin-user-profile">
+            <div className="avatar-wrapper">
+              <div className={`profile-avatar role-avatar-${role}`}>
+                {adminUser.username ? adminUser.username.charAt(0).toUpperCase() : "A"}
+              </div>
+              <span className="status-indicator online" />
+            </div>
+            <div className="profile-info">
+              <span className="profile-name" title={adminUser.username}>
+                {adminUser.username}
+              </span>
+              <span className={`profile-role role-${role}`}>
+                {role === "admin" ? "Адміністратор" : "Модератор"}
+              </span>
+            </div>
+          </div>
+        )}
+        {isCollapsed && adminUser && (
+          <div className="admin-user-profile-collapsed" title={`${adminUser.username} (${role === "admin" ? "Адміністратор" : "Модератор"})`}>
+            <div className="avatar-wrapper">
+              <div className={`profile-avatar role-avatar-${role}`}>
+                {adminUser.username ? adminUser.username.charAt(0).toUpperCase() : "A"}
+              </div>
+              <span className="status-indicator online" />
+            </div>
+          </div>
+        )}
         <button className="admin-logout-btn" onClick={handleLogout} title={isCollapsed ? "Вийти" : ""}>
           <Logout sx={{ width: "20px", height: "20px" }} />
           <span className="logout-text">Вийти</span>

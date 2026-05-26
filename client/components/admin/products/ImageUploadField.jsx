@@ -83,7 +83,7 @@ const ImageUploadField = ({
                 event.target.src = 'https://placehold.co/500x300?text=No+Image';
               }}
             />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: 'inherit', opacity: 0.7 }}>
               Зображення вибрано
             </Typography>
           </Box>

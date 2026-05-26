@@ -8,6 +8,7 @@ import {
   Visibility,
   VisibilityOff
 } from '@mui/icons-material';
+import { API_BASE_URL } from '../../../../config/api.js';
 
 import './AdminLoginPage.scss';
 
@@ -28,7 +29,7 @@ const AdminLoginPage = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/admin/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -67,7 +68,7 @@ const AdminLoginPage = () => {
       <div className="login-container">
         {/* Логотип та заголовок */}
         <div className="login-header">
-          <h1>ElectroLux</h1>
+          <h1>Nexora</h1>
           <p>Система управління інтернет-магазином</p>
         </div>
 
@@ -138,7 +139,7 @@ const AdminLoginPage = () => {
           <div className="login-footer">
             <p>
               Admin: admin / admin123<br />
-              Moderator: moderator@electrolux.test / Moderator123!
+              Moderator: moderator@nexora.test / Moderator123!
             </p>
           </div>
         </div>

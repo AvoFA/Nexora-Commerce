@@ -42,6 +42,14 @@
     border-radius: $border-radius * 1.5;
   }
 
+  &.category-form-modal-card {
+    width: min(760px, calc(100vw - 32px));
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
   &.product-form-modal-card {
     width: min(1060px, calc(100vw - 32px));
 
