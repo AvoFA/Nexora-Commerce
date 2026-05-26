@@ -90,6 +90,8 @@ router.post('/login', async (req, res) => {
           id: user.id,
           email: user.email,
           name: user.name,
+          surname: user.surname || '',
+          patronymic: user.patronymic || '',
           phone: user.phone || '',
           role: user.role
         },
@@ -104,6 +106,8 @@ router.post('/login', async (req, res) => {
           id: user.id,
           email: user.email,
           name: user.name,
+          surname: user.surname || '',
+          patronymic: user.patronymic || '',
           phone: user.phone || '',
           role: user.role,
           wishlistProductIds: user.wishlistProductIds || []
@@ -165,6 +169,8 @@ router.post('/register', async (req, res) => {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
+        surname: newUser.surname || '',
+        patronymic: newUser.patronymic || '',
         phone: newUser.phone || '',
         role: newUser.role,
         wishlistProductIds: newUser.wishlistProductIds || []
@@ -180,6 +186,8 @@ router.post('/register', async (req, res) => {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
+        surname: newUser.surname || '',
+        patronymic: newUser.patronymic || '',
         phone: newUser.phone || '',
         role: newUser.role,
         wishlistProductIds: newUser.wishlistProductIds || []
@@ -191,6 +199,22 @@ router.post('/register', async (req, res) => {
     res.status(500).json({
       success: false,
       message: getPublicAuthErrorMessage(error, 'Не вдалося створити акаунт')
+    });
+  }
+});
+
+router.get('/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await UserController.getUserById(req.user.id);
+    res.json({
+      success: true,
+      user
+    });
+  } catch (error) {
+    console.error('Помилка отримання профілю:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка отримання профілю'
     });
   }
 });
