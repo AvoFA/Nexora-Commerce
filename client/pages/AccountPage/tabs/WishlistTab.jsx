@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { FavoriteBorder } from "@mui/icons-material";
+import { FavoriteBorder, DeleteOutline, DeleteSweepOutlined } from "@mui/icons-material";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCompare } from "../../../hooks/useCompare.js";
 import { useCart } from "../../../hooks/useCart.js";
@@ -16,12 +16,13 @@ import {
 import WishlistListBar from "./WishlistListBar.jsx";
 import WishlistBoard from "./WishlistBoard.jsx";
 import WishlistListDialog from "./WishlistListDialog.jsx";
+import ConfirmModal from "../../../components/common/ConfirmModal/ConfirmModal.jsx";
 import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notifications.js";
 
 const getProductId = (product) => product?._id || product?.id;
 const isAuthError = (error) => error?.status === 401 || error?.status === 403;
 
-const WishlistTab = () => {
+const WishlistTab = ({ variant = "page", onNavigate } = {}) => {
   const { isAuthenticated, updateWishlistProductIds, logout } = useAuth();
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
@@ -33,6 +34,10 @@ const WishlistTab = () => {
   const [listDialogMode, setListDialogMode] = useState(null);
   const [listName, setListName] = useState("");
   const [listNameTouched, setListNameTouched] = useState(false);
+
+  // Modal states
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
 
   const activeList = useMemo(
     () => lists.find((list) => list._id === activeListId) || lists[0],
@@ -140,10 +145,14 @@ const WishlistTab = () => {
     }
   };
 
-  const handleDeleteList = async () => {
+  const promptDeleteList = () => {
     if (!activeList) return;
     setIsMenuOpen(false);
-    if (!window.confirm(`Видалити список "${activeList.name}"?`)) return;
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteList = async () => {
+    if (!activeList) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -153,6 +162,7 @@ const WishlistTab = () => {
       setActiveListId(nextLists[0]?._id || "");
       updateWishlistProductIds(data.wishlistProductIds || []);
       toast.success("Список видалено");
+      setIsDeleteModalOpen(false);
     } catch (error) {
       if (!handleAuthError(error)) {
         toast.error(error.message || "Не вдалося видалити список");
@@ -160,10 +170,14 @@ const WishlistTab = () => {
     }
   };
 
-  const handleClearList = async () => {
+  const promptClearList = () => {
     if (!activeList || products.length === 0) return;
     setIsMenuOpen(false);
-    if (!window.confirm(`Очистити список "${activeList.name}"?`)) return;
+    setIsClearModalOpen(true);
+  };
+
+  const handleClearList = async () => {
+    if (!activeList) return;
 
     try {
       const token = localStorage.getItem("token");
@@ -171,6 +185,7 @@ const WishlistTab = () => {
       setLists(data.wishlistLists || []);
       updateWishlistProductIds(data.wishlistProductIds || []);
       toast.success("Список очищено");
+      setIsClearModalOpen(false);
     } catch (error) {
       if (!handleAuthError(error)) {
         toast.error(error.message || "Не вдалося очистити список");
@@ -215,7 +230,7 @@ const WishlistTab = () => {
         <FavoriteBorder sx={{ fontSize: 72 }} />
         <h2>Увійдіть, щоб переглянути списки бажань</h2>
         <p>Зберігайте товари у власних списках та швидко повертайтеся до них пізніше.</p>
-        <Link to="/catalog" className="btn-primary">
+        <Link to="/catalog" className="btn-primary" onClick={onNavigate}>
           Переглянути каталог
         </Link>
       </div>
@@ -239,7 +254,7 @@ const WishlistTab = () => {
   }
 
   return (
-    <div className="wishlist-tab">
+    <div className={`wishlist-tab wishlist-tab--${variant}`}>
       <div className="wishlist-module">
         <div className="wishlist-toolbar">
           <div className="wishlist-heading">
@@ -262,12 +277,13 @@ const WishlistTab = () => {
           isMenuOpen={isMenuOpen}
           setIsMenuOpen={setIsMenuOpen}
           onRename={openRenameDialog}
-          onClear={handleClearList}
-          onDelete={handleDeleteList}
+          onClear={promptClearList}
+          onDelete={promptDeleteList}
           onAddToCart={handleAddToCart}
           onRemoveProduct={handleRemoveProduct}
           onToggleCompare={handleToggleCompare}
           isCompared={isCompared}
+          onNavigate={onNavigate}
         />
       </div>
 
@@ -279,6 +295,31 @@ const WishlistTab = () => {
         setListNameTouched={setListNameTouched}
         onClose={closeListDialog}
         onSave={handleSaveList}
+      />
+
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteList}
+        title="Видалити список?"
+        message={`Ви впевнені, що хочете видалити список "${activeList?.name}"?`}
+        warning="Ця дія видалить сам список і всі товари в ньому. Це неможливо скасувати."
+        icon={DeleteOutline}
+        confirmText="Видалити"
+        type="danger"
+      />
+
+      <ConfirmModal
+        isOpen={isClearModalOpen}
+        onClose={() => setIsClearModalOpen(false)}
+        onConfirm={handleClearList}
+        title="Очистити список?"
+        message={`Ви впевнені, що хочете видалити всі товари зі списку "${activeList?.name}"?`}
+        warning={`Буде видалено {count} товарів. Сам список при цьому залишиться.`}
+        count={products.length}
+        icon={DeleteSweepOutlined}
+        confirmText="Очистити"
+        type="danger"
       />
     </div>
   );

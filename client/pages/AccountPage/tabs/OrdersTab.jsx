@@ -21,7 +21,7 @@ const OrdersTab = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [loading, setLoading] = useState(!SHOW_DEMO_ORDER_LAYOUT);
   const [error, setError] = useState(null);
-  
+
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [selectedOrderForCancel, setSelectedOrderForCancel] = useState(null);
 
@@ -77,11 +77,11 @@ const OrdersTab = () => {
 
   const handleCancelConfirm = async ({ reason, comment }) => {
     if (!selectedOrderForCancel) return;
-    
+
     try {
       const token = localStorage.getItem("token");
       await cancelOrder(selectedOrderForCancel._id, { reason, comment }, token);
-      
+
       toast.success("Замовлення успішно скасовано");
       handleCloseCancelModal();
       fetchOrders(); // Refresh orders after cancellation
@@ -126,9 +126,9 @@ const OrdersTab = () => {
     return (
       <div className="orders-list">
         {filteredOrders.map((order) => (
-          <OrderCard 
-            key={order._id} 
-            order={order} 
+          <OrderCard
+            key={order._id}
+            order={order}
             onCancelRequest={() => handleOpenCancelModal(order)}
             onReviewRequest={handleOpenReviewModal}
           />
@@ -143,6 +143,9 @@ const OrdersTab = () => {
         <div className="orders-toolbar">
           <div className="orders-toolbar-main">
             <div className="orders-heading">
+              <span className="orders-mobile-count">
+                {displayOrders.length} покупок у вашому кабінеті
+              </span>
               <h2>Мої замовлення</h2>
               <p>Переглядайте історію покупок, статуси та деталі доставки.</p>
             </div>
@@ -172,7 +175,6 @@ const OrdersTab = () => {
           <div className="orders-board-head">
             <div>
               <h3>Історія замовлень</h3>
-              <p>{filteredOrders.length} з {displayOrders.length} покупок у вашому кабінеті</p>
             </div>
           </div>
 

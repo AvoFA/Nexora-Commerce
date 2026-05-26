@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { DeleteOutline, DriveFileRenameOutline, FavoriteBorder, MoreVert } from "@mui/icons-material";
+import { DeleteOutline, DeleteSweepOutlined, DriveFileRenameOutline, FavoriteBorder, MoreVert } from "@mui/icons-material";
 import { formatPrice } from "../../../utils/formatPrice.js";
 import WishlistProductRow from "./WishlistProductRow.jsx";
 
@@ -16,6 +16,7 @@ const WishlistBoard = ({
   onRemoveProduct,
   onToggleCompare,
   isCompared,
+  onNavigate,
 }) => {
   return (
     <div className="wishlist-board">
@@ -46,7 +47,7 @@ const WishlistBoard = ({
                   Перейменувати
                 </button>
                 <button type="button" onClick={onClear} disabled={products.length === 0}>
-                  <DeleteOutline />
+                  <DeleteSweepOutlined />
                   Очистити список
                 </button>
                 <button type="button" className="danger" onClick={onDelete}>
@@ -64,7 +65,7 @@ const WishlistBoard = ({
           <FavoriteBorder sx={{ fontSize: 42 }} />
           <h2>У цьому списку поки немає товарів</h2>
           <p>Натисніть серце на товарі та оберіть список, куди його додати.</p>
-          <Link to="/catalog" className="btn-primary">
+          <Link to="/catalog" className="btn-primary" onClick={onNavigate}>
             Перейти до каталогу
           </Link>
         </div>
@@ -80,6 +81,7 @@ const WishlistBoard = ({
                 onRemove={onRemoveProduct}
                 onToggleCompare={onToggleCompare}
                 isCompared={isCompared}
+                onNavigate={onNavigate}
               />
             );
           })}

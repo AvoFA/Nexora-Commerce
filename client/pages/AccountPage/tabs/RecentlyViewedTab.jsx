@@ -8,7 +8,7 @@ import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notificat
 import "../AccountPage.scss"; // Reuse account page styles
 
 const RecentlyViewedTab = () => {
-  const { items, clearRecentlyViewed } = useRecentlyViewed();
+  const { products: viewedItems, clearRecentlyViewed } = useRecentlyViewed();
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
 
@@ -27,7 +27,7 @@ const RecentlyViewedTab = () => {
     }
   };
 
-  if (!items.length) {
+  if (!viewedItems.length) {
     return (
       <EmptyState
         icon={History}
@@ -42,39 +42,41 @@ const RecentlyViewedTab = () => {
 
   return (
     <div className="wishlist-tab">
-      <div className="wishlist-toolbar">
-        <div className="wishlist-toolbar-main">
-          <div className="wishlist-heading">
-            <h2 className="tab-title">
-              <VisibilityOutlined sx={{ verticalAlign: 'middle', mr: 1.5, color: 'var(--primary-color)' }} />
-              <span>Переглянуті товари</span>
-            </h2>
-            <p>Товари, якими ви цікавилися останнім часом.</p>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
-            <button
-              className="btn-text-danger"
-              onClick={clearRecentlyViewed}
-            >
-              Очистити історію
-            </button>
+      <div className="wishlist-module">
+        <div className="wishlist-toolbar">
+          <div className="wishlist-toolbar-main">
+            <div className="wishlist-heading">
+              <h2 className="tab-title">
+                <VisibilityOutlined sx={{ verticalAlign: 'middle', mr: 1.5, color: 'var(--primary-color)' }} />
+                <span>Переглянуті товари</span>
+              </h2>
+              <p>Товари, якими ви цікавилися останнім часом.</p>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
+              <button
+                className="btn-text-danger"
+                onClick={clearRecentlyViewed}
+              >
+                Очистити історію
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="wishlist-board">
-        <div className="wishlist-products-list">
-          {items.map((product) => (
-            <WishlistProductRow
-              key={product._id || product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              onRemove={() => {}}
-              onToggleCompare={handleToggleCompare}
-              isCompared={isCompared}
-              hideRemove
-            />
-          ))}
+        <div className="wishlist-board">
+          <div className="wishlist-products-list">
+            {viewedItems.map((product) => (
+              <WishlistProductRow
+                key={product._id || product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onRemove={() => {}}
+                onToggleCompare={handleToggleCompare}
+                isCompared={isCompared}
+                hideRemove
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

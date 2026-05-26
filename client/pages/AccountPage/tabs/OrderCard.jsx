@@ -46,13 +46,13 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
   const itemCount = order.items?.length || 0;
   const itemsTotal = getItemsTotal(order);
   const discount = Number(order.discount) || 0;
-  const deliveryPrice = Number(order.deliveryPrice) || 0;
+  const deliveryPrice = Number(order.deliveryPrice) || Number(order.delivery?.deliveryPrice) || 0;
   const totalPrice = Number(order.totalPrice) || itemsTotal - discount + deliveryPrice;
 
   return (
     <details className="order-card">
       <summary className="order-card-summary">
-        <div>
+        <div className="order-summary-number">
           <span className="order-card-label">Замовлення</span>
           <strong>{getOrderNumber(order)}</strong>
         </div>
@@ -66,7 +66,7 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
           </span>
         </div>
         <div>
-          <span className="order-card-label">Сума</span>
+          <span className="order-card-label">Сума замовлення</span>
           <strong>{formatPrice(totalPrice)}</strong>
         </div>
         <div className="order-preview">
@@ -75,8 +75,14 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
               {renderProductImage(item)}
             </div>
           ))}
+          {itemCount > previewItems.length && (
+            <span className="order-preview-more">+{itemCount - previewItems.length}</span>
+          )}
         </div>
-        <ExpandMore className="order-expand-icon" />
+        <span className="order-details-toggle">
+          <span>Детальніше</span>
+          <ExpandMore className="order-expand-icon" />
+        </span>
       </summary>
 
       <div className="order-expanded">
@@ -95,8 +101,8 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
                   <div className="ex-info">
                     <Link to={`/product/${productId}`}>{item.name}</Link>
                   </div>
-                  <button 
-                    className="ex-review-link" 
+                  <button
+                    className="ex-review-link"
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
@@ -129,8 +135,8 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
 
           {(order.status === 'new' || order.status === 'confirmed') && (
             <div className="order-actions-section">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="cancel-order-btn"
                 onClick={onCancelRequest}
               >

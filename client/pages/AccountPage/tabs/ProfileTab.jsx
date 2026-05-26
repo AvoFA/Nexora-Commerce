@@ -7,7 +7,9 @@ import {
   CheckOutlined,
   CloseOutlined,
 } from "@mui/icons-material";
+import { API_BASE_URL } from "../../../config/api.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
+import { getMyOrders } from "../../../services/orderService.js";
 import {
   formatPhone,
   isCompletePhone,
@@ -54,10 +56,7 @@ const ProfileTab = () => {
     const fetchLastOrder = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/orders/my", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await response.json();
+        const data = await getMyOrders(token);
         if (data.success && data.orders?.length > 0) {
           setLastOrder(data.orders[0]);
         }
@@ -117,7 +116,7 @@ const ProfileTab = () => {
       setIsSaving(true);
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/api/auth/profile", {
+      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

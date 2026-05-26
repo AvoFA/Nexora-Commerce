@@ -7,7 +7,14 @@ import { getProductReviews } from "../../../services/reviewService.js";
 
 const getProductId = (product) => product?._id || product?.id;
 
-const WishlistProductRow = ({ product, onAddToCart, onRemove, onToggleCompare, isCompared }) => {
+const WishlistProductRow = ({
+  product,
+  onAddToCart,
+  onRemove,
+  onToggleCompare,
+  isCompared,
+  onNavigate,
+}) => {
   const productId = getProductId(product);
   const imgSrc = product.image || product.imageUrl;
 
@@ -44,11 +51,11 @@ const WishlistProductRow = ({ product, onAddToCart, onRemove, onToggleCompare, i
 
   return (
     <article className="wishlist-product-row">
-      <Link to={`/product/${productId}`} className="wishlist-product-img">
+      <Link to={`/product/${productId}`} className="wishlist-product-img" onClick={onNavigate}>
         {imgSrc ? <img src={imgSrc} alt={product.name} /> : <span>No image</span>}
       </Link>
       <div className="wishlist-product-info">
-        <Link to={`/product/${productId}`}>{product.name}</Link>
+        <Link to={`/product/${productId}`} onClick={onNavigate}>{product.name}</Link>
         <div className="wishlist-product-rating-link">
           <div className="wishlist-product-stars">
             <Rating
