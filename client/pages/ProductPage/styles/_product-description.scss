@@ -1,0 +1,129 @@
+// Markdown and rich content descriptions
+.product-detailed-content {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin-top: 48px;
+  animation: sectionFadeIn 0.8s ease-out forwards;
+
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: $text-color;
+    position: relative;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba($border-color, 0.5);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 100px;
+      height: 3px;
+      background: $primary-color;
+      border-radius: 2px;
+    }
+  }
+
+  .detailed-description-section,
+  .characteristics-section {
+    margin-bottom: 8px;
+  }
+
+  .description-outer-container {
+    transition: max-height 0.3s ease;
+
+    &.is-collapsed {
+      max-height: 280px;
+      overflow: hidden;
+    }
+  }
+
+  .desc-toggle-container,
+  .specs-toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+  }
+
+  .desc-toggle-btn,
+  .specs-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba($surface-color, 0.4);
+    border: 1px solid rgba($border-color, 0.8);
+    color: $text-color;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba($surface-color, 0.8);
+      border-color: rgba($primary-color, 0.4);
+      color: $primary-color;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  .description-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #cbd5e1; // slate-300
+    padding: 24px;
+    background: rgba($surface-color, 0.4);
+    border-radius: $border-radius;
+    border-left: 4px solid $primary-color;
+
+    p {
+      margin-bottom: 24px;
+    }
+
+    h3 {
+      color: white;
+      margin: 24px 0 8px;
+      font-size: 1.3rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+
+      li {
+        position: relative;
+        padding-left: 28px;
+        margin-bottom: 8px;
+        line-height: 1.6;
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 10px;
+          width: 6px;
+          height: 6px;
+          background: $primary-color;
+          border-radius: 50%;
+          box-shadow: 0 0 10px $primary-color;
+        }
+
+        strong {
+          color: white;
+          font-weight: 600;
+          margin-right: 4px;
+        }
+      }
+    }
+  }
+}

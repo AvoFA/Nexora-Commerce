@@ -1,0 +1,66 @@
+// Product specs table styles
+.product-detailed-content {
+  // Характеристики в стилі макета (Єдина таблиця)
+  .characteristics-section {
+    .specs-table-box {
+      display: flex;
+      flex-direction: column;
+      gap: 32px; // Відступ між групами
+
+      .specs-table-group {
+        .group-header {
+          padding: 0 0 16px 0; // Відступ лише знизу до таблиці
+          font-weight: 700;
+          color: white;
+          font-size: 1.3rem;
+          letter-spacing: 0.5px;
+        }
+
+        .group-rows {
+          background: rgba($card-bg, 0.45);
+          border-radius: $border-radius;
+          overflow: hidden;
+          border: 1px solid rgba($border-color, 0.6);
+
+          .spec-row-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba($border-color, 0.3);
+            gap: 8px;
+            transition: background-color 0.2s ease;
+
+            @media (min-width: 640px) {
+              grid-template-columns: 1fr 2fr;
+              gap: 40px;
+            }
+
+            &:last-child {
+              border-bottom: none;
+            }
+
+            // Ефект зебри
+            &:nth-child(even) {
+              background: rgba(255, 255, 255, 0.015);
+            }
+
+            .spec-key {
+              color: $text-secondary; // slate-400
+              font-weight: 400;
+              font-size: 0.95rem;
+            }
+
+            .spec-value {
+              color: #e2e8f0; // slate-200
+              font-weight: 500;
+
+              @media (min-width: 640px) {
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+// Галерея зображень
+.product-image-gallery {
+  img {
+    width: 100%;
+    height: auto;
+    max-height: clamp(300px, 60vh, 500px); // Обмежуємо висоту на мобільних
+    object-fit: contain;
+    border-radius: $border-radius;
+    border: 1px solid $border-color;
+  }
+}
