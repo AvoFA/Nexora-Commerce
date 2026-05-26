@@ -30,16 +30,29 @@ import {
   PAYMENT_METHODS,
   STORES,
   UKRAINIAN_CALENDAR_WEEKDAY_LABELS,
-  UKRAINIAN_MONTH_LABELS,
-  UKRAINIAN_WEEKDAY_LABELS,
-  UKRAINIAN_WEEKDAY_SHORT_LABELS,
 } from "./checkout.constants.js";
+import { getPluralGoods, getWarehouseSummary, validateRecipientAndCity } from "./utils/checkoutValidation.js";
+import {
+  getDateByOffset,
+  getDateParts,
+  getPlannedDate,
+  getDefaultDateOffset,
+  getDeliveryDateOffsets,
+  getDeliveryCalendarDays,
+  getMethodHeaderDate,
+} from "./utils/checkoutDateUtils.js";
 import "./CheckoutPage.scss";
 
 const CheckoutPage = () => {
   const { state, dispatch } = useCart();
-  const { items } = state;
+  const summaryRef = useRef(null);
+  const [isSummaryVisible, setIsSummaryVisible] = useState(false);
+  const allItems = state.items;
+  // Фільтруємо тільки обрані товари
+  const items = allItems.filter(item => item.selected !== false);
+
   const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
   const navigate = useNavigate();
   const { isAuthenticated, user, updateUserData } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,13 +83,13 @@ const CheckoutPage = () => {
   const [city, setCity] = useState(DEFAULT_CITY);
   const [cityArea, setCityArea] = useState(DEFAULT_CITY_AREA);
   const [zip] = useState(DEFAULT_ZIP);
-  
+
   // Поля для адресної доставки
   const [address, setAddress] = useState("");
-  
+
   // Вибраний магазин для самовивозу
   const [chosenStore, setChosenStore] = useState(STORES[0].name + ", " + STORES[0].address);
-  
+
   // Відділення Нової Пошти
   const [npBranch, setNpBranch] = useState(DEFAULT_NOVA_POSHTA_BRANCH);
 
@@ -89,10 +102,10 @@ const CheckoutPage = () => {
   // Стан помилок валідації
   const [errors, setErrors] = useState({});
 
-  const isIdentityVerificationRequired = 
-    deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || 
-    deliveryMethod === DELIVERY_METHODS.MEEST || 
-    deliveryMethod === DELIVERY_METHODS.COURIER || 
+  const isIdentityVerificationRequired =
+    deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA ||
+    deliveryMethod === DELIVERY_METHODS.MEEST ||
+    deliveryMethod === DELIVERY_METHODS.COURIER ||
     deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA;
 
   // Стан для преміальних плашок редагування (Колапс як у Comfy)
@@ -121,25 +134,7 @@ const CheckoutPage = () => {
     }));
   };
 
-  const getWarehouseSummary = (description) => {
-    const normalized = String(description || "").trim();
-
-    if (!normalized) {
-      return {
-        title: "",
-        details: "",
-      };
-    }
-
-    const [title, ...detailsParts] = normalized.split(",");
-
-    return {
-      title: title.trim() || "Відділення Нової Пошти",
-      details: detailsParts.join(",").trim() || `${city}${cityArea ? `, ${cityArea}` : ""}`,
-    };
-  };
-
-  const selectedWarehouse = getWarehouseSummary(npBranch);
+  const selectedWarehouse = getWarehouseSummary(npBranch, city, cityArea);
 
   /* === РЕФ ТА СТЕЙТ ДЛЯ ГОРИЗОНТАЛЬНОГО СЛАЙДЕРА ТОВАРІВ === */
   const itemsContainerRef = useRef(null);
@@ -174,29 +169,10 @@ const CheckoutPage = () => {
     return `form-input ${isFilled} ${hasErrorClass}`;
   };
 
-  const getDefaultDateOffset = (method) => (method === DELIVERY_METHODS.PICKUP ? 1 : 2);
-
   const selectDeliveryMethod = (method) => {
     setDeliveryMethod(method);
     setSelectedDeliveryDateOffset(getDefaultDateOffset(method));
     setIsDeliveryCalendarOpen(false);
-  };
-
-  const getStartOfToday = () => {
-    const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  };
-
-  const getDateByOffset = (daysToAdd) => {
-    const date = getStartOfToday();
-    date.setDate(date.getDate() + daysToAdd);
-    return date;
-  };
-
-  const getOffsetByDate = (date) => {
-    const today = getStartOfToday();
-    const selected = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-    return Math.round((selected - today) / 86400000);
   };
 
   /* === СИНХРОНІЗАЦІЯ ДАНИХ З ПРОФІЛЮ КОРИСТУВАЧА === */
@@ -210,12 +186,34 @@ const CheckoutPage = () => {
     }
   }, [user]);
 
-  /* === ПЕРЕВІРКА, ЧИ КОШИК ПУСТИЙ === */
   useEffect(() => {
     if (items.length === 0 && !isOrderCompleted) {
       navigate("/cart");
     }
   }, [items, navigate, isOrderCompleted]);
+
+  // IntersectionObserver для мобільної липкої кнопки оформлення
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSummaryVisible(entry.isIntersecting);
+      },
+      {
+        threshold: 0.05,
+      }
+    );
+
+    const currentRef = summaryRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [items, activeStep]);
 
   useEffect(() => {
     if (!isDeliveryCalendarOpen) return undefined;
@@ -233,66 +231,8 @@ const CheckoutPage = () => {
   }, [isDeliveryCalendarOpen]);
 
   /* === РОЗРАХУНОК ДАТ ДОСТАВКИ === */
-  const getDateParts = (daysToAdd) => {
-    const date = getDateByOffset(daysToAdd);
-    const day = date.getDate();
-    const month = UKRAINIAN_MONTH_LABELS[date.getMonth()];
-    const weekday = UKRAINIAN_WEEKDAY_LABELS[date.getDay()];
-    const weekdayShort = UKRAINIAN_WEEKDAY_SHORT_LABELS[date.getDay()];
-    
-    return {
-      dayMonth: `${day} ${month}`,
-      weekday,
-      weekdayShort,
-      full: `${day} ${month} (${weekday})`,
-      numeric: date.toLocaleDateString("uk-UA", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }),
-    };
-  };
-
-  const getFormattedDate = (daysToAdd) => {
-    return getDateParts(daysToAdd).full;
-  };
-
-  const getPlannedDate = () => {
-    if (deliveryMethod === DELIVERY_METHODS.PICKUP) return `самовивіз, ${getFormattedDate(selectedDeliveryDateOffset)}`;
-    if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) return `до відділення, ${getFormattedDate(selectedDeliveryDateOffset)}`;
-    return `кур'єром, ${getFormattedDate(selectedDeliveryDateOffset)}`;
-  };
-
-  const getDeliveryDateOffsets = () => {
-    const firstOffset = getDefaultDateOffset(deliveryMethod);
-    return [firstOffset, firstOffset + 1, firstOffset + 2, firstOffset + 3];
-  };
-
   const changeDeliveryCalendarMonth = (step) => {
     setDeliveryCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() + step, 1));
-  };
-
-  const getDeliveryCalendarDays = () => {
-    const year = deliveryCalendarMonth.getFullYear();
-    const month = deliveryCalendarMonth.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const calendarStart = new Date(firstDay);
-    calendarStart.setDate(firstDay.getDate() - ((firstDay.getDay() + 6) % 7));
-
-    return Array.from({ length: 42 }, (_, index) => {
-      const date = new Date(calendarStart);
-      date.setDate(calendarStart.getDate() + index);
-      const offset = getOffsetByDate(date);
-
-      return {
-        date,
-        offset,
-        day: date.getDate(),
-        isCurrentMonth: date.getMonth() === month,
-        isSelected: offset === selectedDeliveryDateOffset,
-        isDisabled: offset < getDefaultDateOffset(deliveryMethod),
-      };
-    });
   };
 
   const selectDeliveryCalendarDate = (day) => {
@@ -301,13 +241,8 @@ const CheckoutPage = () => {
     setIsDeliveryCalendarOpen(false);
   };
 
-  const getMethodHeaderDate = (method) => {
-    const offset = deliveryMethod === method ? selectedDeliveryDateOffset : getDefaultDateOffset(method);
-    return getFormattedDate(offset);
-  };
-
   const renderDeliveryDateStrip = () => {
-    const offsets = getDeliveryDateOffsets();
+    const offsets = getDeliveryDateOffsets(deliveryMethod);
     const customDate = getDateParts(selectedDeliveryDateOffset);
     const calendarTitle = deliveryCalendarMonth.toLocaleDateString("uk-UA", {
       month: "long",
@@ -373,7 +308,7 @@ const CheckoutPage = () => {
               </div>
 
               <div className="calendar-day-grid">
-                {getDeliveryCalendarDays().map((day) => (
+                {getDeliveryCalendarDays(deliveryCalendarMonth, deliveryMethod, selectedDeliveryDateOffset).map((day) => (
                   <button
                     key={day.date.toISOString()}
                     type="button"
@@ -412,77 +347,35 @@ const CheckoutPage = () => {
 
   const getNumericDeliveryPrice = () => {
     if (deliveryMethod === DELIVERY_METHODS.PICKUP) return 0;
-    if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) return 1;
+    if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) return 75;
     if (deliveryMethod === DELIVERY_METHODS.COURIER) return 199;
-    if (deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA) return 329;
+    if (deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA) return 249;
     return 0;
   };
 
   /* === ВАЛІДАЦІЯ ТА ПЕРЕХІД НА НАСТУПНИЙ КРОК === */
-  const validateRecipientAndCity = (currentErrors = {}) => {
-    const newErrors = { ...currentErrors };
-
-    // Common fields
-    if (!name.trim()) {
-      newErrors.name = "Поле обов'язкове для заповнення";
-    } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(name.trim())) {
-      newErrors.name = "Вкажіть ім'я кирилицею";
-    }
-
-    if (isIdentityVerificationRequired) {
-      if (!surname.trim()) {
-        newErrors.surname = "Поле обов'язкове для заповнення";
-      } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(surname.trim())) {
-        newErrors.surname = "Вкажіть прізвище кирилицею";
-      }
-
-      if (!patronymic.trim()) {
-        newErrors.patronymic = "Поле обов'язкове для заповнення";
-      } else if (!/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(patronymic.trim())) {
-        newErrors.patronymic = "Вкажіть по батькові кирилицею";
-      }
-    } else {
-      // Optional for pickup, but if provided, must be Cyrillic
-      if (surname.trim() && !/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(surname.trim())) {
-        newErrors.surname = "Вкажіть прізвище кирилицею";
-      }
-      if (patronymic.trim() && !/^[А-Яа-яЄєІіЇїҐґ'-]+$/.test(patronymic.trim())) {
-        newErrors.patronymic = "Вкажіть по батькові кирилицею";
-      }
-    }
-
-    const cleanedPhone = phone.replace(/[\s()+-]/g, "");
-    if (!phone.trim()) {
-      newErrors.phone = "Поле обов'язкове для заповнення";
-    } else if (!/^\d{10,12}$/.test(cleanedPhone) || (cleanedPhone.length === 12 && !cleanedPhone.startsWith("38"))) {
-      newErrors.phone = "Введіть коректний номер телефону (наприклад, +380991234567)";
-    }
-
-    if (!email.trim()) {
-      newErrors.email = "Поле обов'язкове для заповнення";
-    }
-
-    if (!city.trim()) {
-      newErrors.city = "Поле обов'язкове для заповнення";
-    }
-
-    return newErrors;
-  };
-
   const validateDeliveryStep = () => {
     if (!isAuthenticated) {
       toast.error("Увійдіть або зареєструйтесь, щоб оформити замовлення");
       return false;
     }
 
-    let nextErrors = validateRecipientAndCity({});
+    let nextErrors = validateRecipientAndCity({
+      name,
+      surname,
+      patronymic,
+      phone,
+      email,
+      city,
+      isIdentityVerificationRequired,
+    }, {});
 
     // Check if recipient info is incomplete for auto-expansion
     const missingIdentityData = isIdentityVerificationRequired && (!surname.trim() || !patronymic.trim());
     const missingBasicData = !name.trim() || !phone.trim() || !email.trim();
-    const hasCyrillicErrors = (nextErrors.surname || nextErrors.patronymic || nextErrors.name) && 
-                              (nextErrors.surname?.includes("кирилицею") || 
-                               nextErrors.patronymic?.includes("кирилицею") || 
+    const hasCyrillicErrors = (nextErrors.surname || nextErrors.patronymic || nextErrors.name) &&
+                              (nextErrors.surname?.includes("кирилицею") ||
+                               nextErrors.patronymic?.includes("кирилицею") ||
                                nextErrors.name?.includes("кирилицею"));
 
     if (missingIdentityData || missingBasicData || hasCyrillicErrors) {
@@ -554,10 +447,10 @@ const CheckoutPage = () => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       // Формула плавного уповільнення EaseInOutQuad
-      const ease = progress < 0.5 
-        ? 2 * progress * progress 
+      const ease = progress < 0.5
+        ? 2 * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 2) / 2;
-      
+
       element.scrollLeft = start + (distance * ease);
 
       if (progress < 1) {
@@ -638,7 +531,7 @@ const CheckoutPage = () => {
           address: finalAddress,
           city: finalCity,
           zip: finalZip,
-          plannedDate: getPlannedDate(),
+          plannedDate: getPlannedDate(deliveryMethod, selectedDeliveryDateOffset),
           deliveryPrice: currentDeliveryPrice,
         },
         totalPrice: finalTotalPrice,
@@ -647,7 +540,7 @@ const CheckoutPage = () => {
       }, token);
 
       setIsOrderCompleted(true);
-      updateUserData?.({ 
+      updateUserData?.({
         phone,
         ...(name && { name }),
         ...(surname && { surname }),
@@ -707,7 +600,7 @@ const CheckoutPage = () => {
       <form className="checkout-container" onSubmit={handleSubmit}>
         {/* === ЛІВА КОЛОНКА (ДЕТАЛІ ЗАМОВЛЕННЯ) === */}
         <div className="checkout-form">
-          
+
           {/* ================= КРОК 1: ДОСТАВКА ================= */}
           {activeStep === 1 && (
             <div className="step-section-wrapper">
@@ -746,7 +639,15 @@ const CheckoutPage = () => {
                     if (errors.email) setErrors(prev => ({ ...prev, email: null }));
                   }}
                   onSaveRecipient={() => {
-                    const nextErrors = validateRecipientAndCity({});
+                    const nextErrors = validateRecipientAndCity({
+                      name,
+                      surname,
+                      patronymic,
+                      phone,
+                      email,
+                      city,
+                      isIdentityVerificationRequired,
+                    }, {});
                     delete nextErrors.city;
                     if (Object.keys(nextErrors).length > 0) {
                       setErrors(nextErrors);
@@ -784,7 +685,7 @@ const CheckoutPage = () => {
                 }}
                 onContinue={handleContinueToPayment}
                 renderDeliveryDateStrip={renderDeliveryDateStrip}
-                getMethodHeaderDate={getMethodHeaderDate}
+                getMethodHeaderDate={(method) => getMethodHeaderDate(method, deliveryMethod, selectedDeliveryDateOffset)}
                 getInputClassName={getInputClassName}
               />
             </div>
@@ -803,7 +704,7 @@ const CheckoutPage = () => {
               deliveryTypeLabel={getDeliveryTypeLabel()}
               deliveryAddress={confirmationDeliveryAddress}
               courierAddress={confirmationCourierContext}
-              plannedDate={getPlannedDate()}
+              plannedDate={getPlannedDate(deliveryMethod, selectedDeliveryDateOffset)}
               paymentLabel={paymentMethod === PAYMENT_METHODS.CASH ? "Оплата при отриманні" : "Картою онлайн"}
               recipientName={name}
               recipientPhone={phone}
@@ -816,22 +717,61 @@ const CheckoutPage = () => {
 
         </div>
 
-        <CheckoutSummary
-          items={items}
-          totalPrice={totalPrice}
-          deliveryPrice={getNumericDeliveryPrice()}
-          activeStep={activeStep}
-          isSubmitting={isSubmitting}
-          itemsContainerRef={itemsContainerRef}
-          scrollLeft={scrollLeft}
-          maxScroll={maxScroll}
-          onScrollLeft={scrollItemsLeft}
-          onScrollRight={scrollItemsRight}
-          onEditItems={() => navigate("/cart")}
-          onContinueToPayment={handleContinueToPayment}
-          onContinueToConfirmation={handleContinueToConfirmation}
-          onBackToCart={() => navigate("/cart")}
-        />
+        <div ref={summaryRef} className="checkout-summary-wrapper">
+          <CheckoutSummary
+            items={items}
+            totalPrice={totalPrice}
+            deliveryPrice={getNumericDeliveryPrice()}
+            activeStep={activeStep}
+            isSubmitting={isSubmitting}
+            itemsContainerRef={itemsContainerRef}
+            scrollLeft={scrollLeft}
+            maxScroll={maxScroll}
+            onScrollLeft={scrollItemsLeft}
+            onScrollRight={scrollItemsRight}
+            onEditItems={() => navigate("/cart")}
+            onContinueToPayment={handleContinueToPayment}
+            onContinueToConfirmation={handleContinueToConfirmation}
+            onBackToCart={() => navigate("/cart")}
+          />
+        </div>
+
+        {/* Мобільна липка кнопка оформлення для checkout */}
+        {items.length > 0 && (
+          <div className={`checkout-mobile-sticky-bar ${isSummaryVisible ? "is-hidden" : ""}`}>
+            <div className="sticky-bar-content">
+              <span className="sticky-items-count">
+                {getPluralGoods(totalItemCount)}
+              </span>
+
+              {activeStep === 1 ? (
+                <button
+                  type="button"
+                  className="btn-checkout-sticky-action"
+                  onClick={handleContinueToPayment}
+                >
+                  Продовжити
+                </button>
+              ) : activeStep === 2 ? (
+                <button
+                  type="button"
+                  className="btn-checkout-sticky-action"
+                  onClick={handleContinueToConfirmation}
+                >
+                  Продовжити
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="btn-checkout-sticky-action btn-submit"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? "Створюємо..." : `Оформити | ${formatPrice(totalPrice + getNumericDeliveryPrice())}`}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </form>
 
       <CitySelectModal
