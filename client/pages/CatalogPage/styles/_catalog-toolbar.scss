@@ -1,0 +1,306 @@
+// Search and Sort rows
+.search-sort-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.catalog-search {
+  flex: 1;
+  min-width: 200px;
+
+  .mui-form-control {
+    width: 100%;
+
+    .MuiInputBase-root {
+      height: 44px;
+      width: 100%;
+    }
+  }
+}
+
+// Catalog Controls & Toolbar
+.catalog-controls {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  align-items: center;
+  gap: 12px 16px;
+  padding: 12px 16px;
+  background: $surface-color; // Fully solid opaque surface color
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: $border-radius;
+
+  @media (min-width: 992px) {
+    position: sticky;
+    top: 80px;
+    z-index: 100;
+    background: $surface-color;
+    margin-bottom: 24px;
+    padding: 12px 16px;
+  }
+
+  @media (max-width: 991px) {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+}
+
+.toolbar-left-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex-grow: 1;
+  min-width: 0;
+
+  @media (max-width: 991px) {
+    width: 100%;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+.toolbar-summary {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 1.3;
+
+  @media (max-width: 991px) {
+    padding: 0 8px;
+  }
+
+  .products-count {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: $text-color;
+  }
+
+  .page-number {
+    font-size: 0.8rem;
+    color: $text-secondary;
+    margin-top: 1px;
+  }
+}
+
+.catalog-toolbar-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+
+  @media (max-width: 991px) {
+    width: 100%;
+    display: block;
+  }
+
+  .toolbar-desktop-only {
+    display: flex;
+    align-items: center;
+    @media (max-width: 991px) {
+      display: none;
+    }
+  }
+
+  .toolbar-mobile-capsules {
+    display: none;
+
+    @media (max-width: 991px) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      align-items: center;
+
+      .sort-mobile-capsule-wrapper,
+      .filter-mobile-capsule-wrapper {
+        width: 100%;
+        min-width: 0;
+        position: relative;
+      }
+
+      .sort-mobile-capsule,
+      .filter-mobile-capsule {
+        height: 40px;
+        width: 100%;
+        overflow: hidden;
+        background-color: rgba($surface-color, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        color: $text-color;
+        font-weight: 600;
+        gap: 8px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+
+        .capsule-icon {
+          color: $primary-color;
+          font-size: 1.2rem;
+        }
+
+        &:active {
+          transform: translateY(1px) scale(0.98);
+          background: rgba($surface-color, 1);
+        }
+      }
+
+      .sort-mobile-capsule {
+        font-size: 0.75rem;
+
+        span {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        &.is-active {
+          border-color: $primary-color;
+          box-shadow: 0 0 15px rgba($primary-color, 0.15);
+        }
+      }
+
+      .filter-mobile-capsule {
+        font-size: 0.875rem;
+        position: relative;
+
+        .filter-counter {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: $primary-color;
+          color: white;
+          font-size: 0.7rem;
+          font-weight: 700;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4px;
+          border-radius: 10px;
+          box-shadow: 0 2px 5px rgba($primary-color, 0.3);
+          border: 1.5px solid $surface-color;
+        }
+      }
+    }
+  }
+}
+
+// Active Filter Chips
+.active-filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex-grow: 1;
+  min-width: 0;
+
+  .filter-chip {
+    background: rgba($surface-color, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: $text-secondary !important;
+    border-radius: 16px;
+    cursor: pointer;
+
+    &.MuiChip-clickable:hover,
+    &.MuiChip-clickable:focus,
+    &.MuiChip-clickable:active {
+      background: rgba($surface-color, 0.6) !important;
+      box-shadow: none !important;
+      opacity: 1 !important;
+    }
+
+    .MuiChip-deleteIcon {
+      color: rgba(255, 255, 255, 0.5);
+      transition: color 0.2s;
+      &:hover {
+        color: $danger-color;
+      }
+    }
+  }
+
+  .chips-toggle-btn {
+    background: rgba($primary-color, 0.08);
+    border: 1px solid rgba($primary-color, 0.2);
+    color: $primary-color;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    .toggle-icon {
+      font-size: 0.95rem;
+    }
+
+    &:hover {
+      background: rgba($primary-color, 0.15);
+      border-color: $primary-color;
+    }
+  }
+
+  .chips-clear-btn {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: inherit;
+
+    &:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 991px) {
+    .filter-chip,
+    .chips-toggle-btn,
+    .chips-clear-btn {
+      display: none !important;
+    }
+  }
+}
+
+.filters-toggle-button {
+  display: none;
+
+  @media (max-width: 991px) {
+    display: inline-flex;
+  }
+}

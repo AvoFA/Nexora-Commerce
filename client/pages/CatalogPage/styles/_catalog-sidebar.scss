@@ -1,0 +1,246 @@
+// Sidebar & Filters Dialog
+.catalog-sidebar {
+  @media (max-width: 991px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $surface-color;
+    z-index: 2500;
+    transform: translateX(-100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: hidden;
+    box-shadow: none;
+
+    &.is-open {
+      transform: translateX(0);
+    }
+  }
+
+  .filter-mobile__dialog {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    @media (max-width: 991px) {
+      height: 100%;
+      background-color: $surface-color;
+    }
+
+    &-header {
+      display: none;
+
+      @media (max-width: 991px) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        background: $surface-color;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      &-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        &-label {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: $text-color;
+        }
+
+        &-badge {
+          background: $primary-color;
+          color: white;
+          font-size: 0.75rem;
+          font-weight: 700;
+          min-width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 10px;
+          padding: 0 6px;
+          box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+        }
+      }
+
+      &-close {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: $text-secondary;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        svg {
+          font-size: 1.4rem;
+        }
+
+        &:active {
+          background: rgba($primary-color, 0.15);
+          color: $primary-color;
+          transform: scale(0.9);
+        }
+      }
+    }
+
+    &-content {
+      @media (max-width: 991px) {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+      }
+
+      .filter-mobile__dialog-selected-filters {
+        display: none;
+
+        @media (max-width: 991px) {
+          display: flex;
+          padding: 16px 20px;
+          flex-wrap: wrap;
+          gap: 8px;
+          background: rgba(255, 255, 255, 0.02);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .selected-filters__item {
+          font-size: 0.85rem;
+          color: $text-secondary;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 4px 12px;
+          border-radius: 50px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          &-value {
+            color: $primary-color;
+            font-weight: 600;
+            margin-left: 4px;
+          }
+
+          &--clear {
+            color: $danger-color;
+            border-color: rgba($danger-color, 0.2);
+            background: rgba($danger-color, 0.05);
+            cursor: pointer;
+
+            &:active {
+              background: rgba($danger-color, 0.1);
+            }
+          }
+        }
+      }
+
+      .filter-sidebar {
+        @media (max-width: 991px) {
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          box-shadow: none;
+          border-radius: 0;
+
+          .filter-reset-block {
+            display: none;
+          }
+        }
+      }
+    }
+
+    &-footer {
+      display: none;
+
+      @media (max-width: 991px) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 20px;
+        background: $surface-color;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      &-button {
+        height: 48px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        outline: none;
+
+        &--reset {
+          background: rgba(255, 255, 255, 0.05);
+          color: $text-secondary;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+
+          &:active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(1px);
+          }
+        }
+
+        &--apply {
+          background: $primary-color;
+          color: white;
+          box-shadow: 0 4px 15px rgba($primary-color, 0.3);
+
+          &:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 0 2px 8px rgba($primary-color, 0.2);
+          }
+        }
+      }
+    }
+  }
+
+  // Desktop sticky sidebar and customized scrollbar
+  @media (min-width: 992px) {
+    position: sticky;
+    top: 148px;
+    max-height: calc(100vh - 170px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    padding-right: 4px;
+
+    scrollbar-width: thin;
+    scrollbar-color: rgba($text-secondary, 0.2) transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: rgba($text-secondary, 0.2);
+    }
+  }
+}
+
+.filters-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2400;
+  display: none;
+
+  @media (max-width: 991px) {
+    display: block;
+  }
+}
