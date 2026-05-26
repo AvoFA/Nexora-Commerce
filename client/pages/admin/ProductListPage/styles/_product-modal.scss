@@ -1,22 +1,6 @@
-.admin-modal-card.product-form-modal-card {
-  width: min(760px, calc(100vw - 32px));
+@import '@/styles/variables';
 
-  @media (min-width: 800px) {
-    width: min(1200px, calc(100vw - 48px));
-  }
 
-  .admin-modal-header {
-    padding: 18px 24px 14px;
-  }
-
-  .admin-modal-content {
-    padding: 16px 24px;
-  }
-
-  .admin-modal-actions {
-    padding: 16px 24px;
-  }
-}
 
 .product-modal-subtitle {
   margin: 6px 0 0;
@@ -25,38 +9,57 @@
   line-height: 1.4;
 }
 
-.product-form-grid-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+input[type="number"] {
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0;
+  }
+  -moz-appearance: textfield !important;
+}
+
+.product-basic-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
 
   @media (min-width: 800px) {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1.35fr 1fr;
     gap: 32px;
-    align-items: start;
+    align-items: stretch;
   }
 }
-
-.product-form-left-col {
+.product-basic-fields {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
-.product-form-right-col {
+.product-basic-media {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  height: auto;
-}
+  height: 100%;
 
-.product-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+  .product-image-field {
+    height: 100%;
+    padding: 16px;
+    background: rgba($bg-color, 0.18);
+    border: 1px solid rgba($border-color, 0.45);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 
+    .image-upload-zone {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+    }
+  }
+}
 .product-form-grid {
   display: grid;
   gap: 14px;
@@ -83,16 +86,11 @@
   border-radius: 12px;
 }
 
-.product-image-field {
-  padding: 16px;
-  background: rgba($bg-color, 0.18);
-  border: 1px solid rgba($border-color, 0.45);
-  border-radius: 12px;
+.product-attributes-header {
   display: flex;
-  flex-direction: column;
-}
-
-.product-form-section-heading {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 14px;
 
   h6 {
@@ -108,6 +106,53 @@
     font-size: 0.82rem;
     line-height: 1.4;
   }
+}
+
+.product-add-attribute-btn.MuiButton-root {
+  flex-shrink: 0;
+  text-transform: none;
+  font-weight: 700;
+}
+
+.product-attributes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-attribute-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 10px;
+
+  .MuiInputBase-input.MuiOutlinedInput-input {
+    font-size: 0.85rem;
+    padding: 8.5px 14px;
+  }
+
+  .MuiInputLabel-root.MuiInputLabel-outlined {
+    font-size: 0.85rem;
+    transform: translate(14px, 9px) scale(1);
+
+    &.MuiInputLabel-shrink {
+      transform: translate(14px, -9px) scale(0.75);
+    }
+  }
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr 40px;
+
+    .mui-form-control:first-child {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.product-remove-attribute-btn.MuiIconButton-root {
+  width: 34px;
+  height: 34px;
+  padding: 0;
 }
 
 .image-upload-zone {
@@ -176,56 +221,218 @@
   margin-top: 14px !important;
 }
 
-.product-attributes-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 14px;
+.product-desc-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  align-items: stretch;
 
-  h6 {
-    margin: 0 0 4px;
-    color: $text-color;
-    font-size: 0.98rem;
-    font-weight: 750;
-  }
-
-  p {
-    margin: 0;
-    color: rgba($text-secondary, 0.78);
-    font-size: 0.82rem;
-    line-height: 1.4;
+  @media (min-width: 800px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
   }
 }
 
-.product-add-attribute-btn {
-  flex-shrink: 0;
-  text-transform: none !important;
-  font-weight: 700 !important;
-}
-
-.product-attributes-list {
+.product-desc-editor-col,
+.product-desc-preview-col {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.product-attribute-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 40px;
-  align-items: center;
-  gap: 10px;
+.product-field-title {
+  font-weight: 650 !important;
+  color: rgba($text-color, 0.85);
+  font-size: 0.88rem !important;
+}
 
-  @media (max-width: 680px) {
-    grid-template-columns: 1fr 40px;
+.product-markdown-editor {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba($border-color, 0.5);
+  background: rgba($bg-color, 0.1);
 
-    .mui-form-control:first-child {
-      grid-column: 1 / -1;
+  .markdown-toolbar {
+    display: flex;
+    gap: 4px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba($border-color, 0.3);
+
+    .markdown-toolbar-btn {
+      min-width: 32px;
+      padding: 4px;
+      color: rgba(255, 255, 255, 0.65) !important;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+      }
+    }
+  }
+
+  .markdown-editor-input {
+    border-radius: 0;
+    font-family: 'Fira Code', 'Courier New', Courier, monospace;
+    font-size: 0.88rem;
+    color: $text-color;
+    background: transparent;
+
+    fieldset {
+      border: none !important;
+    }
+
+    textarea {
+      line-height: 1.6;
     }
   }
 }
 
-.product-remove-attribute-btn {
-  width: 38px;
-  height: 38px;
+.product-description-preview-pane {
+  flex-grow: 1;
+  padding: 18px 22px;
+  border: 1px solid rgba($border-color, 0.5);
+  border-radius: 8px;
+  background: rgba(11, 11, 11, 0.25) !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  min-height: 440px;
+  max-height: 480px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+
+  .preview-pane-empty {
+    opacity: 0.45;
+    font-style: italic;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+.admin-modal-segmented-tabs {
+  padding: 10px 24px 14px;
+  border-bottom: 1px solid rgba($border-color, 0.45);
+  background: rgba(255, 255, 255, 0.005);
+}
+
+.segmented-tabs-container {
+  display: inline-flex;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba($border-color, 0.45);
+  border-radius: 10px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (min-width: 600px) {
+    width: auto;
+  }
+}
+
+.segmented-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: $text-secondary;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 650;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  flex: 1;
+
+  @media (min-width: 600px) {
+    flex: none;
+  }
+
+  svg {
+    font-size: 1.15rem;
+    opacity: 0.75;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover {
+    color: $text-color;
+    background: rgba(255, 255, 255, 0.035);
+
+    svg {
+      opacity: 0.95;
+    }
+  }
+
+  &.is-active {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    svg {
+      color: #60a5fa;
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    background: rgba($primary-color, 0.08);
+  }
+}
+
+.centered-editor-container {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.specs-search-bar {
+  .MuiInputBase-root {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba($border-color, 0.45);
+    border-radius: 8px;
+
+    &:hover {
+      border-color: rgba($primary-color, 0.35);
+    }
+    &.Mui-focused {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.12);
+    }
+  }
+
+  fieldset {
+    border: none !important;
+  }
+}
+
+.specs-group-card {
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    border-color: rgba($border-color, 0.8) !important;
+  }
+
+  .specs-group-header {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.035) !important;
+    }
+
+    .MuiInputBase-root::before,
+    .MuiInputBase-root::after {
+      display: none !important;
+    }
+  }
 }

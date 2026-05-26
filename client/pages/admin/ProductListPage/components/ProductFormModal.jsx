@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Backdrop, Box, Fade, Modal, Typography } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
-import ProductBasicInfoSection from './ProductBasicInfoSection.jsx';
-import ProductCategoryBrandSection from './ProductCategoryBrandSection.jsx';
-import ProductPricingStockSection from './ProductPricingStockSection.jsx';
-import ProductMediaSection from './ProductMediaSection.jsx';
-import ProductAttributesSection from './ProductAttributesSection.jsx';
-import ProductDescriptionSection from './ProductDescriptionSection.jsx';
+import {
+  InfoOutlined as InfoIcon,
+  DescriptionOutlined as DescIcon,
+  TuneOutlined as SpecsIcon,
+  Close as CloseIcon,
+} from '@mui/icons-material';
+import ProductBasicTab from './tabs/ProductBasicTab.jsx';
+import ProductDescriptionTab from './tabs/ProductDescriptionTab.jsx';
+import ProductSpecsTab from './tabs/ProductSpecsTab.jsx';
 
 const ProductFormModal = ({
   open,
@@ -21,14 +23,25 @@ const ProductFormModal = ({
   onClose,
   onChange,
   onSave,
-  onAddAttribute,
-  onUpdateAttribute,
-  onRemoveAttribute,
+  onAddGroup,
+  onRemoveGroup,
+  onGroupNameChange,
+  onAddItem,
+  onRemoveItem,
+  onItemChange,
   onAddBrandClick,
   onCancelAddBrand,
   onAddNewBrand,
   onNewBrandNameChange,
 }) => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    if (open) {
+      setActiveTab(0);
+    }
+  }, [open]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     onSave();
@@ -49,7 +62,7 @@ const ProductFormModal = ({
     >
       <Fade in={open} timeout={250}>
         <Box className="admin-modal-wrapper">
-          <div className="admin-modal-card admin-solid-card product-form-modal-card">
+          <div className="admin-modal-card admin-solid-card product-form-modal-card tabbed-layout-card">
             <button onClick={onClose} className="admin-modal-close-btn">
               <CloseIcon />
             </button>
@@ -59,8 +72,37 @@ const ProductFormModal = ({
                 {editingId ? 'Редагувати товар' : 'Додати новий товар'}
               </Typography>
               <p className="product-modal-subtitle">
-                Дані товару, ціна, наявність, зображення та характеристики.
+                Вкажіть загальні відомості, опис та характеристики товару.
               </p>
+            </div>
+
+            <div className="admin-modal-segmented-tabs">
+              <div className="segmented-tabs-container">
+                <button
+                  type="button"
+                  className={`segmented-tab-btn${activeTab === 0 ? ' is-active' : ''}`}
+                  onClick={() => setActiveTab(0)}
+                >
+                  <InfoIcon fontSize="small" />
+                  <span>Основна інформація</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented-tab-btn${activeTab === 1 ? ' is-active' : ''}`}
+                  onClick={() => setActiveTab(1)}
+                >
+                  <DescIcon fontSize="small" />
+                  <span>Опис товару</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented-tab-btn${activeTab === 2 ? ' is-active' : ''}`}
+                  onClick={() => setActiveTab(2)}
+                >
+                  <SpecsIcon fontSize="small" />
+                  <span>Характеристики</span>
+                </button>
+              </div>
             </div>
 
             <div className="admin-modal-content">
@@ -68,21 +110,14 @@ const ProductFormModal = ({
                 id="product-form"
                 component="form"
                 onSubmit={handleSubmit}
-                className="product-form-grid-layout"
+                className="product-form-tabbed-layout"
               >
-                <div className="product-form-left-col">
-                  <ProductBasicInfoSection
-                    name={formData.name}
-                    error={errors.name}
-                    onChange={onChange}
-                  />
-
-                  <ProductCategoryBrandSection
-                    category={formData.category}
-                    brand={formData.brand}
+                {activeTab === 0 && (
+                  <ProductBasicTab
+                    formData={formData}
+                    errors={errors}
                     categories={categories}
                     availableBrands={availableBrands}
-                    errors={errors}
                     showAddBrandField={showAddBrandField}
                     newBrandName={newBrandName}
                     onChange={onChange}
@@ -91,33 +126,26 @@ const ProductFormModal = ({
                     onAddNewBrand={onAddNewBrand}
                     onNewBrandNameChange={onNewBrandNameChange}
                   />
+                )}
 
-                  <ProductPricingStockSection
-                    price={formData.price}
-                    stock={formData.stock}
-                    errors={errors}
-                    onChange={onChange}
-                  />
-
-                  <ProductDescriptionSection
+                {activeTab === 1 && (
+                  <ProductDescriptionTab
                     description={formData.description}
                     onChange={onChange}
                   />
+                )}
 
-                  <ProductAttributesSection
+                {activeTab === 2 && (
+                  <ProductSpecsTab
                     attributes={formData.attributes}
-                    onAddAttribute={onAddAttribute}
-                    onUpdateAttribute={onUpdateAttribute}
-                    onRemoveAttribute={onRemoveAttribute}
+                    onAddGroup={onAddGroup}
+                    onRemoveGroup={onRemoveGroup}
+                    onGroupNameChange={onGroupNameChange}
+                    onAddItem={onAddItem}
+                    onRemoveItem={onRemoveItem}
+                    onItemChange={onItemChange}
                   />
-                </div>
-
-                <div className="product-form-right-col">
-                  <ProductMediaSection
-                    imageUrl={formData.imageUrl}
-                    onChange={onChange}
-                  />
-                </div>
+                )}
               </Box>
             </div>
 
