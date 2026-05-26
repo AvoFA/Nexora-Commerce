@@ -32,6 +32,7 @@ import {
   UKRAINIAN_CALENDAR_WEEKDAY_LABELS,
 } from "./checkout.constants.js";
 import { getPluralGoods, getWarehouseSummary, validateRecipientAndCity } from "./utils/checkoutValidation.js";
+import { formatPrice } from "../../utils/formatPrice.js";
 import {
   getDateByOffset,
   getDateParts,
