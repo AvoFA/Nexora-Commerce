@@ -348,6 +348,47 @@
     flex-direction: column;
     gap: 12px;
 
+    .description-outer-container {
+      transition: max-height 0.3s ease;
+
+      &.is-collapsed {
+        max-height: 280px;
+        overflow: hidden;
+      }
+    }
+
+    .desc-toggle-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .desc-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba($surface-color, 0.4);
+      border: 1px solid rgba($border-color, 0.8);
+      color: $text-color;
+      padding: 10px 24px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba($surface-color, 0.8);
+        border-color: rgba($primary-color, 0.4);
+        color: $primary-color;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+
     .description-content {
       font-size: 1.1rem;
       line-height: 1.8;
@@ -365,6 +406,12 @@
         color: white;
         margin: 24px 0 8px;
         font-size: 1.3rem;
+      }
+
+      .rich-desc-img {
+        max-width: 100%;
+        height: auto;
+        display: block;
       }
 
       ul {

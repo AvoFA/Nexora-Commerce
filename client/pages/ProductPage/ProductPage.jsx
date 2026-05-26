@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { CheckCircle, ChevronRight, RateReview, Star, ShoppingCart } from "@mui/icons-material";
+import { CheckCircle, ChevronRight, RateReview, Star, ShoppingCart, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { Rating } from "@mui/material";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPurchaseCard from "../../components/product/ProductPurchaseCard/ProductPurchaseCard.jsx";
@@ -15,6 +15,7 @@ import ProductSpecsTable from "./ProductSpecsTable.jsx";
 import SimilarProducts from "./SimilarProducts.jsx";
 import { useProductData } from "./useProductData.js";
 import { useReviews } from "./useReviews.js";
+import { parseMarkdown } from "../../utils/markdown.js";
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -25,6 +26,23 @@ const ProductPage = () => {
   // Рефи та стейт для липкої панелі (Senior approach)
   const mainPurchaseRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const [isDescExpanded, setIsDescExpanded] = useState(false);
+  const [hasLongDesc, setHasLongDesc] = useState(false);
+  const descRef = useRef(null);
+
+  useEffect(() => {
+    if (!product || !descRef.current) return;
+
+    const checkHeight = () => {
+      if (descRef.current) {
+        setHasLongDesc(descRef.current.scrollHeight > 280);
+      }
+    };
+
+    checkHeight();
+    const timer = setTimeout(checkHeight, 500);
+    return () => clearTimeout(timer);
+  }, [product, isLoading]);
 
   useEffect(() => {
     if (product && !isLoading) {
@@ -226,12 +244,36 @@ const ProductPage = () => {
         <div className="content-left">
           <section className="detailed-description-section">
             <h2 className="section-title">Опис товару</h2>
-            <div
-              className="description-content"
-              dangerouslySetInnerHTML={{
-                __html: product.description || "Опис відсутній",
-              }}
-            />
+            <div className={`description-outer-container ${!isDescExpanded && hasLongDesc ? "is-collapsed" : ""}`}>
+              <div
+                ref={descRef}
+                className="description-content"
+                dangerouslySetInnerHTML={{
+                  __html: parseMarkdown(product.description) || "Опис відсутній",
+                }}
+              />
+            </div>
+            {hasLongDesc && (
+              <div className="desc-toggle-container">
+                <button
+                  type="button"
+                  className="desc-toggle-btn"
+                  onClick={() => setIsDescExpanded(!isDescExpanded)}
+                >
+                  {isDescExpanded ? (
+                    <>
+                      <span>Згорнути опис</span>
+                      <ExpandLess sx={{ fontSize: "18px" }} />
+                    </>
+                  ) : (
+                    <>
+                      <span>Показати більше</span>
+                      <ExpandMore sx={{ fontSize: "18px" }} />
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </section>
 
           <ProductSpecsTable attributes={product.attributes} />
