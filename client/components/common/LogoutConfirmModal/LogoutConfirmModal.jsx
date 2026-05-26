@@ -14,7 +14,7 @@ const LogoutConfirmModal = ({ isOpen, onClose, onConfirm }) => {
       warning="Ваші списки бажань буде збережено."
       confirmText="Вийти"
       cancelText="Скасувати"
-      type="warning"
+      type="danger"
     />
   );
 };

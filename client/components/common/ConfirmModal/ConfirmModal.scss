@@ -116,13 +116,12 @@
       }
 
       &.confirm-modal-confirm-btn--danger {
-        background: rgba($danger-color, 0.1);
-        border: 1px solid rgba($danger-color, 0.25);
-        color: $danger-color;
+        background: $danger-color;
+        color: #ffffff;
+        font-weight: 600;
 
         &:not(:disabled):hover {
-          background: rgba($danger-color, 0.18);
-          border-color: rgba($danger-color, 0.4);
+          background: darken($danger-color, 8%);
         }
       }
 
@@ -138,13 +137,12 @@
       }
 
       &.confirm-modal-confirm-btn--primary {
-        background: rgba($primary-color, 0.1);
-        border: 1px solid rgba($primary-color, 0.25);
-        color: $primary-color;
+        background: $primary-color;
+        color: #ffffff;
+        font-weight: 600;
 
         &:not(:disabled):hover {
-          background: rgba($primary-color, 0.18);
-          border-color: rgba($primary-color, 0.4);
+          background: darken($primary-color, 6%);
         }
       }
     }

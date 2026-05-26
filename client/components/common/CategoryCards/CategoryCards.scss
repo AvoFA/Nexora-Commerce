@@ -11,7 +11,31 @@
     gap: 24px;
 
     @media (max-width: 768px) {
-        grid-template-columns: 1fr;
+        display: flex;
+        overflow-x: auto;
+        gap: 12px;
+        padding: 4px 0 16px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+
+        // Маска для плавного розчинення правого краю (ширша зона, щоб краще було видно наступну картку)
+        -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+        mask-image: linear-gradient(to right, black 80%, transparent 100%);
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-card {
+            // Трохи зменшив ширину, щоб третя картка більше "виглядала"
+            flex: 0 0 42%;
+            height: 120px;
+            scroll-snap-align: start;
+
+            .category-card-title {
+                font-size: 1.1rem;
+            }
+        }
     }
 }
 

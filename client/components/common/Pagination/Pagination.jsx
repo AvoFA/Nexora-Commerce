@@ -5,6 +5,7 @@ import {
   LastPage as LastPageIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
 import "./Pagination.scss";
 
@@ -53,6 +54,10 @@ const Pagination = ({
   isLoading = false,
   className = "",
   showLimitSelector = true,
+  onLoadMore,
+  hasMore = false,
+  loadMoreLabel = "Показати ще",
+  simpleMode = false,
 }) => {
   const [isLimitOpen, setIsLimitOpen] = useState(false);
 
@@ -67,122 +72,144 @@ const Pagination = ({
 
   return (
     <div className={`custom-pagination-container ${className}`}>
-      {/* ── Left: limit selector + total info ── */}
-      <div className="pagination-left">
-        {showLimitSelector && onLimitChange && (
-          <>
-            <span className="pagination-meta-label">Показувати по:</span>
-            <div className={`limit-select-wrapper ${isLimitOpen ? "is-open" : ""}`}>
-              <select
-                value={limit}
-                disabled={isLoading}
-                onMouseDown={(e) => {
-                  setIsLimitOpen((prev) => {
-                    const next = !prev;
-                    if (!next) setTimeout(() => e.target.blur(), 0);
-                    return next;
-                  });
-                }}
-                onChange={(e) => {
-                  onLimitChange?.(parseInt(e.target.value, 10));
-                  setIsLimitOpen(false);
-                  e.target.blur();
-                }}
-                onBlur={() => setIsLimitOpen(false)}
-                onKeyDown={(e) => {
-                  if (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowUp") setIsLimitOpen(true);
-                  if (e.key === "Escape" || e.key === "Enter") setIsLimitOpen(false);
-                }}
-              >
-                {limitOptions.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
-              <span className="select-chevron"><ExpandMoreIcon /></span>
-            </div>
-          </>
-        )}
-        <span className="pagination-total-info">
-          Всього: <strong>{total}</strong>{itemLabel ? ` ${itemLabel}` : ""}
-        </span>
-      </div>
-
-      {/* ── Center: page buttons ── */}
-      <div className="pagination-center">
-        <div className="pagination-actions">
-          {/* First */}
-          <button
-            type="button"
-            className="pagination-btn pagination-btn--icon"
-            onClick={() => go(1)}
-            disabled={page <= 1 || isLoading}
-            title="Перша сторінка"
-          >
-            <FirstPageIcon />
-          </button>
-
-          {/* Prev */}
-          <button
-            type="button"
-            className="pagination-btn pagination-btn--nav"
-            onClick={() => go(page - 1)}
-            disabled={page <= 1 || isLoading}
-            title="Попередня сторінка"
-          >
-            <ChevronLeftIcon />
-            <span>Назад</span>
-          </button>
-
-          {/* Page numbers */}
-          <div className="pagination-pages">
-            {pages.map((p, idx) =>
-              p === "..." ? (
-                <span key={`dots-${idx}`} className="pagination-dots">…</span>
-              ) : (
-                <button
-                  key={p}
-                  type="button"
-                  className={`pagination-page-btn${p === page ? " is-active" : ""}`}
-                  onClick={() => go(p)}
-                  disabled={isLoading}
-                  aria-current={p === page ? "page" : undefined}
-                >
-                  {p}
-                </button>
-              )
-            )}
+      {onLoadMore && hasMore && (
+        <>
+          <div className="pagination-load-more-row">
+            <button
+              type="button"
+              className="pagination-load-more-btn"
+              onClick={onLoadMore}
+              disabled={isLoading}
+            >
+              <AddIcon className="load-more-icon" />
+              <span>{isLoading ? "Завантаження..." : loadMoreLabel}</span>
+            </button>
           </div>
+        </>
+      )}
 
-          {/* Next */}
-          <button
-            type="button"
-            className="pagination-btn pagination-btn--nav"
-            onClick={() => go(page + 1)}
-            disabled={page >= totalPages || isLoading}
-            title="Наступна сторінка"
-          >
-            <span>Вперед</span>
-            <ChevronRightIcon />
-          </button>
+      <div className={`pagination-grid-row ${simpleMode ? "is-simple" : ""}`}>
+        {/* ── Left: limit selector + total info ── */}
+        {!simpleMode && (
+          <div className="pagination-left">
+            {showLimitSelector && onLimitChange && (
+              <>
+                <span className="pagination-meta-label">Показувати по:</span>
+                <div className={`limit-select-wrapper ${isLimitOpen ? "is-open" : ""}`}>
+                  <select
+                    value={limit}
+                    disabled={isLoading}
+                    onMouseDown={(e) => {
+                      setIsLimitOpen((prev) => {
+                        const next = !prev;
+                        if (!next) setTimeout(() => e.target.blur(), 0);
+                        return next;
+                      });
+                    }}
+                    onChange={(e) => {
+                      onLimitChange?.(parseInt(e.target.value, 10));
+                      setIsLimitOpen(false);
+                      e.target.blur();
+                    }}
+                    onBlur={() => setIsLimitOpen(false)}
+                    onKeyDown={(e) => {
+                      if (e.key === " " || e.key === "ArrowDown" || e.key === "ArrowUp") setIsLimitOpen(true);
+                      if (e.key === "Escape" || e.key === "Enter") setIsLimitOpen(false);
+                    }}
+                  >
+                    {limitOptions.map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                  <span className="select-chevron"><ExpandMoreIcon /></span>
+                </div>
+              </>
+            )}
+            <span className="pagination-total-info">
+              Всього: <strong>{total}</strong>{itemLabel ? ` ${itemLabel}` : ""}
+            </span>
+          </div>
+        )}
 
-          {/* Last */}
-          <button
-            type="button"
-            className="pagination-btn pagination-btn--icon"
-            onClick={() => go(totalPages)}
-            disabled={page >= totalPages || isLoading}
-            title="Остання сторінка"
-          >
-            <LastPageIcon />
-          </button>
+        {/* ── Center: page buttons ── */}
+        <div className="pagination-center">
+          <div className="pagination-actions">
+            {/* First */}
+            <button
+              type="button"
+              className="pagination-btn pagination-btn--icon"
+              onClick={() => go(1)}
+              disabled={page <= 1 || isLoading}
+              title="Перша сторінка"
+            >
+              <FirstPageIcon />
+            </button>
+
+            {/* Prev */}
+            <button
+              type="button"
+              className="pagination-btn pagination-btn--nav"
+              onClick={() => go(page - 1)}
+              disabled={page <= 1 || isLoading}
+              title="Попередня сторінка"
+            >
+              <ChevronLeftIcon />
+              <span>Назад</span>
+            </button>
+
+            {/* Page numbers */}
+            <div className="pagination-pages">
+              {pages.map((p, idx) =>
+                p === "..." ? (
+                  <span key={`dots-${idx}`} className="pagination-dots">…</span>
+                ) : (
+                  <button
+                    key={p}
+                    type="button"
+                    className={`pagination-page-btn${p === page ? " is-active" : ""}`}
+                    onClick={() => go(p)}
+                    disabled={isLoading}
+                    aria-current={p === page ? "page" : undefined}
+                  >
+                    {p}
+                  </button>
+                )
+              )}
+            </div>
+
+            {/* Next */}
+            <button
+              type="button"
+              className="pagination-btn pagination-btn--nav"
+              onClick={() => go(page + 1)}
+              disabled={page >= totalPages || isLoading}
+              title="Наступна сторінка"
+            >
+              <span>Вперед</span>
+              <ChevronRightIcon />
+            </button>
+
+            {/* Last */}
+            <button
+              type="button"
+              className="pagination-btn pagination-btn--icon"
+              onClick={() => go(totalPages)}
+              disabled={page >= totalPages || isLoading}
+              title="Остання сторінка"
+            >
+              <LastPageIcon />
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* ── Right: page counter ── */}
-      <div className="pagination-right">
-        <span className="pagination-page-info">
-          Стор. <strong>{page}</strong> / <strong>{totalPages}</strong>
-        </span>
+        {/* ── Right: page counter ── */}
+        {!simpleMode && (
+          <div className="pagination-right">
+            <span className="pagination-page-info">
+              Стор. <strong>{page}</strong> / <strong>{totalPages}</strong>
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

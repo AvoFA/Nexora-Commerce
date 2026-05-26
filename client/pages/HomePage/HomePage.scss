@@ -3,6 +3,7 @@
 
 .homepage {
   width: 100%;
+  overflow-x: hidden;
 }
 
 .home-section-heading {
@@ -105,6 +106,10 @@
 }
 
 @media (max-width: 768px) {
+  .homepage {
+    padding: 0 16px;
+  }
+
   .product-section {
     margin-top: 46px;
     padding-top: 30px;

@@ -6,23 +6,28 @@
     border-top: 1px solid $border-color;
     margin-top: 40px;
     padding: 30px 0 0 0;
-
 }
 
 .footer-content {
     display: grid;
-    grid-template-columns: 1fr; // 1 колонка на мобільних
+    grid-template-columns: 1fr;
     gap: 32px;
     margin-bottom: 32px;
 
     @media (min-width: 768px) {
-        grid-template-columns: repeat(4, 1fr); // 4 колонки
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    // ── Mobile: center everything ──
+    @media (max-width: 767px) {
+        gap: 28px;
+        text-align: center;
     }
 }
 
 .footer-logo-section {
     .footer-logo {
-        height: 40px; // Increased from 32px
+        height: 40px;
         width: auto;
         object-fit: contain;
         display: block;
@@ -30,13 +35,29 @@
     }
 
     p {
-        font-size: 0.9rem; // text-sm
-        color: $text-secondary; // text-muted-foreground
+        font-size: 0.9rem;
+        color: $text-secondary;
         margin: 0;
         line-height: 1.5;
     }
+
+    @media (max-width: 767px) {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .footer-logo {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        p {
+            max-width: 300px;
+        }
+    }
 }
 
+// ── Link columns ──
 .footer-links {
     h4 {
         font-size: 1rem;
@@ -51,7 +72,7 @@
         margin: 0;
         display: flex;
         flex-direction: column;
-        gap: 8px; // space-y-2
+        gap: 8px;
 
         li a {
             color: $text-secondary;
@@ -83,8 +104,19 @@
             }
         }
     }
+
+    @media (max-width: 767px) {
+        h4 {
+            margin-bottom: 12px;
+        }
+
+        ul {
+            align-items: center;
+        }
+    }
 }
 
+// ── Social icons ──
 .footer-social {
     h4 {
         font-size: 1rem;
@@ -119,11 +151,27 @@
             }
         }
     }
+
+    @media (max-width: 767px) {
+        h4 {
+            margin-bottom: 12px;
+        }
+
+        .social-icons {
+            justify-content: center;
+        }
+    }
 }
 
+// ── Bottom bar ──
 .footer-bottom {
     text-align: center;
     border-top: 1px solid $border-color;
     font-size: 0.9rem;
     color: $text-secondary;
+    padding: 16px 0;
+
+    p {
+        margin: 0;
+    }
 }

@@ -3,6 +3,13 @@ import { ArrowForward } from '@mui/icons-material';
 import './HeroSection.scss';
 
 const HeroSection = ({ variant = 'polish' }) => {
+  const handleCatalogClick = (e) => {
+    if (window.innerWidth <= 900) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent('openMobileCatalog'));
+    }
+  };
+
   return (
     <section
       className={`hero-section hero-section--${variant}`}
@@ -18,7 +25,7 @@ const HeroSection = ({ variant = 'polish' }) => {
             Смартфони, ноутбуки та гаджети в одному каталозі для зручного вибору.
           </p>
           <div className="hero-actions">
-            <Link to="/catalog" className="hero-button">
+            <Link to="/catalog" className="hero-button" onClick={handleCatalogClick}>
               <span>До каталогу</span>
               <ArrowForward sx={{ fontSize: '20px' }} />
             </Link>
