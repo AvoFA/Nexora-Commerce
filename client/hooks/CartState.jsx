@@ -15,21 +15,29 @@ const cartReducer = (state, action) => {
       const existingItem = state.items.find(item => item.id === itemToAdd.id);
 
       if (existingItem) {
-        // Якщо товар вже є у кошику, збільшуємо кількість
+        // Якщо товар вже є у кошику, збільшуємо кількість та обираємо його
         newItems = state.items.map(item =>
-          item.id === itemToAdd.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === itemToAdd.id ? { ...item, quantity: item.quantity + 1, selected: true } : item
         );
       } else {
-        // Якщо товару немає, додаємо його з кількістю 1
-        newItems = [...state.items, { ...itemToAdd, quantity: 1 }];
+        // Якщо товару немає, додаємо його з кількістю 1 та обраним станом
+        newItems = [...state.items, { ...itemToAdd, quantity: 1, selected: true }];
       }
-      return { 
-        ...state, 
-        items: newItems, 
+      return {
+        ...state,
+        items: newItems,
         lastAddedProductId: itemToAdd.id,
         isDrawerOpen: true,
         addedProduct: itemToAdd
       };
+    }
+
+    case 'TOGGLE_ITEM_SELECTION': {
+      const idToToggle = action.payload;
+      newItems = state.items.map(item =>
+        item.id === idToToggle ? { ...item, selected: !item.hasOwnProperty('selected') ? false : !item.selected } : item
+      );
+      return { ...state, items: newItems };
     }
 
     case 'REMOVE_ITEM': {

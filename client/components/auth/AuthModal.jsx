@@ -163,40 +163,37 @@ const AuthModal = ({ isOpen, onClose }) => {
       >
         <div className="auth-wrapper">
           <div className="auth-card">
-            <button
-              type="button"
-              className="auth-modal-close"
-              onClick={onClose}
-              aria-label="Закрити вікно авторизації"
-            >
-              <CloseIcon />
-            </button>
-
-            <div className="auth-card-header">
-              <div className="auth-title-row">
-                <div className="auth-logo-mark" aria-hidden="true">
-                  <img src="/assets/logo/nexora-symbol.svg" alt="" />
-                </div>
-                <div>
-                  <h2 className="auth-card-title" id="auth-modal-title">
-                    {tab === 'login' ? 'З поверненням!' : 'Створити акаунт'}
-                  </h2>
-                  <p className="auth-card-description" id="auth-modal-description">
-                    {tab === 'login'
-                      ? 'Увійдіть, щоб швидше оформляти замовлення.'
-                      : 'Створіть профіль для замовлень, обраного та історії.'}
-                  </p>
-                </div>
+            <div className="auth-modal-top-bar">
+              <div className="auth-logo-mark" aria-hidden="true">
+                <img src="/assets/logo/nexora-symbol.svg" alt="" />
               </div>
+              <button
+                type="button"
+                className="auth-modal-close"
+                onClick={onClose}
+                aria-label="Закрити вікно авторизації"
+              >
+                <CloseIcon />
+              </button>
             </div>
 
             {error && (
-              <div className="error-message" role="alert">
+              <div className="error-message" role="alert" style={{ marginTop: '20px', marginBottom: '0' }}>
                 {error}
               </div>
             )}
 
             <div className="auth-card-content">
+              <div className="auth-header-text">
+                <h2 className="auth-card-title" id="auth-modal-title">
+                  {tab === 'login' ? 'З поверненням!' : 'Створити акаунт'}
+                </h2>
+                <p className="auth-card-description" id="auth-modal-description">
+                  {tab === 'login'
+                    ? 'Увійдіть, щоб швидше оформляти замовлення.'
+                    : 'Створіть профіль для замовлень, обраного та історії.'}
+                </p>
+              </div>
               <div
                 id="auth-panel-login"
                 className={`auth-form ${tab === 'login' ? 'active' : ''}`}

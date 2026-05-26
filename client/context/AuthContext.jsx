@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useReducer, useCallback } from 'react';
+import { API_BASE_URL } from '../config/api.js';
 import { getWishlist } from '../services/wishlistService.js';
 
 const initialState = {
@@ -85,24 +86,49 @@ export const AuthProvider = ({ children }) => {
     const user = localStorage.getItem('user');
     const wishlistProductIds = localStorage.getItem('wishlistProductIds');
 
-    if (token && user) {
-      try {
-        const parsedUser = JSON.parse(user);
-        const parsedWishlistProductIds = wishlistProductIds ? JSON.parse(wishlistProductIds) : [];
+    const initializeAuth = async () => {
+      if (token && user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          const parsedWishlistProductIds = wishlistProductIds ? JSON.parse(wishlistProductIds) : [];
 
-        dispatch({
-          type: AuthActionTypes.LOGIN_SUCCESS,
-          payload: {
-            user: parsedUser,
-            wishlistProductIds: parsedWishlistProductIds
+          // Pre-load with local data
+          dispatch({
+            type: AuthActionTypes.LOGIN_SUCCESS,
+            payload: {
+              user: parsedUser,
+              wishlistProductIds: parsedWishlistProductIds
+            }
+          });
+
+          // Verify and update with fresh data from server
+          const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+
+          const data = await response.json();
+          if (data.success) {
+            updateUserData(data.user);
+            if (data.user.wishlistProductIds) {
+              updateWishlistProductIds(data.user.wishlistProductIds);
+            }
           }
-        });
-      } catch (error) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('wishlistProductIds');
+        } catch (error) {
+          console.error('Auth initialization error:', error);
+          // If token is invalid or server error, we might want to logout
+          // but for now just clear local storage if it's a parsing error
+          if (error instanceof SyntaxError) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('wishlistProductIds');
+          }
+        }
       }
-    }
+    };
+
+    initializeAuth();
   }, []);
 
   const saveToLocalStorage = (user, token, wishlistProductIds = []) => {
@@ -147,7 +173,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AuthActionTypes.SET_ERROR, payload: null });
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +224,7 @@ export const AuthProvider = ({ children }) => {
     dispatch({ type: AuthActionTypes.SET_ERROR, payload: null });
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

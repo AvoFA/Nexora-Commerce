@@ -178,3 +178,152 @@
     border-bottom-color: #ef4444;
   }
 }
+
+// Помічники для адаптивності
+.mobile-only {
+  @media (min-width: 901px) {
+    display: none;
+  }
+}
+
+.desktop-only {
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+@mixin hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+.hide-scrollbar {
+  @include hide-scrollbar;
+}
+
+// ─── Calm & Premium Sonner Toasts ───────────────────────────────────────────
+// We use a clean approach without !important by relying on Sonner's 'unstyled' prop.
+
+.sonner-toast-premium {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: min(340px, calc(100vw - 32px));
+  padding: 16px;
+
+  background: rgba($card-bg, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+  color: $text-color;
+  transition: all 0.3s ease;
+  animation: sonner-premium-in 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+
+  &[data-type="success"] {
+    border-color: rgba($success-color, 0.2);
+    .sonner-toast-icon {
+      background: rgba($success-color, 0.15);
+      color: $success-color;
+    }
+  }
+
+  &[data-type="error"] {
+    border-color: rgba($danger-color, 0.2);
+    .sonner-toast-icon {
+      background: rgba($danger-color, 0.15);
+      color: $danger-color;
+    }
+  }
+
+  &[data-type="warning"] {
+    border-color: rgba($warning-color, 0.2);
+    .sonner-toast-icon {
+      background: rgba($warning-color, 0.15);
+      color: $warning-color;
+    }
+  }
+}
+
+.sonner-toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  padding-right: 20px;
+}
+
+.sonner-toast-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: $text-color;
+}
+
+.sonner-toast-description {
+  font-size: 0.84rem;
+  color: $text-secondary;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.sonner-toast-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba($primary-color, 0.15);
+  color: $primary-color;
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.sonner-toast-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: rgba($text-secondary, 0.5);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: $text-color;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@keyframes sonner-premium-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

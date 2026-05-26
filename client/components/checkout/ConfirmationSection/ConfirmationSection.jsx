@@ -16,7 +16,6 @@ const ConfirmationSection = ({
 }) => (
   <div className="step-section-wrapper">
     <div className="checkout-card confirmation-card">
-      <h2>Підтвердження замовлення</h2>
       <div className="card-content confirmation-vertical-list">
         <div className="confirmation-row">
           <div className="row-left">

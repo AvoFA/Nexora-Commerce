@@ -31,7 +31,7 @@ const RecipientSection = ({
 
   return (
     <div className="checkout-card">
-      <h2>Заповніть інформацію по доставці</h2>
+      <h2>Отримувач та місто</h2>
       <div className="card-content" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <div className={`info-preview-card city-preview-card ${errors.city ? "has-error" : ""}`} onClick={onOpenCityModal} style={{ cursor: "pointer" }}>
           <div className="preview-content">
@@ -59,7 +59,8 @@ const RecipientSection = ({
                 {surname ? `${surname} ` : ""}{name}{patronymic ? ` ${patronymic}` : ""}
               </span>
               <span className="preview-subtext" style={{ color: "var(--text-secondary)", marginTop: "2px", display: "block" }}>
-                {phone || "Немає телефону"} {email ? `· ${email}` : ""}
+                <div>{phone || "Немає телефону"}</div>
+                {email && <div>{email}</div>}
               </span>
             </div>
             <button
@@ -74,7 +75,7 @@ const RecipientSection = ({
             </button>
           </div>
         ) : (
-          <div style={{ padding: "16px 20px", background: "rgba(255,255,255,0.01)", border: "1px solid rgba(255,255,255,0.05)", borderRadius: "8px" }}>
+          <div className="recipient-edit-form-wrap">
             <div className="form-grid">
               <div className="form-group">
                 <label htmlFor="phone">Номер телефону *</label>

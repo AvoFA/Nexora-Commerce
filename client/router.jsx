@@ -83,14 +83,22 @@ const SiteLayout = () => {
     >
       <Toaster
         position="top-right"
+        expand={false}
         theme="dark"
-        style={{
-          top: "85px",
-          right: "24px"
-        }}
+        closeButton
+        unstyled={true}
         toastOptions={{
+          classNames: {
+            toast: 'sonner-toast-premium',
+            title: 'sonner-toast-title',
+            description: 'sonner-toast-description',
+            icon: 'sonner-toast-icon',
+            closeButton: 'sonner-toast-close',
+            content: 'sonner-toast-content'
+          },
           style: {
-            width: "fit-content"
+            top: "85px",
+            right: "24px"
           }
         }}
       />
@@ -119,9 +127,18 @@ const AdminLayoutWithToaster = () => {
       {/* Toast для адмін-панелі */}
       <Toaster
         position="top-right"
-        theme="dark"
         closeButton
-        richColors
+        unstyled={true}
+        toastOptions={{
+          classNames: {
+            toast: 'sonner-toast-premium',
+            title: 'sonner-toast-title',
+            description: 'sonner-toast-description',
+            icon: 'sonner-toast-icon',
+            closeButton: 'sonner-toast-close',
+            content: 'sonner-toast-content'
+          }
+        }}
       />
       <AdminLayout />
     </>
@@ -196,4 +213,3 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
-
