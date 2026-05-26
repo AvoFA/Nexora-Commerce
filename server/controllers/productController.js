@@ -4,6 +4,7 @@ const Product = require('../models/Product');
 const recommendationService = require('../services/recommendations/similarProductsService');
 
 // ... (rest of imports)
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // Get similar products for recommendations
 const getSimilarProducts = async (req, res) => {
@@ -29,13 +30,23 @@ const getProducts = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 100;
     const skip = (page - 1) * limit;
+    const search = req.query.search || '';
 
-    const products = await Product.find({})
+    const query = {};
+    if (search) {
+      const safeSearch = escapeRegExp(search.trim());
+      query.$or = [
+        { name: { $regex: safeSearch, $options: 'i' } },
+        { description: { $regex: safeSearch, $options: 'i' } }
+      ];
+    }
+
+    const products = await Product.find(query)
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip);
 
-    const total = await Product.countDocuments();
+    const total = await Product.countDocuments(query);
 
     res.json({
       success: true,

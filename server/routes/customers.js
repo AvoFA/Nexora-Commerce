@@ -6,6 +6,7 @@ const { authenticateToken, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 const adminOrModerator = requireRole('admin', 'moderator');
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // GET /api/customers/stats - Get customer workspace stats
 router.get('/stats', authenticateToken, adminOrModerator, async (req, res) => {
@@ -129,7 +130,7 @@ router.get('/', authenticateToken, adminOrModerator, async (req, res) => {
     }
 
     if (search) {
-      const searchRegex = new RegExp(search.trim(), 'i');
+      const searchRegex = new RegExp(escapeRegExp(search.trim()), 'i');
       matchStage.$or = [
         { name: searchRegex },
         { surname: searchRegex },
