@@ -222,6 +222,10 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 10px;
+
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .store-compact-btn {
@@ -277,6 +281,10 @@
   display: flex;
   gap: 10px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding-bottom: 4px;
   scrollbar-width: none; // Приховуємо scrollbar
 
@@ -330,4 +338,3 @@
     }
   }
 }
-

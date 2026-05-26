@@ -39,9 +39,9 @@ export const STORES = [
 
 export const DELIVERY_PRICES = {
   PICKUP: "Безкоштовно",
-  BRANCH: "1 ₴",
+  BRANCH: "75 ₴",
   COURIER: "199 ₴",
-  COURIER_NOVA_POSHTA: "329 ₴",
+  COURIER_NOVA_POSHTA: "249 ₴",
 };
 
 export const UKRAINIAN_MONTH_LABELS = [

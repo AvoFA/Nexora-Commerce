@@ -5,6 +5,9 @@
   gap: 10px;
   align-items: stretch;
   margin-top: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 760px) {
     grid-template-columns: 1fr;
@@ -19,8 +22,12 @@
   display: flex;
   gap: 8px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 2px;
   scrollbar-width: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 
   &::-webkit-scrollbar {
     display: none;
@@ -293,4 +300,3 @@
     cursor: not-allowed;
   }
 }
-
