@@ -20,7 +20,7 @@
 
 .cmp-sticky-stack {
   position: sticky;
-  top: var(--navbar-height, 64px);
+  top: var(--navbar-height, 80px);
   z-index: 30;
   background: $card-bg;
   border-radius: 16px 16px 0 0;
