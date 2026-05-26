@@ -1,8 +1,9 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../config/api.js';
+import { getAdminToken } from '../utils/authStorage.js';
 
 const getAdminHeaders = () => ({
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
+  Authorization: `Bearer ${getAdminToken()}`
 });
 
 // Підставляємо замість _id звичайний id
@@ -20,7 +21,6 @@ const normalizeProduct = (product) => {
 // Отримуємо всі товари для головної сторінки
 export const getProducts = async () => {
   try {
-    console.log("Завантажую товари із сервера...");
     const response = await fetch(`${API_BASE_URL}/products`);
 
     if (!response.ok) {
@@ -28,12 +28,10 @@ export const getProducts = async () => {
     }
 
     const data = await response.json();
-    console.log(`Отримав ${data.data.length} товарів`);
-
     return data.data.map(normalizeProduct);
 
   } catch (error) {
-    console.warn("Не вдалося завантажити товари:", error.message);
+    console.warn("[ProductService] Не вдалося завантажити товари:", error.message);
     return [];
   }
 };
@@ -41,7 +39,6 @@ export const getProducts = async () => {
 // Знаходимо товар за його ID
 export const getProductById = async (id) => {
   try {
-    console.log("Шукаю товар з ID:", id);
     const response = await fetch(`${API_BASE_URL}/products/${id}`);
 
     if (!response.ok) {
@@ -49,11 +46,10 @@ export const getProductById = async (id) => {
     }
 
     const data = await response.json();
-    console.log(`Знайшов товар: ${data.data.name}`);
     return normalizeProduct(data.data);
 
   } catch (error) {
-    console.warn("Не вдалося знайти товар:", error.message);
+    console.warn("[ProductService] Не вдалося знайти товар:", error.message);
     throw new Error('Товар не знайдено - проблема з сервером');
   }
 };
@@ -133,5 +129,22 @@ export const deleteProduct = async (id) => {
   } catch (error) {
     console.error("Не вдалося видалити товар:", error);
     throw error;
+  }
+};
+
+// Пошук товарів за запитом
+export const searchProducts = async (query) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/products?search=${encodeURIComponent(query)}`);
+
+    if (!response.ok) {
+      throw new Error(`Помилка сервера: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.data.map(normalizeProduct);
+  } catch (error) {
+    console.warn("[ProductService] Помилка при пошуку товарів:", error.message);
+    return [];
   }
 };

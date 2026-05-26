@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../config/api.js';
+import { buildQueryString } from '../utils/apiHelpers.js';
 
 const getAuthHeaders = (token) => ({
   'Content-Type': 'application/json',
@@ -48,16 +49,15 @@ export const getMyOrders = async (token) => {
 };
 
 export const getAdminOrders = async (token, params = {}) => {
-  const query = new URLSearchParams();
-  if (params.page) query.append('page', params.page);
-  if (params.limit) query.append('limit', params.limit);
-  if (params.status) query.append('status', params.status);
-  if (params.cancelledBy) query.append('cancelledBy', params.cancelledBy);
-  if (params.search) query.append('search', params.search);
-  if (params.sort) query.append('sort', params.sort);
-  if (params.customer) query.append('customer', params.customer);
-
-  const queryString = query.toString() ? `?${query.toString()}` : '';
+  const queryString = buildQueryString({
+    page: params.page,
+    limit: params.limit,
+    status: params.status,
+    cancelledBy: params.cancelledBy,
+    search: params.search,
+    sort: params.sort,
+    customer: params.customer
+  });
 
   const response = await fetch(`${API_BASE_URL}/orders/admin${queryString}`, {
     headers: getAuthHeaders(token)

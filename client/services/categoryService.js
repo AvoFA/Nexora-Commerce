@@ -1,9 +1,10 @@
 // Сервіс для роботи з категоріями
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../config/api.js';
+import { getAdminToken } from '../utils/authStorage.js';
 
 const getAdminHeaders = () => ({
   'Content-Type': 'application/json',
-  Authorization: `Bearer ${localStorage.getItem('adminToken') || ''}`
+  Authorization: `Bearer ${getAdminToken()}`
 });
 
 const normalizeCategory = (category) => ({

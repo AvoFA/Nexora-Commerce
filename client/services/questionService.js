@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../config/api.js';
+import { buildQueryString } from '../utils/apiHelpers.js';
 
 const getAuthHeaders = (token) => ({
   'Content-Type': 'application/json',
@@ -56,14 +57,7 @@ export const getUserQuestions = async (token) => {
 };
 
 export const getAdminQuestions = async (token, params = {}) => {
-  const queryParams = new URLSearchParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      queryParams.append(key, value);
-    }
-  });
-
-  const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+  const queryString = buildQueryString(params);
   const response = await fetch(`${API_BASE_URL}/questions/admin${queryString}`, {
     headers: getAuthHeaders(token)
   });
