@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import GridViewIcon from "@mui/icons-material/GridView";
 import MenuIcon from "@mui/icons-material/Menu";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -9,6 +9,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BalanceIcon from "@mui/icons-material/Balance";
 import CloseIcon from "@mui/icons-material/Close";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import HistoryIcon from "@mui/icons-material/History";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
@@ -18,10 +19,17 @@ import { useAuth } from "../../../context/AuthContext";
 import { useLogoutFlow } from "../../../hooks/useLogoutFlow.js";
 import { useCompare } from "../../../hooks/useCompare";
 import MegaMenu from "./MegaMenu.jsx";
+import WishlistTab from "../../../pages/AccountPage/tabs/WishlistTab.jsx";
 import { formatPrice } from "../../../utils/formatPrice.js";
+import SearchIcon from "@mui/icons-material/Search";
+import SearchBar from "../../product/Search/SearchBar.jsx";
+import MobileSearchDrawer from "../../product/Search/MobileSearchDrawer.jsx";
+import AccountDropdown from "./components/AccountDropdown.jsx";
+import MobileBottomNav from "./components/MobileBottomNav.jsx";
+import MobileProfileDrawer from "./components/MobileProfileDrawer.jsx";
 import "./Navbar.scss";
 
-const accountLinks = [
+export const accountLinks = [
   {
     to: "/account/orders",
     label: "Мої замовлення",
@@ -49,7 +57,7 @@ const accountLinks = [
   },
 ];
 
-const UserAvatar = ({ name, className = "" }) => {
+export const UserAvatar = ({ name, className = "" }) => {
   const initial = name ? name.charAt(0).toUpperCase() : "U";
   return (
     <div className={`user-initial-avatar ${className}`}>
@@ -59,15 +67,33 @@ const UserAvatar = ({ name, className = "" }) => {
 };
 
 const Navbar = ({ openAuth }) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
   const { state } = useCart();
   const { compareCount } = useCompare();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, wishlistProductIds } = useAuth();
+  const wishlistCount = isAuthenticated && wishlistProductIds ? wishlistProductIds.length : 0;
   const totalItems = state.items.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = state.items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [activeMobileDrawer, setActiveMobileDrawer] = useState(null); // 'catalog' | 'wishlist' | 'profile' | null
+
+  useEffect(() => {
+    if (activeMobileDrawer) {
+      document.documentElement.classList.add("body-lock-scroll");
+      document.body.classList.add("body-lock-scroll");
+    } else {
+      document.documentElement.classList.remove("body-lock-scroll");
+      document.body.classList.remove("body-lock-scroll");
+    }
+    return () => {
+      document.documentElement.classList.remove("body-lock-scroll");
+      document.body.classList.remove("body-lock-scroll");
+    };
+  }, [activeMobileDrawer]);
 
   const closeMegaMenu = () => {
     setIsMegaMenuOpen(false);
@@ -77,6 +103,7 @@ const Navbar = ({ openAuth }) => {
     closeMegaMenu();
     setIsMenuOpen(false);
     setIsAccountDropdownOpen(false);
+    setActiveMobileDrawer(null);
   };
 
   const {
@@ -89,14 +116,25 @@ const Navbar = ({ openAuth }) => {
       setIsMenuOpen(false);
       closeMegaMenu();
       setIsAccountDropdownOpen(false);
+      setActiveMobileDrawer(null);
     },
   });
+
+  useEffect(() => {
+    const handleOpenCatalogEvent = () => {
+      setActiveMobileDrawer('catalog');
+    };
+
+    window.addEventListener('openMobileCatalog', handleOpenCatalogEvent);
+    return () => window.removeEventListener('openMobileCatalog', handleOpenCatalogEvent);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         closeMegaMenu();
         setIsAccountDropdownOpen(false);
+        setActiveMobileDrawer(null);
       }
     };
 
@@ -104,20 +142,25 @@ const Navbar = ({ openAuth }) => {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    setActiveMobileDrawer(null);
+    setIsMenuOpen(false);
+    setIsMegaMenuOpen(false);
+  }, [location]);
+
   return (
-    <header className="navbar">
-      <div className="container">
+    <>
+      <header className="navbar">
+        <div className="container">
         <div className="navbar-container">
           <div className="navbar-logo">
             <Link to="/home" onClick={handleLinkClick}>
-              <img src="/assets/logo/nexora-full.svg" alt="Nexora" className="logo-img" />
+              <img src="/assets/logo/nexora-full.svg" alt="Nexora" className="logo-img logo-desktop" />
+              <img src="/assets/logo/nexora-symbol.svg" alt="Nexora" className="logo-img logo-mobile" />
             </Link>
           </div>
 
           <nav className="navbar-nav">
-            <Link to="/home" className="nav-link" onClick={handleLinkClick}>
-              Головна
-            </Link>
             <button
               type="button"
               className={`nav-link-button${isMegaMenuOpen ? " is-active" : ""}`}
@@ -128,12 +171,29 @@ const Navbar = ({ openAuth }) => {
               {isMegaMenuOpen ? <CloseIcon /> : <GridViewIcon />}
               <span>Каталог</span>
             </button>
-            <Link to="/about" className="nav-link" onClick={handleLinkClick}>
-              Про нас
-            </Link>
           </nav>
 
+          <SearchBar />
+
+          <div
+            className="mobile-search-header-trigger"
+            onClick={() => setActiveMobileDrawer('search')}
+          >
+            <span className="mobile-search-header-placeholder">Я шукаю...</span>
+            <div className="mobile-search-header-icon-btn">
+              <SearchIcon style={{ fontSize: 20 }} />
+            </div>
+          </div>
+
           <div className="navbar-actions">
+            <button
+              className="mobile-search-trigger"
+              onClick={() => setActiveMobileDrawer('search')}
+              aria-label="Пошук товарів"
+            >
+              <SearchIcon />
+            </button>
+
             <button
               className="action-button hamburger-button"
               onClick={() => setIsMenuOpen(true)}
@@ -145,7 +205,7 @@ const Navbar = ({ openAuth }) => {
             <div className="desktop-actions desktop-only">
               {isAuthenticated ? (
                 <>
-                  <div 
+                  <div
                     className={`account-menu-wrapper ${isAccountDropdownOpen ? 'is-open' : ''}`}
                     onMouseEnter={() => setIsAccountDropdownOpen(true)}
                     onMouseLeave={() => setIsAccountDropdownOpen(false)}
@@ -154,37 +214,13 @@ const Navbar = ({ openAuth }) => {
                       <UserAvatar name={user?.name} className="desktop-user-avatar-icon" />
                       <span>Кабінет</span>
                     </Link>
-                    <div className={`account-dropdown ${isAccountDropdownOpen ? 'is-visible' : ''}`} aria-label="Швидкі переходи кабінету">
-                      <div className="account-dropdown-user">
-                        <UserAvatar name={user?.name} className="dropdown-user-avatar" />
-                        <div>
-                          <strong>{user?.name || "Користувач"}</strong>
-                          <span>{user?.email}</span>
-                        </div>
-                      </div>
-                      {accountLinks.map(({ to, label, icon: Icon }) => (
-                        <Link 
-                          key={to} 
-                          to={to} 
-                          className="account-dropdown-link"
-                          onClick={handleLinkClick}
-                        >
-                          <Icon />
-                          <span>{label}</span>
-                        </Link>
-                      ))}
-                      <button
-                        type="button"
-                        className="account-dropdown-link account-dropdown-logout"
-                        onClick={() => {
-                          handleLogoutClick();
-                          setIsAccountDropdownOpen(false);
-                        }}
-                      >
-                        <ExitToAppIcon />
-                        <span>Вийти</span>
-                      </button>
-                    </div>
+                    <AccountDropdown
+                      isAccountDropdownOpen={isAccountDropdownOpen}
+                      user={user}
+                      handleLinkClick={handleLinkClick}
+                      handleLogoutClick={handleLogoutClick}
+                      setIsAccountDropdownOpen={setIsAccountDropdownOpen}
+                    />
                   </div>
                   <Link to="/account/wishlist" className="action-button" onClick={handleLinkClick} title="Мої улюблені">
                     <FavoriteIcon />
@@ -245,6 +281,7 @@ const Navbar = ({ openAuth }) => {
       </div>
 
       {isMegaMenuOpen && <MegaMenu mode="desktop" onClose={closeMegaMenu} />}
+      </header>
 
       {isMenuOpen && (
         <div className="mobile-menu-overlay open" onClick={() => setIsMenuOpen(false)}>
@@ -351,7 +388,69 @@ const Navbar = ({ openAuth }) => {
         onClose={handleCancelLogout}
         onConfirm={handleConfirmLogout}
       />
-    </header>
+
+      {/* Mobile Bottom Navigation Bar (Comfy style) */}
+      <MobileBottomNav
+        activeMobileDrawer={activeMobileDrawer}
+        currentPath={currentPath}
+        totalItems={totalItems}
+        wishlistCount={wishlistCount}
+        isAuthenticated={isAuthenticated}
+        handleLinkClick={handleLinkClick}
+        setActiveMobileDrawer={setActiveMobileDrawer}
+        setIsMenuOpen={setIsMenuOpen}
+        openAuth={openAuth}
+      />
+
+      {/* Hoisted Mobile Drawers to prevent containing block backdrop-filter clipping bug */}
+      <div className={`bottom-mobile-menu-tab-card${activeMobileDrawer === 'catalog' ? ' is-open' : ''}`}>
+        <div className="drawer-backdrop" onClick={() => setActiveMobileDrawer(null)} />
+        <div className="mobile-catalog-drawer-wrapper">
+          <MegaMenu mode="mobile-drawer" onClose={() => setActiveMobileDrawer(null)} />
+        </div>
+      </div>
+
+      <div className={`bottom-mobile-menu-tab-card${activeMobileDrawer === 'wishlist' ? ' is-open' : ''}`}>
+        <div className="drawer-backdrop" onClick={() => setActiveMobileDrawer(null)} />
+        <div className="mobile-catalog-drawer-wrapper is-wishlist-wrapper">
+          <div className="mobile-wishlist-panel">
+            <div className="mobile-wishlist-panel__header">
+              <h2>Обране</h2>
+              <button
+                type="button"
+                className="mobile-profile-drawer__close"
+                onClick={() => setActiveMobileDrawer(null)}
+                aria-label="Закрити обране"
+              >
+                <CloseIcon />
+              </button>
+            </div>
+            <div className="mobile-wishlist-panel__body">
+              {activeMobileDrawer === 'wishlist' && (
+                <WishlistTab variant="mobile-panel" onNavigate={handleLinkClick} />
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <MobileProfileDrawer
+        activeMobileDrawer={activeMobileDrawer}
+        setActiveMobileDrawer={setActiveMobileDrawer}
+        handleLinkClick={handleLinkClick}
+        handleLogoutClick={handleLogoutClick}
+        user={user}
+        wishlistCount={wishlistCount}
+        compareCount={compareCount}
+      />
+
+      <div className={`bottom-mobile-menu-tab-card${activeMobileDrawer === 'search' ? ' is-open' : ''}`}>
+        <div className="drawer-backdrop" onClick={() => setActiveMobileDrawer(null)} />
+        <div className="mobile-catalog-drawer-wrapper is-search-wrapper">
+          <MobileSearchDrawer onClose={() => setActiveMobileDrawer(null)} />
+        </div>
+      </div>
+    </>
   );
 };
 
