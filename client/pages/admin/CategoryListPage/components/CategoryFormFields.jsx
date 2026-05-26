@@ -1,8 +1,11 @@
-import { FormControl, TextField } from "@mui/material";
+import { FormControl, TextField, InputAdornment, IconButton } from "@mui/material";
+import { LockOutlined, LockOpenOutlined } from "@mui/icons-material";
 import CategoryAttributesManager from "./CategoryAttributesManager.jsx";
 
 const CategoryFormFields = ({
   formData,
+  isSlugLocked,
+  onToggleSlugLock,
   onFieldChange,
   onAddAttribute,
   onAttributeChange,
@@ -32,8 +35,22 @@ const CategoryFormFields = ({
               label="Системний ID (англійською)"
               value={formData.name}
               onChange={(event) => onFieldChange("name", event.target.value)}
+              disabled={isSlugLocked}
               helperText="Унікальний ідентифікатор (напр. phones)"
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={onToggleSlugLock}
+                      edge="end"
+                      title={isSlugLocked ? "Розблокувати для ручного редагування" : "Заблокувати автогенерацію"}
+                    >
+                      {isSlugLocked ? <LockOutlined fontSize="small" /> : <LockOpenOutlined fontSize="small" />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </FormControl>
         </div>

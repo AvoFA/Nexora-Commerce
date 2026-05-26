@@ -7,6 +7,8 @@ const CategoryFormModal = ({
   editingId,
   formData,
   isSaving,
+  isSlugLocked,
+  onToggleSlugLock,
   onClose,
   onSave,
   onFieldChange,
@@ -52,6 +54,8 @@ const CategoryFormModal = ({
               >
                 <CategoryFormFields
                   formData={formData}
+                  isSlugLocked={isSlugLocked}
+                  onToggleSlugLock={onToggleSlugLock}
                   onFieldChange={onFieldChange}
                   onAddAttribute={onAddAttribute}
                   onAttributeChange={onAttributeChange}

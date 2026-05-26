@@ -101,6 +101,8 @@ const CategoryListPage = () => {
         editingId={categoryForm.editingId}
         formData={categoryForm.formData}
         isSaving={categoryForm.isSaving}
+        isSlugLocked={categoryForm.isSlugLocked}
+        onToggleSlugLock={() => categoryForm.setIsSlugLocked(!categoryForm.isSlugLocked)}
         onClose={categoryForm.closeModal}
         onSave={categoryForm.handleSave}
         onFieldChange={categoryForm.handleFieldChange}
