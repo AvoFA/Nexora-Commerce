@@ -18,7 +18,7 @@
 
   // Тримаємо картку зверху, якщо показується підказка (навіть якщо ми вже навели на іншу картку)
   &:has(.wishlist-auth-tooltip.visible) {
-    z-index: 100 !important;
+    z-index: 200 !important;
   }
 
   &:hover {
@@ -186,8 +186,8 @@
 
 .wishlist-auth-tooltip {
   position: absolute;
-  top: 54px;
-  right: -90px;
+  top: 28px; // Центр кнопки серця по вертикалі
+  right: 56px; // Зліва від кнопки (10px right + 36px width + 10px gap)
   width: 236px;
   padding: 12px 14px;
   color: $text-color;
@@ -202,7 +202,7 @@
   z-index: 120;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-4px);
+  transform: translateY(-50%) translateX(8px); // Анімація зправа наліво
   pointer-events: none;
   transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
   transition-delay: 0.16s;
@@ -210,23 +210,24 @@
   &::before {
     content: '';
     position: absolute;
-    top: -7px;
-    left: 50%;
+    top: 50%;
+    right: -7px; // Виносимо на правий край
+    left: auto;
     width: 12px;
     height: 12px;
-    background: rgba($card-bg, 0.98);
-    border-left: 1px solid rgba($primary-color, 0.28);
+    background: rgba($bg-color, 0.98); // Колір правої частини градієнта
+    border-right: 1px solid rgba($primary-color, 0.28);
     border-top: 1px solid rgba($primary-color, 0.28);
-    transform: translateX(-50%) rotate(45deg);
+    transform: translateY(-50%) rotate(45deg);
   }
 
   &::after {
     content: '';
     position: absolute;
-    top: -14px;
-    left: 0;
-    width: 100%;
-    height: 14px;
+    top: 0;
+    left: 100%;
+    width: 20px; // Місток до кнопки, щоб не зникало при переведенні миші
+    height: 100%;
   }
 }
 
@@ -245,7 +246,7 @@
 .wishlist-auth-tooltip.visible {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateY(-50%) translateX(0);
   pointer-events: auto;
   transition-delay: 0s;
 }

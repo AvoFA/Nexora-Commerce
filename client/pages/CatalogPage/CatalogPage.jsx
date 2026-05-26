@@ -62,6 +62,7 @@ const CatalogPage = () => {
   // State для пагинації
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(12); // Кількість товарів на сторінці
+  const [loadedPagesRange, setLoadedPagesRange] = useState({ start: 1, end: 1 });
 
   const sortOptions = [
     { value: "priceAsc", label: "Від дешевих до дорогих" },
@@ -72,23 +73,41 @@ const CatalogPage = () => {
   useEffect(() => {
     if (categoryName) {
       setSelectedCategory(categoryName);
-      const currentCategory = availableCategories.find(
-        (cat) => cat.value === categoryName,
-      );
-      if (currentCategory) {
-        setPageTitle(currentCategory.label);
-      } else {
-        setPageTitle("Каталог товарів");
-      }
-    } else if (navbarSearchQuery) {
-      setPageSearchQuery(navbarSearchQuery);
-      setPageTitle(`Результати пошуку: "${navbarSearchQuery}"`);
     } else {
-      setPageTitle("Каталог товарів");
       setSelectedCategory("all");
+    }
+  }, [categoryName]);
+
+  useEffect(() => {
+    if (navbarSearchQuery) {
+      setPageSearchQuery(navbarSearchQuery);
+    } else {
       setPageSearchQuery("");
     }
-  }, [categoryName, navbarSearchQuery, availableCategories]);
+  }, [navbarSearchQuery]);
+
+  // Оновлює заголовок сторінки динамічно
+  useEffect(() => {
+    if (pageSearchQuery) {
+      setPageTitle(`По запиту «${pageSearchQuery}» знайшлося`);
+    } else {
+      const currentCategory = availableCategories.find(
+        (cat) => cat.value === selectedCategory,
+      );
+      const categoryLabel = currentCategory && selectedCategory !== "all"
+        ? currentCategory.label
+        : "Каталог товарів";
+
+      const selectedBrands = activeSidebarFilters?.brands || [];
+      if (selectedBrands.length > 0) {
+        const brandString = selectedBrands.join(", ");
+        const base = categoryLabel === "Каталог товарів" ? "Товари" : categoryLabel;
+        setPageTitle(`${base} ${brandString}`);
+      } else {
+        setPageTitle(categoryLabel);
+      }
+    }
+  }, [pageSearchQuery, selectedCategory, activeSidebarFilters?.brands, availableCategories]);
 
   useEffect(() => {
     if (brandQuery) {
@@ -153,6 +172,8 @@ const CatalogPage = () => {
     if (!activeSidebarFilters) return 0;
     let count = 0;
     if (activeSidebarFilters.brands?.length) count += activeSidebarFilters.brands.length;
+    if (activeSidebarFilters.memory?.length) count += activeSidebarFilters.memory.length;
+    if (activeSidebarFilters.ram?.length) count += activeSidebarFilters.ram.length;
     if (activeSidebarFilters.minPrice > 0 || activeSidebarFilters.maxPrice > 0) count += 1;
     if (activeSidebarFilters.attributes) {
       count += Object.values(activeSidebarFilters.attributes).flat().length;
@@ -166,12 +187,28 @@ const CatalogPage = () => {
   useEffect(() => {
     // Сортування блокує скрол тільки на мобільних (де воно на весь екран)
     const isMobile = window.innerWidth < 992;
+
+    if (isFiltersOpen) {
+      document.body.classList.add("filters-open");
+    } else {
+      document.body.classList.remove("filters-open");
+    }
+
+    if (isSortOpen && isMobile) {
+      document.body.classList.add("sort-open");
+    } else {
+      document.body.classList.remove("sort-open");
+    }
+
     if (isFiltersOpen || (isSortOpen && isMobile)) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
+
     return () => {
+      document.body.classList.remove("filters-open");
+      document.body.classList.remove("sort-open");
       document.body.style.overflow = "";
     };
   }, [isFiltersOpen, isSortOpen]);
@@ -179,7 +216,8 @@ const CatalogPage = () => {
 
   // Скидання сторінки на першу при зміні фільтрів
   useEffect(() => {
-    if (page !== 1) setPage(1);
+    setPage(1);
+    setLoadedPagesRange({ start: 1, end: 1 });
   }, [pageSearchQuery, selectedCategory, activeSidebarFilters, sortOrder]);
 
   // Універсальна функція обробки даних (Пошук -> Фільтр -> Сортування)
@@ -257,6 +295,8 @@ const CatalogPage = () => {
       updated.brands = updated.brands.filter((b) => b !== value);
     } else if (type === "memory") {
       updated.memory = updated.memory.filter((m) => m !== value);
+    } else if (type === "ram") {
+      updated.ram = updated.ram.filter((r) => r !== value);
     } else if (type === "price") {
       updated.minPrice = 0;
       updated.maxPrice = Infinity;
@@ -266,11 +306,9 @@ const CatalogPage = () => {
 
   // Розрахунки пагинації
   const totalPages = Math.ceil(filteredProducts.length / perPage);
-  const startIndex = (page - 1) * perPage;
-  const currentProducts = filteredProducts.slice(
-    startIndex,
-    startIndex + perPage,
-  );
+  const startIndex = (loadedPagesRange.start - 1) * perPage;
+  const endIndex = loadedPagesRange.end * perPage;
+  const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
   // СТАН - помилка
   if (error) {
@@ -329,32 +367,24 @@ const CatalogPage = () => {
             Знайдено {filteredProducts.length} товарів
           </p>
         </div>
-        <div className="catalog-header-actions">
-          <Button
-            variant="outlined"
-            className="filters-toggle-button"
-            startIcon={<FilterListIcon />}
-            onClick={() => setIsFiltersOpen(true)}
-            sx={{
-              display: "inline-flex",
-              "@media (min-width: 992px)": { display: "none" },
-            }}
-            aria-label="Open filters"
-          >
-            Фільтри
-          </Button>
-
-          <CatalogSortMenu
-            isSortOpen={isSortOpen}
-            setIsSortOpen={setIsSortOpen}
-            sortOptions={sortOptions}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            className="header-sort"
-            variant="header"
-          />
-        </div>
       </header>
+
+      <CatalogToolbar
+        pageSearchQuery={pageSearchQuery}
+        setPageSearchQuery={setPageSearchQuery}
+        isSortOpen={isSortOpen}
+        setIsSortOpen={setIsSortOpen}
+        sortOptions={sortOptions}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        setIsFiltersOpen={setIsFiltersOpen}
+        activeFiltersCount={activeFiltersCount}
+        activeSidebarFilters={activeSidebarFilters}
+        handleRemoveFilter={handleRemoveFilter}
+        handleResetFilters={handleResetFilters}
+        filteredProductsCount={filteredProducts.length}
+        currentPage={page}
+      />
 
       <div className="catalog-wrapper">
         <aside className={`catalog-sidebar ${isFiltersOpen ? "is-open" : ""}`}>
@@ -370,8 +400,8 @@ const CatalogPage = () => {
                   </div>
                 )}
               </div>
-              <div 
-                className="filter-mobile__dialog-header-close" 
+              <div
+                className="filter-mobile__dialog-header-close"
                 onClick={() => setIsFiltersOpen(false)}
               >
                 <CloseIcon />
@@ -379,7 +409,7 @@ const CatalogPage = () => {
             </div>
 
             <div className="filter-mobile__dialog-content">
-              {activeSidebarFilters && (activeSidebarFilters.brands?.length > 0 || activeSidebarFilters.memory?.length > 0 || activeSidebarFilters.minPrice > 0 || (activeSidebarFilters.maxPrice < Infinity && activeSidebarFilters.maxPrice > 0)) && (
+              {activeSidebarFilters && (activeSidebarFilters.brands?.length > 0 || activeSidebarFilters.memory?.length > 0 || activeSidebarFilters.ram?.length > 0 || activeSidebarFilters.minPrice > 0 || (activeSidebarFilters.maxPrice < Infinity && activeSidebarFilters.maxPrice > 0)) && (
                 <div className="filter-mobile__dialog-selected-filters">
                   {activeSidebarFilters.brands?.map((brand) => (
                     <span key={brand} className="selected-filters__item">
@@ -391,6 +421,11 @@ const CatalogPage = () => {
                       Пам'ять: <span className="selected-filters__item-value">{mem}</span>
                     </span>
                   ))}
+                  {activeSidebarFilters.ram?.map((ramVal) => (
+                    <span key={ramVal} className="selected-filters__item">
+                      ОЗУ: <span className="selected-filters__item-value">{ramVal}</span>
+                    </span>
+                  ))}
                   {(activeSidebarFilters.minPrice > 0 || (activeSidebarFilters.maxPrice < Infinity && activeSidebarFilters.maxPrice > 0)) && (
                     <span className="selected-filters__item">
                       Ціна: <span className="selected-filters__item-value">
@@ -398,7 +433,7 @@ const CatalogPage = () => {
                       </span>
                     </span>
                   )}
-                  <span 
+                  <span
                     className="selected-filters__item selected-filters__item--clear"
                     onClick={handleResetFilters}
                   >
@@ -418,13 +453,13 @@ const CatalogPage = () => {
             </div>
 
             <div className="filter-mobile__dialog-footer">
-              <button 
+              <button
                 className="filter-mobile__dialog-footer-button filter-mobile__dialog-footer-button--reset"
                 onClick={handleResetFilters}
               >
                 Скинути
               </button>
-              <button 
+              <button
                 className="filter-mobile__dialog-footer-button filter-mobile__dialog-footer-button--apply"
                 onClick={() => setIsFiltersOpen(false)}
               >
@@ -435,21 +470,6 @@ const CatalogPage = () => {
         </aside>
 
         <main className="catalog-right">
-          {/* активні чіпси перенесено всередину контрольного блоку */}
-          <CatalogToolbar
-            pageSearchQuery={pageSearchQuery}
-            setPageSearchQuery={setPageSearchQuery}
-            isSortOpen={isSortOpen}
-            setIsSortOpen={setIsSortOpen}
-            sortOptions={sortOptions}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            setIsFiltersOpen={setIsFiltersOpen}
-            activeFiltersCount={activeFiltersCount}
-            activeSidebarFilters={activeSidebarFilters}
-            handleRemoveFilter={handleRemoveFilter}
-            handleResetFilters={handleResetFilters}
-          />
 
           {filteredProducts.length > 0 ? (
             <>
@@ -465,12 +485,20 @@ const CatalogPage = () => {
                   itemLabel="товарів"
                   onPageChange={(p) => {
                     setPage(p);
+                    setLoadedPagesRange({ start: p, end: p });
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   onLimitChange={(l) => {
                     setPerPage(l);
                     setPage(1);
+                    setLoadedPagesRange({ start: 1, end: 1 });
                   }}
+                  onLoadMore={() => {
+                    setLoadedPagesRange((prev) => ({ ...prev, end: prev.end + 1 }));
+                    setPage((prev) => prev + 1);
+                  }}
+                  hasMore={loadedPagesRange.end < totalPages}
+                  simpleMode={true}
                   isLoading={isLoading}
                   className="catalog-pagination"
                 />

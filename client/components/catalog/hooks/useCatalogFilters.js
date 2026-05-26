@@ -26,6 +26,19 @@ export const useCatalogFilters = () => {
       });
     }
 
+    // фільтруємо за оперативною пам'яттю
+    if (filters.ram && filters.ram.length > 0) {
+      filtered = filtered.filter(p => {
+        const text = `${p.name} ${p.description} ${p.specs ? JSON.stringify(p.specs) : ''}`.toLowerCase();
+        return filters.ram.some(ramVal => {
+          const valClean = ramVal.toLowerCase().replace(/\s+/g, '');
+          const valEnglish = valClean.replace('гб', 'gb');
+          const textClean = text.replace(/\s+/g, '');
+          return textClean.includes(valClean) || textClean.includes(valEnglish);
+        });
+      });
+    }
+
     return filtered;
   };
 
@@ -34,7 +47,7 @@ export const useCatalogFilters = () => {
     const targetProducts = category === 'all'
       ? products
       : products.filter(p => p.category === category);
-    
+
     const counts = {};
     targetProducts.forEach(p => {
       if (p.brand) {

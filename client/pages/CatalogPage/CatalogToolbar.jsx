@@ -1,10 +1,21 @@
-import { TextField, InputAdornment, Chip } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { useState } from "react";
+import { Chip } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import CloseIcon from "@mui/icons-material/Close";
 import CheckIcon from "@mui/icons-material/Check";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import CatalogSortMenu from "./CatalogSortMenu.jsx";
+
+const getProductsWord = (count) => {
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 19) return "товарів";
+  if (lastDigit === 1) return "товар";
+  if (lastDigit >= 2 && lastDigit <= 4) return "товари";
+  return "товарів";
+};
 
 const CatalogToolbar = ({
   pageSearchQuery,
@@ -18,28 +29,113 @@ const CatalogToolbar = ({
   activeFiltersCount,
   activeSidebarFilters,
   handleRemoveFilter,
-  handleResetFilters
+  handleResetFilters,
+  filteredProductsCount,
+  currentPage,
 }) => {
+  const [isChipsExpanded, setIsChipsExpanded] = useState(false);
+
+  // Збір активних фільтрів у єдиний список чипсів
+  const chips = [];
+  if (activeSidebarFilters) {
+    if (
+      activeSidebarFilters.minPrice > 0 ||
+      (activeSidebarFilters.maxPrice < Infinity && activeSidebarFilters.maxPrice)
+    ) {
+      chips.push({
+        type: "price",
+        label: `Ціна: ${activeSidebarFilters.minPrice?.toLocaleString() || 0} – ${activeSidebarFilters.maxPrice !== Infinity ? activeSidebarFilters.maxPrice?.toLocaleString() : "∞"} ₴`,
+        onDelete: () => handleRemoveFilter("price"),
+      });
+    }
+    activeSidebarFilters.brands?.forEach((brand) => {
+      chips.push({
+        type: "brand",
+        value: brand,
+        label: `Бренд: ${brand}`,
+        onDelete: () => handleRemoveFilter("brand", brand),
+      });
+    });
+    activeSidebarFilters.memory?.forEach((mem) => {
+      chips.push({
+        type: "memory",
+        value: mem,
+        label: `Пам'ять: ${mem}`,
+        onDelete: () => handleRemoveFilter("memory", mem),
+      });
+    });
+    activeSidebarFilters.ram?.forEach((ramVal) => {
+      chips.push({
+        type: "ram",
+        value: ramVal,
+        label: `ОЗУ: ${ramVal}`,
+        onDelete: () => handleRemoveFilter("ram", ramVal),
+      });
+    });
+  }
+
+  const hasMoreChips = chips.length > 4;
+  const visibleChips = hasMoreChips && !isChipsExpanded ? chips.slice(0, 4) : chips;
+
   return (
     <div className="catalog-controls">
-      {/* Пошук */}
-      <div className="catalog-search">
-        <TextField
-          variant="outlined"
-          size="small"
-          className="mui-form-control"
-          placeholder="Пошук у каталозі..."
-          value={pageSearchQuery}
-          onChange={(e) => setPageSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon className="search-icon" />
-              </InputAdornment>
-            ),
-          }}
-          aria-label="Search products"
-        />
+
+      <div className="toolbar-left-content">
+        <div className="toolbar-summary">
+          <div className="products-count">
+            {filteredProductsCount} {getProductsWord(filteredProductsCount)}
+          </div>
+          <div className="page-number">сторінка {currentPage}</div>
+        </div>
+
+        {chips.length > 0 && (
+          <div className="active-filters-container">
+            {visibleChips.map((chip, index) => (
+              <Chip
+                key={`${chip.type}-${chip.value || index}`}
+                label={chip.label}
+                onDelete={chip.onDelete}
+                onClick={chip.onDelete}
+                className="filter-chip"
+              />
+            ))}
+
+            {hasMoreChips && !isChipsExpanded && (
+              <button
+                className="chips-toggle-btn"
+                onClick={() => setIsChipsExpanded(true)}
+              >
+                Показати більше <KeyboardArrowDownIcon className="toggle-icon" />
+              </button>
+            )}
+
+            {hasMoreChips && isChipsExpanded && (
+              <>
+                <button
+                  className="chips-clear-btn"
+                  onClick={handleResetFilters}
+                >
+                  Очистити всі
+                </button>
+                <button
+                  className="chips-toggle-btn"
+                  onClick={() => setIsChipsExpanded(false)}
+                >
+                  Сховати <KeyboardArrowUpIcon className="toggle-icon" />
+                </button>
+              </>
+            )}
+
+            {!hasMoreChips && (
+              <button
+                className="chips-clear-btn"
+                onClick={handleResetFilters}
+              >
+                Очистити всі
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="catalog-toolbar-actions">
@@ -59,7 +155,7 @@ const CatalogToolbar = ({
         {/* Мобільна версія (капсульна пара як у Comfy) */}
         <div className="toolbar-mobile-capsules">
           <div className="sort-mobile-capsule-wrapper">
-            <button 
+            <button
               className={`sort-mobile-capsule ${isSortOpen ? 'is-active' : ''}`}
               onClick={() => setIsSortOpen(!isSortOpen)}
             >
@@ -75,7 +171,7 @@ const CatalogToolbar = ({
                   </button>
                   <div className="mobile-sort-body">
                     {sortOptions.map(option => (
-                      <div 
+                      <div
                         key={option.value}
                         className={`sort-item mobile-capsule ${sortOrder === option.value ? 'is-selected' : ''}`}
                         onClick={() => {
@@ -97,7 +193,7 @@ const CatalogToolbar = ({
             )}
           </div>
 
-          <button 
+          <button
             className="filter-mobile-capsule"
             onClick={() => setIsFiltersOpen(true)}
           >
@@ -110,48 +206,6 @@ const CatalogToolbar = ({
         </div>
       </div>
 
-      {/* Активні фільтри (chips) — тепер одразу під пошуком */}
-      {activeSidebarFilters && (
-        <div className="active-filters-container">
-          {(activeSidebarFilters.minPrice > 0 ||
-            (activeSidebarFilters.maxPrice < Infinity &&
-              activeSidebarFilters.maxPrice)) && (
-            <Chip
-              label={`Ціна: ${activeSidebarFilters.minPrice?.toLocaleString() || 0} – ${activeSidebarFilters.maxPrice !== Infinity ? activeSidebarFilters.maxPrice?.toLocaleString() : "∞"} ₴`}
-              onDelete={() => handleRemoveFilter("price")}
-              className="filter-chip"
-            />
-          )}
-          {activeSidebarFilters.brands?.map((brand) => (
-            <Chip
-              key={`brand-${brand}`}
-              label={brand}
-              onDelete={() => handleRemoveFilter("brand", brand)}
-              className="filter-chip"
-            />
-          ))}
-          {activeSidebarFilters.memory?.map((mem) => (
-            <Chip
-              key={`mem-${mem}`}
-              label={mem}
-              onDelete={() => handleRemoveFilter("memory", mem)}
-              className="filter-chip"
-            />
-          ))}
-          {(activeSidebarFilters.minPrice > 0 ||
-            (activeSidebarFilters.maxPrice < Infinity &&
-              activeSidebarFilters.maxPrice) ||
-            activeSidebarFilters.brands?.length > 0 ||
-            activeSidebarFilters.memory?.length > 0) && (
-            <button
-              className="chips-clear-btn"
-              onClick={handleResetFilters}
-            >
-              Очистити все
-            </button>
-          )}
-        </div>
-      )}
 
     </div>
   );

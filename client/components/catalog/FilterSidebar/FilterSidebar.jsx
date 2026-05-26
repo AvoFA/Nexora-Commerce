@@ -21,6 +21,15 @@ const MEMORY_OPTIONS = [
   { label: '1 ТБ',   count: 12 },
 ];
 
+const RAM_OPTIONS = [
+  { label: '4 ГБ',  count: 14 },
+  { label: '6 ГБ',  count: 8  },
+  { label: '8 ГБ',  count: 24 },
+  { label: '12 ГБ', count: 18 },
+  { label: '16 ГБ', count: 32 },
+  { label: '32 ГБ', count: 10 },
+];
+
 const PRICE_MAX = 100000;
 const BRAND_SEARCH_THRESHOLD = 5; // показувати пошук якщо брендів > 5
 
@@ -50,6 +59,7 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
   const [priceRange, setPriceRange] = useState([0, PRICE_MAX]);
   const [localSelectedBrands, setLocalSelectedBrands] = useState([]);
   const [localMemory, setLocalMemory] = useState([]);
+  const [localRam, setLocalRam] = useState([]);
   const [brandSearch, setBrandSearch] = useState('');
   const [showAllBrands, setShowAllBrands] = useState(false);
 
@@ -64,10 +74,12 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
       ]);
       setLocalSelectedBrands(activeFilters.brands || []);
       setLocalMemory(activeFilters.memory || []);
+      setLocalRam(activeFilters.ram || []);
     } else {
       setPriceRange([0, PRICE_MAX]);
       setLocalSelectedBrands([]);
       setLocalMemory([]);
+      setLocalRam([]);
     }
   }, [activeFilters]);
 
@@ -80,12 +92,13 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
   const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 5);
 
   // Хелпер відправки фільтрів
-  const triggerApply = useCallback((range, brands, memory) => {
+  const triggerApply = useCallback((range, brands, memory, ram) => {
     onApply({
       minPrice: range[0],
       maxPrice: range[1] >= PRICE_MAX ? Infinity : range[1],
       brands,
       memory,
+      ram,
       categories: [],
     });
   }, [onApply]);
@@ -97,8 +110,8 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
 
   // Відпускання слайдера — застосовує фільтр
   const handleSliderCommit = useCallback((_, newValue) => {
-    triggerApply(newValue, localSelectedBrands, localMemory);
-  }, [triggerApply, localSelectedBrands, localMemory]);
+    triggerApply(newValue, localSelectedBrands, localMemory, localRam);
+  }, [triggerApply, localSelectedBrands, localMemory, localRam]);
 
   // Ручне введення ціни
   const handlePriceInput = useCallback((idx, raw) => {
@@ -110,29 +123,38 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
     });
     const next = [...priceRange];
     next[idx] = val;
-    triggerApply(next, localSelectedBrands, localMemory);
-  }, [priceRange, triggerApply, localSelectedBrands, localMemory]);
+    triggerApply(next, localSelectedBrands, localMemory, localRam);
+  }, [priceRange, triggerApply, localSelectedBrands, localMemory, localRam]);
 
   const handleBrandChange = useCallback((brand) => {
     const next = localSelectedBrands.includes(brand)
       ? localSelectedBrands.filter(b => b !== brand)
       : [...localSelectedBrands, brand];
     setLocalSelectedBrands(next);
-    triggerApply(priceRange, next, localMemory);
-  }, [localSelectedBrands, priceRange, localMemory, triggerApply]);
+    triggerApply(priceRange, next, localMemory, localRam);
+  }, [localSelectedBrands, priceRange, localMemory, localRam, triggerApply]);
 
   const handleMemoryToggle = useCallback((mem) => {
     const next = localMemory.includes(mem)
       ? localMemory.filter(m => m !== mem)
       : [...localMemory, mem];
     setLocalMemory(next);
-    triggerApply(priceRange, localSelectedBrands, next);
-  }, [localMemory, priceRange, localSelectedBrands, triggerApply]);
+    triggerApply(priceRange, localSelectedBrands, next, localRam);
+  }, [localMemory, priceRange, localSelectedBrands, localRam, triggerApply]);
+
+  const handleRamToggle = useCallback((ramValue) => {
+    const next = localRam.includes(ramValue)
+      ? localRam.filter(r => r !== ramValue)
+      : [...localRam, ramValue];
+    setLocalRam(next);
+    triggerApply(priceRange, localSelectedBrands, localMemory, next);
+  }, [localRam, priceRange, localSelectedBrands, localMemory, triggerApply]);
 
   const handleReset = () => {
     setPriceRange([0, PRICE_MAX]);
     setLocalSelectedBrands([]);
     setLocalMemory([]);
+    setLocalRam([]);
     setBrandSearch('');
     onReset();
   };
@@ -251,6 +273,22 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
               key={label}
               className={`memory-tag ${localMemory.includes(label) ? 'active' : ''}`}
               onClick={() => handleMemoryToggle(label)}
+            >
+              <span className="memory-tag-label">{label}</span>
+              <span className="memory-tag-count">{count}</span>
+            </button>
+          ))}
+        </div>
+      </FilterSection>
+
+      {/* ── Оперативна пам'ять ───────────────────────────── */}
+      <FilterSection title="Оперативна пам'ять" defaultOpen={false}>
+        <div className="memory-grid">
+          {RAM_OPTIONS.map(({ label, count }) => (
+            <button
+              key={label}
+              className={`memory-tag ${localRam.includes(label) ? 'active' : ''}`}
+              onClick={() => handleRamToggle(label)}
             >
               <span className="memory-tag-label">{label}</span>
               <span className="memory-tag-count">{count}</span>

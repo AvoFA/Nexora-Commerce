@@ -10,7 +10,6 @@ export const useCatalogData = () => {
 
   // завантажуємо початкові дані при першому відкритті
   const fetchData = async () => {
-    console.log('📡 fetchData почався...');
     try {
       setIsLoading(true);
 
@@ -20,7 +19,6 @@ export const useCatalogData = () => {
         getCategories()
       ]);
 
-      console.log(`📊 Загружено ${productsData.length} товарів, ${categoriesData.length} категорій`);
       setAllProducts(productsData);
 
       // додаємо опцію "усі товари" до категорій
@@ -31,9 +29,8 @@ export const useCatalogData = () => {
       }));
 
       setAvailableCategories([allProductsOption, ...categoryOptions]);
-      console.log('✅ fetchData завершено успішно');
     } catch (err) {
-      console.error('❌ Помилка fetchData:', err.message);
+      console.error('[Catalog::Error] Fetch failed:', err.message);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -47,19 +44,13 @@ export const useCatalogData = () => {
   // оновлюємо дані при поверненні до вкладки відбу
   useEffect(() => {
     const handleVisibilityChange = () => {
-      console.log('🔄 visibilitychange triggered, hidden:', document.hidden);
       if (document.visibilityState === 'visible') {
-        console.log('✅ Вкладка стала видимою - оновляю дані...');
         fetchData();
-      } else {
-        console.log('⏸️ Вкладка стала невидимою');
       }
     };
 
-    console.log('🎯 listener visibilitychange доданий');
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
-      console.log('🧹 listener visibilitychange прибрано');
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);

@@ -108,6 +108,20 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
     event.stopPropagation();
 
     if (!isAuthenticated) {
+      // Надійна перевірка на мобільні пристрої (екрани або сенсори)
+      const isMobile = window.innerWidth <= 768 || window.matchMedia("(hover: none)").matches;
+
+      if (isMobile && !isAuthTooltipVisible) {
+        showAuthTooltip();
+
+        // Автоматично приховати підказку через 3 секунди
+        window.clearTimeout(authTooltipTimerRef.current);
+        authTooltipTimerRef.current = window.setTimeout(() => {
+          setIsAuthTooltipVisible(false);
+        }, 3000);
+        return;
+      }
+
       openAuthModal();
       return;
     }
@@ -141,10 +155,10 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
         <button
           className={`action-btn wishlist-button${isWishlisted(productId) ? " active" : ""}`}
           onClick={handleOpenWishlist}
-          onMouseEnter={!isAuthenticated ? showAuthTooltip : undefined}
-          onMouseLeave={!isAuthenticated ? hideAuthTooltip : undefined}
-          onFocus={!isAuthenticated ? showAuthTooltip : undefined}
-          onBlur={!isAuthenticated ? hideAuthTooltip : undefined}
+          onMouseEnter={!isAuthenticated ? () => { if (window.innerWidth > 768) showAuthTooltip(); } : undefined}
+          onMouseLeave={!isAuthenticated ? () => { if (window.innerWidth > 768) hideAuthTooltip(); } : undefined}
+          onFocus={!isAuthenticated ? () => { if (window.innerWidth > 768) showAuthTooltip(); } : undefined}
+          onBlur={!isAuthenticated ? () => { if (window.innerWidth > 768) hideAuthTooltip(); } : undefined}
           title={isWishlisted(productId) ? "Додати в інший список" : "Додати до списку бажань"}
           aria-pressed={isWishlisted(productId)}
         >
