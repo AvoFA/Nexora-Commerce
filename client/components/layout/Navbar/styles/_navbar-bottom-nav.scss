@@ -1,5 +1,9 @@
 @import '../../../../styles/variables';
 
+.bottom-mobile-menu {
+    display: none;
+}
+
 // Mobile view adaptations
 @media (max-width: 900px) {
     .hamburger-button {
