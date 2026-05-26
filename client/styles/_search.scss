@@ -1,0 +1,912 @@
+// Стилі для розумного пошуку (Smart Search) - Дизайн Comfy
+
+.search-highlight {
+  background: rgba($primary-color, 0.15);
+  color: lighten($primary-color, 10%);
+  padding: 0 2px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+// Десктопний бекдроп оверлей (без блюру для швидкодії)
+.search-backdrop-dim {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+// Контейнер пошуку у навбарі
+.navbar-search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 450px;
+  margin: 0 16px;
+  z-index: 1001;
+  display: none;
+
+  @media (min-width: 901px) {
+    display: block;
+  }
+}
+
+// Поле пошуку у фірмовому стилі Nexora (напівпрозоре темне поле з основним акцентом)
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: rgba($card-bg, 0.7);
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
+  transition: all 0.25s ease;
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: rgba($primary-color, 0.8);
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+  }
+}
+
+.search-input-field {
+  width: 100%;
+  height: 40px;
+  padding: 8px 92px 8px 16px;
+  border: none;
+  background: transparent;
+  color: $text-color;
+  font-size: 0.95rem;
+
+  &::placeholder {
+    color: $text-secondary;
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.search-input-actions {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+}
+
+.search-clear-btn {
+  background: none;
+  border: none;
+  color: $text-secondary;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: $text-color;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.search-divider {
+  width: 1px;
+  height: 18px;
+  background: $border-color;
+  margin: 0 4px;
+}
+
+.search-submit-btn {
+  background: $primary-color;
+  color: #ffffff;
+  border: none;
+  height: 100%;
+  width: 44px; // Clean minimal square shape
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.85);
+  }
+
+  svg {
+    font-size: 20px;
+  }
+}
+
+// Випадаюче меню результатів (без блюру)
+.search-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 520px;
+  background: $surface-color;
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  max-height: 480px;
+  overflow-y: auto;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+
+// Рядок пошукових пропозицій (suggestion chips)
+.search-suggestions-row {
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+
+  .suggestion-chip {
+    background: rgba($primary-color, 0.05);
+    border-color: rgba($primary-color, 0.15);
+    color: lighten($primary-color, 15%);
+    font-weight: 500;
+
+    &:hover {
+      background: rgba($primary-color, 0.12);
+      border-color: rgba($primary-color, 0.4);
+      color: #ffffff;
+    }
+  }
+}
+
+// Загальні внутрішні секції
+.search-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .clear-btn {
+    background: none;
+    border: none;
+    color: $text-secondary;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-transform: none;
+    font-weight: 500;
+    padding: 0;
+    text-decoration: underline;
+
+    &:hover {
+      color: $primary-color;
+    }
+  }
+}
+
+// Чіпси історії та тегів
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid $border-color;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: $text-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+    border-color: rgba($primary-color, 0.4);
+  }
+
+  .delete-chip-btn {
+    background: none;
+    border: none;
+    color: $text-secondary;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+
+    &:hover {
+      color: $danger-color;
+    }
+  }
+}
+
+// Список результатів живого пошуку
+.search-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.search-result-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: $text-color;
+  transition: all 0.2s ease;
+
+  &.is-active, &:hover {
+    background: rgba($primary-color, 0.08);
+  }
+
+  .result-img-wrapper {
+    width: 42px;
+    height: 42px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.03);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $border-color;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .result-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .result-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-category {
+      font-size: 0.75rem;
+      color: $text-secondary;
+    }
+  }
+
+  .result-price {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $primary-color;
+    white-space: nowrap;
+  }
+}
+
+// Компонент недавно переглянутих товарів
+// Заголовок секції просмотренных товаров
+.recently-viewed-header {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  span {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $text-color;
+  }
+
+  .view-all-link {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $primary-color;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      color: lighten($primary-color, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Компонент недавно переглянутих товарів
+.recently-viewed-grid,
+.search-results-grid {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  align-items: stretch;
+
+  .grid-card-wrapper {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+
+    // Стили переопределения для ProductCard внутри выпадающего списка
+    .product-card-link {
+      width: 100%;
+      height: 100%;
+      background: rgba($surface-color, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transform: none !important; // disable main card scale
+
+      &:hover {
+        border-color: rgba($primary-color, 0.35);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+
+        .product-card-image img {
+          transform: scale(1.04);
+        }
+      }
+
+      .product-card-image {
+        height: 110px; // Компактная высота картинки
+        padding: 8px;
+        background: #ffffff;
+        border-radius: 6px 6px 0 0;
+
+        // Hide wishlist and compare buttons inside search dropdown
+        .wishlist-button,
+        .compare-button,
+        .wishlist-auth-tooltip {
+          display: none !important;
+        }
+      }
+
+      .card-content {
+        padding: 8px;
+        gap: 4px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+
+      .card-name {
+        font-size: 0.78rem;
+        height: 2.2rem;
+        line-height: 1.3;
+        font-weight: 500;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .card-rating {
+        font-size: 0.72rem;
+        gap: 2px;
+        margin: 0;
+
+        .rating-star {
+          font-size: 13px;
+        }
+
+        .rating-value {
+          font-size: 0.72rem;
+          font-weight: 600;
+        }
+
+        .rating-reviews {
+          display: none !important; // Hide reviews count for dropdown simplicity
+        }
+      }
+
+      .card-footer {
+        margin-top: auto; // Push to bottom
+        padding-top: 4px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .price-block .card-price {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: $primary-color;
+      }
+
+      .btn-cart-round {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+
+        svg {
+          width: 16px;
+          height: 16px;
+        }
+
+        &::after {
+          width: 36px;
+          height: 36px;
+        }
+      }
+    }
+  }
+
+  .view-all-results-card {
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    min-height: 185px; // Идеально выравнивается с высотой ProductCard
+    border: 1px dashed $border-color;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px;
+    text-decoration: none;
+    color: $text-color;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: rgba($primary-color, 0.5);
+      background: rgba($primary-color, 0.05);
+
+      .view-all-circle-arrow {
+        background: $primary-color;
+        color: #ffffff;
+      }
+    }
+
+    .view-all-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: $text-color;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .view-all-circle-arrow {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid $border-color;
+      color: $primary-color;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+  }
+}
+
+.recently-viewed-carousel {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel-item {
+    flex: 0 0 110px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-decoration: none;
+    color: $text-color;
+    font-size: 0.8rem;
+    text-align: center;
+
+    &:hover .item-image {
+      border-color: rgba($primary-color, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .item-image {
+      height: 90px;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      transition: all 0.2s ease;
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+
+    .item-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+
+    .item-price {
+      font-weight: 700;
+      color: $primary-color;
+    }
+  }
+}
+
+// Заглушка пошуку
+.no-results-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+  padding: 8px 0;
+
+  .no-results-alert {
+    padding: 12px;
+    background: rgba($danger-color, 0.1);
+    border: 1px solid rgba($danger-color, 0.2);
+    border-radius: 8px;
+    color: lighten($danger-color, 10%);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+}
+
+// Мобільний оверлей-кнопка в шапці (без блюру)
+.mobile-search-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid $border-color;
+  background: $card-bg;
+  color: $text-color;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba($primary-color, 0.1);
+    border-color: rgba($primary-color, 0.3);
+  }
+
+  @media (min-width: 901px) {
+    display: none;
+  }
+}
+
+// Мобільна панель Drawer
+.mobile-search-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $bg-color;
+  color: $text-color;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid $border-color;
+    background: $surface-color;
+
+    .mobile-search-form {
+      flex: 1;
+      display: flex;
+      align-items: center;
+
+      .search-input-container {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.25);
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .mobile-search-close-btn {
+      background: none;
+      border: none;
+      color: $text-color;
+      padding: 4px;
+      margin-left: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      svg {
+        font-size: 24px;
+      }
+    }
+  }
+
+  &__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+// Плитка горизонтальних карток товарів
+.mobile-search-results-stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .grid-card-wrapper {
+    width: 100%;
+  }
+
+  .product-card-link {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    padding: 12px;
+    height: auto;
+    background: $surface-color;
+    border: 1px solid $border-color;
+    border-radius: 12px;
+    overflow: hidden;
+
+    &:hover {
+      box-shadow: none;
+      border-color: $border-color;
+      transform: none;
+    }
+
+    .product-card-image {
+      width: 90px;
+      height: 90px;
+      flex-shrink: 0;
+      background: transparent;
+      padding: 0;
+      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      overflow: hidden;
+
+      a {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        transition: none;
+      }
+
+      .action-btn {
+        display: none !important;
+      }
+    }
+
+    .card-content {
+      flex: 1;
+      padding: 0;
+      gap: 4px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .card-name-link {
+        display: block;
+      }
+
+      .card-name {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: $text-color;
+        line-height: 1.3;
+        height: auto;
+        margin: 0 0 4px;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .card-rating {
+        display: none !important;
+      }
+
+      .card-footer {
+        margin-top: auto;
+        padding-top: 0;
+        border-top: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .price-block {
+          .card-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: $primary-color; // Brand primary color for price
+          }
+        }
+
+
+      }
+    }
+  }
+}
+
+// Кнопка "Переглянути всі товари"
+.mobile-search-view-all-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 20px;
+  background: $surface-color;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 16px;
+  text-align: left;
+  transition: background-color 0.2s;
+
+  &:active {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .view-all-btn-text {
+    display: flex;
+    flex-direction: column;
+    color: $text-color;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .view-all-arrow-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: $primary-color;
+    color: #ffffff;
+    flex-shrink: 0;
+
+    svg {
+      font-size: 20px;
+    }
+  }
+}
+
+// Посилання-пігулка "Усі >" для переглянутих
+.view-all-link-mobile {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba($text-color, 0.06);
+  padding: 4px 10px 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $text-color;
+  text-decoration: none;
+  transition: background 0.2s;
+
+  svg {
+    font-size: 14px;
+  }
+
+  &:active {
+    background: rgba($text-color, 0.12);
+  }
+}
+
+// Мобільний тригер пошуку в шапці (стилізований як поле введення)
+.mobile-search-header-trigger {
+  display: none;
+
+  @media (max-width: 900px) {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    padding: 0;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background: rgba($card-bg, 0.7);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+    overflow: hidden;
+
+    &:active {
+      border-color: rgba($primary-color, 0.6);
+    }
+  }
+}
+
+.mobile-search-header-placeholder {
+  flex: 1;
+  padding: 0 12px;
+  color: $text-secondary;
+  font-size: 0.88rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.mobile-search-header-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 100%;
+  flex-shrink: 0;
+  background: $primary-color;
+  color: #ffffff;
+  pointer-events: none;
+
+  svg {
+    font-size: 20px;
+  }
+}

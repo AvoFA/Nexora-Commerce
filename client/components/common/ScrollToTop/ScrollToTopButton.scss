@@ -1,48 +1,32 @@
-// src/components/common/ScrollToTop/ScrollToTopButton.scss
+// client/components/common/ScrollToTop/ScrollToTopButton.scss
 @import '../../../styles/_variables';
 
-// Стилізація кнопки "Наверх" під дизайн сайту
+// Стилізація самої кнопки
+.MuiFab-root.scroll-to-top-btn {
+    // Градієнт від білого до синього (як у заголовках сайту)
+    background: linear-gradient(180deg, #FFFFFF 20%, #3658F3 110%);
 
-.scroll-to-top-btn {
-    // Градієнтний фон як у основних кнопок проекту
-    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    // Колір іконки - темно-синій для контрасту
+    color: #1a2a6c;
 
-    // Білий текст для контрасту
-    color: hsl(0, 0%, 100%);
-
-    // Ефект світіння як у проекту
-    box-shadow: $glow-primary;
-
-    // Плавні переходи для всіх властивостей
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-        // Яскравіший градієнт при наведенні
-        background: linear-gradient(135deg, lighten($primary-color, 10%), lighten($secondary-color, 10%));
-
-        // Більша інтенсивність світіння
-        box-shadow: 0 0 40px rgba($primary-color, 0.4);
-
-        // Масштабування для інтерактивності
-        transform: scale(1.05);
+        transform: scale(1.1) translateY(-3px);
+        background: linear-gradient(180deg, #FFFFFF 0%, #3658F3 100%);
+        box-shadow: 0 8px 30px rgba($primary-color, 0.5);
     }
 
-    // Збільшена іконка для кращої помітності
     .MuiSvgIcon-root {
-        font-size: 1.7rem;
-        font-weight: 600;
+        font-size: 1.8rem;
+        font-weight: 700;
     }
-}
 
-// Responsive поведінка для мобільних
-@media (max-width: 768px) {
-    .scroll-to-top-btn {
-
-        // Менший розмір на мобільних
-        &.MuiFab-root {
-            width: 56px;
-            height: 56px;
-        }
+    @media (max-width: 900px) {
+        width: 46px;
+        height: 46px;
+        min-height: 46px;
 
         .MuiSvgIcon-root {
             font-size: 1.5rem;

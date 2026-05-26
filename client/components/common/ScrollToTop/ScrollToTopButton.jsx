@@ -36,9 +36,16 @@ const ScrollToTopButton = () => {
           className="scroll-to-top-btn"
           sx={{
             position: "fixed",
-            bottom: 16,
-            right: 16,
-            zIndex: 1000,
+            zIndex: 900,
+            // Десктоп: внизу справа
+            bottom: { xs: "auto", md: 24 },
+            right: { xs: 16, md: 24 },
+            // Мобілка: зверху над нижнім меню
+            top: { xs: "auto", md: "auto" }, // залишаємо дефолт
+            // Перевизначаємо для мобілки (xs)
+            "@media (max-width: 900px)": {
+              bottom: 140,
+            }
           }}
         >
           <KeyboardArrowUp fontSize="medium" />
