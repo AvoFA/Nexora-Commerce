@@ -56,6 +56,10 @@
 .product-feedback-page__sidebar {
   min-width: 0;
 
+  @media (max-width: 1023px) {
+    display: none;
+  }
+
   @media (min-width: 1024px) {
     position: sticky;
     top: 96px;
@@ -71,5 +75,94 @@
     min-height: 52px;
     margin-bottom: 26px;
     padding: 0 16px;
+  }
+}
+
+// Мобільна липка панель покупки
+.mobile-sticky-purchase-bar {
+  display: none; // Сховано на десктопі
+
+  @media (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+    width: calc(100% - 24px);
+    height: 64px;
+    background: $surface-color;
+    border: 1px solid $border-color;
+    border-radius: 16px;
+    z-index: 2500;
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+    // Ховаємо повністю через opacity/visibility та невеликий зсув замість гігантського translateY
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .sticky-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+
+      .sticky-thumb {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        background: white;
+        border-radius: 8px;
+        padding: 2px;
+        flex-shrink: 0;
+      }
+
+      .sticky-meta {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+
+        .sticky-name {
+          font-size: 0.8rem;
+          color: white;
+          font-weight: 600;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 140px;
+        }
+
+        .sticky-price {
+          font-size: 0.95rem;
+          color: $primary-color;
+          font-weight: 800;
+          margin-top: 2px;
+        }
+      }
+    }
+
+    .btn-primary {
+      padding: 0 16px;
+      font-size: 0.85rem;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
   }
 }

@@ -133,7 +133,6 @@ const QuestionsPanel = ({
         <CustomSelect
           id="question-sort"
           className="feedback-sort-select"
-          label="Сортування"
           value={questionSort}
           onChange={setQuestionSort}
           options={QUESTION_SORT_OPTIONS}

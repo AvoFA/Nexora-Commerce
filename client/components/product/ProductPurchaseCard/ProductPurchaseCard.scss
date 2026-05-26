@@ -170,6 +170,21 @@
         font-size: 1.05rem;
         border-radius: 12px;
       }
+
+      .btn-cart-text {
+        &--desktop {
+          display: inline;
+          @media (max-width: 768px) {
+            display: none;
+          }
+        }
+        &--mobile {
+          display: none;
+          @media (max-width: 768px) {
+            display: inline;
+          }
+        }
+      }
     }
 }
 

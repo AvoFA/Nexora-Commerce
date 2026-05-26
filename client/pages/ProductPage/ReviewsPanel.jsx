@@ -236,7 +236,6 @@ const ReviewsPanel = ({
         <CustomSelect
           id="review-sort"
           className="feedback-sort-select"
-          label="Сортування"
           value={reviewSort}
           onChange={setReviewSort}
           options={REVIEW_SORT_OPTIONS}

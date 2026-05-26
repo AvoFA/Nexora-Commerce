@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { CheckCircle, ChevronRight, RateReview, Star, ShoppingCart, ExpandMore, ExpandLess } from "@mui/icons-material";
+import { CheckCircle, ChevronRight, RateReview, Star, ShoppingCart, ShoppingCartOutlined, ExpandMore, ExpandLess } from "@mui/icons-material";
 import { Rating } from "@mui/material";
 import Breadcrumbs from "../../components/common/Breadcrumbs/Breadcrumbs.jsx";
 import ProductPurchaseCard from "../../components/product/ProductPurchaseCard/ProductPurchaseCard.jsx";
@@ -13,6 +13,7 @@ import "./ProductPage.scss";
 import ProductPageSkeleton from "./ProductPageSkeleton.jsx";
 import ProductSpecsTable from "./ProductSpecsTable.jsx";
 import SimilarProducts from "./SimilarProducts.jsx";
+import { useProductActions } from "../../components/product/hooks/useProductActions.js";
 import { useProductData } from "./useProductData.js";
 import { useReviews } from "./useReviews.js";
 import { parseMarkdown } from "../../utils/markdown.js";
@@ -25,23 +26,25 @@ const ProductPage = () => {
 
   // Рефи та стейт для липкої панелі (Senior approach)
   const mainPurchaseRef = useRef(null);
+  const galleryRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const actions = useProductActions(product);
+
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [hasLongDesc, setHasLongDesc] = useState(false);
   const descRef = useRef(null);
 
   useEffect(() => {
-    if (!product || !descRef.current) return;
-
-    const checkHeight = () => {
-      if (descRef.current) {
-        setHasLongDesc(descRef.current.scrollHeight > 280);
-      }
-    };
-
-    checkHeight();
-    const timer = setTimeout(checkHeight, 500);
-    return () => clearTimeout(timer);
+    if (product && descRef.current) {
+      const checkHeight = () => {
+        if (descRef.current) {
+          setHasLongDesc(descRef.current.scrollHeight > 280);
+        }
+      };
+      checkHeight();
+      const timer = setTimeout(checkHeight, 500);
+      return () => clearTimeout(timer);
+    }
   }, [product, isLoading]);
 
   useEffect(() => {
@@ -50,13 +53,13 @@ const ProductPage = () => {
     }
   }, [product, isLoading]);
 
-  // Логіка спостереження за кнопкою покупки
+  // Логіка спостереження за галереєю зображень
   useEffect(() => {
     if (isLoading || !product) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Показуємо липку панель, лише якщо основна кнопка пішла вгору за межі екрана
+        // Показуємо липку панель, лише якщо галерея пішла вгору за межі екрана
         if (window.innerWidth <= 768) {
           setShowStickyBar(!entry.isIntersecting && entry.boundingClientRect.top < 0);
         } else {
@@ -66,8 +69,8 @@ const ProductPage = () => {
       { threshold: 0 }
     );
 
-    if (mainPurchaseRef.current) {
-      observer.observe(mainPurchaseRef.current);
+    if (galleryRef.current) {
+      observer.observe(galleryRef.current);
     }
 
     return () => observer.disconnect();
@@ -146,7 +149,7 @@ const ProductPage = () => {
     <div className="product-page-wrapper">
       <Breadcrumbs items={breadcrumbItems} />
       <div className="product-page-container">
-        <div className="product-image-gallery">
+        <div className="product-image-gallery" ref={galleryRef}>
           {imgSrc ? (
             <img src={imgSrc} alt={product.name} />
           ) : (
@@ -241,43 +244,40 @@ const ProductPage = () => {
       </div>
 
       <div className="product-detailed-content">
-        <div className="content-left">
-          <section className="detailed-description-section">
-            <h2 className="section-title">Опис товару</h2>
-            <div className={`description-outer-container ${!isDescExpanded && hasLongDesc ? "is-collapsed" : ""}`}>
-              <div
-                ref={descRef}
-                className="description-content"
-                dangerouslySetInnerHTML={{
-                  __html: parseMarkdown(product.description) || "Опис відсутній",
-                }}
-              />
+        <section className="detailed-description-section">
+          <h2 className="section-title">Опис товару</h2>
+          <div className={`description-outer-container ${!isDescExpanded && hasLongDesc ? "is-collapsed" : ""}`}>
+            <div
+              ref={descRef}
+              className="description-content"
+              dangerouslySetInnerHTML={{
+                __html: parseMarkdown(product.description) || "Опис відсутній",
+              }}
+            />
+          </div>
+          {hasLongDesc && (
+            <div className="desc-toggle-container">
+              <button
+                className="desc-toggle-btn"
+                onClick={() => setIsDescExpanded(!isDescExpanded)}
+              >
+                {isDescExpanded ? (
+                  <>
+                    <span>Згорнути опис</span>
+                    <ExpandLess sx={{ fontSize: "18px" }} />
+                  </>
+                ) : (
+                  <>
+                    <span>Показати більше</span>
+                    <ExpandMore sx={{ fontSize: "18px" }} />
+                  </>
+                )}
+              </button>
             </div>
-            {hasLongDesc && (
-              <div className="desc-toggle-container">
-                <button
-                  type="button"
-                  className="desc-toggle-btn"
-                  onClick={() => setIsDescExpanded(!isDescExpanded)}
-                >
-                  {isDescExpanded ? (
-                    <>
-                      <span>Згорнути опис</span>
-                      <ExpandLess sx={{ fontSize: "18px" }} />
-                    </>
-                  ) : (
-                    <>
-                      <span>Показати більше</span>
-                      <ExpandMore sx={{ fontSize: "18px" }} />
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-          </section>
+          )}
+        </section>
 
-          <ProductSpecsTable attributes={product.attributes} />
-        </div>
+        <ProductSpecsTable attributes={product.attributes} />
       </div>
 
       <ProductFeedbackSection
@@ -294,16 +294,29 @@ const ProductPage = () => {
       {/* Мобільна липка панель (Senior UI) */}
       <div className={`mobile-sticky-purchase-bar ${showStickyBar ? 'is-visible' : ''}`}>
         <div className="sticky-info">
-          <span className="sticky-name">{product.name}</span>
-          <span className="sticky-price">{formatPrice(product.price)}</span>
+          {imgSrc && <img src={imgSrc} alt="" className="sticky-thumb" />}
+          <div className="sticky-meta">
+            <span className="sticky-name">{product.name}</span>
+            <span className="sticky-price">{formatPrice(product.price)}</span>
+          </div>
         </div>
-        <button
-          className="btn-primary"
-          onClick={() => mainPurchaseRef.current?.scrollIntoView({ behavior: 'smooth' })}
-        >
-          <ShoppingCart sx={{ fontSize: '18px' }} />
-          Купити
-        </button>
+        {actions.isInCart ? (
+          <button
+            className="btn-primary"
+            onClick={actions.handleGoToCart}
+          >
+            <ShoppingCart sx={{ fontSize: '18px' }} />
+            До кошику
+          </button>
+        ) : (
+          <button
+            className="btn-primary"
+            onClick={actions.handleAddToCart}
+          >
+            <ShoppingCartOutlined sx={{ fontSize: '18px' }} />
+            {"\u041a\u0443\u043f\u0438\u0442\u0438"}
+          </button>
+        )}
       </div>
     </div>
   );

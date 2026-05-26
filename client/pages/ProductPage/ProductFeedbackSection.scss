@@ -441,12 +441,20 @@
     .answer-label {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       grid-column: 2;
       margin-bottom: 8px;
       color: $text-color;
       font-weight: 800;
       font-size: 0.9rem;
+
+      .answer-logo-text {
+        height: 12px;
+        width: auto;
+        object-fit: contain;
+        flex-shrink: 0;
+        margin-top: 1px;
+      }
     }
 
     .answer-icon {
@@ -525,11 +533,79 @@
     }
 
     .product-review-form,
-    .feedback-stats,
     .feedback-review-item,
     .question-item {
       display: flex;
       flex-direction: column;
+    }
+
+    .feedback-stats {
+      display: grid !important;
+      grid-template-columns: 110px 1fr !important;
+      gap: 16px !important;
+      padding: 16px 12px !important;
+      align-items: center !important;
+      justify-content: stretch !important;
+
+      .feedback-stats-summary {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 6px !important;
+        grid-template-columns: none !important;
+      }
+
+      .feedback-rating-value {
+        font-size: 42px !important;
+        font-weight: 800 !important;
+        color: white !important;
+        line-height: 1 !important;
+        margin: 0 !important;
+      }
+
+      .feedback-rating-stars {
+        display: flex !important;
+        justify-content: center !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+
+        .MuiRating-root {
+          font-size: 1rem !important;
+        }
+      }
+
+      .feedback-rating-count {
+        font-size: 0.76rem !important;
+        color: $text-secondary !important;
+        white-space: nowrap !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        margin: 0 !important;
+      }
+
+      .feedback-rating-bars {
+        width: 100% !important;
+      }
+
+      .feedback-rating-row {
+        gap: 6px !important;
+        margin-bottom: 6px !important;
+      }
+
+      .distribution-stars {
+        width: 72px !important;
+        gap: 0px !important;
+      }
+
+      .distribution-star {
+        font-size: 11px !important;
+      }
+
+      .bar-count {
+        width: 24px !important;
+        font-size: 0.78rem !important;
+      }
     }
 
     .question-submit-button {

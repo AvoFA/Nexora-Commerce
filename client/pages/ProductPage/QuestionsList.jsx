@@ -55,7 +55,8 @@ const QuestionsList = ({ questions, isLoading, emptyMessage }) => {
                     <SubdirectoryArrowRight className="answer-thread-icon" />
                     <div className="answer-label">
                       <VerifiedOutlined className="answer-icon" />
-                      Відповідь ElectroLux
+                      <span>Відповідь</span>
+                      <img src="/assets/logo/nexora-full.svg" alt="Nexora" className="answer-logo-text" />
                     </div>
                     <p>{question.answer}</p>
                   </div>

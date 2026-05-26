@@ -37,6 +37,22 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
     }, 350);
   };
 
+  const handleWishlistClick = (event) => {
+    if (!actions.isAuthenticated) {
+      const isMobile = window.innerWidth <= 768 || window.matchMedia("(hover: none)").matches;
+
+      if (isMobile && !isAuthTooltipVisible) {
+        showAuthTooltip();
+        window.clearTimeout(authTooltipTimerRef.current);
+        authTooltipTimerRef.current = window.setTimeout(() => {
+          setIsAuthTooltipVisible(false);
+        }, 3000);
+        return;
+      }
+    }
+    actions.handleOpenWishlist(event);
+  };
+
   if (!product) return null;
 
   return (
@@ -65,11 +81,11 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
           <div className="product-actions-icons">
             <button
               className={`product-wishlist-button${actions.isWishlisted ? " active" : ""}`}
-              onClick={actions.handleOpenWishlist}
-              onMouseEnter={!actions.isAuthenticated ? showAuthTooltip : undefined}
-              onMouseLeave={!actions.isAuthenticated ? hideAuthTooltip : undefined}
-              onFocus={!actions.isAuthenticated ? showAuthTooltip : undefined}
-              onBlur={!actions.isAuthenticated ? hideAuthTooltip : undefined}
+              onClick={handleWishlistClick}
+              onMouseEnter={!actions.isAuthenticated ? () => { if (window.innerWidth > 768) showAuthTooltip(); } : undefined}
+              onMouseLeave={!actions.isAuthenticated ? () => { if (window.innerWidth > 768) hideAuthTooltip(); } : undefined}
+              onFocus={!actions.isAuthenticated ? () => { if (window.innerWidth > 768) showAuthTooltip(); } : undefined}
+              onBlur={!actions.isAuthenticated ? () => { if (window.innerWidth > 768) hideAuthTooltip(); } : undefined}
               title={
                 actions.isWishlisted
                   ? "Додати в інший список"
@@ -115,9 +131,10 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
 
         <div className="product-actions-wrapper">
           {actions.isInCart ? (
-            <button className="btn-primary btn-with-icon" onClick={actions.handleGoToCart}>
+            <button className="btn-primary btn-with-icon btn-go-to-cart" onClick={actions.handleGoToCart}>
               <ShoppingCart sx={{ fontSize: "20px" }} />
-              Перейти до кошика
+              <span className="btn-cart-text btn-cart-text--desktop">Перейти до кошика</span>
+              <span className="btn-cart-text btn-cart-text--mobile">До кошику</span>
             </button>
           ) : (
             <button className="btn-primary btn-with-icon" onClick={actions.handleAddToCart}>

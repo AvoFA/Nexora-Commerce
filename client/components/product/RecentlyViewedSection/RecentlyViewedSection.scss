@@ -7,6 +7,7 @@
   overflow: visible;
 
   .section-header {
+    padding: 0 16px; // Keeping title aligned with container
     margin-bottom: 24px;
     display: flex;
     justify-content: flex-start;
@@ -36,13 +37,30 @@
     width: 100%;
     display: flex;
     align-items: center;
+    overflow: visible;
   }
 
   .recently-viewed-scroll-container {
     overflow-x: auto;
     overflow-y: hidden;
     width: 100%;
+    padding: 0 16px; // Adding padding inside so cards don't stick to edge on start
 
+    // 🎭 Mask effect for scrolling hint
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 40px,
+      black calc(100% - 40px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 40px,
+      black calc(100% - 40px),
+      transparent 100%
+    );
 
     scroll-behavior: auto;
     scroll-snap-type: none;
@@ -56,10 +74,12 @@
 
   .recently-viewed-inner {
     display: flex;
-    gap: 12px; 
+    gap: 12px;
     width: max-content;
+    padding-right: 32px; // Extra space at the end
   }
 
+  // ... rest of items
   .carousel-item {
     flex: 0 0 auto;
     width: 160px;
@@ -190,11 +210,11 @@
     }
 
     &--left {
-      left: -12px;
+      left: 6px;
     }
 
     &--right {
-      right: -12px;
+      right: 6px;
     }
 
     @media (max-width: 1023px) {
