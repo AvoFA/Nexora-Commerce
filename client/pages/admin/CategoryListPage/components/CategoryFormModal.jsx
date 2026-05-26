@@ -12,9 +12,12 @@ const CategoryFormModal = ({
   onClose,
   onSave,
   onFieldChange,
-  onAddAttribute,
-  onAttributeChange,
-  onRemoveAttribute,
+  onAddGroup,
+  onRemoveGroup,
+  onGroupNameChange,
+  onAddItem,
+  onRemoveItem,
+  onItemChange,
 }) => {
   return (
     <Modal
@@ -57,9 +60,12 @@ const CategoryFormModal = ({
                   isSlugLocked={isSlugLocked}
                   onToggleSlugLock={onToggleSlugLock}
                   onFieldChange={onFieldChange}
-                  onAddAttribute={onAddAttribute}
-                  onAttributeChange={onAttributeChange}
-                  onRemoveAttribute={onRemoveAttribute}
+                  onAddGroup={onAddGroup}
+                  onRemoveGroup={onRemoveGroup}
+                  onGroupNameChange={onGroupNameChange}
+                  onAddItem={onAddItem}
+                  onRemoveItem={onRemoveItem}
+                  onItemChange={onItemChange}
                 />
               </form>
             </div>

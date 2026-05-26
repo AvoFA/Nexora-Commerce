@@ -106,9 +106,12 @@ const CategoryListPage = () => {
         onClose={categoryForm.closeModal}
         onSave={categoryForm.handleSave}
         onFieldChange={categoryForm.handleFieldChange}
-        onAddAttribute={categoryForm.handleAddAttribute}
-        onAttributeChange={categoryForm.handleAttributeChange}
-        onRemoveAttribute={categoryForm.handleRemoveAttribute}
+        onAddGroup={categoryForm.handleAddGroup}
+        onRemoveGroup={categoryForm.handleRemoveGroup}
+        onGroupNameChange={categoryForm.handleGroupNameChange}
+        onAddItem={categoryForm.handleAddItem}
+        onRemoveItem={categoryForm.handleRemoveItem}
+        onItemChange={categoryForm.handleItemChange}
       />
 
       <CategoryList

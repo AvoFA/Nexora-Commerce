@@ -3,16 +3,22 @@ import AttributesManager from '../../../../components/admin/products/AttributesM
 
 const ProductAttributesSection = ({
   attributes,
-  onAddAttribute,
-  onUpdateAttribute,
-  onRemoveAttribute,
+  onAddGroup,
+  onRemoveGroup,
+  onGroupNameChange,
+  onAddItem,
+  onRemoveItem,
+  onItemChange,
 }) => (
   <div className="product-attributes-section">
     <AttributesManager
       attributes={attributes}
-      onAddAttribute={onAddAttribute}
-      onUpdateAttribute={onUpdateAttribute}
-      onRemoveAttribute={onRemoveAttribute}
+      onAddGroup={onAddGroup}
+      onRemoveGroup={onRemoveGroup}
+      onGroupNameChange={onGroupNameChange}
+      onAddItem={onAddItem}
+      onRemoveItem={onRemoveItem}
+      onItemChange={onItemChange}
     />
   </div>
 );

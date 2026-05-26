@@ -7,9 +7,12 @@ const CategoryFormFields = ({
   isSlugLocked,
   onToggleSlugLock,
   onFieldChange,
-  onAddAttribute,
-  onAttributeChange,
-  onRemoveAttribute,
+  onAddGroup,
+  onRemoveGroup,
+  onGroupNameChange,
+  onAddItem,
+  onRemoveItem,
+  onItemChange,
 }) => {
   return (
     <>
@@ -58,9 +61,12 @@ const CategoryFormFields = ({
 
       <CategoryAttributesManager
         attributes={formData.defaultAttributes}
-        onAddAttribute={onAddAttribute}
-        onAttributeChange={onAttributeChange}
-        onRemoveAttribute={onRemoveAttribute}
+        onAddGroup={onAddGroup}
+        onRemoveGroup={onRemoveGroup}
+        onGroupNameChange={onGroupNameChange}
+        onAddItem={onAddItem}
+        onRemoveItem={onRemoveItem}
+        onItemChange={onItemChange}
       />
     </>
   );

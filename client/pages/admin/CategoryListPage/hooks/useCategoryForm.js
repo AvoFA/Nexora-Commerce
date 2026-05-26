@@ -7,7 +7,7 @@ const initialFormData = {
   icon: "CategoryIcon",
   image: "",
   color: "linear-gradient(135deg, #3A86FF, #214D8A)",
-  defaultAttributes: [{ key: "", value: "" }],
+  defaultAttributes: [{ groupName: "", items: [{ key: "", value: "" }] }],
 };
 
 const mapCategoryToFormData = (category) => ({
@@ -18,11 +18,17 @@ const mapCategoryToFormData = (category) => ({
   color: category.color || initialFormData.color,
   defaultAttributes:
     category.defaultAttributes && category.defaultAttributes.length > 0
-      ? category.defaultAttributes.map((attr) => ({
-          key: attr.key,
-          value: attr.value || "",
+      ? category.defaultAttributes.map((group) => ({
+          groupName: group.groupName || "",
+          items:
+            group.items && group.items.length > 0
+              ? group.items.map((item) => ({
+                  key: item.key || "",
+                  value: item.value || "",
+                }))
+              : [{ key: "", value: "" }],
         }))
-      : [{ key: "", value: "" }],
+      : [{ groupName: "", items: [{ key: "", value: "" }] }],
 });
 
 const slugify = (text) => {
@@ -91,40 +97,92 @@ export const useCategoryForm = ({ onCreate, onUpdate }) => {
     });
   };
 
-  const handleAddAttribute = () => {
+  const handleAddGroup = () => {
     setFormData((prev) => ({
       ...prev,
-      defaultAttributes: [...prev.defaultAttributes, { key: "", value: "" }],
+      defaultAttributes: [
+        ...prev.defaultAttributes,
+        { groupName: "", items: [{ key: "", value: "" }] },
+      ],
     }));
   };
 
-  const handleAttributeChange = (index, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      defaultAttributes: prev.defaultAttributes.map((attr, attrIndex) =>
-        attrIndex === index ? { ...attr, [field]: value } : attr,
-      ),
-    }));
-  };
-
-  const handleRemoveAttribute = (index) => {
+  const handleRemoveGroup = (groupIndex) => {
     setFormData((prev) => {
       if (prev.defaultAttributes.length <= 1) return prev;
-
       return {
         ...prev,
-        defaultAttributes: prev.defaultAttributes.filter((_, attrIndex) => attrIndex !== index),
+        defaultAttributes: prev.defaultAttributes.filter((_, idx) => idx !== groupIndex),
       };
     });
   };
 
+  const handleGroupNameChange = (groupIndex, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      defaultAttributes: prev.defaultAttributes.map((group, idx) =>
+        idx === groupIndex ? { ...group, groupName: value } : group,
+      ),
+    }));
+  };
+
+  const handleAddItem = (groupIndex) => {
+    setFormData((prev) => ({
+      ...prev,
+      defaultAttributes: prev.defaultAttributes.map((group, idx) =>
+        idx === groupIndex
+          ? { ...group, items: [...group.items, { key: "", value: "" }] }
+          : group,
+      ),
+    }));
+  };
+
+  const handleRemoveItem = (groupIndex, itemIndex) => {
+    setFormData((prev) => ({
+      ...prev,
+      defaultAttributes: prev.defaultAttributes.map((group, idx) => {
+        if (idx !== groupIndex) return group;
+        if (group.items.length <= 1) return group;
+        return {
+          ...group,
+          items: group.items.filter((_, itemIdx) => itemIdx !== itemIndex),
+        };
+      }),
+    }));
+  };
+
+  const handleItemChange = (groupIndex, itemIndex, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      defaultAttributes: prev.defaultAttributes.map((group, idx) =>
+        idx === groupIndex
+          ? {
+              ...group,
+              items: group.items.map((item, itemIdx) =>
+                itemIdx === itemIndex ? { ...item, [field]: value } : item,
+              ),
+            }
+          : group,
+      ),
+    }));
+  };
+
   const validate = () => {
-    const hasEmptyAttributes = formData.defaultAttributes.some(
-      (attr) => attr.key.trim() === "",
+    const hasEmptyGroup = formData.defaultAttributes.some(
+      (group) => group.groupName.trim() === "",
     );
 
-    if (hasEmptyAttributes) {
-      toast.error("Будь ласка, заповніть всі характеристики або видаліть порожні");
+    if (hasEmptyGroup) {
+      toast.error("Будь ласка, заповніть назви всіх груп характеристик");
+      return false;
+    }
+
+    const hasEmptyKey = formData.defaultAttributes.some((group) =>
+      group.items.some((item) => item.key.trim() === ""),
+    );
+
+    if (hasEmptyKey) {
+      toast.error("Будь ласка, заповніть назви всіх характеристик");
       return false;
     }
 
@@ -165,9 +223,12 @@ export const useCategoryForm = ({ onCreate, onUpdate }) => {
     openEditModal,
     closeModal,
     handleFieldChange,
-    handleAddAttribute,
-    handleAttributeChange,
-    handleRemoveAttribute,
+    handleAddGroup,
+    handleRemoveGroup,
+    handleGroupNameChange,
+    handleAddItem,
+    handleRemoveItem,
+    handleItemChange,
     handleSave,
   };
 };

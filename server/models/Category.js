@@ -24,15 +24,22 @@ const categorySchema = new mongoose.Schema({
     default: 'linear-gradient(135deg, #3A86FF, #214D8A)'
   },
   defaultAttributes: [{
-    key: {
+    groupName: {
       type: String,
       required: true,
       trim: true
     },
-    value: {
-      type: String,
-      default: ''
-    }
+    items: [{
+      key: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      value: {
+        type: String,
+        default: ''
+      }
+    }]
   }]
 }, {
   timestamps: true

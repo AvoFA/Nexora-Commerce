@@ -71,7 +71,19 @@ export const useProductForm = ({
       stock: product.stock || 0,
       imageUrl: product.image || product.imageUrl || '',
       description: product.description || '',
-      attributes: product.attributes || [],
+      attributes:
+        product.attributes && product.attributes.length > 0
+          ? product.attributes.map((group) => ({
+              groupName: group.groupName || '',
+              items:
+                group.items && group.items.length > 0
+                  ? group.items.map((item) => ({
+                      key: item.key || '',
+                      value: item.value || '',
+                    }))
+                  : [{ key: '', value: '' }],
+            }))
+          : [],
     });
     setOpenModal(true);
   };
@@ -90,9 +102,15 @@ export const useProductForm = ({
         const selectedCategory = categories.find((cat) => cat.name === value);
 
         if (selectedCategory?.defaultAttributes?.length > 0) {
-          nextData.attributes = selectedCategory.defaultAttributes.map((attr) => ({
-            key: attr.key,
-            value: attr.value,
+          nextData.attributes = selectedCategory.defaultAttributes.map((group) => ({
+            groupName: group.groupName || '',
+            items:
+              group.items && group.items.length > 0
+                ? group.items.map((item) => ({
+                    key: item.key || '',
+                    value: item.value || '',
+                  }))
+                : [{ key: '', value: '' }],
           }));
         }
       }
@@ -101,22 +119,68 @@ export const useProductForm = ({
     });
   };
 
-  const handleAddAttribute = () => {
+  const handleAddGroup = () => {
     setFormData((prev) => ({
       ...prev,
-      attributes: [...prev.attributes, { key: '', value: '' }],
+      attributes: [...prev.attributes, { groupName: '', items: [{ key: '', value: '' }] }],
     }));
   };
 
-  const handleUpdateAttribute = (index, field, value) => {
-    const nextAttributes = [...formData.attributes];
-    nextAttributes[index][field] = value;
-    setFormData((prev) => ({ ...prev, attributes: nextAttributes }));
+  const handleRemoveGroup = (groupIndex) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.filter((_, idx) => idx !== groupIndex),
+    }));
   };
 
-  const handleRemoveAttribute = (index) => {
-    const nextAttributes = formData.attributes.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, attributes: nextAttributes }));
+  const handleGroupNameChange = (groupIndex, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.map((group, idx) =>
+        idx === groupIndex ? { ...group, groupName: value } : group,
+      ),
+    }));
+  };
+
+  const handleAddItem = (groupIndex) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.map((group, idx) =>
+        idx === groupIndex
+          ? { ...group, items: [...group.items, { key: '', value: '' }] }
+          : group,
+      ),
+    }));
+  };
+
+  const handleRemoveItem = (groupIndex, itemIndex) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.map((group, idx) => {
+        if (idx !== groupIndex) return group;
+        if (group.items.length <= 1) return group;
+        return {
+          ...group,
+          items: group.items.filter((_, itemIdx) => itemIdx !== itemIndex),
+        };
+      }),
+    }));
+  };
+
+  const handleItemChange = (groupIndex, itemIndex, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      attributes: prev.attributes.map((group, idx) =>
+        idx === groupIndex
+          ? {
+              ...group,
+              items: group.items.map((item, itemIdx) =>
+                itemIdx === itemIndex ? { ...item, [field]: value } : item,
+              ),
+            }
+          : group,
+      ),
+    }));
   };
 
   const handleAddBrandClick = () => {
@@ -173,6 +237,21 @@ export const useProductForm = ({
       hasErrors = true;
     }
 
+    // Validate attributes grouping
+    const hasEmptyGroup = formData.attributes.some((group) => !group.groupName || group.groupName.trim() === '');
+    if (hasEmptyGroup) {
+      toast.error('Будь ласка, вкажіть назву для всіх груп характеристик');
+      hasErrors = true;
+    }
+
+    const hasEmptyKey = formData.attributes.some((group) =>
+      group.items.some((item) => !item.key || item.key.trim() === ''),
+    );
+    if (hasEmptyKey) {
+      toast.error('Будь ласка, вкажіть назву для всіх характеристик');
+      hasErrors = true;
+    }
+
     setErrors(nextErrors);
     return !hasErrors;
   };
@@ -215,9 +294,12 @@ export const useProductForm = ({
     openEditModal,
     closeModal,
     handleInputChange,
-    handleAddAttribute,
-    handleUpdateAttribute,
-    handleRemoveAttribute,
+    handleAddGroup,
+    handleRemoveGroup,
+    handleGroupNameChange,
+    handleAddItem,
+    handleRemoveItem,
+    handleItemChange,
     handleAddBrandClick,
     handleCancelAddBrand,
     handleAddNewBrand,

@@ -34,8 +34,22 @@ const productSchema = new mongoose.Schema({
     default: false
   },
   attributes: [{
-    key: String,
-    value: String
+    groupName: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    items: [{
+      key: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      value: {
+        type: String,
+        default: ''
+      }
+    }]
   }]
 }, {
   timestamps: true

@@ -72,6 +72,33 @@
   gap: 12px;
   flex: 1;
   min-width: 0;
+  border-radius: 8px;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  transition: background-color 0.18s ease;
+
+  &.is-clickable {
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  .category-inline-chevron {
+    font-size: 1.15rem;
+    color: rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), color 0.18s ease;
+
+    &.rotated {
+      transform: rotate(180deg);
+    }
+  }
+
+  &:hover .category-inline-chevron {
+    color: rgba(255, 255, 255, 0.6);
+  }
 }
 
 .category-item-icon-wrapper {
@@ -162,6 +189,17 @@
   }
 }
 
+.category-attrs-count-badge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $text-secondary;
+  background: rgba($surface-color, 0.15);
+  border: 1px solid rgba($border-color, 0.45);
+  padding: 3px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
 .category-attrs-empty {
   font-size: 0.78rem;
   color: rgba($text-secondary, 0.65);
@@ -243,14 +281,61 @@
   gap: 6px;
 }
 
-.category-attribute-chip {
-  background: rgba($surface-color, 0.06) !important;
-  border: 1px solid rgba($border-color, 0.5) !important;
-  color: $text-color !important;
-  font-size: 0.74rem !important;
-  font-weight: 500 !important;
-  height: 24px !important;
-  border-radius: 6px !important;
+.category-attribute-chip.MuiChip-root {
+  background: rgba($surface-color, 0.15);
+  border: 1px solid rgba($border-color, 0.45);
+  color: $text-secondary;
+  font-size: 0.73rem;
+  font-weight: 500;
+  height: 22px;
+  border-radius: 4px;
+
+  .MuiChip-label {
+    padding: 0 7px;
+  }
+}
+
+// Grouped attributes layout
+.attr-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.attr-group-block {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+
+  .attr-group-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: rgba($text-secondary, 0.55);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 80px;
+    text-align: right;
+
+    &--ungrouped {
+      color: rgba($text-secondary, 0.3);
+    }
+  }
+
+  .attr-group-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-left: 8px;
+    border-left: 1px solid rgba($border-color, 0.6);
+  }
+}
+
+.attr-group-chips--flat {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
 // Mobile overrides

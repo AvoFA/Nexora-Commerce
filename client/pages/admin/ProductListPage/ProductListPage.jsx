@@ -175,9 +175,12 @@ const ProductListPage = () => {
         isSaving={productForm.isSaving}
         onChange={productForm.handleInputChange}
         onSave={productForm.handleSaveProduct}
-        onAddAttribute={productForm.handleAddAttribute}
-        onUpdateAttribute={productForm.handleUpdateAttribute}
-        onRemoveAttribute={productForm.handleRemoveAttribute}
+        onAddGroup={productForm.handleAddGroup}
+        onRemoveGroup={productForm.handleRemoveGroup}
+        onGroupNameChange={productForm.handleGroupNameChange}
+        onAddItem={productForm.handleAddItem}
+        onRemoveItem={productForm.handleRemoveItem}
+        onItemChange={productForm.handleItemChange}
         onAddBrandClick={productForm.handleAddBrandClick}
         onCancelAddBrand={productForm.handleCancelAddBrand}
         onAddNewBrand={productForm.handleAddNewBrand}
