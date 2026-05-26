@@ -30,17 +30,23 @@
     flex-direction: column;
     gap: 6px;
     text-align: left;
+    min-width: 0;
+    flex: 1;
 
     .preview-title {
       font-size: 1.05rem;
       font-weight: 700;
       color: $text-color;
       letter-spacing: -0.01em;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     .preview-subtext {
       font-size: 0.9rem;
       color: $text-secondary;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
   }
 
@@ -335,5 +341,18 @@
   &.has-error {
     border-color: rgba($danger-color, 0.75);
     background: rgba($danger-color, 0.035);
+  }
+}
+
+.recipient-edit-form-wrap {
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  box-sizing: border-box;
+  width: 100%;
+
+  @media (max-width: 600px) {
+    padding: 12px 14px;
   }
 }

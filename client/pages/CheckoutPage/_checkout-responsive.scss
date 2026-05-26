@@ -1,1 +1,400 @@
-// Responsive rules remain colocated with their source blocks to preserve cascade.
+// client/pages/CheckoutPage/_checkout-responsive.scss
+
+@media (max-width: 600px) {
+  // 1. Optimize the main checkout-page and container to prevent any horizontal overflow and center perfectly
+  .checkout-page {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 12px 100px 12px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+
+    .checkout-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 100%;
+      gap: 16px;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .checkout-form {
+      width: 100%;
+      max-width: 100%;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .step-section-wrapper {
+      width: 100%;
+      max-width: 100%;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    // 2. Beautiful responsive checkout card styling with reduced paddings
+    .checkout-card {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-sizing: border-box;
+      overflow: hidden;
+
+      h2 {
+        font-size: 1.1rem;
+        padding: 14px 16px;
+        line-height: 1.3;
+      }
+
+      .card-content {
+        padding: 14px 16px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+    // 3. Optimize info-preview-card to look sleek and fit in small spaces
+    .info-preview-card {
+      padding: 12px 14px;
+      gap: 10px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .preview-content {
+        gap: 4px;
+
+        .preview-title {
+          font-size: 0.95rem;
+        }
+
+        .preview-subtext {
+          font-size: 0.85rem;
+        }
+      }
+
+      .btn-change-info {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+      }
+    }
+
+    // 4. Stepper container adjustments for mobile
+    .checkout-stepper-container {
+      padding-bottom: 20px;
+      margin-bottom: 16px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .page-title {
+        font-size: 1rem;
+        text-align: center;
+        width: 100%;
+      }
+    }
+
+    .checkout-stepper {
+      padding: 0 16px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .step {
+        .step-label {
+          font-size: 0.7rem;
+          width: 70px;
+          top: 34px;
+        }
+      }
+    }
+
+    // 5. Optimize delivery option cards for mobile
+    .delivery-option-card {
+      border-radius: 10px;
+
+      .option-card-header {
+        padding: 12px 14px;
+        gap: 10px;
+
+        .option-icon-shell {
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+        }
+
+        .option-icon {
+          font-size: 1.25rem;
+        }
+
+        .option-info {
+          .option-title {
+            font-size: 0.9rem;
+          }
+          .option-date {
+            font-size: 0.75rem;
+          }
+        }
+
+        .option-cost {
+          font-size: 0.88rem;
+        }
+      }
+
+      .option-settings-block {
+        padding: 12px 14px 14px;
+      }
+    }
+
+    // 6. Compact stores grid
+    .store-selector-compact {
+      gap: 8px;
+      margin-bottom: 14px;
+
+      .stores-compact-grid {
+        gap: 8px;
+      }
+
+      .store-compact-btn {
+        padding: 8px 12px;
+        border-radius: 6px;
+
+        strong {
+          font-size: 0.8rem;
+        }
+
+        .store-btn-addr {
+          font-size: 0.7rem;
+        }
+      }
+    }
+
+    // 7. Horizontal date choice scrolling area adjustments - PREVENT SHRINKING
+    .delivery-dates-badges {
+      gap: 10px;
+      padding-bottom: 8px;
+
+      .date-badge {
+        flex-shrink: 0; // Prevent dates from squishing on mobile screen sizes
+        min-width: 110px;
+        padding: 8px 12px;
+
+        .date-day {
+          font-size: 0.78rem;
+        }
+
+        .date-time {
+          font-size: 0.68rem;
+        }
+      }
+    }
+
+    .delivery-date-strip {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .delivery-date-options {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+      width: 100%;
+    }
+
+    .delivery-date-option {
+      flex-shrink: 0; // Prevent option from squishing on mobile screen sizes
+      min-width: 100px;
+      display: grid;
+      gap: 6px;
+
+      .date-title {
+        font-size: 0.8rem;
+      }
+
+      .date-time-chip {
+        min-height: 26px;
+        padding: 0 10px;
+        font-size: 0.7rem;
+      }
+    }
+
+    // Stretch the 'choose date manually' button to full width like in Comfy
+    .delivery-custom-date-wrap {
+      width: 100%;
+    }
+
+    .delivery-custom-date {
+      width: 100%;
+      min-height: 44px;
+      padding: 0 14px;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+
+    // Elegant scrollbars on mobile so users know they can swipe
+    .delivery-dates-badges,
+    .delivery-date-options,
+    .summary-items {
+      &::-webkit-scrollbar {
+        display: block !important;
+        height: 3px !important; // Super thin custom scrollbar
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.01) !important;
+        border-radius: 99px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: rgba($primary-color, 0.3) !important; // Translucent primary color glow
+        border-radius: 99px;
+      }
+
+      // Premium visual indicator: wider fade-out mask on the right edge
+      -webkit-mask-image: linear-gradient(to right, #000 75%, transparent 100%);
+      mask-image: linear-gradient(to right, #000 75%, transparent 100%);
+    }
+
+    // 8. Payment Section options
+    .payment-option-card {
+      padding: 12px 14px;
+      gap: 12px;
+
+      .payment-option-content {
+        gap: 12px;
+
+        .MuiSvgIcon-root {
+          font-size: 1.5rem;
+        }
+
+        .payment-option-text {
+          span {
+            font-size: 0.9rem;
+          }
+          small {
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+
+    // 9. Warehouse summary component on mobile
+    .selected-warehouse-summary {
+      padding: 10px 12px;
+      gap: 10px;
+
+      .summary-copy {
+        strong {
+          font-size: 0.88rem;
+        }
+        small {
+          font-size: 0.78rem;
+        }
+      }
+    }
+
+    // 10. Responsive Checkout Summary Sidebar (Centering and paddings like checkout card)
+    .checkout-summary-wrapper {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .checkout-summary {
+      width: 100%;
+      max-width: 100%;
+      border-radius: 12px;
+      box-sizing: border-box;
+
+      .summary-header {
+        padding: 14px 16px;
+
+        h2 {
+          font-size: 1.1rem;
+        }
+      }
+
+      .card-content {
+        padding: 14px 16px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      // Smooth horizontal scroll for products in summary
+      .summary-items-wrapper {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+        padding-bottom: 12px;
+        display: flex;
+        align-items: center;
+      }
+
+      .summary-items {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch; // Ensure smooth touch swiping momentum
+        width: 100%;
+        padding: 4px 0;
+      }
+
+      .summary-product-item {
+        flex-shrink: 0; // Prevent products from squishing in horizontal slider
+        width: 110px;
+        min-width: 110px;
+        max-width: 110px;
+      }
+
+      // Hide navigation arrows on mobile as swiping is native and preferred
+      .btn-scroll-left,
+      .btn-scroll-right {
+        display: none !important;
+      }
+    }
+
+    // 11. Sticky mobile bar centering and padding safety
+    .checkout-mobile-sticky-bar {
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+
+      .btn-checkout-sticky-action {
+        height: 44px;
+        font-size: 0.95rem;
+        border-radius: 10px;
+      }
+    }
+
+    // 12. Form inputs and groups alignment
+    .form-group {
+      margin-bottom: 12px;
+
+      label {
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+      }
+
+      .form-icon {
+        top: 32px;
+        left: 12px;
+        font-size: 1.1rem;
+      }
+
+      .form-input {
+        padding-left: 38px;
+        height: 38px;
+        font-size: 0.88rem;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+    }
+  }
+}
