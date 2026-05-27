@@ -1,11 +1,17 @@
-// Галерея зображень
 .product-image-gallery {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  width: 100%;
+
   img {
     width: 100%;
     height: auto;
     max-height: clamp(300px, 60vh, 500px); // Обмежуємо висоту на мобільних
     object-fit: contain;
-    border-radius: $border-radius;
-    border: 1px solid $border-color;
   }
 }
