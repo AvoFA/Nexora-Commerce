@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { CheckCircle, Close } from "@mui/icons-material";
 import CustomSelect from "../../components/common/CustomSelect/CustomSelect.jsx";
 import QuestionForm from "./QuestionForm.jsx";
 import QuestionsList from "./QuestionsList.jsx";
+import Pagination from "../../components/common/Pagination/Pagination.jsx";
 
 const QUESTION_FILTERS = [
   { key: "all", label: "Усі питання" },
@@ -32,6 +33,9 @@ const QuestionsPanel = ({
 }) => {
   const [answerFilter, setAnswerFilter] = useState("all");
   const [questionSort, setQuestionSort] = useState("newest");
+  const [page, setPage] = useState(1);
+  const [loadedPagesRange, setLoadedPagesRange] = useState({ start: 1, end: 1 });
+  const itemsPerPage = 10;
   const isPreview = mode === "preview";
 
   const visibleQuestions = useMemo(() => {
@@ -49,9 +53,17 @@ const QuestionsPanel = ({
       return (secondQuestion.createdAtTime || 0) - (firstQuestion.createdAtTime || 0);
     });
   }, [questions, answerFilter, questionSort]);
+
+  useEffect(() => {
+    setPage(1);
+    setLoadedPagesRange({ start: 1, end: 1 });
+  }, [answerFilter, questionSort]);
+
+  const totalPages = Math.ceil(visibleQuestions.length / itemsPerPage);
+
   const displayedQuestions = isPreview
     ? visibleQuestions.slice(0, previewLimit)
-    : visibleQuestions;
+    : visibleQuestions.slice((loadedPagesRange.start - 1) * itemsPerPage, loadedPagesRange.end * itemsPerPage);
   const emptyMessage =
     answerFilter === "all" ? undefined : "Немає питань для обраного фільтра.";
 
@@ -144,6 +156,27 @@ const QuestionsPanel = ({
         isLoading={isLoadingQuestions}
         emptyMessage={emptyMessage}
       />
+
+      {!isPreview && totalPages > 1 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={visibleQuestions.length}
+          limit={itemsPerPage}
+          itemLabel="запитань"
+          onPageChange={(p) => {
+            setPage(p);
+            setLoadedPagesRange({ start: p, end: p });
+          }}
+          onLoadMore={() => {
+            setLoadedPagesRange((prev) => ({ ...prev, end: prev.end + 1 }));
+            setPage((prev) => prev + 1);
+          }}
+          hasMore={loadedPagesRange.end < totalPages}
+          simpleMode={true}
+          className="questions-list-pagination"
+        />
+      )}
     </div>
   );
 };

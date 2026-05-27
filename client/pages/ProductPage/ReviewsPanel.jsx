@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Rating } from "@mui/material";
 import { CheckCircle, Close, InfoOutlined, Star } from "@mui/icons-material";
 import CustomSelect from "../../components/common/CustomSelect/CustomSelect.jsx";
 import ReviewForm from "./ReviewForm.jsx";
+import Pagination from "../../components/common/Pagination/Pagination.jsx";
 
 const REVIEW_SORT_OPTIONS = [
   { value: "newest", label: "Спочатку нові" },
@@ -40,6 +41,9 @@ const ReviewsPanel = ({
   previewLimit = 3,
 }) => {
   const [reviewSort, setReviewSort] = useState("newest");
+  const [page, setPage] = useState(1);
+  const [loadedPagesRange, setLoadedPagesRange] = useState({ start: 1, end: 1 });
+  const itemsPerPage = 10;
   const isPreview = mode === "preview";
 
   const handleEditClick = () => {
@@ -77,9 +81,17 @@ const ReviewsPanel = ({
       return (secondReview.createdAtTime || 0) - (firstReview.createdAtTime || 0);
     });
   }, [reviews, ratingFilter, reviewSort]);
+
+  useEffect(() => {
+    setPage(1);
+    setLoadedPagesRange({ start: 1, end: 1 });
+  }, [ratingFilter, reviewSort]);
+
+  const totalPages = Math.ceil(sortedReviews.length / itemsPerPage);
+
   const displayedReviews = isPreview
     ? sortedReviews.slice(0, previewLimit)
-    : sortedReviews;
+    : sortedReviews.slice((loadedPagesRange.start - 1) * itemsPerPage, loadedPagesRange.end * itemsPerPage);
 
   return (
     <div className="reviews-panel">
@@ -295,6 +307,27 @@ const ReviewsPanel = ({
             ))
           )}
       </div>
+
+      {!isPreview && totalPages > 1 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={sortedReviews.length}
+          limit={itemsPerPage}
+          itemLabel="відгуків"
+          onPageChange={(p) => {
+            setPage(p);
+            setLoadedPagesRange({ start: p, end: p });
+          }}
+          onLoadMore={() => {
+            setLoadedPagesRange((prev) => ({ ...prev, end: prev.end + 1 }));
+            setPage((prev) => prev + 1);
+          }}
+          hasMore={loadedPagesRange.end < totalPages}
+          simpleMode={true}
+          className="reviews-list-pagination"
+        />
+      )}
     </div>
   );
 };
