@@ -1,18 +1,31 @@
-# React + Vite
+# Nexora
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MERN веб-додаток із клієнтською частиною на React/Vite, серверною частиною на Node.js/Express та базою даних MongoDB.
 
-Currently, two official plugins are available:
+## Запуск проєкту через Docker
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Для production-like запуску через Docker Desktop достатньо виконати команду з кореня проєкту:
 
-## React Compiler
+```bash
+docker compose up -d --build
+```
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Після збірки та запуску контейнерів веб-додаток буде доступний за адресою:
 
-Note: This will impact Vite dev & build performances.
+```text
+http://localhost
+```
 
-## Expanding the ESLint configuration
+Backend API буде доступний за адресою:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```text
+http://localhost:5000
+```
+
+MongoDB усередині Docker використовується backend-сервісом за адресою `database:27017`, а для локального доступу з хост-системи опублікована на порту `27018`.
+
+Зупинити контейнери можна командою:
+
+```bash
+docker compose down
+```

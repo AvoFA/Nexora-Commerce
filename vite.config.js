@@ -5,6 +5,7 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   root: ".",
+  envDir: "./client",
   server: {
     port: 3000,
     open: true,
