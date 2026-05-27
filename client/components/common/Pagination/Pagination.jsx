@@ -71,21 +71,17 @@ const Pagination = ({
   };
 
   return (
-    <div className={`custom-pagination-container ${className}`}>
+    <div className={`custom-pagination-container ${simpleMode ? "is-simple-mode" : ""} ${className}`}>
       {onLoadMore && hasMore && (
-        <>
-          <div className="pagination-load-more-row">
-            <button
-              type="button"
-              className="pagination-load-more-btn"
-              onClick={onLoadMore}
-              disabled={isLoading}
-            >
-              <AddIcon className="load-more-icon" />
-              <span>{isLoading ? "Завантаження..." : loadMoreLabel}</span>
-            </button>
-          </div>
-        </>
+        <button
+          type="button"
+          className="pagination-load-more-btn"
+          onClick={onLoadMore}
+          disabled={isLoading}
+        >
+          <AddIcon className="load-more-icon" />
+          <span>{isLoading ? "Завантаження..." : loadMoreLabel}</span>
+        </button>
       )}
 
       <div className={`pagination-grid-row ${simpleMode ? "is-simple" : ""}`}>

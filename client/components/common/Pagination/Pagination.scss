@@ -10,9 +10,27 @@
   padding: 12px 20px;
   gap: 12px;
 
+  &.is-simple-mode {
+    background-color: transparent;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 0;
+    gap: 0;
+
+    .pagination-actions {
+      border: none;
+      border-radius: 0;
+    }
+  }
+
   @media (max-width: 900px) {
     padding: 14px 16px;
     gap: 10px;
+
+    &.is-simple-mode {
+      padding: 0;
+    }
 
     .pagination-left {
       justify-content: center;
@@ -30,43 +48,36 @@
   }
 }
 
-.pagination-load-more-row {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  padding: 10px 0 2px;
-  margin-bottom: 6px;
-}
-
 .pagination-load-more-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  height: 38px;
-  padding: 0 24px;
-  border-radius: 19px;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid $border-color;
+  width: 100%;
+  height: 42px;
+  padding: 0 16px;
+  border: none;
+  border-bottom: 1px solid $border-color;
+  border-radius: 0;
+  background-color: rgba(255, 255, 255, 0.02);
   color: $text-secondary;
   font-family: inherit;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 
   .load-more-icon {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
 
   &:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.08);
-    border-color: rgba($primary-color, 0.35);
+    background-color: rgba(255, 255, 255, 0.07);
     color: #fff;
   }
 
   &:active:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   &:disabled {
@@ -190,41 +201,51 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .pagination-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  width: 100%;
+  gap: 0;
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-// Prev / Next buttons (with text)
+// Prev / Next / First / Last buttons
 .pagination-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  height: 32px;
-  padding: 0 10px;
-  border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid $border-color;
+  height: 42px;
+  padding: 0 16px;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
   color: $text-color;
   cursor: pointer;
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   font-family: inherit;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   white-space: nowrap;
+  flex: 1;
+  border-left: 1px solid $border-color;
+
+  &:first-child {
+    border-left: none;
+  }
 
   svg {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     flex-shrink: 0;
   }
 
   &:hover:not(:disabled) {
-    background-color: rgba(255, 255, 255, 0.08);
-    border-color: rgba($primary-color, 0.35);
+    background-color: rgba(255, 255, 255, 0.05);
     color: #fff;
   }
 
@@ -232,27 +253,31 @@
     opacity: 0.28;
     cursor: not-allowed;
     background-color: transparent;
-    border-color: rgba(255, 255, 255, 0.04);
     color: $text-secondary;
   }
 
   // Icon-only (first/last)
   &--icon {
     padding: 0 6px;
-    width: 32px;
+    flex: 0.6;
+  }
+
+  // Nav buttons (Назад/Вперед)
+  &--nav {
+    flex: 1.3;
   }
 }
 
-// Page number buttons
+// Page number buttons wrapper
 .pagination-pages {
   display: flex;
   align-items: center;
-  gap: 3px;
-  margin: 0 4px;
+  gap: 0;
+  flex: 3;
+  border-left: 1px solid $border-color;
 
-  @media (max-width: 480px) {
-    gap: 2px;
-    margin: 0 2px;
+  &:first-child {
+    border-left: none;
   }
 }
 
@@ -260,36 +285,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 0 6px;
-  border-radius: 6px;
+  flex: 1;
+  height: 42px;
   background-color: transparent;
-  border: 1px solid transparent;
+  border: none;
+  border-radius: 0;
   color: $text-secondary;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   font-family: inherit;
   font-weight: 600;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
+  border-left: 1px solid $border-color;
+
+  &:first-child {
+    border-left: none;
+  }
 
   &:hover:not(:disabled):not(.is-active) {
-    background-color: rgba(255, 255, 255, 0.07);
-    border-color: rgba($border-color, 0.8);
+    background-color: rgba(255, 255, 255, 0.05);
     color: $text-color;
   }
 
   &.is-active {
     background-color: rgba($primary-color, 0.15);
-    border-color: rgba($primary-color, 0.45);
     color: $primary-color;
     cursor: default;
     font-weight: 700;
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
   }
 }
 
@@ -297,8 +319,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
-  height: 32px;
+  flex: 1;
+  height: 42px;
+  border-left: 1px solid $border-color;
   font-size: 0.85rem;
   color: $text-secondary;
   user-select: none;
