@@ -13,10 +13,10 @@ export const ORDER_STEPS = [
 
 // Short badge labels shown in the order status chip.
 export const STATUS_LABELS = {
-  new: "Нове",
+  new: "В роботі",
   confirmed: "Підтверджено",
-  packing: "Комплектація",
-  ready_for_pickup: "Очікує в магазині",
+  packing: "Збирається",
+  ready_for_pickup: "Готово до видачі",
   received: "Отримано",
   cancelled: "Скасовано",
 };

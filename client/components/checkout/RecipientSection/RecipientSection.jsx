@@ -25,6 +25,8 @@ const RecipientSection = ({
   onEmailChange,
   onSaveRecipient,
   getInputClassName,
+  recipientType = "self",
+  onRecipientTypeChange,
 }) => {
   const hasIdentityErrors = isIdentityRequired && (errors.surname || errors.patronymic);
   const showIdentityWarning = isIdentityRequired && (!surname?.trim() || !patronymic?.trim()) && !isEditingRecipient;
@@ -76,7 +78,24 @@ const RecipientSection = ({
           </div>
         ) : (
           <div className="recipient-edit-form-wrap">
-            <div className="form-grid">
+            <div className="recipient-toggle-container">
+              <button
+                type="button"
+                className={`recipient-toggle-btn ${recipientType === 'self' ? 'active' : ''}`}
+                onClick={() => onRecipientTypeChange('self')}
+              >
+                Я одержувач
+              </button>
+              <button
+                type="button"
+                className={`recipient-toggle-btn ${recipientType === 'other' ? 'active' : ''}`}
+                onClick={() => onRecipientTypeChange('other')}
+              >
+                Одержувач інша людина
+              </button>
+            </div>
+
+            <div className="form-grid" style={{ marginTop: "14px" }}>
               <div className="form-group">
                 <label htmlFor="phone">Номер телефону *</label>
                 <PhoneOutlined className="form-icon" />
@@ -148,6 +167,7 @@ const RecipientSection = ({
                   placeholder="example@gmail.com"
                   className={getInputClassName(email, "email")}
                   required
+                  disabled={recipientType === "self"}
                 />
                 {errors.email && <div className="error-message">{errors.email}</div>}
               </div>

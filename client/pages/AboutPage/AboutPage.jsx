@@ -3,54 +3,78 @@ import FlashOnOutlined from "@mui/icons-material/FlashOnOutlined";
 import DiamondOutlined from "@mui/icons-material/DiamondOutlined";
 import DesignServicesOutlined from "@mui/icons-material/DesignServicesOutlined";
 import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
+import PublicIcon from "@mui/icons-material/Public";
+import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
+import SpeedIcon from "@mui/icons-material/Speed";
 
 const aboutUsImage = "/assets/images/ui/about_us3.jpg";
 
 const features = [
   {
     icon: <DiamondOutlined />,
-    title: "Безкомпромісна Якість",
+    title: "Безумовна Якість",
     description:
-      "Кожен пристрій — це преміум-вибір. Ми відбираємо лише інновації, які задають світові стандарти.",
+      "Nexora відбирає лише ті пристрої, що відповідають найвищим стандартам надійності та продуктивності.",
   },
   {
     icon: <FlashOnOutlined />,
-    title: "Енергія Інновацій",
+    title: "Енергія Майбутнього",
     description:
-      "Ми не просто продаємо; ми надаємо доступ до найновіших цифрових рішень та технологічних проривів.",
+      "Ми не просто магазин, ми — портал у світ найсучасніших технологічних досягнень людства.",
   },
   {
     icon: <ScienceOutlined />,
-    title: "Культура Експертності",
+    title: "Науковий Підхід",
     description:
-      "Наша команда — це фахівці. Ми надаємо професійний супровід, знаючись на кожній деталі пристрою.",
+      "Кожен товар у нашому каталозі проходить експертну перевірку на актуальність та функціональність.",
   },
   {
     icon: <DesignServicesOutlined />,
-    title: "Естетика та Форма",
+    title: "Техно-Естетика",
     description:
-      "ElectroLux — це поєднання технологічної міці та витонченого дизайну. Краса в кожній лінії.",
+      "Для нас важливо, щоб техніка була не тільки потужною, а й естетично довершеною.",
   },
+];
+
+const stats = [
+  { label: "Років інновацій", value: "5+" },
+  { label: "Задоволених клієнтів", value: "50k+" },
+  { label: "Світових брендів", value: "100+" },
+  { label: "Техно-експертів", value: "24/7" },
 ];
 
 const AboutPage = () => {
   return (
     <div className="about-page-v2">
       <section className="about-hero-glass">
-        <h1>Про ElectroLux</h1>
-        <p className="subtitle">
-          Наша місія — не просто продаж електроніки. Це створення майбутнього,
-          де інновації доступні кожному. ElectroLux — ваш провідник у світ
-          передових цифрових рішень та преміального сервісу.
-        </p>
+        <div className="hero-content">
+          <h1>Майбутнє з Nexora</h1>
+          <p className="subtitle">
+            Nexora — це екосистема, де інновації зустрічаються з доступністю. Ми створюємо простір, де кожен може отримати доступ до технологій завтрашнього дня вже сьогодні.
+          </p>
+        </div>
+        <div className="hero-glow"></div>
+      </section>
+
+      <section className="about-stats">
+        <div className="stats-grid">
+          {stats.map((stat) => (
+            <div key={stat.label} className="stat-item">
+              <span className="stat-value">{stat.value}</span>
+              <span className="stat-label">{stat.label}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="about-features">
-        <h2 className="section-title centered-title">Філософія ElectroLux</h2>
+        <h2 className="section-title centered-title">Наша Філософія</h2>
         <div className="features-grid">
           {features.map((feature) => (
             <div key={feature.title} className="feature-card">
-              <div className="feature-icon">{feature.icon}</div>
+              <div className="feature-icon-wrapper">
+                <div className="feature-icon">{feature.icon}</div>
+              </div>
               <h3 className="feature-title">{feature.title}</h3>
               <p className="feature-description">{feature.description}</p>
             </div>
@@ -60,38 +84,44 @@ const AboutPage = () => {
 
       <section className="about-details-grid">
         <div className="details-image-wrapper">
-          <img src={aboutUsImage} alt="Наша команда" />
+          <img src={aboutUsImage} alt="Nexora Tech" />
+          <div className="image-overlay-glow"></div>
         </div>
 
-        <div className="admin-solid-card details-content-card">
-          <h3>Наша історія</h3>
+        <div className="details-content-card">
+          <div className="content-badge">Наша історія</div>
+          <h3>Nexora: Шлях до зірок</h3>
           <p>
-            ElectroLux был заснований з єдиною метою: надати українському ринку
-            виключно люксову та передову електроніку. Ми віримо, що майбутнє
-            цифрових пристроїв має бути яскравим, потужним та надійним.
+            Nexora народилася з мрії про світ, де технології не є привілеєм обраних, а стають інструментом для кожного. Ми починали як невелика група ентузіастів, об'єднаних пристрастю до прогресу.
           </p>
           <p>
-            Ми ретельно відбираємо лише передові технологічні пристрої, які
-            задають світові стандарти якості. Наш темний, неоновий дизайн
-            відображає філософію ElectroLux: чиста енергія технологій у
-            витонченій формі.
+            Сьогодні ми — провідний хаб преміальної електроніки, де кожна лінія дизайну та кожен піксель інтерфейсу відображає нашу відданість якості. Наш неоновий стиль — це символ енергії та нескінченних можливостей, які відкривають перед вами сучасні гаджети.
           </p>
 
           <div className="divider"></div>
 
-          <h3>Контакти</h3>
-          <div className="contact-details">
-            <p>
-              <strong>Email:</strong>{" "}
-              <a href="mailto:support@electrolux.com">support@electrolux.com</a>
-            </p>
-            <p>
-              <strong>Телефон:</strong>{" "}
-              <a href="tel:+380991234567">+380 (99) 123-45-67</a>
-            </p>
-            <p>
-              <strong>Графік:</strong> Пн - Пт, 9:00 - 18:00
-            </p>
+          <div className="contact-info-grid">
+            <div className="contact-item">
+              <PublicIcon className="contact-icon" />
+              <div>
+                <strong>Глобальний Email</strong>
+                <p><a href="mailto:future@nexora.com">future@nexora.com</a></p>
+              </div>
+            </div>
+            <div className="contact-item">
+              <VerifiedUserIcon className="contact-icon" />
+              <div>
+                <strong>Підтримка 24/7</strong>
+                <p><a href="tel:+380800300100">0 800 300 100</a></p>
+              </div>
+            </div>
+            <div className="contact-item">
+              <SpeedIcon className="contact-icon" />
+              <div>
+                <strong>Швидкий Зв'язок</strong>
+                <p>Пн - Нд, без вихідних</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>

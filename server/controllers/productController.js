@@ -41,12 +41,41 @@ const getProducts = async (req, res) => {
       ];
     }
 
-    const products = await Product.find(query)
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(skip);
+    let products;
+    let total;
 
-    const total = await Product.countDocuments(query);
+    if (search) {
+      // Fetch all matching products to perform a relevance sort in memory
+      const allMatchingProducts = await Product.find(query).sort({ createdAt: -1 });
+      total = allMatchingProducts.length;
+
+      const safeSearchLower = search.trim().toLowerCase();
+      
+      // Sort matching products: Name matches first, then description matches
+      allMatchingProducts.sort((a, b) => {
+        const aNameContains = a.name && a.name.toLowerCase().includes(safeSearchLower);
+        const bNameContains = b.name && b.name.toLowerCase().includes(safeSearchLower);
+
+        if (aNameContains && !bNameContains) return -1;
+        if (!aNameContains && bNameContains) return 1;
+
+        if (aNameContains && bNameContains) {
+          const aStartsWith = a.name.toLowerCase().startsWith(safeSearchLower);
+          const bStartsWith = b.name.toLowerCase().startsWith(safeSearchLower);
+          if (aStartsWith && !bStartsWith) return -1;
+          if (!aStartsWith && bStartsWith) return 1;
+        }
+        return 0;
+      });
+
+      products = allMatchingProducts.slice(skip, skip + limit);
+    } else {
+      products = await Product.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(skip);
+      total = await Product.countDocuments(query);
+    }
 
     res.json({
       success: true,

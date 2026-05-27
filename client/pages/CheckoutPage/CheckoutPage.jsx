@@ -91,6 +91,26 @@ const CheckoutPage = () => {
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS.CASH);
   const [comment, setComment] = useState("");
   const [errors, setErrors] = useState({});
+  const [recipientType, setRecipientType] = useState("self"); // 'self' or 'other'
+
+  const handleRecipientTypeChange = (type) => {
+    setRecipientType(type);
+    setIsEditingRecipient(true);
+
+    if (type === "self") {
+      setName(user?.name || "");
+      setSurname(user?.surname || "");
+      setPatronymic(user?.patronymic || "");
+      setEmail(user?.email || "");
+      setPhone(user?.phone || "");
+    } else {
+      setName("");
+      setSurname("");
+      setPatronymic("");
+      setPhone("");
+      setEmail("");
+    }
+  };
 
   const isIdentityVerificationRequired =
     deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA ||
@@ -167,14 +187,14 @@ const CheckoutPage = () => {
 
   // Sync recipient state with authenticated user's profile
   useEffect(() => {
-    if (user) {
+    if (user && recipientType === "self") {
       if (!name && user.name) setName(user.name);
       if (!surname && user.surname) setSurname(user.surname);
       if (!patronymic && user.patronymic) setPatronymic(user.patronymic);
       if (!email && user.email) setEmail(user.email);
       if (!phone && user.phone) setPhone(user.phone);
     }
-  }, [user]);
+  }, [user, recipientType]);
 
   useEffect(() => {
     if (items.length === 0 && !isOrderCompleted) {
@@ -529,12 +549,14 @@ const CheckoutPage = () => {
       }, token);
 
       setIsOrderCompleted(true);
-      updateUserData?.({
-        phone,
-        ...(name && { name }),
-        ...(surname && { surname }),
-        ...(patronymic && { patronymic }),
-      });
+      if (recipientType === "self") {
+        updateUserData?.({
+          phone,
+          ...(name && { name }),
+          ...(surname && { surname }),
+          ...(patronymic && { patronymic }),
+        });
+      }
       dispatch({ type: "CLEAR_CART" });
 
       toast.success("Дякуємо за замовлення!", {
@@ -640,6 +662,8 @@ const CheckoutPage = () => {
                     setIsEditingRecipient(false);
                   }}
                   getInputClassName={getInputClassName}
+                  recipientType={recipientType}
+                  onRecipientTypeChange={handleRecipientTypeChange}
                 />
               </div>
               <DeliverySection
