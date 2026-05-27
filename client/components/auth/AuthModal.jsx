@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { toast } from 'sonner';
+import { API_BASE_URL } from '../../config/api.js';
 import './AuthModal.scss';
 import {
   Close as CloseIcon,
@@ -35,10 +36,24 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [registerData, setRegisterData] = useState(initialRegisterData);
   const [fieldErrors, setFieldErrors] = useState({});
 
+  // Forgot password flow states
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotStep, setForgotStep] = useState(1);
+  const [forgotCode, setForgotCode] = useState('');
+  const [forgotPassword, setForgotPassword] = useState('');
+  const [forgotConfirmPassword, setForgotConfirmPassword] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [localError, setLocalError] = useState(null);
+
   const passwordsMatch = useMemo(() => {
     if (!registerData.password || !registerData.confirmPassword) return null;
     return registerData.password === registerData.confirmPassword;
   }, [registerData.password, registerData.confirmPassword]);
+
+  const forgotPasswordsMatch = useMemo(() => {
+    if (!forgotPassword || !forgotConfirmPassword) return null;
+    return forgotPassword === forgotConfirmPassword;
+  }, [forgotPassword, forgotConfirmPassword]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -48,6 +63,13 @@ const AuthModal = ({ isOpen, onClose }) => {
     setShowConfirmPassword(false);
     setLoginData(initialLoginData);
     setRegisterData(initialRegisterData);
+    setForgotEmail('');
+    setForgotStep(1);
+    setForgotCode('');
+    setForgotPassword('');
+    setForgotConfirmPassword('');
+    setForgotLoading(false);
+    setLocalError(null);
     setFieldErrors({});
     if (clearError) clearError();
 
@@ -79,6 +101,13 @@ const AuthModal = ({ isOpen, onClose }) => {
     setFieldErrors({});
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setForgotEmail('');
+    setForgotStep(1);
+    setForgotCode('');
+    setForgotPassword('');
+    setForgotConfirmPassword('');
+    setForgotLoading(false);
+    setLocalError(null);
     if (clearError) clearError();
   };
 
@@ -149,6 +178,75 @@ const AuthModal = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleForgotEmailSubmit = async (event) => {
+    event.preventDefault();
+    const emailError = validateEmail(forgotEmail);
+    if (emailError) {
+      setLocalError(emailError);
+      return;
+    }
+    setLocalError(null);
+    setForgotLoading(true);
+
+    try {
+      toast.success('Код підтвердження надіслано!');
+      setForgotStep(2);
+    } catch (err) {
+      setLocalError(err.message || 'Помилка надсилання коду.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleResetPasswordSubmit = async (event) => {
+    event.preventDefault();
+    const errors = {};
+    if (!forgotCode) errors.forgotCode = 'Введіть код підтвердження.';
+    if (!forgotPassword) {
+      errors.forgotPassword = 'Створіть новий пароль.';
+    } else if (forgotPassword.length < 6) {
+      errors.forgotPassword = 'Пароль має містити не менше 6 символів.';
+    }
+    if (forgotPassword !== forgotConfirmPassword) {
+      errors.forgotConfirmPassword = 'Паролі не співпадають.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
+    setFieldErrors({});
+    setForgotLoading(true);
+    setLocalError(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: forgotEmail.trim().toLowerCase(),
+          code: forgotCode.trim(),
+          newPassword: forgotPassword,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Не вдалося скинути пароль.');
+      }
+
+      toast.success('Пароль успішно змінено! Тепер ви можете увійти.');
+      switchTab('login');
+    } catch (err) {
+      setLocalError(err.message);
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -177,21 +275,23 @@ const AuthModal = ({ isOpen, onClose }) => {
               </button>
             </div>
 
-            {error && (
+            {(error || (tab === 'forgot' && localError)) && (
               <div className="error-message" role="alert" style={{ marginTop: '20px', marginBottom: '0' }}>
-                {error}
+                {tab === 'forgot' ? localError : error}
               </div>
             )}
 
             <div className="auth-card-content">
               <div className="auth-header-text">
                 <h2 className="auth-card-title" id="auth-modal-title">
-                  {tab === 'login' ? 'З поверненням!' : 'Створити акаунт'}
+                  {tab === 'login' && 'З поверненням!'}
+                  {tab === 'register' && 'Створити акаунт'}
+                  {tab === 'forgot' && 'Відновлення пароля'}
                 </h2>
                 <p className="auth-card-description" id="auth-modal-description">
-                  {tab === 'login'
-                    ? 'Увійдіть, щоб швидше оформляти замовлення.'
-                    : 'Створіть профіль для замовлень, обраного та історії.'}
+                  {tab === 'login' && 'Увійдіть, щоб швидше оформляти замовлення.'}
+                  {tab === 'register' && 'Створіть профіль для замовлень, обраного та історії.'}
+                  {tab === 'forgot' && (forgotStep === 1 ? 'Вкажіть ваш email для отримання коду підтвердження.' : 'Введіть код підтвердження та новий пароль.')}
                 </p>
               </div>
               <div
@@ -253,8 +353,10 @@ const AuthModal = ({ isOpen, onClose }) => {
                     )}
                   </div>
 
-                  <p className="forgot-password-note">
-                    Відновлення пароля буде доступне після підключення email-підтверджень.
+                  <p className="forgot-password-link-container">
+                    <button type="button" className="forgot-password-link" onClick={() => switchTab('forgot')}>
+                      Забули пароль?
+                    </button>
                   </p>
 
                   <button type="submit" className="auth-button btn-primary" disabled={loading}>
@@ -398,6 +500,115 @@ const AuthModal = ({ isOpen, onClose }) => {
                     </button>
                   </p>
                 </form>
+              </div>
+
+              <div
+                id="auth-panel-forgot"
+                className={`auth-form ${tab === 'forgot' ? 'active' : ''}`}
+                hidden={tab !== 'forgot'}
+              >
+                {forgotStep === 1 ? (
+                  <form onSubmit={handleForgotEmailSubmit} noValidate>
+                    <div className="form-group">
+                      <label htmlFor="forgot-email">Email</label>
+                      <EmailOutlined className="form-icon" aria-hidden="true" />
+                      <input
+                        id="forgot-email"
+                        type="email"
+                        placeholder="ivanenko@example.com"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <button type="submit" className="auth-button btn-primary" disabled={forgotLoading}>
+                      {forgotLoading ? 'Надсилання...' : 'Надіслати код'}
+                    </button>
+                    <p className="auth-switch-text">
+                      Згадали пароль?
+                      <button type="button" onClick={() => switchTab('login')}>
+                        Увійти
+                      </button>
+                    </p>
+                  </form>
+                ) : (
+                  <form onSubmit={handleResetPasswordSubmit} noValidate>
+                    <div className={`form-group ${fieldErrors.forgotCode ? 'has-error' : ''}`}>
+                      <label htmlFor="forgot-code">Код підтвердження</label>
+                      <LockOutlined className="form-icon" aria-hidden="true" />
+                      <input
+                        id="forgot-code"
+                        type="text"
+                        placeholder="1234"
+                        value={forgotCode}
+                        onChange={(e) => setForgotCode(e.target.value)}
+                        aria-invalid={Boolean(fieldErrors.forgotCode)}
+                        required
+                      />
+                      <span className="field-hint" style={{ marginTop: '6px', opacity: 0.85 }}>
+                        Для демонстрації використовуйте код: <strong>1234</strong>
+                      </span>
+                      {fieldErrors.forgotCode && (
+                        <span className="field-error">{fieldErrors.forgotCode}</span>
+                      )}
+                    </div>
+
+                    <div className={`form-group ${fieldErrors.forgotPassword ? 'has-error' : ''}`}>
+                      <label htmlFor="forgot-password">Новий пароль</label>
+                      <LockOutlined className="form-icon" aria-hidden="true" />
+                      <input
+                        id="forgot-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={forgotPassword}
+                        onChange={(e) => setForgotPassword(e.target.value)}
+                        aria-invalid={Boolean(fieldErrors.forgotPassword)}
+                        required
+                      />
+                      {fieldErrors.forgotPassword && (
+                        <span className="field-error">{fieldErrors.forgotPassword}</span>
+                      )}
+                    </div>
+
+                    <div className={`form-group ${fieldErrors.forgotConfirmPassword ? 'has-error' : ''}`}>
+                      <label htmlFor="forgot-confirm-password">Підтвердіть новий пароль</label>
+                      <LockOutlined className="form-icon" aria-hidden="true" />
+                      <input
+                        id="forgot-confirm-password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={forgotConfirmPassword}
+                        onChange={(e) => setForgotConfirmPassword(e.target.value)}
+                        aria-invalid={Boolean(fieldErrors.forgotConfirmPassword)}
+                        required
+                      />
+                      {forgotPasswordsMatch !== null && (
+                        <span
+                          className={`password-match ${
+                            forgotPasswordsMatch === true ? 'is-success' : 'is-error'
+                          }`}
+                          aria-live="polite"
+                        >
+                          {forgotPasswordsMatch === true ? 'Паролі співпадають.' : 'Паролі не співпадають.'}
+                        </span>
+                      )}
+                      {fieldErrors.forgotConfirmPassword && (
+                        <span className="field-error">{fieldErrors.forgotConfirmPassword}</span>
+                      )}
+                    </div>
+
+                    <button type="submit" className="auth-button btn-primary" disabled={forgotLoading}>
+                      {forgotLoading ? 'Зміна...' : 'Змінити пароль'}
+                    </button>
+                    
+                    <p className="auth-switch-text">
+                      Повернутися назад?
+                      <button type="button" onClick={() => setForgotStep(1)}>
+                        До введення Email
+                      </button>
+                    </p>
+                  </form>
+                )}
               </div>
             </div>
           </div>

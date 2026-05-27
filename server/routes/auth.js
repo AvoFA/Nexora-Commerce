@@ -259,4 +259,47 @@ router.get('/users', authenticateToken, adminOnly, async (req, res) => {
   }
 });
 
+router.post('/change-password', authenticateToken, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Поточний та новий паролі обов\'язкові'
+      });
+    }
+
+    const result = await UserController.changeClientPassword(req.user.id, currentPassword, newPassword);
+    res.json(result);
+  } catch (error) {
+    console.error('Помилка зміни паролю:', error.message);
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    if (!email || !code || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email, код підтвердження та новий пароль обов\'язкові'
+      });
+    }
+
+    const result = await UserController.resetClientPassword(email, code, newPassword);
+    res.json(result);
+  } catch (error) {
+    console.error('Помилка скидання паролю:', error.message);
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;
+
