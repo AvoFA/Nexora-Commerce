@@ -33,7 +33,7 @@ const RecentlyViewedSection = ({
     };
   }, [products, checkScroll]);
 
-  // ПОВЕРНЕННЯ ДО ФІРМОВОЇ АНІМАЦІЇ ЧЕКАУТУ
+  // Smooth scroll animation with easing
   const animateScroll = (element, distance) => {
     const start = element.scrollLeft;
     const startTime = performance.now();
@@ -53,7 +53,7 @@ const RecentlyViewedSection = ({
       if (progress < 1) {
         requestAnimationFrame(step);
       } else {
-        // Оновлюємо стрілки ТІЛЬКИ в кінці, щоб не гальмувати анімацію
+        // Update navigation controls after animation finishes
         checkScroll();
       }
     };
@@ -64,7 +64,7 @@ const RecentlyViewedSection = ({
   const handleScroll = (direction) => {
     if (!scrollRef.current) return;
     
-    // Крок: 158px + 12px gap = 170px (щоб вмістити 7 товарів)
+    // Scroll distance calculation based on card width and gap
     const scrollDistance = 170;
     
     animateScroll(scrollRef.current, direction * scrollDistance);

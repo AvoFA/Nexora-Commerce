@@ -1,5 +1,4 @@
-// client/components/common/ScrollToTop/ScrollToTopButton.jsx
-// Кнопка "наверх" - floating button з плавним скроллом
+// Floating "scroll to top" button with smooth scroll behavior
 import { useState, useEffect } from "react";
 import { Fab, Zoom } from "@mui/material";
 import { KeyboardArrowUp } from "@mui/icons-material";
@@ -8,21 +7,21 @@ import "./ScrollToTopButton.scss";
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Відстежуємо позицію скроллу
+  // Monitor scroll position
   useEffect(() => {
     const toggleVisibility = () => {
-      setIsVisible(window.scrollY > 300); // показуємо при скроллі > 300px
+      setIsVisible(window.scrollY > 300);
     };
 
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
-  // Функція скроллу наверх
+  // Scroll to top handler
   const handleClick = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // плавний скролл
+      behavior: "smooth",
     });
   };
 
@@ -37,12 +36,9 @@ const ScrollToTopButton = () => {
           sx={{
             position: "fixed",
             zIndex: 900,
-            // Десктоп: внизу справа
             bottom: { xs: "auto", md: 24 },
             right: { xs: 16, md: 24 },
-            // Мобілка: зверху над нижнім меню
-            top: { xs: "auto", md: "auto" }, // залишаємо дефолт
-            // Перевизначаємо для мобілки (xs)
+            top: { xs: "auto", md: "auto" },
             "@media (max-width: 900px)": {
               bottom: 140,
             }

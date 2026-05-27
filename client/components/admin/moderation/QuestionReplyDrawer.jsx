@@ -74,7 +74,6 @@ const QuestionReplyDrawer = ({
         </Box>
 
         <Box sx={{ flexGrow: 1, overflowY: "auto", pr: 0.5, display: "flex", flexDirection: "column", gap: 3.5 }}>
-          {/* Блок товару */}
           <Box className="drawer-product-info" sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
               src={question.product?.image}
@@ -97,7 +96,6 @@ const QuestionReplyDrawer = ({
             </Box>
           </Box>
 
-          {/* Блок автора */}
           <Box className="drawer-author-info">
             <Typography variant="caption" sx={{ color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.5px", display: "block", mb: 0.5 }}>
               Автор запитання
@@ -112,7 +110,6 @@ const QuestionReplyDrawer = ({
             )}
           </Box>
 
-          {/* Текст запитання */}
           <Box className="drawer-question-text" sx={{ p: 2, borderRadius: "12px", backgroundColor: "rgba(0, 0, 0, 0.2)", border: "1px solid rgba(255, 255, 255, 0.04)" }}>
             <Typography variant="caption" sx={{ color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.5px", display: "block", mb: 1 }}>
               Запитання
@@ -122,7 +119,6 @@ const QuestionReplyDrawer = ({
             </Typography>
           </Box>
 
-          {/* Текстове поле для відповіді */}
           <Box className="drawer-reply-input" sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Typography variant="caption" sx={{ color: "var(--text-secondary)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.5px" }}>
               Ваша відповідь
@@ -140,7 +136,6 @@ const QuestionReplyDrawer = ({
           </Box>
         </Box>
 
-        {/* Дії у підвалі Drawer */}
         <Box
           className="quick-reply-drawer-footer"
           sx={{

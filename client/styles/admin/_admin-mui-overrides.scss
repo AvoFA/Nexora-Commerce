@@ -26,6 +26,14 @@
 
     .MuiInputBase-root {
       color: $text-color;
+
+      &.Mui-disabled {
+        color: rgba($text-color, 0.38);
+
+        .MuiInputBase-input.Mui-disabled {
+          -webkit-text-fill-color: rgba($text-color, 0.38);
+        }
+      }
     }
 
     .MuiOutlinedInput-notchedOutline {

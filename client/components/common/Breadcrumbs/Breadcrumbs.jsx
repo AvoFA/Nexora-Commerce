@@ -8,7 +8,7 @@ const Breadcrumbs = ({ items }) => {
   return (
     <nav className="breadcrumbs-nav" aria-label="breadcrumb">
       <ol className="breadcrumbs-list">
-        {/* Домашня сторінка */}
+        {/* Home page */}
         <li className="breadcrumbs-item">
           <Link to="/" className="breadcrumbs-link">
             <HomeIcon fontSize="small" className="home-icon" />

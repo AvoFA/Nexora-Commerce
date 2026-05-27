@@ -1,11 +1,11 @@
-// Контекст для керування кошиком
+// Context for managing the shopping cart state
 
 import { createContext, useReducer, useEffect } from "react";
 
-// Створюємо контекст кошика
+// Create the cart context
 export const CartContext = createContext();
 
-// Reducer для керування станом кошика
+// Reducer to manage cart state operations
 const cartReducer = (state, action) => {
   let newItems;
 
@@ -15,12 +15,12 @@ const cartReducer = (state, action) => {
       const existingItem = state.items.find(item => item.id === itemToAdd.id);
 
       if (existingItem) {
-        // Якщо товар вже є у кошику, збільшуємо кількість та обираємо його
+        // If item exists in cart, increment quantity and select it
         newItems = state.items.map(item =>
           item.id === itemToAdd.id ? { ...item, quantity: item.quantity + 1, selected: true } : item
         );
       } else {
-        // Якщо товару немає, додаємо його з кількістю 1 та обраним станом
+        // If item is new, add it with quantity 1
         newItems = [...state.items, { ...itemToAdd, quantity: 1, selected: true }];
       }
       return {
@@ -45,12 +45,12 @@ const cartReducer = (state, action) => {
       const itemToRemove = state.items.find(item => item.id === idToRemove);
 
       if (itemToRemove.quantity > 1) {
-        // Якщо товарів більше одного, зменшуємо кількість
+        // Decrement quantity if greater than 1
         newItems = state.items.map(item =>
           item.id === idToRemove ? { ...item, quantity: item.quantity - 1 } : item
         );
       } else {
-        // Якщо товар один, видаляємо його з кошика
+        // Remove item if quantity is 1
         newItems = state.items.filter(item => item.id !== idToRemove);
       }
       return { ...state, items: newItems };
@@ -58,13 +58,13 @@ const cartReducer = (state, action) => {
 
     case 'CLEAR_ITEM': {
       const idToClear = action.payload;
-      // Повністю видаляємо товар з кошика
+      // Remove item completely from the cart
       newItems = state.items.filter(item => item.id !== idToClear);
       return { ...state, items: newItems };
     }
 
     case 'CLEAR_CART': {
-      // Очищаємо весь кошик
+      // Clear entire cart
       return { ...state, items: [], lastAddedProductId: null, isDrawerOpen: false, addedProduct: null };
     }
 
@@ -73,7 +73,7 @@ const cartReducer = (state, action) => {
     }
 
     case 'LOAD_STATE': {
-      // Завантажуємо збережений стан
+      // Load cart state from saved payload
       return {
         ...initialState,
         ...action.payload,
@@ -87,7 +87,7 @@ const cartReducer = (state, action) => {
   }
 };
 
-// Початковий стан кошика
+// Initial cart state structure
 const initialState = {
   items: [],
   lastAddedProductId: null,
@@ -95,12 +95,12 @@ const initialState = {
   addedProduct: null,
 };
 
-// Провайдер контексту кошика
+// Cart context provider component
 export const CartProvider = ({ children }) => {
-  // Використовуємо useReducer для складної логіки стану
+  // Use useReducer for state management
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  // Завантажуємо кошик з localStorage при першому завантаженні
+  // Load cart from localStorage on mount
   useEffect(() => {
     try {
       const localData = localStorage.getItem("cartState");
@@ -108,22 +108,22 @@ export const CartProvider = ({ children }) => {
         dispatch({ type: "LOAD_STATE", payload: JSON.parse(localData) });
       }
     } catch (error) {
-      console.error("Не вдалося завантажити кошик з localStorage", error);
+      console.error("Failed to load cart from localStorage", error);
     }
   }, []);
 
-  // Зберігаємо кошик у localStorage при зміні стану
+  // Persist cart to localStorage when state changes
   useEffect(() => {
     try {
       if (state !== initialState) {
         localStorage.setItem("cartState", JSON.stringify(state));
       }
     } catch (error) {
-      console.error("Не вдалося зберегти кошик у localStorage", error);
+      console.error("Failed to save cart to localStorage", error);
     }
   }, [state]);
 
-  // Передаємо стан та функцію dispatch дочірнім компонентам
+  // Expose cart state and dispatch to children
   return (
     <CartContext.Provider value={{ state, dispatch }}>
       {children}

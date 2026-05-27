@@ -1,4 +1,4 @@
-// ─── Orders Tab: Static Constants ───────────────────────────────────────────
+// Orders Tab: Static Constants
 // Feature flag — will be replaced by real API when backend is ready.
 export const SHOW_DEMO_ORDER_LAYOUT = false;
 
@@ -66,7 +66,7 @@ export const ORDER_FILTERS = [
   },
 ];
 
-// Demo order stub — used while SHOW_DEMO_ORDER_LAYOUT === true.
+// Demo order stub used when SHOW_DEMO_ORDER_LAYOUT is enabled.
 // Replace with real API data once order history endpoint is live.
 export const DEMO_ORDER = {
   _id: "demo-order-10245",

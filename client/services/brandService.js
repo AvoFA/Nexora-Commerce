@@ -1,4 +1,4 @@
-// Сервіс для роботи з брендами
+// Brand management API client service
 import { API_BASE_URL } from '../config/api.js';
 import { getAdminToken } from '../utils/authStorage.js';
 

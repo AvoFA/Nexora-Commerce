@@ -12,7 +12,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SearchIcon from '@mui/icons-material/Search';
 import './FilterSidebar.scss';
 
-// Кількість продуктів по пам'яті (заглушка)
+// Static count mock for memory options
 const MEMORY_OPTIONS = [
   { label: '64 ГБ',  count: 7  },
   { label: '128 ГБ', count: 29 },
@@ -31,9 +31,9 @@ const RAM_OPTIONS = [
 ];
 
 const PRICE_MAX = 100000;
-const BRAND_SEARCH_THRESHOLD = 5; // показувати пошук якщо брендів > 5
+const BRAND_SEARCH_THRESHOLD = 5; // Show search input if brands count > 5
 
-// Accordion-секція з заголовком і стрілкою
+// Accordion component with header toggle
 const FilterSection = ({ title, children, defaultOpen = true }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
@@ -54,7 +54,6 @@ const FilterSection = ({ title, children, defaultOpen = true }) => {
   );
 };
 
-// ─── Основний компонент ────────────────────────────────────────────────────
 const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
   const [priceRange, setPriceRange] = useState([0, PRICE_MAX]);
   const [localSelectedBrands, setLocalSelectedBrands] = useState([]);
@@ -63,7 +62,7 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
   const [brandSearch, setBrandSearch] = useState('');
   const [showAllBrands, setShowAllBrands] = useState(false);
 
-  // Синхронізація ззовні (при видаленні chips)
+  // Sync state with active filters from parent
   useEffect(() => {
     if (activeFilters) {
       setPriceRange([
@@ -83,7 +82,7 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
     }
   }, [activeFilters]);
 
-  // Відфільтровані бренди по пошуку
+  // Filter brands by search input
   const filteredBrands = useMemo(() => {
     const query = brandSearch.trim().toLowerCase();
     return query ? brands.filter(b => b.name.toLowerCase().includes(query)) : brands;
@@ -91,7 +90,7 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
 
   const visibleBrands = showAllBrands ? filteredBrands : filteredBrands.slice(0, 5);
 
-  // Хелпер відправки фільтрів
+  // Helper to propagate filter changes
   const triggerApply = useCallback((range, brands, memory, ram) => {
     onApply({
       minPrice: range[0],
@@ -103,17 +102,17 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
     });
   }, [onApply]);
 
-  // Слайдер — оновлює тільки локальний стан
+  // Update local price range state on slide
   const handleSliderChange = useCallback((_, newValue) => {
     setPriceRange(newValue);
   }, []);
 
-  // Відпускання слайдера — застосовує фільтр
+  // Apply filters on slider release
   const handleSliderCommit = useCallback((_, newValue) => {
     triggerApply(newValue, localSelectedBrands, localMemory, localRam);
   }, [triggerApply, localSelectedBrands, localMemory, localRam]);
 
-  // Ручне введення ціни
+  // Handle manual price input
   const handlePriceInput = useCallback((idx, raw) => {
     const val = Math.min(Math.max(Number(raw) || 0, 0), PRICE_MAX);
     setPriceRange(prev => {
@@ -162,7 +161,6 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
   return (
     <aside className="filter-sidebar">
 
-      {/* ── Ціна (завжди відкрита) ────────────────────── */}
       <div className="filter-block">
         <div className="filter-section-header no-toggle">
           <span className="filter-title">Ціна</span>
@@ -211,10 +209,8 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
         </div>
       </div>
 
-      {/* ── Бренди ──────────────────────────────────────── */}
       {brands.length > 0 && (
         <FilterSection title="Бренд">
-          {/* Пошук по брендам */}
           {brands.length > BRAND_SEARCH_THRESHOLD && (
             <div className="brand-search-wrapper">
               <SearchIcon className="brand-search-icon" />
@@ -265,7 +261,6 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
         </FilterSection>
       )}
 
-      {/* ── Пам'ять ─────────────────────────────────────── */}
       <FilterSection title="Вбудована пам'ять" defaultOpen={false}>
         <div className="memory-grid">
           {MEMORY_OPTIONS.map(({ label, count }) => (
@@ -281,7 +276,6 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
         </div>
       </FilterSection>
 
-      {/* ── Оперативна пам'ять ───────────────────────────── */}
       <FilterSection title="Оперативна пам'ять" defaultOpen={false}>
         <div className="memory-grid">
           {RAM_OPTIONS.map(({ label, count }) => (
@@ -297,7 +291,6 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
         </div>
       </FilterSection>
 
-      {/* ── Скинути ─────────────────────────────────────── */}
       <div className="filter-reset-block">
         <button className="filter-reset-btn" onClick={handleReset}>
           Скинути фільтри

@@ -108,13 +108,13 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
     event.stopPropagation();
 
     if (!isAuthenticated) {
-      // Надійна перевірка на мобільні пристрої (екрани або сенсори)
+      // Mobile/touch device detection
       const isMobile = window.innerWidth <= 768 || window.matchMedia("(hover: none)").matches;
 
       if (isMobile && !isAuthTooltipVisible) {
         showAuthTooltip();
 
-        // Автоматично приховати підказку через 3 секунди
+        // Automatically hide tooltip after 3 seconds
         window.clearTimeout(authTooltipTimerRef.current);
         authTooltipTimerRef.current = window.setTimeout(() => {
           setIsAuthTooltipVisible(false);

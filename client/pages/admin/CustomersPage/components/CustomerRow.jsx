@@ -67,8 +67,8 @@ const CustomerRow = ({ customer, onViewDetails, onToggleBlock, isActionLoading }
       </td>
 
       {/* 8. Actions */}
-      <td className="customer-actions-cell text-right">
-        <div className="action-buttons">
+      <td className="customer-actions-cell">
+        <div className="action-buttons" style={{ display: "flex", justifyContent: "flex-end", paddingRight: "6px" }}>
           <Tooltip title="Деталі покупця" arrow placement="top">
             <IconButton
               onClick={() => onViewDetails(customer._id)}

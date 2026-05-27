@@ -5,7 +5,7 @@ import { getCategoryDisplay } from '../../../utils/categories';
 import CategoryCardsSkeleton from './CategoryCardsSkeleton';
 import './CategoryCards.scss';
 
-// Список категорий для отображения на главной
+// Categories to display on homepage
 const FEATURED_CATEGORIES = ['phones', 'laptops', 'tablets'];
 
 const CategoryCards = () => {
@@ -16,7 +16,7 @@ const CategoryCards = () => {
     const fetchCategories = async () => {
       try {
         const data = await getCategories();
-        // Показываем только избранные категории для демо
+        // Show only featured categories
         const featured = data.filter(cat => FEATURED_CATEGORIES.includes(cat.name));
         setCategories(featured);
       } catch (error) {

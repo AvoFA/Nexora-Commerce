@@ -1,5 +1,4 @@
-// головний компонент додатку
-// налаштовує провайдери контекстів та маршрутизацію
+// Main application component setting up context providers and routing
 
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router.jsx";
@@ -14,7 +13,7 @@ function App() {
     <AuthProvider>
       <CompareProvider>
         <CartProvider>
-          {/* Floating кнопка "Наверх" для всього сайту */}
+          {/* Floating ScrollToTop button available site-wide */}
           <ScrollToTopButton />
 
           <RouterProvider router={router} />

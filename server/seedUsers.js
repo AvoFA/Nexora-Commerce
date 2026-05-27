@@ -1,12 +1,12 @@
-// Скрипт для створення початкових користувачів в базі даних
+// Database seed script for initial users
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 
-// Налаштування підключення до бази даних
+// Database connection configuration
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/eshop-admin';
 
-// Початкові дані для створення користувачів
+// Initial user seed data
 const initialUsers = [
   {
     username: 'admin',
@@ -53,14 +53,14 @@ async function seedUsers() {
     console.error('❌ Помилка створення користувачів:', error.message);
     process.exit(1);
   } finally {
-    // Закрити з'єднання з базою даних
+    // Close MongoDB connection
     console.log('🔌 Відключення від MongoDB...');
     await mongoose.disconnect();
     console.log('✅ Відключено від MongoDB');
   }
 }
 
-// Обробка невловних помилок
+// Uncaught exception and promise rejection handlers
 process.on('unhandledRejection', (reason, promise) => {
   console.error('❌ Невловна помилка:', reason);
   process.exit(1);
@@ -71,7 +71,7 @@ process.on('uncaughtException', (error) => {
   process.exit(1);
 });
 
-// Запуск скрипта
+// Script entrypoint
 if (require.main === module) {
   console.log('🚀 Запуск seedUsers скрипта...');
   seedUsers()

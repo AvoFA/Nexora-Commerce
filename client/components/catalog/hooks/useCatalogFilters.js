@@ -1,24 +1,24 @@
 export const useCatalogFilters = () => {
-  // застосовуємо бокові фільтри до товарів
+  // Apply sidebar filters to products
   const applySidebarFilters = (products, filters) => {
     let filtered = [...products];
 
-    // фільтруємо за брендом
+    // Filter by brand
     if (filters.brands && filters.brands.length > 0) {
       filtered = filtered.filter(p => filters.brands.includes(p.brand));
     }
 
-    // фільтруємо за категорією
+    // Filter by category
     if (filters.categories && filters.categories.length > 0) {
       filtered = filtered.filter(p => filters.categories.includes(p.category));
     }
 
-    // фільтруємо за діапазоном цін
+    // Filter by price range
     if (typeof filters.minPrice === 'number' && typeof filters.maxPrice === 'number') {
       filtered = filtered.filter(p => p.price >= filters.minPrice && p.price <= filters.maxPrice);
     }
 
-    // фільтруємо за пам'яттю (заглушка — шукаємо в назві/описі/specs)
+    // Filter by storage capacity (checking name/description/specs)
     if (filters.memory && filters.memory.length > 0) {
       filtered = filtered.filter(p => {
         const text = `${p.name} ${p.description} ${p.specs ? JSON.stringify(p.specs) : ''}`.toLowerCase();
@@ -26,7 +26,7 @@ export const useCatalogFilters = () => {
       });
     }
 
-    // фільтруємо за оперативною пам'яттю
+    // Filter by RAM capacity
     if (filters.ram && filters.ram.length > 0) {
       filtered = filtered.filter(p => {
         const text = `${p.name} ${p.description} ${p.specs ? JSON.stringify(p.specs) : ''}`.toLowerCase();
@@ -42,7 +42,7 @@ export const useCatalogFilters = () => {
     return filtered;
   };
 
-  // розраховуємо доступні бренди та їх кількість для поточного контексту
+  // Calculate available brands and their counts for active category
   const calculateAvailableBrands = (products, category) => {
     const targetProducts = category === 'all'
       ? products
@@ -55,7 +55,7 @@ export const useCatalogFilters = () => {
       }
     });
 
-    // Повертаємо масив об'єктів { name, count }
+    // Return sorted brand list with counts
     return Object.entries(counts)
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => a.name.localeCompare(b.name));

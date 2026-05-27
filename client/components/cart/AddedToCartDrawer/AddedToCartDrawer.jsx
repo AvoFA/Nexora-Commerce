@@ -10,11 +10,11 @@ const AddedToCartDrawer = () => {
   const { isDrawerOpen, addedProduct, items } = state;
   const navigate = useNavigate();
 
-  // Знаходимо поточний доданий товар в кошику, щоб взяти актуальну кількість
+  // Find active added product in cart to get current quantity
   const cartItem = items.find((item) => item.id === addedProduct?.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
-  // Блокуємо прокрутку сторінки, коли шторку відкрито
+  // Prevent background scrolling when drawer is active
   useEffect(() => {
     if (isDrawerOpen) {
       document.body.style.overflow = "hidden";
@@ -50,17 +50,14 @@ const AddedToCartDrawer = () => {
     navigate("/checkout");
   };
 
-  // Отримуємо посилання на зображення
+  // Get image URL
   const imgSrc = addedProduct.image || (addedProduct.images && addedProduct.images[0]);
 
   return (
     <div className="added-to-cart-portal">
-      {/* Затемнення заднього плану */}
       <div className="added-to-cart-overlay" onClick={handleClose} />
 
-      {/* Сама висувна шторка */}
       <div className="added-to-cart-drawer">
-        {/* Шапка шторки */}
         <div className="drawer-header">
           <h2 className="drawer-title">Товар додано до кошика</h2>
           <button className="btn-close-drawer" onClick={handleClose} title="Закрити">
@@ -68,7 +65,6 @@ const AddedToCartDrawer = () => {
           </button>
         </div>
 
-        {/* Вміст із доданим товаром */}
         <div className="drawer-content">
           <div className="added-product-card">
             <div className="added-product-card-top">
@@ -86,7 +82,6 @@ const AddedToCartDrawer = () => {
             </div>
 
             <div className="added-product-card-bottom">
-              {/* Селектор кількості всередині швидкого кошика */}
               <div className="quantity-selector">
                 <button
                   className="quantity-btn decrease"
@@ -113,7 +108,6 @@ const AddedToCartDrawer = () => {
           </div>
         </div>
 
-        {/* Кнопки дій */}
         <div className="drawer-actions">
           <button className="btn-drawer-action btn-go-cart" onClick={handleGoToCart}>
             <ShoppingCart fontSize="small" />

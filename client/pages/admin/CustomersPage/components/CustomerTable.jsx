@@ -101,7 +101,7 @@ const CustomerTable = ({
                 sortOrder={sortOrder}
                 onSort={onSortToggle}
               />
-              <th className="actions-cell" style={{ textAlign: "right" }}>Дії</th>
+              <th className="actions-cell">Дії</th>
             </tr>
           </thead>
           <tbody>

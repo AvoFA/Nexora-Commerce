@@ -3,8 +3,28 @@
 .category-modal-subtitle {
   font-size: 0.84rem;
   color: $text-secondary;
-  margin: 6px 0 0;
+  margin: 4px 0 0;
   line-height: 1.4;
+}
+
+.category-modal-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  .category-modal-title-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border-radius: 10px;
+    background: rgba($primary-color, 0.1);
+    color: $primary-color;
+    border: 1px solid rgba($primary-color, 0.2);
+  }
 }
 
 .category-form {

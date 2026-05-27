@@ -1,4 +1,4 @@
-// Сторінка входу для адміністратора
+// Admin login page component
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +40,7 @@ const AdminLoginPage = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Зберігаємо токен і переходимо в адмінку
+        // Save admin credentials and redirect to dashboard
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminUser', JSON.stringify(data.user));
         navigate('/admin');
@@ -66,13 +66,11 @@ const AdminLoginPage = () => {
   return (
     <div className="admin-login-page">
       <div className="login-container">
-        {/* Логотип та заголовок */}
         <div className="login-header">
           <h1>Nexora</h1>
           <p>Система управління інтернет-магазином</p>
         </div>
 
-        {/* Форма входу */}
         <div className="login-form-card">
           <div className="form-header">
             <h2>Вхід в панель адміністратора</h2>
@@ -80,7 +78,6 @@ const AdminLoginPage = () => {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {/* Поле логіна */}
             <div className="admin-form-group">
               <label>Ім'я користувача</label>
               <div className="input-container">
@@ -97,7 +94,6 @@ const AdminLoginPage = () => {
               </div>
             </div>
 
-            {/* Поле пароля */}
             <div className="admin-form-group">
               <label>Пароль</label>
               <div className="input-container">
@@ -122,20 +118,18 @@ const AdminLoginPage = () => {
               </div>
             </div>
 
-            {/* Повідомлення про помилку */}
             {error && (
               <div className="error-message">
                 {error}
               </div>
             )}
 
-            {/* Кнопка */}
             <button type="submit" className="login-button" disabled={loading}>
               {loading ? 'Вхід...' : 'Увійти'}
             </button>
           </form>
 
-          {/* Підказка для розробки (можна прибрати в продакшні) */}
+          {/* Development credentials */}
           <div className="login-footer">
             <p>
               Admin: admin / admin123<br />

@@ -1,5 +1,3 @@
-// інтелектуальний каталог товарів із пошуком та фільтрацією
-
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import ProductList from "../../components/catalog/ProductList/ProductList.jsx";
@@ -28,20 +26,17 @@ import CatalogToolbar from "./CatalogToolbar.jsx";
 import CatalogSortMenu from "./CatalogSortMenu.jsx";
 import CatalogEmptyState from "./CatalogEmptyState.jsx";
 
-// Спеціальні хуки для логіки каталогу
 import { useCatalogData } from "../../components/catalog/hooks/useCatalogData.js";
 import { useCatalogSearch } from "../../components/catalog/hooks/useCatalogSearch.js";
 import { useCatalogFilters } from "../../components/catalog/hooks/useCatalogFilters.js";
 
 const CatalogPage = () => {
-  // Параметри маршруту
   const { categoryName } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const navbarSearchQuery = searchParams.get("q");
   const brandQuery = searchParams.get("brand");
 
-  // Управління станом та хуки
   const { allProducts, availableCategories, isLoading, error } =
     useCatalogData();
   const { performIntelligentSearch, shouldAutoSwitchCategory } =
@@ -59,9 +54,8 @@ const CatalogPage = () => {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  // State для пагинації
   const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(12); // Кількість товарів на сторінці
+  const [perPage, setPerPage] = useState(12);
   const [loadedPagesRange, setLoadedPagesRange] = useState({ start: 1, end: 1 });
 
   const sortOptions = [
@@ -69,7 +63,7 @@ const CatalogPage = () => {
     { value: "priceDesc", label: "Від дорогих до дешевих" },
   ];
 
-  // Обробляє зміни URL (категорія або пошуковий запит)
+  // Sync route params with state
   useEffect(() => {
     if (categoryName) {
       setSelectedCategory(categoryName);
@@ -86,7 +80,7 @@ const CatalogPage = () => {
     }
   }, [navbarSearchQuery]);
 
-  // Оновлює заголовок сторінки динамічно
+  // Dynamically update document/page title
   useEffect(() => {
     if (pageSearchQuery) {
       setPageTitle(`По запиту «${pageSearchQuery}» знайшлося`);
@@ -127,7 +121,7 @@ const CatalogPage = () => {
     });
   }, [brandQuery]);
 
-  // Закриття сортування при кліку зовні
+  // Close sort menu on click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".catalog-sort-picker") && !event.target.closest(".sort-mobile-capsule-wrapper")) {
@@ -138,7 +132,7 @@ const CatalogPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Основна логіка фільтрації та сортування
+  // Perform main filtering, searching, and sorting
   useEffect(() => {
     const filtered = processProducts(
       allProducts,
@@ -153,7 +147,7 @@ const CatalogPage = () => {
     setAvailableBrands(brands);
     setFilteredProducts(filtered.products);
 
-    // Авто-переключення категорії, якщо пошук знайшов товари лише в одній
+    // Auto-switch category if search results belong to a single category
     if (!filtered.autoSwitch) return;
 
     setSelectedCategory(filtered.targetCategory);
@@ -167,7 +161,7 @@ const CatalogPage = () => {
     availableCategories,
   ]);
 
-  // Підрахунок активних фільтрів для лічильника на кнопці
+  // Calculate total active filters count
   const getActiveFiltersCount = () => {
     if (!activeSidebarFilters) return 0;
     let count = 0;
@@ -183,9 +177,8 @@ const CatalogPage = () => {
 
   const activeFiltersCount = getActiveFiltersCount();
 
-  // Блокування скролу фону при відкритих фільтрах або сортуванні
+  // Lock body scrolling when filter/sort overlays are open
   useEffect(() => {
-    // Сортування блокує скрол тільки на мобільних (де воно на весь екран)
     const isMobile = window.innerWidth < 992;
 
     if (isFiltersOpen) {
@@ -214,13 +207,13 @@ const CatalogPage = () => {
   }, [isFiltersOpen, isSortOpen]);
 
 
-  // Скидання сторінки на першу при зміні фільтрів
+  // Reset pagination on filter change
   useEffect(() => {
     setPage(1);
     setLoadedPagesRange({ start: 1, end: 1 });
   }, [pageSearchQuery, selectedCategory, activeSidebarFilters, sortOrder]);
 
-  // Універсальна функція обробки даних (Пошук -> Фільтр -> Сортування)
+  // Pipeline to process products: search, filter, then sort
   const processProducts = (
     products,
     category,
@@ -231,11 +224,9 @@ const CatalogPage = () => {
     let processed = [...products];
 
     if (searchQuery) {
-      // 1. Інтелектуальний пошук
       const results = performIntelligentSearch(processed, searchQuery);
       processed = results.products;
 
-      // 2. Аналіз: чи треба перемкнути категорію?
       const autoSwitch = shouldAutoSwitchCategory(results.products, category);
       if (autoSwitch.shouldSwitch) {
         return {
@@ -245,7 +236,6 @@ const CatalogPage = () => {
         };
       }
     } else {
-      // Стандартний режим (без пошуку)
       if (category !== "all") {
         processed = processed.filter((p) => p.category === category);
       }
@@ -264,7 +254,6 @@ const CatalogPage = () => {
     };
   };
 
-  // Сортує товари в вказаному порядку
   const sortProducts = (products, sortOrder) => {
     const sorted = [...products];
 
@@ -278,7 +267,6 @@ const CatalogPage = () => {
     }
   };
 
-  // Обробники бокової панелі фільтрів
   const handleApplyFilters = (filters) => {
     setActiveSidebarFilters(filters);
   };
@@ -304,13 +292,11 @@ const CatalogPage = () => {
     setActiveSidebarFilters(updated);
   };
 
-  // Розрахунки пагинації
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const startIndex = (loadedPagesRange.start - 1) * perPage;
   const endIndex = loadedPagesRange.end * perPage;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // СТАН - помилка
   if (error) {
     return (
       <div className="catalog-error">
@@ -320,7 +306,7 @@ const CatalogPage = () => {
     );
   }
 
-  // Генерація хлібних крихт
+  // Generate breadcrumbs
   const breadcrumbItems = [{ label: "Каталог товарів", path: "/catalog" }];
 
   if (categoryName && categoryName !== "all") {
@@ -347,7 +333,6 @@ const CatalogPage = () => {
     breadcrumbItems[breadcrumbItems.length - 1].path = null;
   }
 
-  // ГОЛОВНИЙ РЕНДЕР
   return (
     <div className="catalog-page">
       <Breadcrumbs items={breadcrumbItems} />
@@ -470,12 +455,10 @@ const CatalogPage = () => {
         </aside>
 
         <main className="catalog-right">
-
           {filteredProducts.length > 0 ? (
             <>
               <ProductList products={currentProducts} isLoading={isLoading} />
 
-              {/* Пагінація */}
               {totalPages > 1 && (
                 <Pagination
                   page={page}

@@ -8,12 +8,12 @@ export const useCatalogData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // завантажуємо початкові дані при першому відкритті
+  // Load initial data on mount
   const fetchData = async () => {
     try {
       setIsLoading(true);
 
-      // завантажуємо товари та категорії паралельно для швидкості
+      // Load products and categories in parallel
       const [productsData, categoriesData] = await Promise.all([
         getProducts(),
         getCategories()
@@ -21,7 +21,7 @@ export const useCatalogData = () => {
 
       setAllProducts(productsData);
 
-      // додаємо опцію "усі товари" до категорій
+      // Add default "all products" option
       const allProductsOption = { value: 'all', label: 'Усі товари' };
       const categoryOptions = categoriesData.map(cat => ({
         value: cat.name,
@@ -41,7 +41,7 @@ export const useCatalogData = () => {
     fetchData();
   }, []);
 
-  // оновлюємо дані при поверненні до вкладки відбу
+  // Refetch data when tab becomes active
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {

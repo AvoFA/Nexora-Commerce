@@ -94,7 +94,7 @@ const OrdersTable = ({
             <TableCell>Товари</TableCell>
             <TableCell>Сума</TableCell>
             <TableCell>Статус</TableCell>
-            <TableCell align="right">Дії</TableCell>
+            <TableCell>Дії</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -203,8 +203,8 @@ const OrdersTable = ({
                     )}
                   </Box>
                 </TableCell>
-                <TableCell align="right">
-                  <Box className="actions-cell">
+                <TableCell>
+                  <Box className="actions-cell" sx={{ display: "flex", justifyContent: "flex-end", pr: 0.75 }}>
                     <Tooltip title="Деталі замовлення">
                       <IconButton
                         size="small"

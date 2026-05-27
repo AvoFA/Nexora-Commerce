@@ -1,14 +1,14 @@
-// Контролер для роботи з категоріями
+// Category controller
 
 const Category = require('../models/Category');
 const Product = require('../models/Product');
 
-// Отримати всі категорії
+// Get all categories
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find({});
 
-    // Додаємо підрахунок товарів для кожної категорії
+    // Add product count to each category
     const categoriesWithCount = await Promise.all(categories.map(async (cat) => {
       const count = await Product.countDocuments({ category: cat.name });
       return {
@@ -30,7 +30,7 @@ const getCategories = async (req, res) => {
   }
 };
 
-// Створити нову категорію
+// Create a category
 const createCategory = async (req, res) => {
   try {
     const category = await Category.create(req.body);
@@ -49,7 +49,7 @@ const createCategory = async (req, res) => {
   }
 };
 
-// Оновити категорію
+// Update a category
 const updateCategory = async (req, res) => {
   try {
     let category = await Category.findById(req.params.id);
@@ -80,7 +80,7 @@ const updateCategory = async (req, res) => {
   }
 };
 
-// Видалити категорію
+// Delete a category
 const deleteCategory = async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);

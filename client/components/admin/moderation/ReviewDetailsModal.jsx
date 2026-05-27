@@ -41,12 +41,21 @@ const ReviewDetailsModal = ({
       >
         <CloseIcon />
       </button>
-      <DialogTitle>Деталі відгуку</DialogTitle>
+      <DialogTitle sx={{ p: 0 }}>
+        <Box className="review-dialog-title-block">
+          <Typography variant="overline" className="review-dialog-label">Відгук про товар</Typography>
+          <Typography variant="h6" className="review-dialog-product-name">
+            {review.product?.name || "Видалений товар"}
+          </Typography>
+          <Typography variant="body2" className="review-dialog-author">
+            {review.name}{review.user?.email ? ` · ${review.user.email}` : ""}
+          </Typography>
+        </Box>
+      </DialogTitle>
       <DialogContent dividers sx={{ pb: 3 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-          {/* Двоколонкова спліт-панель: Товар ліворуч, Деталі праворуч */}
+          {/* Split layout: product panel and metadata details */}
           <Box className="modal-header-split">
-            {/* Ліва панель: Товар */}
             <Box className="product-panel">
               <Box className="product-image-container">
                 <img
@@ -60,7 +69,6 @@ const ReviewDetailsModal = ({
               </Typography>
             </Box>
 
-            {/* Права панель: Метадані та Автор */}
             <Box className="details-panel">
               <Box className="author-card">
                 <Box className="author-info">
@@ -127,7 +135,6 @@ const ReviewDetailsModal = ({
             </Box>
           </Box>
 
-          {/* Текст відгуку */}
           <div className="modal-section">
             <span className="section-label">Текст відгуку</span>
             <Typography
@@ -138,7 +145,6 @@ const ReviewDetailsModal = ({
             </Typography>
           </div>
 
-          {/* Переваги та недоліки */}
           {review.pros && (
             <div className="modal-section">
               <span className="section-label">Переваги</span>

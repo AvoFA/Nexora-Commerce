@@ -102,7 +102,7 @@ const ReviewForm = ({
               const val = e.target.value;
               setNewReview((p) => ({ ...p, text: val }));
               
-              // Жива валідація: показуємо помилку відразу при введенні
+              // Real-time validation: show error immediately on typing
               if (val.length > 0 && val.trim().length < 10) {
                 setFormErrors((prev) => ({ 
                   ...prev, 

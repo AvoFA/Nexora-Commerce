@@ -6,7 +6,7 @@ const { authenticateToken, requireRole } = require('../middleware/auth');
 const router = express.Router();
 const moderationAccess = requireRole('admin', 'moderator');
 
-// 1. Створення нового питання користувачем
+// 1. Create a new question by a user
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const { productId, text } = req.body;
@@ -40,7 +40,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// 2. Отримання запитань поточного користувача
+// 2. Get questions of the current user
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const questions = await Question.find({ user: req.user.id })
@@ -60,7 +60,7 @@ router.get('/me', authenticateToken, async (req, res) => {
   }
 });
 
-// 3. Отримання схвалених запитань для картки товару
+// 3. Get approved questions for a product page
 router.get('/product/:productId', async (req, res) => {
   try {
     const questions = await Question.find({
@@ -81,7 +81,7 @@ router.get('/product/:productId', async (req, res) => {
   }
 });
 
-// 4. Отримання списку запитань для адмін-панелі
+// 4. Get questions for admin panel
 router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
   try {
     let page = parseInt(req.query.page, 10) || 1;
@@ -95,12 +95,12 @@ router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
     const skip = (page - 1) * limit;
     const query = {};
 
-    // Фільтр за статусом
+    // Filter by status
     if (status && status !== 'all') {
       query.status = status;
     }
 
-    // Фільтр за наявністю відповіді
+    // Filter by answer status
     if (answerStatus === 'answered') {
       query.answer = { $exists: true, $ne: '' };
     } else if (answerStatus === 'unanswered') {
@@ -110,7 +110,7 @@ router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
       ];
     }
 
-    // Пошук за текстом запитання/відповіді, автором та назвою товару
+    // Search by question/answer text, author name/email, and product name
     if (search && search.trim()) {
       const cleanSearch = search.trim().slice(0, 100);
       const searchRegex = new RegExp(cleanSearch.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
@@ -142,8 +142,8 @@ router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
       ];
     }
 
-    // Підрахунок кількості за статусами (для плашок зверху)
-    // Має враховувати пошук та фільтр за відповідями, але не статус
+    // Count by status for UI stats badges
+    // Should respect search and answer filters, but ignore status
     const countQuery = {};
     if (answerStatus === 'answered') {
       countQuery.answer = { $exists: true, $ne: '' };
@@ -180,7 +180,7 @@ router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
     });
     counts.all = totalAll;
 
-    // Окремо рахуємо загальну кількість питань без відповіді (для плашки статистики)
+    // Count total unanswered questions for the stats badge
     const unansweredCount = await Question.countDocuments({
       $or: [
         { answer: { $exists: false } },
@@ -188,13 +188,13 @@ router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
       ]
     });
 
-    // Сортування
+    // Sorting
     let sortObj = { createdAt: -1 };
     if (sort === 'createdAt_asc') {
       sortObj = { createdAt: 1 };
     }
 
-    // Запит
+    // Query database
     const questions = await Question.find(query)
       .populate('product', 'name image')
       .populate('user', 'name email')
@@ -224,7 +224,7 @@ router.get('/admin', authenticateToken, moderationAccess, async (req, res) => {
   }
 });
 
-// 5. Оновлення статусу запитання (адмін)
+// 5. Update question status (admin/moderator)
 router.patch('/:id/status', authenticateToken, moderationAccess, async (req, res) => {
   try {
     const { status } = req.body;
@@ -263,8 +263,8 @@ router.patch('/:id/status', authenticateToken, moderationAccess, async (req, res
   }
 });
 
-// 6. Додавання або оновлення відповіді адміністратора
-// Автоматично затверджує запитання (status = 'approved')
+// 6. Add or update admin reply
+// Automatically approves question on reply
 router.patch('/:id/answer', authenticateToken, moderationAccess, async (req, res) => {
   try {
     const { answer } = req.body;
@@ -280,7 +280,7 @@ router.patch('/:id/answer', authenticateToken, moderationAccess, async (req, res
       req.params.id,
       {
         answer: answer.trim(),
-        status: 'approved' // Автоматично затверджуємо при відповіді
+        status: 'approved' // Automatically approve on reply
       },
       { new: true, runValidators: true }
     );
@@ -306,7 +306,7 @@ router.patch('/:id/answer', authenticateToken, moderationAccess, async (req, res
   }
 });
 
-// 7. Видалення запитання (адмін)
+// 7. Delete question (admin/moderator)
 router.delete('/:id', authenticateToken, moderationAccess, async (req, res) => {
   try {
     const question = await Question.findByIdAndDelete(req.params.id);

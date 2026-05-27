@@ -349,6 +349,102 @@
   }
 }
 
+// Segmented tabs (shared: Product, Category modals)
+.admin-modal-segmented-tabs {
+  padding: 10px 24px 14px;
+  border-bottom: 1px solid rgba($border-color, 0.45);
+  background: rgba(255, 255, 255, 0.005);
+}
+
+.segmented-tabs-container {
+  display: inline-flex;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba($border-color, 0.45);
+  border-radius: 10px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (min-width: 600px) {
+    width: auto;
+  }
+}
+
+.segmented-tab-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: $text-secondary;
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 650;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  flex: 1;
+
+  @media (min-width: 600px) {
+    flex: none;
+  }
+
+  svg {
+    font-size: 1.15rem;
+    opacity: 0.75;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+
+  &:hover {
+    color: $text-color;
+    background: rgba(255, 255, 255, 0.035);
+
+    svg {
+      opacity: 0.95;
+    }
+  }
+
+  &.is-active {
+    color: #60a5fa;
+    background: rgba(96, 165, 250, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    svg {
+      color: #60a5fa;
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    background: rgba($primary-color, 0.08);
+  }
+
+  .segmented-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    background: rgba(96, 165, 250, 0.2);
+    color: #60a5fa;
+    transition: background 0.2s ease;
+  }
+
+  &.is-active .segmented-tab-badge {
+    background: rgba(96, 165, 250, 0.3);
+  }
+}
+
 .admin-modal-tabs {
   display: flex;
   gap: 8px;

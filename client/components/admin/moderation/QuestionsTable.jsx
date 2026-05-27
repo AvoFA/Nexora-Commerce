@@ -157,9 +157,9 @@ const QuestionsTable = ({
                   variant={question.status === "pending" ? "outlined" : "filled"}
                 />
               </TableCell>
-              <TableCell align="right">
-                <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5 }}>
-                  {/* Перегляд деталей */}
+              <TableCell>
+                <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5, pr: 0.75 }}>
+                  {/* View details */}
                   <Tooltip title="Перегляд">
                     <IconButton
                       size="small"
@@ -170,7 +170,7 @@ const QuestionsTable = ({
                     </IconButton>
                   </Tooltip>
 
-                  {/* Відповісти (Drawer) */}
+                  {/* Reply */}
                   <Tooltip title={replyActionLabel}>
                     <IconButton
                       size="small"

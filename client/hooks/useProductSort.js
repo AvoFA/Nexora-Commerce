@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-// Хук для сортування продуктів
+// Custom hook to sort product list
 export const useProductSort = () => {
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: null
   });
 
-  // Обробка кліку по заголовку таблиці
+  // Handle table header click
   const handleSort = (key) => {
     let direction = 'asc';
 
@@ -18,7 +18,7 @@ export const useProductSort = () => {
     setSortConfig({ key, direction });
   };
 
-  // Функція сортування для масиву продуктів
+  // Sort product array
   const sortProducts = (products) => {
     if (!sortConfig.key) return products;
 
@@ -26,12 +26,12 @@ export const useProductSort = () => {
       let aValue = a[sortConfig.key];
       let bValue = b[sortConfig.key];
 
-      // Для ціни та stock - числове порівняння
+      // Numeric sorting for price and stock
       if (sortConfig.key === 'price' || sortConfig.key === 'stock') {
         aValue = parseFloat(aValue) || 0;
         bValue = parseFloat(bValue) || 0;
       } else {
-        // Для текстових полів
+        // Case-insensitive alphabetical sorting for strings
         aValue = String(aValue).toLowerCase();
         bValue = String(bValue).toLowerCase();
       }

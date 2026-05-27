@@ -6,7 +6,7 @@ const getAdminHeaders = () => ({
   Authorization: `Bearer ${getAdminToken()}`
 });
 
-// Підставляємо замість _id звичайний id
+// Normalize _id to standard id
 const normalizeProduct = (product) => {
   return {
     ...product,
@@ -18,7 +18,7 @@ const normalizeProduct = (product) => {
   };
 };
 
-// Отримуємо всі товари для головної сторінки
+// Get all products
 export const getProducts = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/products`);
@@ -36,7 +36,7 @@ export const getProducts = async () => {
   }
 };
 
-// Знаходимо товар за його ID
+// Get product by ID
 export const getProductById = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${id}`);
@@ -54,7 +54,7 @@ export const getProductById = async (id) => {
   }
 };
 
-// Шукаємо схожі товари для рекомендацій на сторінці товару
+// Get similar products for recommendation
 export const getSimilarProducts = async (currentProductId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${currentProductId}/similar`);
@@ -71,10 +71,10 @@ export const getSimilarProducts = async (currentProductId) => {
   }
 };
 
-// Створюємо новий товар (використовується в адмінці)
+// Create a new product (admin only)
 export const createProduct = async (productData) => {
   try {
-    // готуємо дані під поля сервера
+    // Map fields to match server payload
     const payload = {
       ...productData,
       image: productData.imageUrl || productData.image
@@ -94,10 +94,10 @@ export const createProduct = async (productData) => {
   }
 };
 
-// Оновлюємо існуючий товар
+// Update existing product
 export const updateProduct = async (id, productData) => {
   try {
-    // готуємо дані для сервера
+    // Map fields to match server payload
     const payload = {
       ...productData,
       image: productData.imageUrl || productData.image
@@ -117,7 +117,7 @@ export const updateProduct = async (id, productData) => {
   }
 };
 
-// Видаляємо товар за ID
+// Delete product by ID
 export const deleteProduct = async (id) => {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${id}`, {
@@ -132,7 +132,7 @@ export const deleteProduct = async (id) => {
   }
 };
 
-// Пошук товарів за запитом
+// Search products by query
 export const searchProducts = async (query) => {
   try {
     const response = await fetch(`${API_BASE_URL}/products?search=${encodeURIComponent(query)}`);

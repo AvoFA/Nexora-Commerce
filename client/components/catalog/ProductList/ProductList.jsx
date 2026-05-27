@@ -4,9 +4,8 @@ import './ProductList.scss';
 
 const getProductId = (product) => product?._id || product?.id;
 
-// Відображає сітку карток товарів або скелетони
 const ProductList = ({ products = [], isLoading = false }) => {
-  // Режим завантаження: показуємо 8 скелетонів
+  // Loading state: render skeletons
   if (isLoading) {
     return (
       <div className="product-list">
@@ -17,7 +16,7 @@ const ProductList = ({ products = [], isLoading = false }) => {
     );
   }
 
-  // Якщо список порожній (і не завантажується)
+  // Empty state
   if (!products || products.length === 0) {
     return (
       <div className="product-list-empty">

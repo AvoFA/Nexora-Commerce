@@ -1,4 +1,4 @@
-// Хук для доступу до кошика з будь-якого компонента
+// Custom hook to access cart context
 import { useContext } from "react";
 import { CartContext } from "./CartState.jsx";
 

@@ -529,7 +529,6 @@ const ReviewListPage = () => {
 
   return (
     <Box className="review-list-page">
-      {/* Шапка сторінки */}
       <Box className="admin-page-header">
         <div className="header-title-wrapper">
           <Typography variant="h2" component="h2">
@@ -540,7 +539,6 @@ const ReviewListPage = () => {
           </Typography>
         </div>
 
-        {/* Статистика модерації */}
         <ModerationStats
           activeType={activeType}
           avgRating={avgRating}
@@ -549,7 +547,6 @@ const ReviewListPage = () => {
         />
       </Box>
 
-      {/* Панель керування фільтрами */}
       <div className="admin-solid-card moderation-toolbar-card">
         <div className="toolbar-header-row">
           <AdminFilterTabs
@@ -599,7 +596,7 @@ const ReviewListPage = () => {
                   <TableCell>Оцінка</TableCell>
                   <TableCell>Відгук</TableCell>
                   <TableCell>Статус</TableCell>
-                  <TableCell align="right">Дії</TableCell>
+                  <TableCell>Дії</TableCell>
                 </TableRow>
               ) : (
                 <TableRow>
@@ -608,7 +605,7 @@ const ReviewListPage = () => {
                   <TableCell>Питання</TableCell>
                   <TableCell>Відповідь</TableCell>
                   <TableCell>Статус</TableCell>
-                  <TableCell align="right">Дії</TableCell>
+                  <TableCell>Дії</TableCell>
                 </TableRow>
               )}
             </TableHead>
@@ -644,7 +641,6 @@ const ReviewListPage = () => {
         </TableContainer>
       )}
 
-      {/* Модальне вікно перегляду деталей відгуку */}
       {activeType === "reviews" && (
         <ReviewDetailsModal
           isOpen={Boolean(selectedItemForModal)}
@@ -655,7 +651,6 @@ const ReviewListPage = () => {
         />
       )}
 
-      {/* Модальне вікно перегляду деталей запитання */}
       {activeType === "questions" && (
         <QuestionDetailsModal
           isOpen={Boolean(selectedItemForModal)}
@@ -668,7 +663,6 @@ const ReviewListPage = () => {
         />
       )}
 
-      {/* Компактний правий Drawer для швидкої відповіді */}
       <QuestionReplyDrawer
         isOpen={Boolean(selectedQuestionForAnswer)}
         onClose={() => setSelectedQuestionForAnswer(null)}

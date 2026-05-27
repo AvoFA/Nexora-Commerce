@@ -18,9 +18,9 @@ import "./EmptyState.scss";
  * Usage:
  *   <EmptyState
  *     icon={ShoppingBagOutlinedIcon}
- *     title="Ваш кошик порожній"
- *     description="Додайте товари, щоб розпочати покупки"
- *     action={{ label: "Перейти до каталогу", to: "/catalog" }}
+ *     title="Your cart is empty"
+ *     description="Add products to start shopping"
+ *     action={{ label: "Go to catalog", to: "/catalog" }}
  *     className="cart-empty-state"
  *   />
  */

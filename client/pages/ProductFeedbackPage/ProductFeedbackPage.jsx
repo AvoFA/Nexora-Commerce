@@ -53,11 +53,11 @@ const ProductFeedbackPage = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Якщо скролимо вниз — показуємо, якщо вгору — ховаємо
+      // If scrolling down show the bar, if scrolling up hide it
       if (currentScrollY > lastScrollY.current) {
         setShowStickyBar(true);
       } else if (currentScrollY < lastScrollY.current) {
-        // Додаємо невеликий поріг, щоб не ховалося від випадкових мікро-рухів вгору
+        // Add a small threshold to prevent flickering from micro-scrolls
         if (lastScrollY.current - currentScrollY > 5) {
           setShowStickyBar(false);
         }
@@ -160,7 +160,6 @@ const ProductFeedbackPage = () => {
         </div>
       </div>
 
-      {/* Мобільна липка панель винесена назовні, щоб transform її не ламав! */}
       <div className={`mobile-sticky-purchase-bar ${showStickyBar ? "is-visible" : ""}`}>
         <div className="sticky-info">
           {imgSrc && <img src={imgSrc} alt="" className="sticky-thumb" />}

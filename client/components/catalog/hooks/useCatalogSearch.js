@@ -1,29 +1,29 @@
-// Пошук товарів - розумно та просто
+// Intelligent catalog search functionality
 
-// Налаштування ранжирування результатів пошуку
+// Search relevance weights and configuration
 const SEARCH_CONFIG = {
-  nameWeight: 10,        // назва товару важливіша за все
-  brandWeight: 7,        // бренд теж важить добре
-  categoryWeight: 5,     // категорія менш релевантна
-  autoSwitchThreshold: 0.5  // автоперехід в іншу категорію якщо більшість товарів звідти
+  nameWeight: 10,        // Title weight
+  brandWeight: 7,        // Brand weight
+  categoryWeight: 5,     // Category weight
+  autoSwitchThreshold: 0.5  // Auto-switch threshold
 };
 
 export const useCatalogSearch = () => {
-  // вираховуємо релевантність товару для пошукового запиту
+  // Calculate keyword relevance score for a product
   const calculateSearchScore = (product, query) => {
     let score = 0;
     const queryWords = query.split(' ').filter(word => word.length > 0);
 
     for (const word of queryWords) {
-      // спочатку шукаємо по назві - вона важливіша за все
+      // Title matches
       if (product.name && product.name.toLowerCase().includes(word)) {
         score += SEARCH_CONFIG.nameWeight;
       }
-      // далі бренд - теж важливо
+      // Brand matches
       if (product.brand && product.brand.toLowerCase().includes(word)) {
         score += SEARCH_CONFIG.brandWeight;
       }
-      // категорія менш значима
+      // Category matches
       if (product.category && product.category.toLowerCase().includes(word)) {
         score += SEARCH_CONFIG.categoryWeight;
       }
@@ -32,11 +32,11 @@ export const useCatalogSearch = () => {
     return score;
   };
 
-  // розумний пошук з урахуванням релевантності
+  // Perform query search and rank by relevance score
   const performIntelligentSearch = (products, query) => {
     const normalizedQuery = query.toLowerCase();
 
-    // присвоюємо кожному товару пошуковий рейтинг, сортуємо, забираємо службові поля
+    // Map search scores, filter matches, sort descending, and strip temp fields
     const scoredResults = products
       .map(product => ({
         ...product,
@@ -53,19 +53,19 @@ export const useCatalogSearch = () => {
     };
   };
 
-  // перевіряємо чи варто автоматично переключитися в іншу категорію
+  // Determine if active category filter should switch based on search results
   const shouldAutoSwitchCategory = (searchResults, currentCategory) => {
     if (searchResults.length === 0 || currentCategory === 'all') {
       return { shouldSwitch: false, targetCategory: null };
     }
 
-    // групуємо знайдені товари по категоріях
+    // Group match count by category
     const categoryCounts = {};
     searchResults.forEach(product => {
       categoryCounts[product.category] = (categoryCounts[product.category] || 0) + 1;
     });
 
-    // шукаємо категорію з найбільшою кількістю результатів
+    // Find the category containing the most matching products
     let topCategory = null;
     let maxCount = 0;
     for (const [category, count] of Object.entries(categoryCounts)) {
@@ -75,7 +75,7 @@ export const useCatalogSearch = () => {
       }
     }
 
-    // автоматично переключаємося на цю категорію якщо більшість знайденого звідти
+    // Switch category if a single category exceeds the threshold
     const shouldSwitch = topCategory &&
       topCategory !== currentCategory &&
       maxCount > searchResults.length * SEARCH_CONFIG.autoSwitchThreshold;

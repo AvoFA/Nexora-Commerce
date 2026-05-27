@@ -1,13 +1,11 @@
-// client/pages/AboutPage.jsx
 import "./AboutPage.scss";
-// НОВІ ІМПОРТИ ДЛЯ ФІЛОСОФІЇ
 import FlashOnOutlined from "@mui/icons-material/FlashOnOutlined";
 import DiamondOutlined from "@mui/icons-material/DiamondOutlined";
 import DesignServicesOutlined from "@mui/icons-material/DesignServicesOutlined";
 import ScienceOutlined from "@mui/icons-material/ScienceOutlined";
+
 const aboutUsImage = "/assets/images/ui/about_us3.jpg";
 
-// ОНОВЛЕНИЙ МАСИВ features (ФІЛОСОФІЯ)
 const features = [
   {
     icon: <DiamondOutlined />,
@@ -37,9 +35,7 @@ const features = [
 
 const AboutPage = () => {
   return (
-    // Новий клас-обгортка
     <div className="about-page-v2">
-      {/* --- Секція 1: Герой (НОВА) --- */}
       <section className="about-hero-glass">
         <h1>Про ElectroLux</h1>
         <p className="subtitle">
@@ -49,7 +45,6 @@ const AboutPage = () => {
         </p>
       </section>
 
-      {/* --- Секція 2: Філософія ElectroLux (Збережений макет, новий зміст) --- */}
       <section className="about-features">
         <h2 className="section-title centered-title">Філософія ElectroLux</h2>
         <div className="features-grid">
@@ -63,18 +58,15 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* --- Секція 3: Історія та Контакти (НОВА) --- */}
       <section className="about-details-grid">
-        {/* Колонка 1: Зображення */}
         <div className="details-image-wrapper">
           <img src={aboutUsImage} alt="Наша команда" />
         </div>
 
-        {/* Колонка 2: Скляна картка з текстом */}
         <div className="admin-solid-card details-content-card">
           <h3>Наша історія</h3>
           <p>
-            ElectroLux був заснований з єдиною метою: надати українському ринку
+            ElectroLux был заснований з єдиною метою: надати українському ринку
             виключно люксову та передову електроніку. Ми віримо, що майбутнє
             цифрових пристроїв має бути яскравим, потужним та надійним.
           </p>
@@ -85,7 +77,6 @@ const AboutPage = () => {
             витонченій формі.
           </p>
 
-          {/* Розділювач */}
           <div className="divider"></div>
 
           <h3>Контакти</h3>

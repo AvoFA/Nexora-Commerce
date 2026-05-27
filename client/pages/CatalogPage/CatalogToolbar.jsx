@@ -35,7 +35,7 @@ const CatalogToolbar = ({
 }) => {
   const [isChipsExpanded, setIsChipsExpanded] = useState(false);
 
-  // Збір активних фільтрів у єдиний список чипсів
+  // Collect active filters to chips list
   const chips = [];
   if (activeSidebarFilters) {
     if (
@@ -139,7 +139,6 @@ const CatalogToolbar = ({
       </div>
 
       <div className="catalog-toolbar-actions">
-        {/* Десктопная версия (скрыта на мобилке через CSS) */}
         <div className="toolbar-desktop-only">
           <CatalogSortMenu
             isSortOpen={isSortOpen}
@@ -152,7 +151,6 @@ const CatalogToolbar = ({
           />
         </div>
 
-        {/* Мобільна версія (капсульна пара як у Comfy) */}
         <div className="toolbar-mobile-capsules">
           <div className="sort-mobile-capsule-wrapper">
             <button
@@ -205,7 +203,6 @@ const CatalogToolbar = ({
           </button>
         </div>
       </div>
-
 
     </div>
   );

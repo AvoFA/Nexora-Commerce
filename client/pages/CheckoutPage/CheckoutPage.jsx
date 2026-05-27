@@ -1,4 +1,3 @@
-// client/pages/CheckoutPage/CheckoutPage.jsx
 import { useState, useEffect, useRef } from "react";
 import { useCart } from "../../hooks/useCart.js";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +48,7 @@ const CheckoutPage = () => {
   const summaryRef = useRef(null);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
   const allItems = state.items;
-  // Фільтруємо тільки обрані товари
+  // Filter selected items only
   const items = allItems.filter(item => item.selected !== false);
 
   const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -59,15 +58,15 @@ const CheckoutPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOrderCompleted, setIsOrderCompleted] = useState(false);
 
-  /* === 👣 КРОК ОФОРМЛЕННЯ (1: Доставка, 2: Оплата) === */
+  // checkout steps (1: Delivery, 2: Payment, 3: Confirmation)
   const [activeStep, setActiveStep] = useState(1);
 
   const [scrollLeft, setScrollLeft] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
 
-  /* === СПОСІБ ДОСТАВКИ === */
-  const [deliveryGroup, setDeliveryGroup] = useState(DELIVERY_GROUPS.PICKUP); // pickup | courier
-  const [deliveryMethod, setDeliveryMethod] = useState(DELIVERY_METHODS.PICKUP); // pickup | post | meest | courier | courier_np
+  // delivery methods
+  const [deliveryGroup, setDeliveryGroup] = useState(DELIVERY_GROUPS.PICKUP);
+  const [deliveryMethod, setDeliveryMethod] = useState(DELIVERY_METHODS.PICKUP);
   const [selectedDeliveryDateOffset, setSelectedDeliveryDateOffset] = useState(1);
   const [isDeliveryCalendarOpen, setIsDeliveryCalendarOpen] = useState(false);
   const [deliveryCalendarMonth, setDeliveryCalendarMonth] = useState(() => {
@@ -75,7 +74,7 @@ const CheckoutPage = () => {
     return new Date(today.getFullYear(), today.getMonth(), 1);
   });
 
-  /* === СТАН ФОРМИ === */
+  // form details
   const [name, setName] = useState(user?.name || "");
   const [surname, setSurname] = useState(user?.surname || "");
   const [patronymic, setPatronymic] = useState(user?.patronymic || "");
@@ -85,22 +84,12 @@ const CheckoutPage = () => {
   const [cityArea, setCityArea] = useState(DEFAULT_CITY_AREA);
   const [zip] = useState(DEFAULT_ZIP);
 
-  // Поля для адресної доставки
   const [address, setAddress] = useState("");
-
-  // Вибраний магазин для самовивозу
   const [chosenStore, setChosenStore] = useState(STORES[0].name + ", " + STORES[0].address);
-
-  // Відділення Нової Пошти
   const [npBranch, setNpBranch] = useState(DEFAULT_NOVA_POSHTA_BRANCH);
 
-  /* === СПОСІБ ОПЛАТИ === */
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS.CASH);
-
-  // Коментар до замовлення
   const [comment, setComment] = useState("");
-
-  // Стан помилок валідації
   const [errors, setErrors] = useState({});
 
   const isIdentityVerificationRequired =
@@ -109,9 +98,9 @@ const CheckoutPage = () => {
     deliveryMethod === DELIVERY_METHODS.COURIER ||
     deliveryMethod === DELIVERY_METHODS.COURIER_NOVA_POSHTA;
 
-  // Стан для преміальних плашок редагування (Колапс як у Comfy)
+  // Edit state for collapsible recipient section
   const [isEditingRecipient, setIsEditingRecipient] = useState(!isAuthenticated);
-  const [cityRef, setCityRef] = useState(DEFAULT_CITY_REF); // Дефолтний Ref для Києва
+  const [cityRef, setCityRef] = useState(DEFAULT_CITY_REF);
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
 
@@ -137,7 +126,7 @@ const CheckoutPage = () => {
 
   const selectedWarehouse = getWarehouseSummary(npBranch, city, cityArea);
 
-  /* === РЕФ ТА СТЕЙТ ДЛЯ ГОРИЗОНТАЛЬНОГО СЛАЙДЕРА ТОВАРІВ === */
+  /* Refs and layout states */
   const itemsContainerRef = useRef(null);
   const stepTransitionRef = useRef(false);
   const deliveryCalendarRef = useRef(null);
@@ -155,7 +144,7 @@ const CheckoutPage = () => {
     const el = itemsContainerRef.current;
     if (el) {
       el.addEventListener("scroll", handleItemsScroll);
-      // Робимо затримку, щоб переконатися, що товари відрендерились
+      // Wait for items to render before calculating scroll metrics
       const timer = setTimeout(handleItemsScroll, 300);
       return () => {
         el.removeEventListener("scroll", handleItemsScroll);
@@ -176,7 +165,7 @@ const CheckoutPage = () => {
     setIsDeliveryCalendarOpen(false);
   };
 
-  /* === СИНХРОНІЗАЦІЯ ДАНИХ З ПРОФІЛЮ КОРИСТУВАЧА === */
+  // Sync recipient state with authenticated user's profile
   useEffect(() => {
     if (user) {
       if (!name && user.name) setName(user.name);
@@ -193,7 +182,7 @@ const CheckoutPage = () => {
     }
   }, [items, navigate, isOrderCompleted]);
 
-  // IntersectionObserver для мобільної липкої кнопки оформлення
+  // Use IntersectionObserver to toggle sticky mobile checkout action bar
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -231,7 +220,6 @@ const CheckoutPage = () => {
     };
   }, [isDeliveryCalendarOpen]);
 
-  /* === РОЗРАХУНОК ДАТ ДОСТАВКИ === */
   const changeDeliveryCalendarMonth = (step) => {
     setDeliveryCalendarMonth((current) => new Date(current.getFullYear(), current.getMonth() + step, 1));
   };
@@ -354,7 +342,6 @@ const CheckoutPage = () => {
     return 0;
   };
 
-  /* === ВАЛІДАЦІЯ ТА ПЕРЕХІД НА НАСТУПНИЙ КРОК === */
   const validateDeliveryStep = () => {
     if (!isAuthenticated) {
       toast.error("Увійдіть або зареєструйтесь, щоб оформити замовлення");
@@ -386,7 +373,7 @@ const CheckoutPage = () => {
       }, 100);
     }
 
-    // Перевірка полів доставки
+    // Validate delivery fields
     if (deliveryMethod === DELIVERY_METHODS.NOVA_POSHTA || deliveryMethod === DELIVERY_METHODS.MEEST) {
       if (!npBranch.trim()) {
         nextErrors.npBranch = "Поле обов'язкове для заповнення";
@@ -408,7 +395,7 @@ const CheckoutPage = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
       setTimeout(() => {
         stepTransitionRef.current = false;
-      }, 400); // 400ms захисний інтервал від дабл-кліку
+      }, 400); // 400ms defensive interval against double-click
     }
   };
 
@@ -423,7 +410,6 @@ const CheckoutPage = () => {
     }
   };
 
-  /* === КЛІКАБЕЛЬНІСТЬ СТЕППЕРА === */
   const handleStepClick = (step) => {
     if (step === 1) {
       setActiveStep(1);
@@ -438,16 +424,15 @@ const CheckoutPage = () => {
     }
   };
 
-  /* === ГОРИЗОНТАЛЬНА ПРОКРУТКА ТОВАРІВ === */
   const animateScroll = (element, distance) => {
     const start = element.scrollLeft;
     const startTime = performance.now();
-    const duration = 280; // 280ms - оптимальна тривалість плавності
+    const duration = 280; // 280ms - optimal duration for smooth scroll transition
 
     const step = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Формула плавного уповільнення EaseInOutQuad
+      // EaseInOutQuad transition formula
       const ease = progress < 0.5
         ? 2 * progress * progress
         : 1 - Math.pow(-2 * progress + 2, 2) / 2;
@@ -474,12 +459,11 @@ const CheckoutPage = () => {
     }
   };
 
-  /* === ВІДПРАВКА ЗАМОВЛЕННЯ === */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (stepTransitionRef.current) {
-      return; // Захист від подвійного кліку під час переходу між кроками
+      return; // Prevent double clicking during step transition
     }
 
     if (activeStep === 1) {
@@ -522,8 +506,12 @@ const CheckoutPage = () => {
           image: item.image || item.imageUrl || "",
           quantity: item.quantity,
         })),
+        // Send separate name fields to sync with user profile on the backend
         customer: {
           name: `${surname} ${name} ${patronymic}`.trim(),
+          firstName: name,
+          surname,
+          patronymic,
           email,
           phone,
         },
@@ -562,14 +550,12 @@ const CheckoutPage = () => {
     }
   };
 
-  /* === ДИНАМІЧНИЙ ЗАГОЛОВОК СТОРІНКИ === */
   const getPageTitle = () => {
     if (activeStep === 1) return "Заповніть інформацію по доставці";
     if (activeStep === 2) return "Заповніть інформацію по оплаті";
     return "Підтвердження замовлення";
   };
 
-  /* === ЯКЩО КОШИК ПУСТИЙ === */
   if (items.length === 0) {
     return (
       <div className="checkout-empty">
@@ -599,10 +585,7 @@ const CheckoutPage = () => {
       />
 
       <form className="checkout-container" onSubmit={handleSubmit}>
-        {/* === ЛІВА КОЛОНКА (ДЕТАЛІ ЗАМОВЛЕННЯ) === */}
         <div className="checkout-form">
-
-          {/* ================= КРОК 1: ДОСТАВКА ================= */}
           {activeStep === 1 && (
             <div className="step-section-wrapper">
               <div ref={recipientSectionRef}>
@@ -737,7 +720,7 @@ const CheckoutPage = () => {
           />
         </div>
 
-        {/* Мобільна липка кнопка оформлення для checkout */}
+        {/* Sticky action bar for mobile devices */}
         {items.length > 0 && (
           <div className={`checkout-mobile-sticky-bar ${isSummaryVisible ? "is-hidden" : ""}`}>
             <div className="sticky-bar-content">

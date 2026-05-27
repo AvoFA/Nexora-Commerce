@@ -18,7 +18,7 @@ import { openAuthModal } from "../../utils/authModalEvents.js";
 import "./CartPage.scss";
 
 const CartPage = () => {
-  // Отримуємо товари з глобального стану
+  // Get items from global state
   const { state, dispatch } = useCart();
   const { items } = state;
   const [isClearModalOpen, setIsClearModalOpen] = useState(false);
@@ -54,7 +54,7 @@ const CartPage = () => {
     };
   }, [items]);
 
-  // Розумна кнопка "Назад"
+  // Smart back button navigation
   const handleBack = () => {
     if (fromProduct) {
       navigate(`/product/${fromProduct}`);
@@ -63,7 +63,7 @@ const CartPage = () => {
     }
   };
 
-  // Обробники кількості товарів
+  // Item quantity handlers
   const handleIncrease = (id) => {
     const itemToAdd = items.find((item) => item.id === id);
     if (itemToAdd) {
@@ -80,12 +80,12 @@ const CartPage = () => {
     toast.success(`"${name}" видалено з кошика`);
   };
 
-  // Перемикання вибору товару
+  // Toggle checkbox selection
   const handleToggleSelection = (id) => {
     dispatch({ type: "TOGGLE_ITEM_SELECTION", payload: id });
   };
 
-  // Додати товар до списку бажань
+  // Wishlist actions
   const handleOpenWishlist = (item) => {
     if (!isAuthenticated) {
       openAuthModal();
@@ -95,25 +95,25 @@ const CartPage = () => {
     setIsWishlistModalOpen(true);
   };
 
-  // Відкрити діалог очищення кошика
+  // Open clear cart dialog
   const handleClearAllCart = () => {
     if (items.length === 0) return;
     setIsClearModalOpen(true);
   };
 
-  // Підтвердити очищення кошика
+  // Confirm clear cart
   const confirmClearAllCart = () => {
     dispatch({ type: "CLEAR_CART" });
     toast.success("Кошик очищено!");
     setIsClearModalOpen(false);
   };
 
-  // Закрити діалог
+  // Close dialog
   const handleCloseClearModal = () => {
     setIsClearModalOpen(false);
   };
 
-  // Функція для відмінювання слів (товар, товари, товарів)
+  // Pluralization helper for items
   const getPlural = (count, one, few, many) => {
     const n = Math.abs(count) % 100;
     const n1 = n % 10;
@@ -123,19 +123,19 @@ const CartPage = () => {
     return many;
   };
 
-  // Рахуємо загальну вартість замовлення (тільки для вибраних товарів)
+  // Calculate order total price for selected items
   const totalPrice = items.reduce((total, item) => {
     if (item.selected === false) return total;
     return total + item.price * item.quantity;
   }, 0);
 
-  // Рахуємо загальну кількість одиниць (тільки для вибраних товарів)
+  // Calculate selected items total quantity
   const selectedItemsCount = items.reduce((total, item) => {
     if (item.selected === false) return total;
     return total + item.quantity;
   }, 0);
 
-  // Рахуємо загальну кількість одиниць (всього в кошику)
+  // Calculate total items quantity in cart
   const totalItems = items.reduce((total, item) => {
     return total + item.quantity;
   }, 0);
@@ -147,7 +147,6 @@ const CartPage = () => {
     }
   };
 
-  // Стан пустого кошика
   if (items.length === 0) {
     return (
       <div className="cart-page">
@@ -178,7 +177,6 @@ const CartPage = () => {
       </div>
 
       <div className="cart-container">
-        {/* Список товарів */}
         <div className="cart-items-list">
           <div className="cart-header">
             <button
@@ -260,7 +258,6 @@ const CartPage = () => {
           })}
         </div>
 
-        {/* Підсумок замовлення */}
         <div className="cart-summary" ref={totalsRef}>
           <h2>Підсумок замовлення</h2>
           <div className="card-content">
@@ -288,7 +285,6 @@ const CartPage = () => {
         </div>
       </div>
 
-      {/* Мобільна липка кнопка оформлення */}
       {selectedItemsCount > 0 && (
         <div className={`cart-mobile-sticky-checkout ${isTotalsVisible ? "is-hidden" : ""}`}>
           <Link
@@ -303,7 +299,6 @@ const CartPage = () => {
         </div>
       )}
 
-      {/* Діалог підтвердження очищення кошика */}
       <ClearCartConfirmModal
         isOpen={isClearModalOpen}
         onClose={handleCloseClearModal}
@@ -311,7 +306,6 @@ const CartPage = () => {
         itemsCount={items.length}
       />
 
-      {/* Діалог вибору списку бажань */}
       {isWishlistModalOpen && (
         <WishlistPickerModal
           isOpen={isWishlistModalOpen}

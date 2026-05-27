@@ -11,7 +11,7 @@ async function seedReviews() {
     await mongoose.connect(MONGODB_URI);
     console.log('✅ Підключено до MongoDB успішно');
 
-    // Знайти тестового користувача або створити його
+    // Find or create test user
     let testUser = await User.findOne({ username: 'testuser' });
     if (!testUser) {
       console.log('👤 Створення тестового користувача...');
@@ -28,7 +28,7 @@ async function seedReviews() {
       console.log('✅ Тестового користувача створено');
     }
 
-    // Отримати кілька товарів
+    // Get first few products
     const products = await Product.find().limit(3);
     
     if (products.length < 3) {
@@ -38,11 +38,11 @@ async function seedReviews() {
 
     console.log(`📦 Знайдено ${products.length} товарів для відгуків`);
 
-    // Видалити старі відгуки тестового користувача
+    // Clean up previous test user reviews
     await Review.deleteMany({ user: testUser._id });
     console.log('🗑️ Старі відгуки тестового користувача видалено');
 
-    // Створити 3 відгуки з різними статусами
+    // Seed 3 reviews with different status codes
     const reviews = [
       {
         user: testUser._id,
@@ -95,7 +95,7 @@ async function seedReviews() {
   }
 }
 
-// Запуск скрипта
+// Script entrypoint
 if (require.main === module) {
   console.log('🚀 Запуск seedReviews скрипта...');
   seedReviews()

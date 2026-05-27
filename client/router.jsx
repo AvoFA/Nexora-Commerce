@@ -1,10 +1,7 @@
-// конфігурація маршрутизації додатку
-
 import { createBrowserRouter, Outlet, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
 
-// імпорти компонентів
 import Navbar from "./components/layout/Navbar/Navbar.jsx";
 import AdminLayout from "./components/layout/AdminLayout/AdminLayout.jsx";
 import Footer from "./components/layout/Footer/Footer.jsx";
@@ -14,7 +11,6 @@ import AddedToCartDrawer from "./components/cart/AddedToCartDrawer/AddedToCartDr
 import AppNotifications from "./components/common/AppNotifications/AppNotifications.jsx";
 import { NEXORA_NAVIGATE_EVENT, OPEN_AUTH_MODAL_EVENT } from "./utils/authModalEvents.js";
 
-// сторінки сайту
 import HomePage from "./pages/HomePage/HomePage.jsx";
 import ProductPage from "./pages/ProductPage/ProductPage.jsx";
 import ProductFeedbackPage from "./pages/ProductFeedbackPage/ProductFeedbackPage.jsx";
@@ -32,7 +28,6 @@ import ReviewsTab from "./pages/AccountPage/tabs/ReviewsTab.jsx";
 import RecentlyViewedTab from "./pages/AccountPage/tabs/RecentlyViewedTab.jsx";
 import AccountPlaceholderTab from "./pages/AccountPage/tabs/AccountPlaceholderTab.jsx";
 
-// сторінки адмінки
 import DashboardPage from "./pages/admin/DashboardPage/DashboardPage.jsx";
 import ProductListPage from "./pages/admin/ProductListPage/ProductListPage.jsx";
 import CategoryListPage from "./pages/admin/CategoryListPage/CategoryListPage.jsx";
@@ -41,11 +36,9 @@ import OrderListPage from "./pages/admin/OrderListPage/OrderListPage.jsx";
 import AdminLoginPage from "./components/admin/auth/AdminLoginPage/AdminLoginPage.jsx";
 import CustomersPage from "./pages/admin/CustomersPage/CustomersPage.jsx";
 
-// компоненти захисту
 import AdminProtectedRoute from "./components/common/AdminProtectedRoute/AdminProtectedRoute.jsx";
 import AdminIndexRedirect from "./components/common/AdminProtectedRoute/AdminIndexRedirect.jsx";
 
-// компонент основного макету сайту
 const SiteLayout = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const navigate = useNavigate();
@@ -120,11 +113,9 @@ const SiteLayout = () => {
   );
 };
 
-// компонент макету адмін-панелі з кастомним Toaster
 const AdminLayoutWithToaster = () => {
   return (
     <>
-      {/* Toast для адмін-панелі */}
       <Toaster
         position="top-right"
         closeButton
@@ -145,15 +136,13 @@ const AdminLayoutWithToaster = () => {
   );
 };
 
-// конфігурація маршрутів
 export const router = createBrowserRouter([
   {
-    // основний сайт
     path: "/",
     element: <SiteLayout />,
     children: [
-      { index: true, element: <Navigate to="/home" replace /> },  // "/" переадресація
-      { path: "/home", element: <HomePage /> },                    // ← головна "/home"
+      { index: true, element: <Navigate to="/home" replace /> },
+      { path: "/home", element: <HomePage /> },
       { path: "/product/:id", element: <ProductPage /> },
       { path: "/product/:id/feedback", element: <ProductFeedbackPage /> },
       { path: "/cart", element: <CartPage /> },
@@ -187,16 +176,14 @@ export const router = createBrowserRouter([
       },
       { path: "/compare", element: <ComparePage /> },
       { path: "/about", element: <AboutPage /> },
-      { path: "*", element: <NotFoundPage /> }, // 404 для всіх інших сторінок
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
   {
-    // сторінка логіну адміністратора (без захисту)
     path: "/admin/login",
     element: <AdminLoginPage />
   },
   {
-    // адмін панель (із захистом)
     path: "/admin",
     element: <AdminProtectedRoute><AdminLayoutWithToaster /></AdminProtectedRoute>,
     children: [

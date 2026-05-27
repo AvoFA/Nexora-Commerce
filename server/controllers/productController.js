@@ -1,4 +1,4 @@
-// Контролер для роботи з товарами
+// Product controller
 
 const Product = require('../models/Product');
 const recommendationService = require('../services/recommendations/similarProductsService');
@@ -24,7 +24,7 @@ const getSimilarProducts = async (req, res) => {
   }
 };
 
-// Отримати всі товари
+// Get all products
 const getProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -67,7 +67,7 @@ const getProducts = async (req, res) => {
   }
 };
 
-// Отримати товар за ID
+// Get product by ID
 const getProductById = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -92,7 +92,7 @@ const getProductById = async (req, res) => {
   }
 };
 
-// Створити новий товар
+// Create a product
 const createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
@@ -111,7 +111,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-// Оновити товар
+// Update a product
 const updateProduct = async (req, res) => {
   try {
     let product = await Product.findById(req.params.id);
@@ -142,7 +142,7 @@ const updateProduct = async (req, res) => {
   }
 };
 
-// Видалити товар
+// Delete a product
 const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

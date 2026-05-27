@@ -2,7 +2,7 @@
  * Formats a customer's or user's name for display based on the context.
  * 
  * @param {Object|string} person - The user or customer object containing name fields (name, surname, patronymic), or a string.
- * @param {string} mode - 'compact' (Ім'я Прізвище) or 'full' (Ім'я Прізвище По батькові).
+ * @param {string} mode - 'compact' (First Last) or 'full' (First Last Patronymic).
  * @returns {string} The formatted name.
  */
 export const formatCustomerName = (person, mode = 'compact') => {
@@ -16,9 +16,9 @@ export const formatCustomerName = (person, mode = 'compact') => {
     if (mode === 'compact') {
       const words = nameStr.split(/\s+/);
       // Assuming string is "Surname Name Patronymic" or "Surname Name"
-      // We want to return "Name Surname" (Ім'я Прізвище)
+      // We want to return "Name Surname"
       if (words.length >= 2) {
-        return `${words[1]} ${words[0]}`; // Ім'я Прізвище
+        return `${words[1]} ${words[0]}`; // Name Surname
       }
       return nameStr;
     }
@@ -32,18 +32,18 @@ export const formatCustomerName = (person, mode = 'compact') => {
     const p = (person.patronymic || "").trim();
 
     if (mode === 'compact') {
-      // Ім'я Прізвище
+      // Name Surname
       const parts = [n, s].filter(Boolean);
       return parts.length > 0 ? parts.join(" ") : "—";
     } else {
-      // Ім'я Прізвище По батькові
+      // Name Surname Patronymic
       const parts = [n, s, p].filter(Boolean);
       return parts.length > 0 ? parts.join(" ") : "—";
     }
   }
 
   // If it's an Order.customer object without surname/patronymic
-  // e.g. guest checkout where it's saved as a single `name` string ("Прізвище Ім'я По-батькові")
+  // e.g. guest checkout where it's saved as a single name string
   if (person.name) {
     const nameStr = person.name.trim();
     if (!nameStr) return "—";

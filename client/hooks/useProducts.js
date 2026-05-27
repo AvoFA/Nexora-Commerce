@@ -3,14 +3,14 @@ import { getProducts, createProduct, updateProduct, deleteProduct } from '../ser
 import { getCategories } from '../services/categoryService.js';
 import { getBrands, createBrand } from '../services/brandService.js';
 
-// Хук для управління продуктами
+// Custom hook to manage products, categories, and brands
 export const useProducts = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
 
-  // Завантаження даних
+  // Data fetching actions
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -41,14 +41,14 @@ export const useProducts = () => {
     }
   };
 
-  // Операції з брендами
+  // Brand operations
   const handleCreateBrand = async (brandData) => {
     const result = await createBrand(brandData);
     await fetchBrands();
     return result;
   };
 
-  // Операції з продуктами
+  // Product operations
   const handleCreateProduct = async (productData) => {
     const result = await createProduct(productData);
     await fetchProducts();
@@ -66,7 +66,7 @@ export const useProducts = () => {
     await fetchProducts();
   };
 
-  // Ініціалізація даних при завантаженні
+  // Initialize all resources on mount
   useEffect(() => {
     fetchProducts();
     fetchCategories();

@@ -1,11 +1,10 @@
 import { useState } from 'react';
 
-// Хук для фільтрації товарів: пошук та категорії
+// Custom hook for basic search and category product filtering
 export const useProductFilter = (products = [], brands = []) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
 
-  // Фільтрація товарів
   const filterProducts = (products) => {
     return products.filter((product) => {
       const matchesCategory = category === 'all' || product.category === category;
@@ -17,7 +16,7 @@ export const useProductFilter = (products = [], brands = []) => {
   return {
     searchTerm,
     category,
-    availableBrands: brands, // Просто повертаємо всі brands
+    availableBrands: brands, // Return all brands directly
     setSearchTerm,
     setCategory,
     filterProducts

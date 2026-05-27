@@ -44,12 +44,21 @@ const QuestionDetailsModal = ({
       >
         <CloseIcon />
       </button>
-      <DialogTitle>Деталі запитання</DialogTitle>
+      <DialogTitle sx={{ p: 0 }}>
+        <Box className="review-dialog-title-block">
+          <Typography variant="overline" className="review-dialog-label">Запитання про товар</Typography>
+          <Typography variant="h6" className="review-dialog-product-name">
+            {question.product?.name || "Видалений товар"}
+          </Typography>
+          <Typography variant="body2" className="review-dialog-author">
+            {question.name}{question.user?.email ? ` · ${question.user.email}` : ""}
+          </Typography>
+        </Box>
+      </DialogTitle>
       <DialogContent dividers sx={{ pb: 3 }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-          {/* Двоколонкова спліт-панель: Товар ліворуч, Деталі праворуч */}
+          {/* Split layout: product panel and metadata details */}
           <Box className="modal-header-split">
-            {/* Ліва панель: Товар */}
             <Box className="product-panel">
               <Box className="product-image-container">
                 <img
@@ -63,7 +72,6 @@ const QuestionDetailsModal = ({
               </Typography>
             </Box>
 
-            {/* Права панель: Метадані та Автор */}
             <Box className="details-panel">
               <Box className="author-card">
                 <Box className="author-info">
@@ -131,7 +139,6 @@ const QuestionDetailsModal = ({
             </Box>
           </Box>
 
-          {/* Текст запитання */}
           <div className="modal-section">
             <span className="section-label">Текст запитання</span>
             <Typography
@@ -142,7 +149,6 @@ const QuestionDetailsModal = ({
             </Typography>
           </div>
 
-          {/* Відповідь адміністратора */}
           <div className="modal-section">
             <span className="section-label">Відповідь адміністратора</span>
             <Typography
@@ -156,29 +162,16 @@ const QuestionDetailsModal = ({
               {question.answer || "Немає відповіді на це запитання."}
             </Typography>
           </div>
-
-          <Box className="question-modal-secondary-action">
-            <Button
-              onClick={async () => {
-                const wasDeleted = await onDelete(question._id);
-                if (wasDeleted) {
-                  onClose();
-                }
-              }}
-              variant="text"
-              color="error"
-              disabled={isUpdating === question._id}
-              size="small"
-            >
-              Видалити
-            </Button>
-          </Box>
         </Box>
       </DialogContent>
       <DialogActions
         sx={{
           px: 3,
           pb: 2.5,
+          pt: 1.5,
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
           width: "100%",
           boxSizing: "border-box",
         }}
@@ -191,7 +184,7 @@ const QuestionDetailsModal = ({
             flexWrap: "wrap",
             justifyContent: "center",
             alignItems: "center",
-            width: "100%",
+            flex: 1,
           }}
         >
           {question.status === "pending" && (
@@ -262,6 +255,20 @@ const QuestionDetailsModal = ({
             </Button>
           )}
         </Box>
+
+        <Button
+          onClick={async () => {
+            const wasDeleted = await onDelete(question._id);
+            if (wasDeleted) onClose();
+          }}
+          variant="text"
+          color="error"
+          size="small"
+          disabled={isUpdating === question._id}
+          sx={{ ml: "auto", flexShrink: 0, fontSize: "0.78rem", opacity: 0.75, "&:hover": { opacity: 1 } }}
+        >
+          Видалити
+        </Button>
       </DialogActions>
     </Dialog>
   );

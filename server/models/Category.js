@@ -17,7 +17,7 @@ const categorySchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    default: '' // Необязательно, будет пустая строка если нет фото
+    default: '' // Optional image URL
   },
   color: {
     type: String,

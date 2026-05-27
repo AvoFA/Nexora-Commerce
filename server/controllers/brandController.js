@@ -1,7 +1,7 @@
 // server/controllers/brandController.js
 const Brand = require('../models/Brand');
 
-// Отримати всі бренди
+// Get all brands
 const getBrands = async (req, res) => {
   try {
     const brands = await Brand.find({}).sort({ name: 1 });
@@ -19,7 +19,7 @@ const getBrands = async (req, res) => {
   }
 };
 
-// Створити новий бренд
+// Create a brand
 const createBrand = async (req, res) => {
   try {
     const brand = await Brand.create(req.body);
@@ -30,7 +30,7 @@ const createBrand = async (req, res) => {
       message: 'Brand created successfully'
     });
   } catch (error) {
-    // Якщо бренд вже існує (duplicate key error)
+    // Handle duplicate brand name
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -46,7 +46,7 @@ const createBrand = async (req, res) => {
   }
 };
 
-// Оновити бренд
+// Update a brand
 const updateBrand = async (req, res) => {
   try {
     let brand = await Brand.findById(req.params.id);
@@ -77,7 +77,7 @@ const updateBrand = async (req, res) => {
   }
 };
 
-// Видалити бренд
+// Delete a brand
 const deleteBrand = async (req, res) => {
   try {
     const brand = await Brand.findById(req.params.id);

@@ -1,6 +1,14 @@
+import { useState, useEffect } from "react";
 import { Backdrop, Box, Fade, Modal, Typography } from "@mui/material";
-import { Close as CloseIcon } from "@mui/icons-material";
-import CategoryFormFields from "./CategoryFormFields.jsx";
+import {
+  Close as CloseIcon,
+  CategoryOutlined,
+  EditOutlined,
+  InfoOutlined as InfoIcon,
+  TuneOutlined as AttrsIcon,
+} from "@mui/icons-material";
+import CategoryBasicTab from "./tabs/CategoryBasicTab.jsx";
+import CategoryAttributesTab from "./tabs/CategoryAttributesTab.jsx";
 
 const CategoryFormModal = ({
   open,
@@ -19,6 +27,17 @@ const CategoryFormModal = ({
   onRemoveItem,
   onItemChange,
 }) => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  useEffect(() => {
+    if (open) setActiveTab(0);
+  }, [open]);
+
+  const attrCount = formData.defaultAttributes?.reduce(
+    (sum, g) => sum + (g.items?.length || 0),
+    0
+  ) ?? 0;
+
   return (
     <Modal
       open={open}
@@ -31,7 +50,7 @@ const CategoryFormModal = ({
     >
       <Fade in={open} timeout={250}>
         <Box className="admin-modal-wrapper">
-          <div className="admin-modal-card admin-solid-card category-form-modal-card">
+          <div className="admin-modal-card admin-solid-card category-form-modal-card tabbed-layout-card">
             <button
               type="button"
               onClick={onClose}
@@ -41,12 +60,45 @@ const CategoryFormModal = ({
             </button>
 
             <div className="admin-modal-header">
-              <Typography variant="h5" component="h2">
-                {editingId ? "Редагувати категорію" : "Додати категорію"}
-              </Typography>
-              <p className="category-modal-subtitle">
-                Вкажіть назву, ідентифікатор та характеристики за замовчуванням для цієї категорії товарів.
-              </p>
+              <div className="category-modal-title-row">
+                <div className="category-modal-title-icon">
+                  {editingId ? <EditOutlined fontSize="small" /> : <CategoryOutlined fontSize="small" />}
+                </div>
+                <div>
+                  <Typography variant="h5" component="h2">
+                    {editingId ? "Редагувати категорію" : "Нова категорія"}
+                  </Typography>
+                  <p className="category-modal-subtitle">
+                    {editingId
+                      ? "Змініть назву, ID або характеристики цієї категорії."
+                      : "Вкажіть назву, ідентифікатор та характеристики за замовчуванням."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-modal-segmented-tabs">
+              <div className="segmented-tabs-container">
+                <button
+                  type="button"
+                  className={`segmented-tab-btn${activeTab === 0 ? " is-active" : ""}`}
+                  onClick={() => setActiveTab(0)}
+                >
+                  <InfoIcon fontSize="small" />
+                  <span>Основна інформація</span>
+                </button>
+                <button
+                  type="button"
+                  className={`segmented-tab-btn${activeTab === 1 ? " is-active" : ""}`}
+                  onClick={() => setActiveTab(1)}
+                >
+                  <AttrsIcon fontSize="small" />
+                  <span>Характеристики</span>
+                  {attrCount > 0 && (
+                    <span className="segmented-tab-badge">{attrCount}</span>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className="admin-modal-content">
@@ -55,18 +107,25 @@ const CategoryFormModal = ({
                 onSubmit={onSave}
                 className="category-form"
               >
-                <CategoryFormFields
-                  formData={formData}
-                  isSlugLocked={isSlugLocked}
-                  onToggleSlugLock={onToggleSlugLock}
-                  onFieldChange={onFieldChange}
-                  onAddGroup={onAddGroup}
-                  onRemoveGroup={onRemoveGroup}
-                  onGroupNameChange={onGroupNameChange}
-                  onAddItem={onAddItem}
-                  onRemoveItem={onRemoveItem}
-                  onItemChange={onItemChange}
-                />
+                {activeTab === 0 && (
+                  <CategoryBasicTab
+                    formData={formData}
+                    isSlugLocked={isSlugLocked}
+                    onToggleSlugLock={onToggleSlugLock}
+                    onFieldChange={onFieldChange}
+                  />
+                )}
+                {activeTab === 1 && (
+                  <CategoryAttributesTab
+                    formData={formData}
+                    onAddGroup={onAddGroup}
+                    onRemoveGroup={onRemoveGroup}
+                    onGroupNameChange={onGroupNameChange}
+                    onAddItem={onAddItem}
+                    onRemoveItem={onRemoveItem}
+                    onItemChange={onItemChange}
+                  />
+                )}
               </form>
             </div>
 

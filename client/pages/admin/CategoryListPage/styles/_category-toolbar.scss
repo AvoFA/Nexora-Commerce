@@ -8,7 +8,7 @@
   padding: 20px;
   background:
     linear-gradient(135deg, rgba($card-bg, 0.74), rgba($bg-color, 0.32)),
-    var(--card-bg, #1a2235);
+    $card-bg;
   border: 1px solid rgba($border-color, 0.58);
   border-radius: 12px;
   box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);

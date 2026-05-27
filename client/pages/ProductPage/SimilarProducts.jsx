@@ -11,7 +11,7 @@ const SimilarProducts = ({ similarProducts }) => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
 
-  // Режим каруселі вмикається, якщо товарів більше 6
+  // Enable carousel if there are more than 6 products
   const isCarousel = similarProducts?.length > 6;
 
   const checkScroll = useCallback(() => {
@@ -34,19 +34,19 @@ const SimilarProducts = ({ similarProducts }) => {
   }, [similarProducts, checkScroll, isCarousel]);
 
   const animateScroll = (element, distance) => {
-    // Запобігаємо накладанню анімацій при швидких кліках
+    // Prevent overlapping animations during rapid clicks
     if (element.dataset.animating === "true") return;
     element.dataset.animating = "true";
 
     const start = element.scrollLeft;
     const startTime = performance.now();
-    const duration = 500; // Оптимальний час для "дорогого" відчуття
+    const duration = 500; // Animation duration
 
     const step = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
 
-      // easeOutQuart - швидкий старт та дуже м'яке, плавне сповільнення
+      // easeOutQuart: fast start, smooth deceleration
       const ease = 1 - Math.pow(1 - progress, 4);
 
       element.scrollLeft = start + (distance * ease);
@@ -65,7 +65,7 @@ const SimilarProducts = ({ similarProducts }) => {
   const handleScroll = (direction) => {
     if (!scrollRef.current) return;
 
-    // Крок для каруселі: 240px + 24px gap = 264px
+    // Carousel step: 240px card width + 24px gap
     const scrollDistance = 264 * 2;
 
     animateScroll(scrollRef.current, direction * scrollDistance);

@@ -133,8 +133,8 @@ const ReviewsTable = ({
                 variant={review.status === "pending" ? "outlined" : "filled"}
               />
             </TableCell>
-            <TableCell align="right">
-              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+            <TableCell>
+              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1, pr: 0.75 }}>
                 {review.status === "pending" && (
                   <>
                     <Tooltip title="Схвалити">

@@ -5,7 +5,7 @@
     padding: 20px !important;
     background:
       linear-gradient(135deg, rgba($card-bg, 0.74), rgba($bg-color, 0.32)),
-      var(--card-bg, #1a2235) !important;
+      $card-bg !important;
     border: 1px solid rgba($border-color, 0.58) !important;
     border-radius: 12px !important;
     box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2) !important;
@@ -190,7 +190,7 @@
         .search-icon-wrapper {
           position: absolute;
           left: 12px;
-          color: var(--text-secondary, #94a3b8);
+          color: $text-secondary;
           display: flex;
           align-items: center;
           pointer-events: none;
@@ -206,7 +206,7 @@
           background-color: $bg-color;
           border: 1px solid $border-color;
           border-radius: 8px;
-          color: var(--text-primary, #f8fafc);
+          color: $text-color;
           font-size: 0.88rem;
           padding: 8px 12px 8px 38px;
           height: 40px;
@@ -215,7 +215,7 @@
           box-sizing: border-box;
 
           &::placeholder {
-            color: var(--text-secondary, #94a3b8);
+            color: $text-secondary;
             opacity: 0.55;
           }
 
@@ -242,12 +242,12 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--text-secondary, #94a3b8);
+          color: $text-secondary;
           border-radius: 50%;
           transition: all 0.2s ease;
 
           &:hover {
-            color: var(--text-primary, #f8fafc);
+            color: $text-color;
             background-color: rgba(255, 255, 255, 0.06);
           }
 
@@ -280,14 +280,14 @@
           border-radius: 8px;
           cursor: pointer;
           background-color: $bg-color;
-          color: var(--text-secondary, #94a3b8);
+          color: $text-secondary;
           border: 1px solid $border-color;
           transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
           &:hover:not(:disabled) {
             background-color: lighten($bg-color, 3%);
             border-color: rgba($text-secondary, 0.35);
-            color: var(--text-primary, #f8fafc);
+            color: $text-color;
           }
 
           &:disabled {

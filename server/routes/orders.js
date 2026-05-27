@@ -72,8 +72,15 @@ router.post('/', authenticateToken, async (req, res) => {
       history: [{ status: 'new', timestamp: new Date() }]
     });
 
-    if (customer.phone) {
-      await User.findByIdAndUpdate(req.user.id, { phone: customer.phone.trim() });
+    // Sync order contact details back to the user's permanent profile
+    const userUpdates = {};
+    if (customer.phone) userUpdates.phone = customer.phone.trim();
+    if (customer.firstName) userUpdates.name = customer.firstName.trim();
+    if (customer.surname) userUpdates.surname = customer.surname.trim();
+    if (customer.patronymic) userUpdates.patronymic = customer.patronymic.trim();
+
+    if (Object.keys(userUpdates).length > 0) {
+      await User.findByIdAndUpdate(req.user.id, userUpdates);
     }
 
     res.status(201).json({

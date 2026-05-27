@@ -24,7 +24,7 @@ const ProductPage = () => {
   const { product, similarProducts, isLoading, error } = useProductData(id);
   const { isAuthenticated, user } = useAuth();
 
-  // Рефи та стейт для липкої панелі (Senior approach)
+  // Refs and state for sticky purchase bar
   const mainPurchaseRef = useRef(null);
   const galleryRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
@@ -53,13 +53,13 @@ const ProductPage = () => {
     }
   }, [product, isLoading]);
 
-  // Логіка спостереження за галереєю зображень
+  // Observe image gallery intersection to toggle sticky bar
   useEffect(() => {
     if (isLoading || !product) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        // Показуємо липку панель, лише якщо галерея пішла вгору за межі екрана
+        // Show sticky bar only when the gallery scrolls above the viewport
         if (window.innerWidth <= 768) {
           setShowStickyBar(!entry.isIntersecting && entry.boundingClientRect.top < 0);
         } else {
@@ -210,7 +210,6 @@ const ProductPage = () => {
             </Link>
           </div>
 
-          {/* Обгортка для IntersectionObserver */}
           <div ref={mainPurchaseRef}>
             <ProductPurchaseCard product={product} variant="full" />
           </div>
@@ -291,7 +290,6 @@ const ProductPage = () => {
 
       <SimilarProducts similarProducts={similarProducts} />
 
-      {/* Мобільна липка панель (Senior UI) */}
       <div className={`mobile-sticky-purchase-bar ${showStickyBar ? 'is-visible' : ''}`}>
         <div className="sticky-info">
           {imgSrc && <img src={imgSrc} alt="" className="sticky-thumb" />}

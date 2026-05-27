@@ -12,7 +12,7 @@
   .admin-table-container {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    background-color: var(--card-bg, #1a2235);
+    background-color: $card-bg;
     overflow: hidden;
 
     .MuiTableHead-root {
@@ -20,7 +20,7 @@
 
       .MuiTableCell-head {
         font-weight: 600;
-        color: var(--text-secondary, #94a3b8);
+        color: $text-secondary;
         border-bottom: 1px solid $border-color;
       }
     }
@@ -30,20 +30,20 @@
         .MuiTableCell-body {
           padding: 8px 16px;
           border-bottom: 1px solid $border-color;
-          color: var(--text-primary, #f8fafc);
+          color: $text-color;
 
           .user-name {
-            color: var(--text-primary, #f8fafc);
+            color: $text-color;
             font-weight: 600;
           }
 
           .user-email {
-            color: var(--text-secondary, #94a3b8);
+            color: $text-secondary;
             font-size: 0.80rem;
           }
 
           .user-date {
-            color: var(--text-secondary, #94a3b8);
+            color: $text-secondary;
             font-size: 0.75rem;
             opacity: 0.70;
           }

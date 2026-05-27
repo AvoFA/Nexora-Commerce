@@ -17,7 +17,7 @@ router.post('/', authenticateToken, async (req, res) => {
       });
     }
 
-    // Перевіряємо чи вже є відгук від цього користувача на цей товар
+    // Check if this user already reviewed this product
     const existingReview = await Review.findOne({ user: req.user.id, product: productId });
 
     if (existingReview) {
@@ -28,13 +28,13 @@ router.post('/', authenticateToken, async (req, res) => {
         });
       }
       
-      // Якщо відгук був відхилений (rejected), дозволяємо його оновити (замість створення нового)
+      // Allow updating a rejected review instead of creating a new one
       if (existingReview.status === 'rejected') {
         existingReview.rating = Number(rating);
         existingReview.text = text;
         existingReview.pros = pros;
         existingReview.cons = cons;
-        existingReview.status = 'pending'; // Знову на модерацію
+        existingReview.status = 'pending'; // Submit back to moderation
         existingReview.name = req.user.name;
         
         await existingReview.save();
@@ -72,7 +72,7 @@ router.post('/', authenticateToken, async (req, res) => {
   }
 });
 
-// Отримання всіх відгуків поточного користувача
+// Get all reviews of the current user
 router.get('/me', authenticateToken, async (req, res) => {
   try {
     const reviews = await Review.find({ user: req.user.id })
@@ -92,7 +92,7 @@ router.get('/me', authenticateToken, async (req, res) => {
   }
 });
 
-// Отримання відгуку поточного користувача для конкретного товару
+// Get current user's review for a specific product
 router.get('/me/product/:productId', authenticateToken, async (req, res) => {
   try {
     const review = await Review.findOne({ 
@@ -102,7 +102,7 @@ router.get('/me/product/:productId', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      review // буде null, якщо відгук не знайдено
+      review // null if not found
     });
   } catch (error) {
     console.error('Помилка отримання відгуку користувача:', error.message);
@@ -312,7 +312,7 @@ router.patch('/:id/status', authenticateToken, moderationAccess, async (req, res
   }
 });
 
-// Редагування відгуку самим користувачем
+// Edit review by author
 router.patch('/:id/edit', authenticateToken, async (req, res) => {
   try {
     const { rating, text, pros, cons } = req.body;
@@ -333,7 +333,7 @@ router.patch('/:id/edit', authenticateToken, async (req, res) => {
       });
     }
 
-    // Перевірка, що відгук належить поточному користувачу
+    // Verify review ownership
     if (review.user.toString() !== req.user.id) {
       return res.status(403).json({
         success: false,
@@ -345,7 +345,7 @@ router.patch('/:id/edit', authenticateToken, async (req, res) => {
     review.text = text;
     review.pros = pros;
     review.cons = cons;
-    review.status = 'pending'; // Відправляємо на повторну модерацію
+    review.status = 'pending'; // Submit back to moderation
 
     await review.save();
 

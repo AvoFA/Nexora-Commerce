@@ -22,7 +22,7 @@ export const useCompare = () => {
     dispatch({ type: 'CLEAR_COMPARE' });
   };
 
-  // Перевірка чи товар вже в списку порівняння
+  // Check if product is already in compare list
   const isCompared = (productId) => {
     return state.items.some(item => item._id === productId || item.id === productId);
   };

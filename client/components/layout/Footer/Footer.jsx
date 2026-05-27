@@ -5,20 +5,16 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
 
-// Головний футер сайту: навігація, контакти, соцмережі
-
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="container">
         <div className="footer-content">
-          {/* Логотип та слоган */}
           <div className="footer-logo-section">
             <img src="/assets/logo/nexora-full.svg" alt="Nexora" className="footer-logo" />
             <p>Ваше надійне джерело преміум електроніки. Якісні товари, винятковий сервіс.</p>
           </div>
 
-          {/* 2. Сервіс */}
           <div className="footer-links">
             <h4>Сервіс</h4>
             <ul>
@@ -28,7 +24,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Інформація про компанію та контакти */}
           <div className="footer-links">
             <h4>Компанія</h4>
             <ul>
@@ -38,7 +33,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* 4. Соц. мережі */}
           <div className="footer-social">
             <h4>Слідкуйте за нами</h4>
             <div className="social-icons">
@@ -58,7 +52,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Нижня частина */}
         <div className="footer-bottom">
           <p>&copy; {new Date().getFullYear()} Nexora. Всі права захищені.</p>
         </div>

@@ -15,11 +15,44 @@
   }
 
   .MuiDialogTitle-root {
-    font-weight: 700;
-    font-size: 1.25rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 18px 24px;
+    padding: 0;
     color: $text-color;
+  }
+
+  .review-dialog-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 16px 52px 16px 24px;
+
+    .review-dialog-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: $text-secondary;
+      line-height: 1;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .review-dialog-product-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: $text-color;
+      line-height: 1.3;
+      margin-top: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .review-dialog-author {
+      font-size: 0.78rem;
+      color: $text-secondary;
+      line-height: 1.2;
+      margin-top: 3px;
+    }
   }
 
   .MuiDialogContent-root {
@@ -219,31 +252,14 @@
         }
       }
     }
-
-    .question-modal-secondary-action {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -6px;
-
-      .MuiButton-root.MuiButton-root {
-        height: 30px;
-        padding: 4px 8px;
-        min-width: auto;
-        color: rgba($danger-color, 0.78);
-        font-size: 0.78rem;
-        font-weight: 600;
-
-        &:hover {
-          background: rgba($danger-color, 0.08);
-          color: $danger-color;
-        }
-      }
-    }
   }
 
   .MuiDialogActions-root {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding: 14px 24px;
     background: rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }

@@ -1,4 +1,3 @@
-// Контролер для роботи з користувачами
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const {
@@ -20,30 +19,24 @@ const getWishlistProductIds = (wishlistLists = []) => {
 };
 
 class UserController {
-  // Функція для хешування паролю
   static async hashPassword(password) {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
   }
 
-  // Функція для порівняння паролю з хешем
   static async comparePassword(password, hashedPassword) {
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  // Функція для створення нового користувача
   static async createUser(username, password, role = 'admin') {
     try {
-      // Перевірка чи користувач вже існує
       const existingUser = await User.findOne({ username });
       if (existingUser) {
         throw new Error("Користувач з таким ім'ям вже існує");
       }
 
-      // Хешування паролю
       const hashedPassword = await this.hashPassword(password);
 
-      // Створення нового користувача
       const newUser = new User({
         username,
         password: hashedPassword,
@@ -62,16 +55,13 @@ class UserController {
     }
   }
 
-  // Функція для авторизації користувача
   static async loginUser(username, password) {
     try {
-      // Пошук користувача за ім'ям
       const user = await User.findOne({ username });
       if (!user) {
         throw new Error("Невірне ім'я користувача або пароль");
       }
 
-      // Перевірка паролю
       const isPasswordValid = await this.comparePassword(password, user.password);
       if (!isPasswordValid) {
         throw new Error("Невірне ім'я користувача або пароль");
@@ -88,7 +78,6 @@ class UserController {
     }
   }
 
-  // Функція для отримання всіх користувачів (тільки для адмінів)
   static async getAllUsers() {
     try {
       return await User.find({}, { password: 0 }).sort({ createdAt: -1 });
@@ -97,7 +86,7 @@ class UserController {
     }
   }
 
-  // Функція для створення користувача-клієнта (email замість username)
+  // Create client user using email as the login identifier
   static async createClientUser(email, name, password) {
     try {
       const normalizedEmail = (email || '').trim().toLowerCase();
@@ -108,16 +97,13 @@ class UserController {
       if (emailError) throw new Error(emailError);
       if (nameError) throw new Error(nameError);
 
-      // Перевірка чи email вже існує
       const existingUser = await User.findOne({ email: normalizedEmail });
       if (existingUser) {
         throw new Error('Користувач з таким email вже існує');
       }
 
-      // Хешування паролю
       const hashedPassword = await this.hashPassword(password);
 
-      // Створення нового користувача-клієнта
       const newUser = new User({
         email: normalizedEmail,
         name: normalizedName,
@@ -143,21 +129,17 @@ class UserController {
     }
   }
 
-  // Функція для авторизації клієнта через email
   static async loginClientUser(email, password) {
     try {
-      // Пошук користувача за email
       const user = await User.findOne({ email });
       if (!user) {
         throw new Error('Невірний email або пароль');
       }
 
-      // Перевірка чи акаунт заблоковано
       if (user.status === 'blocked') {
         throw new Error('Ваш акаунт заблоковано. Будь ласка, зверніться до підтримки.');
       }
 
-      // Перевірка паролю
       const isPasswordValid = await this.comparePassword(password, user.password);
       if (!isPasswordValid) {
         throw new Error('Невірний email або пароль');
@@ -188,7 +170,6 @@ class UserController {
     }
   }
 
-  // Функція для отримання користувача по ID (для профілю)
   static async getUserById(id) {
     try {
       const user = await User.findById(id).populate('wishlistLists.products', 'name price image brand category');
@@ -258,16 +239,12 @@ class UserController {
     }
   }
 
-  // Функція для зміни паролю
   static async changePassword(username, currentPassword, newPassword) {
     try {
-      // Перевірка поточного паролю
       const user = await this.loginUser(username, currentPassword);
 
-      // Хешування нового паролю
       const hashedNewPassword = await this.hashPassword(newPassword);
 
-      // Оновлення паролю
       await User.findByIdAndUpdate(user.id, { password: hashedNewPassword });
 
       return { success: true, message: 'Пароль успішно змінено' };
