@@ -164,11 +164,13 @@
     background-color: $primary-color;
     color: white;
     font-size: 0.75rem;
-    width: 24px;
+    min-width: 24px;
     height: 24px;
-    border-radius: 50%;
+    padding: 0 6px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-left: 8px;
+    line-height: normal;
 }

@@ -237,7 +237,7 @@
   color: $text-secondary;
   text-decoration: none;
   font-size: 0.88rem;
-  font-weight: 500;
+  font-weight: 400;
   border-bottom: 1px solid transparent;
   transition: color 0.14s ease;
 
@@ -363,6 +363,7 @@
 .mobile-catalog-brand {
   color: $text-secondary;
   font-size: 1rem;
+  font-weight: 400;
 }
 
 @keyframes megaFadeIn {
@@ -511,7 +512,7 @@
   border-left: 3px solid transparent;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.7rem;
-  font-weight: 700;
+  font-weight: 500;
   font-family: inherit;
   text-align: center;
   cursor: pointer;
@@ -577,7 +578,7 @@
   color: $primary-color;
   text-decoration: none;
   font-size: 0.85rem;
-  font-weight: 800;
+  font-weight: 700;
   transition: all 0.2s ease;
 
   &:hover,
@@ -643,6 +644,7 @@
 
 .cat-menu-cont__subsubmenu {
   font-size: 0.78rem;
+  font-weight: 400;
   color: rgba(255, 255, 255, 0.65);
   text-decoration: none;
   padding: 6px 0 6px 36px;
@@ -677,7 +679,7 @@
   color: $primary-color;
   text-decoration: none;
   font-size: 0.85rem;
-  font-weight: 800;
+  font-weight: 700;
   transition: all 0.2s ease;
 
   &:hover,

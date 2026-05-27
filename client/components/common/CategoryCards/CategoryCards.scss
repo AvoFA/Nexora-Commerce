@@ -68,16 +68,5 @@
         transition: background-color 0.3s ease;
     }
 
-    // Ефект при наведенні
-    &:hover {
-        .category-card-title {
-            transform: scale(1.1);
-        }
-
-        .category-card-overlay {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-    }
-
     // Фонове зображення задається через inline-стилі
 }

@@ -272,20 +272,25 @@
 .order-status {
   width: fit-content;
   max-width: 100%;
-  color: $primary-color;
   font-size: 0.86rem;
-  font-weight: 850;
+  font-weight: 600;
   line-height: 1.25;
   white-space: nowrap;
-}
+  color: $primary-color;
 
-.order-status-received,
-.order-status-ready_for_pickup {
-  color: $success-color;
-}
+  &.order-status-confirmed,
+  &.order-status-packing {
+    color: $secondary-color;
+  }
 
-.order-status-cancelled {
-  color: $danger-color;
+  &.order-status-received,
+  &.order-status-ready_for_pickup {
+    color: $success-color;
+  }
+
+  &.order-status-cancelled {
+    color: $danger-color;
+  }
 }
 
 .order-preview {

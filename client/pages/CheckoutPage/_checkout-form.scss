@@ -356,3 +356,43 @@
     padding: 12px 14px;
   }
 }
+
+// 👥 Перемикач одержувача замовлення
+.recipient-toggle-container {
+  display: flex;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 30px;
+  padding: 4px;
+  margin-bottom: 8px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.recipient-toggle-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: $text-secondary;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 26px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-align: center;
+  white-space: nowrap;
+
+  &:hover {
+    color: $text-color;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  &.active {
+    background: $primary-color;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba($primary-color, 0.24);
+  }
+}

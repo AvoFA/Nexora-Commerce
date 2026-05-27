@@ -18,6 +18,9 @@
 .catalog-right {
   position: relative;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   
   @media (min-width: 992px) {
     min-width: 0; // Prevent overflow on smaller desktop viewports
@@ -97,10 +100,10 @@
   justify-content: center;
 
   width: 100%;
+  flex: 1;
   min-height: 400px;
   margin: 0;
-  flex-shrink: 0;
-
+  
   background-color: transparent;
   border: 2px dashed $border-color;
   border-radius: $border-radius;

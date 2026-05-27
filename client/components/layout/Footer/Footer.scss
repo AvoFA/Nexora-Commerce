@@ -83,20 +83,22 @@
             display: inline-block;
 
             &:hover {
-                color: $primary-color;
-                transform: translateX(4px);
+                color: $text-color;
+                text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
             }
 
-            // Анімація підкреслення
+            // Анімація підкреслення (Cyber-Lux стиль)
             &::after {
                 content: '';
                 position: absolute;
                 bottom: -2px;
-                left: 0;
+                left: 50%;
                 width: 0;
-                height: 1px;
-                background: linear-gradient(90deg, $primary-color, $secondary-color);
-                transition: width 0.3s ease;
+                height: 2px;
+                background: $primary-color;
+                box-shadow: 0 0 10px $primary-color;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                transform: translateX(-50%);
             }
 
             &:hover::after {
@@ -132,22 +134,22 @@
         .social-icon {
             width: 44px;
             height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba($primary-color, 0.1), rgba($secondary-color, 0.1));
-            border: 1px solid rgba($primary-color, 0.2);
+            border-radius: 14px; // Сучасна squircle форма замість круга
+            background: hsla(0, 0%, 100%, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: $text-secondary;
-            transition: background 0.4s ease, transform 0.15s ease, box-shadow 0.2s ease;
-            transform-origin: center;
+            color: $text-color;
+            transition: all 0.3s ease;
             text-decoration: none;
 
             &:hover {
-                background: linear-gradient(135deg, $primary-color, $secondary-color);
-                color: white;
-                transform: scale(1.05);
-                box-shadow: 0 8px 20px rgba(56, 134, 255, 0.3);
+                background: hsla(190, 100%, 50%, 0.1);
+                border-color: rgba($primary-color, 0.3);
+                color: $primary-color;
+                transform: translateY(-4px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
             }
         }
     }

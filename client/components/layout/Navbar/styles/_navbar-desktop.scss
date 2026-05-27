@@ -213,8 +213,8 @@
     color: white;
     font-size: 0.64rem;
     font-weight: 700;
-    line-height: 1;
-    border-radius: 50%;
+    line-height: normal;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -224,8 +224,12 @@
 
 .cart-cta {
     .cart-count {
-        top: -5px;
-        right: -5px;
+        top: -6px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        font-size: 0.72rem;
+        border-radius: 12px;
     }
 }
 
