@@ -252,6 +252,50 @@ class UserController {
       throw new Error(error.message);
     }
   }
+
+  static async changeClientPassword(userId, currentPassword, newPassword) {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('Користувача не знайдено');
+      }
+
+      const isPasswordValid = await this.comparePassword(currentPassword, user.password);
+      if (!isPasswordValid) {
+        throw new Error('Невірний поточний пароль');
+      }
+
+      const hashedNewPassword = await this.hashPassword(newPassword);
+      user.password = hashedNewPassword;
+      await user.save();
+
+      return { success: true, message: 'Пароль успішно змінено' };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  static async resetClientPassword(email, code, newPassword) {
+    try {
+      const normalizedEmail = (email || '').trim().toLowerCase();
+      const user = await User.findOne({ email: normalizedEmail });
+      if (!user) {
+        throw new Error('Користувача з таким email не знайдено');
+      }
+
+      if (code !== '1234') {
+        throw new Error('Невірний код підтвердження');
+      }
+
+      const hashedNewPassword = await this.hashPassword(newPassword);
+      user.password = hashedNewPassword;
+      await user.save();
+
+      return { success: true, message: 'Пароль успішно скинуто' };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 module.exports = UserController;

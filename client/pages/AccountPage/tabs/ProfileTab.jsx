@@ -6,6 +6,8 @@ import {
   PersonOutline,
   CheckOutlined,
   CloseOutlined,
+  Visibility,
+  VisibilityOff,
 } from "@mui/icons-material";
 import { API_BASE_URL } from "../../../config/api.js";
 import { useAuth } from "../../../context/AuthContext.jsx";
@@ -38,6 +40,12 @@ const ProfileTab = () => {
   const [surname, setSurname] = useState(user?.surname || "");
   const [patronymic, setPatronymic] = useState(user?.patronymic || "");
   const [phone, setPhone] = useState(user?.phone || "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [editingSection, setEditingSection] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
@@ -80,8 +88,13 @@ const ProfileTab = () => {
     return phone.trim() !== (user?.phone || "");
   }, [phone, user]);
 
+  const isPasswordDirty = useMemo(() => {
+    return currentPassword.length > 0 || newPassword.length > 0 || confirmPassword.length > 0;
+  }, [currentPassword, newPassword, confirmPassword]);
+
   const isPersonalEditing = editingSection === "personal";
   const isContactsEditing = editingSection === "contacts";
+  const isPasswordEditing = editingSection === "password";
 
   const validateField = (value, required = true) => {
     return normalizeNameError(validateNamePart(value, { required }));
@@ -112,9 +125,55 @@ const ProfileTab = () => {
       }
     }
 
+    if (section === "password") {
+      const nextErrors = {};
+      if (!currentPassword) {
+        nextErrors.currentPassword = "Введіть поточний пароль";
+      }
+      if (!newPassword) {
+        nextErrors.newPassword = "Введіть новий пароль";
+      } else if (newPassword.length < 6) {
+        nextErrors.newPassword = "Пароль має містити не менше 6 символів";
+      }
+      if (newPassword !== confirmPassword) {
+        nextErrors.confirmPassword = "Паролі не співпадають";
+      }
+      if (Object.keys(nextErrors).length > 0) {
+        setErrors(nextErrors);
+        return;
+      }
+    }
+
     try {
       setIsSaving(true);
       const token = localStorage.getItem("token");
+
+      if (section === "password") {
+        const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+          }),
+        });
+
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Не вдалося змінити пароль");
+        }
+
+        toast.success("Пароль успішно змінено");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setErrors({});
+        setEditingSection(null);
+        return;
+      }
 
       const response = await fetch(`${API_BASE_URL}/auth/profile`, {
         method: "PATCH",
@@ -157,6 +216,12 @@ const ProfileTab = () => {
     setSurname(user?.surname || "");
     setPatronymic(user?.patronymic || "");
     setPhone(user?.phone || "");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
     setErrors({});
     setEditingSection(null);
   };
@@ -373,6 +438,131 @@ const ProfileTab = () => {
                     <span className="label">Email</span>
                     <span className="value">{user?.email}</span>
                   </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className={`profile-section-compact ${isPasswordEditing ? "is-editing" : ""}`}>
+            <div className="profile-section-head">
+              <div className="head-title-group">
+                <h3>Безпека</h3>
+                {!isPasswordEditing && (
+                  <button
+                    type="button"
+                    className="profile-edit-icon-btn"
+                    onClick={() => setEditingSection("password")}
+                    title="Змінити пароль"
+                  >
+                    <EditOutlined />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="profile-section-body">
+              {isPasswordEditing ? (
+                <div className="edit-mode-container">
+                  <div className="edit-grid-compact">
+                    <div className="field-group">
+                      <label>Поточний пароль</label>
+                      <div className="password-input-wrapper">
+                        <input
+                          type={showCurrentPassword ? "text" : "password"}
+                          value={currentPassword}
+                          onChange={(event) => {
+                            setCurrentPassword(event.target.value);
+                            setErrors((prev) => ({ ...prev, currentPassword: "" }));
+                          }}
+                          placeholder="••••••••"
+                          className={errors.currentPassword ? "has-error" : ""}
+                        />
+                        <button
+                          type="button"
+                          className="password-toggle-btn"
+                          onClick={() => setShowCurrentPassword((prev) => !prev)}
+                          aria-label={showCurrentPassword ? "Приховати пароль" : "Показати пароль"}
+                        >
+                          {showCurrentPassword ? <VisibilityOff /> : <Visibility />}
+                        </button>
+                      </div>
+                      {errors.currentPassword && (
+                        <span className="field-hint field-hint--error">{errors.currentPassword}</span>
+                      )}
+                    </div>
+                    <div className="field-group">
+                      <label>Новий пароль</label>
+                      <div className="password-input-wrapper">
+                        <input
+                          type={showNewPassword ? "text" : "password"}
+                          value={newPassword}
+                          onChange={(event) => {
+                            setNewPassword(event.target.value);
+                            setErrors((prev) => ({ ...prev, newPassword: "" }));
+                          }}
+                          placeholder="••••••••"
+                          className={errors.newPassword ? "has-error" : ""}
+                        />
+                        <button
+                          type="button"
+                          className="password-toggle-btn"
+                          onClick={() => setShowNewPassword((prev) => !prev)}
+                          aria-label={showNewPassword ? "Приховати пароль" : "Показати пароль"}
+                        >
+                          {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                        </button>
+                      </div>
+                      {errors.newPassword && (
+                        <span className="field-hint field-hint--error">{errors.newPassword}</span>
+                      )}
+                    </div>
+                    <div className="field-group">
+                      <label>Підтвердіть новий пароль</label>
+                      <div className="password-input-wrapper">
+                        <input
+                          type={showConfirmPassword ? "text" : "password"}
+                          value={confirmPassword}
+                          onChange={(event) => {
+                            setConfirmPassword(event.target.value);
+                            setErrors((prev) => ({ ...prev, confirmPassword: "" }));
+                          }}
+                          placeholder="••••••••"
+                          className={errors.confirmPassword ? "has-error" : ""}
+                        />
+                        <button
+                          type="button"
+                          className="password-toggle-btn"
+                          onClick={() => setShowConfirmPassword((prev) => !prev)}
+                          aria-label={showConfirmPassword ? "Приховати пароль" : "Показати пароль"}
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </button>
+                      </div>
+                      {errors.confirmPassword && (
+                        <span className="field-hint field-hint--error">{errors.confirmPassword}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="profile-actions-row">
+                    <button type="button" className="btn-secondary" onClick={handleCancel} disabled={isSaving}>
+                      <CloseOutlined />
+                      <span>Скасувати</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-primary"
+                      onClick={() => handleSave("password")}
+                      disabled={isSaving || !isPasswordDirty}
+                    >
+                      <CheckOutlined />
+                      <span>Зберегти</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="view-line">
+                  <span className="label">Пароль</span>
+                  <span className="value">••••••••</span>
                 </div>
               )}
             </div>
