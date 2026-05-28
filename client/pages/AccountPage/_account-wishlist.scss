@@ -415,6 +415,41 @@
   }
 }
 
+.wishlist-product-price-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.wishlist-product-discount-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 18px;
+}
+
+.wishlist-product-old-price {
+  color: rgba($text-secondary, 0.76);
+  font-size: 0.78rem;
+  text-decoration: line-through;
+  white-space: nowrap;
+}
+
+.wishlist-product-discount {
+  display: inline-flex;
+  align-items: center;
+  min-height: 18px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  color: $danger-color;
+  background: rgba($danger-color, 0.12);
+  font-size: 0.68rem;
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+}
+
 .wishlist-cart-btn {
   @extend .btn-icon-round;
   width: 42px;

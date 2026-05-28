@@ -17,19 +17,18 @@ export const useRecentlyViewed = () => {
   }, []);
 
   useEffect(() => {
-    // Listen for changes in localStorage across components
-    window.addEventListener('recentlyViewedChanged', updateProducts);
-    
-    // Also listen for storage events from other tabs
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'recently_viewed_products') {
+    const handleStorageChange = (event) => {
+      if (event.key === 'recently_viewed_products') {
         updateProducts();
       }
-    });
+    };
+
+    window.addEventListener('recentlyViewedChanged', updateProducts);
+    window.addEventListener('storage', handleStorageChange);
 
     return () => {
       window.removeEventListener('recentlyViewedChanged', updateProducts);
-      window.removeEventListener('storage', updateProducts);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [updateProducts]);
 

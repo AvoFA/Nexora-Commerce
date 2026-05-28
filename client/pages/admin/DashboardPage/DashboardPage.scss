@@ -183,7 +183,7 @@
       }
 
       td {
-        padding: 14px;
+        padding: 14px 12px;
         border-bottom: 1px solid rgba($border-color, 0.2);
         font-size: 0.85rem;
         color: $text-color;
@@ -192,6 +192,26 @@
         &.actions-cell {
           text-align: right;
         }
+      }
+
+      .recent-order-date-cell {
+        padding-left: 8px;
+      }
+
+      .recent-order-date {
+        display: inline-flex;
+        flex-direction: column;
+        min-width: 104px;
+        line-height: 1.25;
+
+        > span:first-child {
+          white-space: nowrap;
+        }
+      }
+
+      .recent-order-time {
+        color: rgba($text-color, 0.62);
+        font-size: 0.75rem;
       }
 
       tr:last-child td {
@@ -223,6 +243,34 @@
           box-shadow: 0 0 0 2px rgba($primary-color, 0.18);
         }
       }
+    }
+  }
+
+  .recent-orders-cell .widget-table-wrapper table {
+    table-layout: fixed;
+
+    .recent-orders-col-number {
+      width: 13%;
+    }
+
+    .recent-orders-col-client {
+      width: 27%;
+    }
+
+    .recent-orders-col-date {
+      width: 17%;
+    }
+
+    .recent-orders-col-total {
+      width: 13%;
+    }
+
+    .recent-orders-col-status {
+      width: 22%;
+    }
+
+    .recent-orders-col-actions {
+      width: 8%;
     }
   }
 
@@ -312,10 +360,16 @@
   .widget-badge {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    max-width: 132px;
+    min-height: 24px;
     padding: 3px 8px;
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 700;
+    line-height: 1.18;
+    text-align: center;
+    white-space: normal;
 
     &.badge-new {
       background: rgba($primary-color, 0.15);

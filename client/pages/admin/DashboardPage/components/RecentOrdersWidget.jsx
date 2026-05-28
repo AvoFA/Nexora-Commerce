@@ -37,6 +37,14 @@ const RecentOrdersWidget = ({ orders = [], onViewOrder }) => {
         ) : (
           <div className="widget-table-wrapper">
             <table>
+              <colgroup>
+                <col className="recent-orders-col-number" />
+                <col className="recent-orders-col-client" />
+                <col className="recent-orders-col-date" />
+                <col className="recent-orders-col-total" />
+                <col className="recent-orders-col-status" />
+                <col className="recent-orders-col-actions" />
+              </colgroup>
               <thead>
                 <tr>
                   <th>№</th>
@@ -65,10 +73,10 @@ const RecentOrdersWidget = ({ orders = [], onViewOrder }) => {
                         )}
                       </div>
                     </td>
-                    <td>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <td className="recent-order-date-cell">
+                      <div className="recent-order-date">
                         <span>{formatOrderDate(order.createdAt)}</span>
-                        <span style={{ fontSize: '0.75rem', opacity: 0.6 }}>
+                        <span className="recent-order-time">
                           {formatOrderTime(order.createdAt)}
                         </span>
                       </div>

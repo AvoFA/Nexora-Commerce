@@ -8,7 +8,11 @@ import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notificat
 import "../AccountPage.scss"; // Reuse account page styles
 
 const RecentlyViewedTab = () => {
-  const { products: viewedItems, clearRecentlyViewed } = useRecentlyViewed();
+  const {
+    products: viewedItems,
+    clearRecentlyViewed,
+    removeRecentlyViewed,
+  } = useRecentlyViewed();
   const { dispatch } = useCart();
   const { addToCompare, removeFromCompare, isCompared } = useCompare();
 
@@ -54,6 +58,7 @@ const RecentlyViewedTab = () => {
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '12px' }}>
               <button
+                type="button"
                 className="btn-text-danger"
                 onClick={clearRecentlyViewed}
               >
@@ -70,10 +75,9 @@ const RecentlyViewedTab = () => {
                 key={product._id || product.id}
                 product={product}
                 onAddToCart={handleAddToCart}
-                onRemove={() => {}}
+                onRemove={removeRecentlyViewed}
                 onToggleCompare={handleToggleCompare}
                 isCompared={isCompared}
-                hideRemove
               />
             ))}
           </div>

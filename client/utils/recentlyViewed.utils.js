@@ -42,7 +42,7 @@ export const addRecentlyViewed = (product) => {
       name: product.name,
       image: product.image || product.imageUrl,
       price: product.price,
-      oldPrice: product.oldPrice,
+      compareAtPrice: product.compareAtPrice || null,
       category: product.category,
       brand: product.brand,
       slug: product.slug

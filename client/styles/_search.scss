@@ -437,12 +437,32 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 8px;
       }
 
-      .price-block .card-price {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: $primary-color;
+      .price-block {
+        max-width: calc(100% - 40px);
+
+        .card-discount-row {
+          gap: 0;
+          margin-bottom: 1px;
+        }
+
+        .card-old-price {
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .card-discount-badge {
+          display: none;
+        }
+
+        .card-price {
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: $primary-color;
+        }
       }
 
       .btn-cart-round {

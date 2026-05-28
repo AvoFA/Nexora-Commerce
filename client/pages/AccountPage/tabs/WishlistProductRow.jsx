@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Rating } from "@mui/material";
 import { Balance, DeleteOutline, RateReview, ShoppingCart, Star } from "@mui/icons-material";
-import { formatPrice } from "../../../utils/formatPrice.js";
+import { formatPrice, getProductDiscountAmount, hasProductDiscount } from "../../../utils/formatPrice.js";
 import { getProductReviews } from "../../../services/reviewService.js";
 
 const getProductId = (product) => product?._id || product?.id;
@@ -48,6 +48,8 @@ const WishlistProductRow = ({
   }, [productId]);
 
   const price = Number(product.price || 0);
+  const hasDiscount = hasProductDiscount(product);
+  const discountAmount = getProductDiscountAmount(product);
 
   return (
     <article className="wishlist-product-row">
@@ -77,7 +79,15 @@ const WishlistProductRow = ({
           </div>
         </div>
         <div className="wishlist-product-price-row">
-          <strong>{formatPrice(price)}</strong>
+          <div className="wishlist-product-price-stack">
+            {hasDiscount && (
+              <div className="wishlist-product-discount-row">
+                <span className="wishlist-product-old-price">{formatPrice(product.compareAtPrice)}</span>
+                <span className="wishlist-product-discount">-{formatPrice(discountAmount)}</span>
+              </div>
+            )}
+            <strong>{formatPrice(price)}</strong>
+          </div>
           <button
             type="button"
             className="wishlist-cart-btn"
