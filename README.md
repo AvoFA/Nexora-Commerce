@@ -1,85 +1,244 @@
-# Nexora
+# <p align="center"><img src="public/assets/logo/nexora-full.svg" alt="Nexora Logo" width="300"></p>
 
-Nexora — MERN веб-додаток електронної комерції з клієнтською частиною на React/Vite, серверною частиною на Node.js/Express та базою даних MongoDB.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
+  <img src="https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite">
+  <img src="https://img.shields.io/badge/Node.js-20-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white" alt="Nginx">
+</p>
 
-Проєкт підготовлений до локального запуску для розробки та до production-like запуску через Docker Compose з Nginx.
+<p align="center">
+  Fullstack MERN веб-додаток електронної комерції з адміністративною панеллю, JWT-автентифікацією та Docker-based інфраструктурою.
+</p>
 
-## Технологічний стек
+---
 
-**Frontend**
+<p align="center">
+  <a href="#-огляд-проєкту">Огляд</a> •
+  <a href="#-галерея-проєкту">Скриншоти</a> •
+  <a href="#-основний-функціонал">Функціонал</a> •
+  <a href="#-технологічний-стек">Технології</a> •
+  <a href="#-структура-проєкту">Структура</a> •
+  <a href="#-docker-розгортання">Docker</a> •
+  <a href="#-локальний-запуск">Запуск</a>
+</p>
 
-- React 19
-- Vite 8
-- React Router
-- Material UI
-- SCSS
-- Context API
+---
 
-**Backend**
+# 📸 Галерея проєкту
 
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- JWT
-- bcrypt
+> ⚠️ У README використовуються демонстраційні скриншоти інтерфейсу. Фактичний вигляд окремих компонентів може відрізнятися залежно від поточної версії проєкту.
 
-**Інфраструктура**
+<table align="center">
+  <tr>
+    <td align="center"><b>Головна сторінка</b></td>
+    <td align="center"><b>Каталог товарів</b></td>
+  </tr>
+  <tr>
+    <td><a href="public/assets/screenshots/Home Page.png"><img src="public/assets/screenshots/Home Page.png" alt="Home Page" width="100%"/></a></td>
+    <td><a href="public/assets/screenshots/Catalog Page.png"><img src="public/assets/screenshots/Catalog Page.png" alt="Catalog Page" width="100%"/></a></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Оформлення замовлення (Checkout)</b></td>
+    <td align="center"><b>Адміністративна панель</b></td>
+  </tr>
+  <tr>
+    <td><a href="public/assets/screenshots/Checkout Page.png"><img src="public/assets/screenshots/Checkout Page.png" alt="Checkout Page" width="100%"/></a></td>
+    <td><a href="public/assets/screenshots/Admin Dashboard.png"><img src="public/assets/screenshots/Admin Dashboard.png" alt="Admin Dashboard" width="100%"/></a></td>
+  </tr>
+</table>
 
-- Docker
-- Docker Compose
-- Nginx
-- npm
+---
 
-## Структура проєкту
+# 📖 Огляд проєкту
+
+**Nexora** — fullstack веб-додаток із адміністративною панеллю, побудований на основі стеку MERN.
+
+
+Проєкт поєднує:
+
+* SPA-архітектуру на основі React + Vite
+* Адміністративну панель
+* JWT-автентифікацію
+* Систему рольового доступу
+* Wishlist-списки та compare модулі
+* Систему керування замовленнями
+* Модерацію відгуків і питань
+* Інтеграцію Nova Poshta API
+* Docker-based deployment infrastructure
+
+Застосунок підтримує як локальний режим розробки, так і production-like запуск через Docker Compose та Nginx.
+
+---
+
+# ✨ Основний функціонал
+
+## 🛍 Користувацька частина
+
+* Каталог товарів із фільтрацією та сортуванням
+* Пошук товарів
+* Wishlist-списки
+* Порівняння товарів
+* Кошик та checkout
+* Історія замовлень
+* Переглянуті товари
+* Система відгуків і питань
+* Підтримка акційних цін та знижок
+
+## 🔐 Адміністративна панель
+
+* Керування товарами
+* Керування категоріями та брендами
+* Панель керування замовленнями
+* Керування клієнтами
+* Модерація відгуків
+* Модерація питань
+* Керування role-based доступом
+* Керування акційними цінами
+
+## 🚚 Інтеграція доставки
+
+* Інтеграція Nova Poshta API
+* Динамічне завантаження міст та відділень
+* Синхронізація даних доставки під час checkout
+
+---
+
+# 🏗 Архітектура
+
+Проєкт побудований відповідно до класичної MERN клієнт-серверної архітектури:
+
+* **Frontend:** React + Vite SPA
+* **Backend:** Node.js + Express REST API
+* **Database:** MongoDB + Mongoose
+* **Authentication:** JWT-based authorization
+* **Infrastructure:** Docker + Nginx reverse proxy
+
+Frontend та backend ізольовані в окремі контейнери та оркеструються через Docker Compose.
+
+---
+
+# 🛠 Технологічний стек
+
+## Frontend
+
+<p>
+  <img src="https://skillicons.dev/icons?i=react,vite,sass,html,css" />
+</p>
+
+* React 19
+* Vite 8
+* React Router DOM
+* Context API
+* Material UI
+* SCSS
+
+## Backend
+
+<p>
+  <img src="https://skillicons.dev/icons?i=nodejs,express,mongodb,js" />
+</p>
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT
+* bcrypt
+
+## Інфраструктура
+
+<p>
+  <img src="https://skillicons.dev/icons?i=docker,nginx,npm,git" />
+</p>
+
+* Docker
+* Docker Compose
+* Nginx
+
+---
+
+# 📦 Структура проєкту
 
 ```text
 fullstack-ecommerce-app/
-├── client/              # React/Vite frontend source code
-├── server/              # Node.js/Express backend
-├── public/              # Public frontend assets
-├── docker-compose.yml   # Docker Compose stack
-├── package.json         # Frontend scripts and dependencies
-└── vite.config.js       # Vite configuration
+├── client/
+│   ├── components/
+│   ├── context/
+│   ├── hooks/
+│   ├── pages/
+│   ├── services/
+│   ├── styles/
+│   ├── Dockerfile
+│   └── nginx.conf
+│
+├── server/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── services/
+│   └── Dockerfile
+│
+├── docker-compose.yml
+└── README.md
 ```
 
-## Запуск проєкту через Docker
+---
 
-Для production-like запуску через Docker Desktop виконайте команду з кореня проєкту:
+# 🐳 Docker розгортання
+
+Запуск повного стеку застосунку:
 
 ```bash
 docker compose up -d --build
 ```
 
-Після збірки та запуску контейнерів веб-додаток буде доступний за адресою:
+Адреси сервісів:
 
 ```text
-http://localhost
+Frontend:   http://localhost
+Backend:    http://localhost:5000
+MongoDB:    localhost:27018
 ```
 
-Backend API буде доступний за адресою:
-
-```text
-http://localhost:5000
-```
-
-MongoDB усередині Docker використовується backend-сервісом за адресою `database:27017`, а для локального доступу з хост-системи опублікована на порту `27018`.
-
-Зупинити контейнери можна командою:
+Зупинка контейнерів:
 
 ```bash
 docker compose down
 ```
 
-## Локальний запуск без Docker
+Перевірка контейнерів:
 
-Встановіть залежності frontend:
+```bash
+docker compose ps
+```
+
+Перегляд логів backend:
+
+```bash
+docker compose logs -f backend
+```
+
+---
+
+# 💻 Локальний запуск
+
+### ⚡ Швидка інсталяція (One-liner)
+Копіюйте та вставте цю команду в термінал, щоб встановити всі залежності (root + server) одразу:
+```bash
+npm install && cd server && npm install && cd ..
+```
+
+## Встановлення frontend-залежностей
 
 ```bash
 npm install
 ```
 
-Встановіть залежності backend:
+## Встановлення backend-залежностей
 
 ```bash
 cd server
@@ -87,46 +246,76 @@ npm install
 cd ..
 ```
 
-Запустіть backend:
+## Запуск backend
 
 ```bash
 npm run server
 ```
 
-Запустіть frontend:
+## Запуск frontend
 
 ```bash
 npm run dev
 ```
 
-За замовчуванням frontend працює на:
+Frontend за замовчуванням:
 
 ```text
 http://localhost:3000
 ```
 
-## Корисні команди
+---
 
-Перевірити production-збірку frontend:
+# ⚙ Environment Variables
 
+Приклад frontend `.env`
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+Приклад backend `.env`
+
+```env
+MONGO_URI=
+JWT_SECRET=
+NOVA_POSHTA_API_KEY=
+```
+
+---
+
+# 📋 Корисні команди
+
+### 🛠 Розробка та збірка
+**Створити production-збірку фронтенду:**
 ```bash
 npm run build
 ```
 
-Переглянути активні Docker-контейнери:
+**Запустити фронтенд та бекенд одночасно (якщо встановлено `concurrently`):**
+```bash
+npm run dev:full
+```
 
+### 🐳 Керування Docker
+**Перевірити статус усіх сервісів:**
 ```bash
 docker compose ps
 ```
 
-Перезапустити backend-контейнер:
-
+**Перезапустити API сервер:**
 ```bash
 docker compose restart backend
 ```
 
-Переглянути логи backend:
-
+**Перегляд логів бекенду в реальному часі:**
 ```bash
 docker compose logs -f backend
 ```
+
+**Зупинити та видалити всі контейнери:**
+```bash
+docker compose down
+```
+
+---
