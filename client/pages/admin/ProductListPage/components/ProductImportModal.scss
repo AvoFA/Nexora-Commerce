@@ -1,0 +1,304 @@
+@use '../../../../styles/variables' as *;
+
+.import-modal-card {
+  display: flex;
+  flex-direction: column;
+  width: min(720px, 94vw);
+  max-height: 88vh;
+  overflow: hidden;
+}
+
+.import-modal-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 0 20px;
+  border-bottom: 1px solid $border-color;
+  background: transparent;
+}
+
+.import-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: $text-secondary;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease;
+  margin-bottom: -1px;
+
+  svg { font-size: 1rem; opacity: 0.7; }
+
+  &:hover {
+    color: $text-color;
+  }
+
+  &.is-active {
+    color: $primary-color;
+    border-bottom-color: $primary-color;
+    svg { opacity: 1; }
+  }
+}
+
+.import-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 20px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($border-color, 0.7);
+    border-radius: 4px;
+  }
+}
+
+.import-drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 160px;
+  border: 2px dashed $border-color;
+  border-radius: 12px;
+  background: rgba($bg-color, 0.4);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:hover,
+  &.is-dragging {
+    border-color: rgba($primary-color, 0.6);
+    background: rgba($primary-color, 0.04);
+  }
+
+  &.has-file {
+    border-color: rgba($success-color, 0.45);
+    background: rgba($success-color, 0.04);
+  }
+
+  .drop-zone-icon {
+    font-size: 2.4rem;
+    color: rgba($primary-color, 0.55);
+    line-height: 1;
+    transition: color 0.2s ease;
+  }
+
+  &.has-file .drop-zone-icon { color: $success-color; }
+
+  .drop-zone-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: $text-color;
+    margin: 0;
+  }
+
+  .drop-zone-hint {
+    font-size: 0.78rem;
+    color: $text-secondary;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .drop-zone-filename {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 4px 12px;
+    background: rgba($success-color, 0.1);
+    border: 1px solid rgba($success-color, 0.25);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: $success-color;
+    font-weight: 500;
+  }
+
+  input[type='file'] { display: none; }
+}
+
+.import-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: $text-color;
+  background: rgba($bg-color, 0.6);
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+
+  &::placeholder { color: rgba($text-secondary, 0.5); }
+
+  &:focus { border-color: rgba($primary-color, 0.55); }
+
+  &.has-error { border-color: rgba($danger-color, 0.5); }
+}
+
+.import-json-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: $text-secondary;
+  line-height: 1.4;
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba($border-color, 0.5);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.73rem;
+    color: rgba($primary-color, 0.9);
+  }
+}
+
+.import-error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba($danger-color, 0.1);
+  border: 1px solid rgba($danger-color, 0.3);
+  border-radius: 8px;
+  color: $danger-color;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  animation: import-shake 0.25s ease;
+
+  svg { flex-shrink: 0; margin-top: 1px; font-size: 1rem; }
+}
+
+@keyframes import-shake {
+  0%  { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.import-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .import-preview-title {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
+  }
+
+  .import-preview-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    background: rgba($primary-color, 0.12);
+    border: 1px solid rgba($primary-color, 0.25);
+    border-radius: 20px;
+    font-size: 0.73rem;
+    font-weight: 600;
+    color: $primary-color;
+  }
+}
+
+.import-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 2px;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($border-color, 0.8);
+    border-radius: 4px;
+  }
+}
+
+.import-preview-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba($bg-color, 0.5);
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+
+  &:hover { border-color: rgba($primary-color, 0.2); }
+
+  .preview-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .preview-card-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: $text-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .preview-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .preview-meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 1px 7px;
+    background: rgba($border-color, 0.6);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    color: $text-secondary;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &.chip-price { color: rgba($primary-color, 0.9); }
+    &.chip-cat   { color: rgba($success-color, 0.85); }
+    &.chip-brand { color: rgba($secondary-color, 0.85); }
+    &.chip-specs { color: rgba($warning-color, 0.85); }
+  }
+
+  .preview-card-index {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba($text-secondary, 0.5);
+    flex-shrink: 0;
+  }
+}
+
+.import-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid $border-color;
+  flex-shrink: 0;
+}

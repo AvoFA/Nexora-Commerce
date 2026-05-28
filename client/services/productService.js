@@ -150,3 +150,20 @@ export const searchProducts = async (query) => {
     return [];
   }
 };
+
+export const importProducts = async (products) => {
+  const response = await fetch(`${API_BASE_URL}/products/import`, {
+    method: 'POST',
+    headers: getAdminHeaders(),
+    body: JSON.stringify(products)
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const msg = data.message || 'Помилка імпорту товарів';
+    throw new Error(msg);
+  }
+
+  return data;
+};

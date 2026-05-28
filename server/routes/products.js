@@ -6,7 +6,8 @@ const {
   getSimilarProducts,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  importProducts
 } = require('../controllers/productController');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 
@@ -18,6 +19,8 @@ router.route('/')
   .post(authenticateToken, adminOnly, createProduct);
 
 router.get('/:id/similar', getSimilarProducts);
+
+router.post('/import', authenticateToken, adminOnly, importProducts);
 
 router.route('/:id')
   .get(getProductById)

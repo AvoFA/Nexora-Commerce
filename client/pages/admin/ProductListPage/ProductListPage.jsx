@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
-import { Add as AddIcon, WarningAmber } from '@mui/icons-material';
+import { Add as AddIcon, DataObject as JsonIcon, WarningAmber } from '@mui/icons-material';
 import { toast } from 'sonner';
 import ConfirmModal from '../../../components/common/ConfirmModal/ConfirmModal.jsx';
 import ProductFormModal from './components/ProductFormModal.jsx';
+import ProductImportModal from './components/ProductImportModal.jsx';
 import ProductStats from './components/ProductStats.jsx';
 import ProductTable from './components/ProductTable.jsx';
 import ProductToolbar from './components/ProductToolbar.jsx';
@@ -42,6 +43,7 @@ const ProductListPage = () => {
   const tableState = useProductTableState(products);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const lowStockFilterActive = searchParams.get('lowStock') === 'true';
 
@@ -111,14 +113,24 @@ const ProductListPage = () => {
             Керуйте вашим асортиментом
           </Typography>
         </div>
-        <button
-          type="button"
-          className="btn-primary btn-with-icon"
-          onClick={productForm.openCreateModal}
-        >
-          <AddIcon />
-          Додати товар
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            type="button"
+            className="btn-secondary btn-with-icon"
+            onClick={() => setShowImportModal(true)}
+          >
+            <JsonIcon />
+            Імпорт
+          </button>
+          <button
+            type="button"
+            className="btn-primary btn-with-icon"
+            onClick={productForm.openCreateModal}
+          >
+            <AddIcon />
+            Додати товар
+          </button>
+        </div>
       </Box>
 
       <ProductStats
@@ -202,6 +214,11 @@ const ProductListPage = () => {
         }
         confirmText="Видалити"
         cancelText="Скасувати"
+      />
+      <ProductImportModal
+        open={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onSuccess={refresh}
       />
     </Box>
   );

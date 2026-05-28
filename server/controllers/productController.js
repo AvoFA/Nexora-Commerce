@@ -199,11 +199,77 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const importProducts = async (req, res) => {
+  try {
+    const body = req.body;
+
+    const raw = Array.isArray(body) ? body : [body];
+
+    if (raw.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Список товарів порожній'
+      });
+    }
+
+    const products = [];
+    const errors = [];
+
+    raw.forEach((item, index) => {
+      if (!item.name || typeof item.name !== 'string') {
+        errors.push(`Товар #${index + 1}: відсутня назва (name)`);
+        return;
+      }
+      const price = parseFloat(item.price);
+      if (isNaN(price) || price < 0) {
+        errors.push(`Товар #${index + 1} "${item.name}": невірна ціна (price)`);
+        return;
+      }
+
+      products.push({
+        name: String(item.name).trim(),
+        price,
+        stock: parseInt(item.stock) || 0,
+        description: item.description ? String(item.description).trim() : '',
+        image: item.image || '',
+        category: item.category || 'phones',
+        brand: item.brand ? String(item.brand).trim() : '',
+        isFeatured: Boolean(item.isFeatured),
+        attributes: Array.isArray(item.attributes) ? item.attributes : [],
+      });
+    });
+
+    if (products.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Немає валідних товарів для імпорту',
+        errors
+      });
+    }
+
+    const inserted = await Product.insertMany(products, { ordered: false });
+
+    res.status(201).json({
+      success: true,
+      message: `Успішно імпортовано ${inserted.length} товарів`,
+      count: inserted.length,
+      errors: errors.length > 0 ? errors : undefined
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Помилка імпорту',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getProducts,
   getProductById,
   getSimilarProducts,
   createProduct,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  importProducts
 };

@@ -54,9 +54,6 @@ const ImageUploadField = ({
         <Typography variant="h6">
           {label}
         </Typography>
-        <Typography variant="body2">
-          Вставте URL або оберіть локальне зображення для попереднього перегляду.
-        </Typography>
       </Box>
 
       <div
