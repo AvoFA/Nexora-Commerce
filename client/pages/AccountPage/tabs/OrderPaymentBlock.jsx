@@ -1,7 +1,15 @@
 import { formatPrice } from "../../../utils/formatPrice.js";
 import { PAYMENT_LABELS } from "./orders.constants.js";
 
-const OrderPaymentBlock = ({ order, itemCount, itemsTotal, deliveryPrice, totalPrice }) => {
+const OrderPaymentBlock = ({
+  order,
+  itemCount,
+  itemsTotal,
+  itemsOriginalTotal = itemsTotal,
+  itemsDiscount = 0,
+  deliveryPrice,
+  totalPrice,
+}) => {
   return (
     <div className="payment-block">
       <div className="detail-block">
@@ -14,8 +22,19 @@ const OrderPaymentBlock = ({ order, itemCount, itemsTotal, deliveryPrice, totalP
             </tr>
             <tr>
               <td>Товар ({itemCount}):</td>
-              <td>{formatPrice(itemsTotal)}</td>
+              <td>
+                {itemsDiscount > 0 && (
+                  <span className="payment-old-price">{formatPrice(itemsOriginalTotal)}</span>
+                )}
+                <strong>{formatPrice(itemsTotal)}</strong>
+              </td>
             </tr>
+            {itemsDiscount > 0 && (
+              <tr>
+                <td>Знижка:</td>
+                <td className="discount">- {formatPrice(itemsDiscount)}</td>
+              </tr>
+            )}
             <tr>
               <td>Доставка:</td>
               <td className={deliveryPrice > 0 ? "" : "free"}>

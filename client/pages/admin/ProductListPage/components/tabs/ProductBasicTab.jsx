@@ -45,6 +45,7 @@ const ProductBasicTab = ({
 
           <ProductPricingStockSection
             price={formData.price}
+            compareAtPrice={formData.compareAtPrice}
             stock={formData.stock}
             errors={errors}
             onChange={onChange}

@@ -7,7 +7,7 @@ import {
   ShoppingCart,
   ShoppingCartOutlined,
 } from "@mui/icons-material";
-import { formatPrice } from "../../../utils/formatPrice.js";
+import { formatPrice, getProductDiscountAmount, hasProductDiscount } from "../../../utils/formatPrice.js";
 import WishlistPickerModal from "../../common/WishlistPickerModal/WishlistPickerModal.jsx";
 import { useProductActions } from "../hooks/useProductActions.js";
 import "./ProductPurchaseCard.scss";
@@ -20,6 +20,8 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
   const authTooltipTimerRef = useRef(null);
   const isCompact = variant === "compact";
   const imgSrc = getProductImage(product);
+  const hasDiscount = hasProductDiscount(product);
+  const discountAmount = getProductDiscountAmount(product);
 
   useEffect(() => () => {
     window.clearTimeout(authTooltipTimerRef.current);
@@ -77,7 +79,15 @@ const ProductPurchaseCard = ({ product, variant = "full" }) => {
         )}
 
         <div className="price-row">
-          <div className="price">{formatPrice(product.price)}</div>
+          <div className="product-price-stack">
+            {hasDiscount && (
+              <div className="product-discount-row">
+                <span className="product-old-price">{formatPrice(product.compareAtPrice)}</span>
+                <span className="product-discount-badge">-{formatPrice(discountAmount)}</span>
+              </div>
+            )}
+            <div className="price">{formatPrice(product.price)}</div>
+          </div>
           <div className="product-actions-icons">
             <button
               className={`product-wishlist-button${actions.isWishlisted ? " active" : ""}`}

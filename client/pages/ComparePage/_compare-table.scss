@@ -298,6 +298,36 @@
     line-height: 1;
   }
 
+  &__price-stack {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+
+  &__discount-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__old-price {
+    color: rgba($text-secondary, 0.72);
+    font-size: 0.74rem;
+    font-weight: 650;
+    text-decoration: line-through;
+    white-space: nowrap;
+  }
+
+  &__discount {
+    color: $danger-color;
+    font-size: 0.68rem;
+    font-weight: 850;
+    white-space: nowrap;
+  }
+
   &__cart {
     @extend .btn-icon-round;
   }

@@ -25,6 +25,11 @@ const orderItemSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  compareAtPrice: {
+    type: Number,
+    default: null,
+    min: 0
+  },
   image: String,
   quantity: {
     type: Number,

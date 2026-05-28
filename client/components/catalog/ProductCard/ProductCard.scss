@@ -413,6 +413,38 @@
 }
 
 .price-block {
+  min-width: 0;
+
+  .card-discount-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 2px;
+    min-height: 18px;
+  }
+
+  .card-old-price {
+    color: rgba($text-secondary, 0.78);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: line-through;
+    white-space: nowrap;
+  }
+
+  .card-discount-badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 18px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    color: $danger-color;
+    background: rgba($danger-color, 0.12);
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
   .card-price {
     font-size: 1.18rem;
     font-weight: 700;
@@ -421,6 +453,19 @@
   }
 
   @media (max-width: 768px) {
+    .card-discount-row {
+      gap: 5px;
+    }
+
+    .card-old-price {
+      font-size: 0.68rem;
+    }
+
+    .card-discount-badge {
+      padding: 1px 5px;
+      font-size: 0.62rem;
+    }
+
     .card-price {
       font-size: 1rem;
       letter-spacing: -0.2px;

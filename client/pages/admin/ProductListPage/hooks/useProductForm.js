@@ -6,6 +6,7 @@ const emptyFormData = {
   category: '',
   brand: '',
   price: '',
+  compareAtPrice: '',
   stock: '',
   imageUrl: '',
   description: '',
@@ -16,6 +17,7 @@ const emptyErrors = {
   name: '',
   brand: '',
   price: '',
+  compareAtPrice: '',
   stock: '',
   newBrand: '',
 };
@@ -68,6 +70,7 @@ export const useProductForm = ({
       category: product.category,
       brand: product.brand,
       price: product.price,
+      compareAtPrice: product.compareAtPrice || '',
       stock: product.stock || 0,
       imageUrl: product.image || product.imageUrl || '',
       description: product.description || '',
@@ -229,6 +232,14 @@ export const useProductForm = ({
 
     if (!formData.price || formData.price <= 0) {
       nextErrors.price = 'Ціна повинна бути більше 0';
+      hasErrors = true;
+    }
+
+    if (
+      formData.compareAtPrice !== '' &&
+      Number(formData.compareAtPrice) <= Number(formData.price || 0)
+    ) {
+      nextErrors.compareAtPrice = 'Стара ціна має бути більшою за поточну ціну';
       hasErrors = true;
     }
 

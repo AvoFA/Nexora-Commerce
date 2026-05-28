@@ -23,7 +23,7 @@ import {
   getCategoryDisplay,
   getProductCategoryKey,
 } from "../../utils/categories.js";
-import { formatPrice } from "../../utils/formatPrice.js";
+import { formatPrice, getProductDiscountAmount, hasProductDiscount } from "../../utils/formatPrice.js";
 import "./ComparePage.scss";
 
 import { CARD_WIDTH, EMPTY_VALUE } from "./compare.constants.js";
@@ -371,6 +371,8 @@ const ComparePage = () => {
         const id = product._id || product.id;
         const img = product.image || product.imageUrl;
         const { rating, count: reviewCount } = getStubRating(id);
+        const hasDiscount = hasProductDiscount(product);
+        const discountAmount = getProductDiscountAmount(product);
 
         return (
           <div
@@ -419,7 +421,15 @@ const ComparePage = () => {
             </div>
 
             <div className="cmp-product-card__footer">
-              <span className="cmp-product-card__price">{formatPrice(product.price)}</span>
+              <div className="cmp-product-card__price-stack">
+                {hasDiscount && (
+                  <div className="cmp-product-card__discount-row">
+                    <span className="cmp-product-card__old-price">{formatPrice(product.compareAtPrice)}</span>
+                    <span className="cmp-product-card__discount">-{formatPrice(discountAmount)}</span>
+                  </div>
+                )}
+                <span className="cmp-product-card__price">{formatPrice(product.price)}</span>
+              </div>
               <button
                 className="cmp-product-card__cart"
                 onClick={() => handleAddToCart(product)}

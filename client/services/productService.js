@@ -77,6 +77,7 @@ export const createProduct = async (productData) => {
     // Map fields to match server payload
     const payload = {
       ...productData,
+      compareAtPrice: productData.compareAtPrice === '' ? null : productData.compareAtPrice,
       image: productData.imageUrl || productData.image
     };
 
@@ -100,6 +101,7 @@ export const updateProduct = async (id, productData) => {
     // Map fields to match server payload
     const payload = {
       ...productData,
+      compareAtPrice: productData.compareAtPrice === '' ? null : productData.compareAtPrice,
       image: productData.imageUrl || productData.image
     };
 

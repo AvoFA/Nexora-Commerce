@@ -251,12 +251,39 @@
     .summary-row {
       display: flex;
       justify-content: space-between;
+      gap: 16px;
       font-size: 0.95rem;
       color: $text-secondary;
+
+      > span:last-child {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 10px;
+        color: $text-color;
+        font-weight: 700;
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .summary-old-price {
+        color: rgba($text-secondary, 0.78);
+        font-weight: 600;
+        text-decoration: line-through;
+      }
 
       .free {
         color: $primary-color;
         font-weight: 700;
+      }
+    }
+
+    .summary-discount-row {
+      color: $text-color;
+
+      strong {
+        color: $danger-color;
+        white-space: nowrap;
       }
     }
   }

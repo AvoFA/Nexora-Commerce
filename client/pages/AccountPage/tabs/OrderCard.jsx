@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { formatPrice } from "../../../utils/formatPrice.js";
+import { formatPrice, getProductDiscountAmount, hasProductDiscount } from "../../../utils/formatPrice.js";
 import { ExpandMore, Inventory2Outlined, RateReviewOutlined, CloseOutlined } from "@mui/icons-material";
 import { STATUS_LABELS } from "./orders.constants.js";
 import OrderTimeline from "./OrderTimeline.jsx";
@@ -33,6 +33,12 @@ const getItemsTotal = (order) => (order.items || []).reduce(
   0
 );
 
+const getItemsOriginalTotal = (order) => (order.items || []).reduce((sum, item) => {
+  const quantity = Number(item.quantity) || 1;
+  const unitPrice = hasProductDiscount(item) ? Number(item.compareAtPrice) : Number(item.price) || 0;
+  return sum + unitPrice * quantity;
+}, 0);
+
 const renderProductImage = (item) => {
   if (item.image) {
     return <img src={item.image} alt={item.name} />;
@@ -45,6 +51,8 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
   const previewItems = order.items?.slice(0, 3) || [];
   const itemCount = order.items?.length || 0;
   const itemsTotal = getItemsTotal(order);
+  const itemsOriginalTotal = getItemsOriginalTotal(order);
+  const itemsDiscount = itemsOriginalTotal - itemsTotal;
   const discount = Number(order.discount) || 0;
   const deliveryPrice = Number(order.deliveryPrice) || Number(order.delivery?.deliveryPrice) || 0;
   const totalPrice = Number(order.totalPrice) || itemsTotal - discount + deliveryPrice;
@@ -92,6 +100,7 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
               const productId = getProductId(item);
               const quantity = Number(item.quantity) || 1;
               const productTotal = (Number(item.price) || 0) * quantity;
+              const productDiscount = getProductDiscountAmount(item) * quantity;
 
               return (
                 <div className="expanded-product" key={getItemKey(order, item, index)}>
@@ -114,7 +123,15 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
                     Залишити відгук
                   </button>
                   <div className="ex-qty">{quantity} шт.</div>
-                  <div className="ex-price">{formatPrice(productTotal)}</div>
+                  <div className="ex-price">
+                    {hasProductDiscount(item) && (
+                      <div className="ex-price-discount-row">
+                        <span className="ex-old-price">{formatPrice(Number(item.compareAtPrice) * quantity)}</span>
+                        <span className="ex-discount">-{formatPrice(productDiscount)}</span>
+                      </div>
+                    )}
+                    <strong>{formatPrice(productTotal)}</strong>
+                  </div>
                 </div>
               );
             })}
@@ -129,6 +146,8 @@ const OrderCard = ({ order, onCancelRequest, onReviewRequest }) => {
             order={order}
             itemCount={itemCount}
             itemsTotal={itemsTotal}
+            itemsOriginalTotal={itemsOriginalTotal}
+            itemsDiscount={itemsDiscount}
             deliveryPrice={deliveryPrice}
             totalPrice={totalPrice}
           />

@@ -6,7 +6,7 @@ import {
   ChevronRight,
   StorefrontOutlined,
 } from "@mui/icons-material";
-import { formatPrice } from "../../../utils/formatPrice.js";
+import { formatPrice, hasProductDiscount } from "../../../utils/formatPrice.js";
 
 const CheckoutSummary = ({
   items,
@@ -25,6 +25,11 @@ const CheckoutSummary = ({
   onBackToCart,
 }) => {
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
+  const itemsOriginalPrice = items.reduce((total, item) => {
+    const unitPrice = hasProductDiscount(item) ? Number(item.compareAtPrice) : Number(item.price || 0);
+    return total + unitPrice * item.quantity;
+  }, 0);
+  const itemsDiscount = itemsOriginalPrice - itemsTotalPrice;
   const finalTotal = itemsTotalPrice + deliveryPrice;
 
   return (
@@ -90,8 +95,19 @@ const CheckoutSummary = ({
         <div className="summary-breakdown">
           <div className="summary-row">
             <span>{itemCount} товарів на суму:</span>
-            <span>{formatPrice(itemsTotalPrice)}</span>
+            <span>
+              {itemsDiscount > 0 && (
+                <span className="summary-old-price">{formatPrice(itemsOriginalPrice)}</span>
+              )}
+              <strong>{formatPrice(itemsTotalPrice)}</strong>
+            </span>
           </div>
+          {itemsDiscount > 0 && (
+            <div className="summary-row summary-discount-row">
+              <span>Знижка</span>
+              <strong>- {formatPrice(itemsDiscount)}</strong>
+            </div>
+          )}
           <div className="summary-row">
             <span>Доставка:</span>
             <span className={deliveryPrice === 0 ? "free" : ""}>

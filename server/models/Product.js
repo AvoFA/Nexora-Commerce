@@ -12,6 +12,18 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
+  compareAtPrice: {
+    type: Number,
+    default: null,
+    min: 0,
+    validate: {
+      validator(value) {
+        const price = typeof this.get === 'function' ? this.get('price') : this.price;
+        return value == null || price == null || value > price;
+      },
+      message: 'Compare-at price must be greater than product price'
+    }
+  },
   stock: {
     type: Number,
     default: 0

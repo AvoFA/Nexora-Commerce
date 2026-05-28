@@ -22,6 +22,9 @@ const normalizeItems = (items = []) => {
       product: productId,
       name: item.name,
       price: Number(item.price) || 0,
+      compareAtPrice: Number(item.compareAtPrice) > Number(item.price)
+        ? Number(item.compareAtPrice)
+        : null,
       image: item.image || item.imageUrl || '',
       quantity: Number(item.quantity) || 1
     };

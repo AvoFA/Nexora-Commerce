@@ -523,6 +523,7 @@ const CheckoutPage = () => {
           id: item._id || item.id,
           name: item.name,
           price: item.price,
+          compareAtPrice: item.compareAtPrice || null,
           image: item.image || item.imageUrl || "",
           quantity: item.quantity,
         })),

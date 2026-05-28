@@ -73,6 +73,117 @@ input[type="number"] {
   }
 }
 
+.product-pricing-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.product-discount-section {
+  padding: 16px;
+  background: rgba($bg-color, 0.18);
+  border: 1px solid rgba($border-color, 0.45);
+  border-radius: 12px;
+}
+
+.product-discount-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  h6 {
+    margin: 0 0 4px;
+    color: $text-color;
+    font-size: 0.98rem;
+    font-weight: 750;
+  }
+
+  p {
+    margin: 0;
+    color: rgba($text-secondary, 0.78);
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .MuiButton-root {
+    color: rgba($primary-color, 0.9);
+    text-transform: none;
+    font-weight: 700;
+  }
+}
+
+.product-discount-quick-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+
+  span {
+    color: rgba($text-secondary, 0.82);
+    font-size: 0.82rem;
+    font-weight: 650;
+  }
+
+  button {
+    height: 28px;
+    padding: 0 10px;
+    border: 1px solid rgba($primary-color, 0.28);
+    border-radius: 8px;
+    color: rgba($primary-color, 0.95);
+    background: rgba($primary-color, 0.08);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background: rgba($primary-color, 0.14);
+      border-color: rgba($primary-color, 0.45);
+      transform: translateY(-1px);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+  }
+}
+
+.product-discount-preview {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba($border-color, 0.38);
+
+  .discount-old-price {
+    color: rgba($text-secondary, 0.75);
+    font-size: 0.9rem;
+    text-decoration: line-through;
+  }
+
+  .discount-current-price {
+    color: $primary-color;
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .discount-badge {
+    padding: 3px 8px;
+    border-radius: 999px;
+    color: $danger-color;
+    background: rgba($danger-color, 0.12);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+}
+
 .product-brand-actions {
   display: flex;
   gap: 8px;

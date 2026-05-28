@@ -503,6 +503,32 @@
   font-weight: 850;
   text-align: right;
   white-space: nowrap;
+
+  strong {
+    display: block;
+    color: $text-color;
+  }
+}
+
+.ex-price-discount-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  margin-bottom: 3px;
+}
+
+.ex-old-price {
+  color: rgba($text-secondary, 0.72);
+  font-size: 0.76rem;
+  font-weight: 650;
+  text-decoration: line-through;
+}
+
+.ex-discount {
+  color: $danger-color;
+  font-size: 0.72rem;
+  font-weight: 850;
 }
 
 .order-info-row {
@@ -693,6 +719,14 @@
 
   .discount {
     color: $danger-color;
+  }
+
+  .payment-old-price {
+    display: inline-block;
+    margin-right: 8px;
+    color: rgba($text-secondary, 0.72);
+    font-weight: 650;
+    text-decoration: line-through;
   }
 
   .free {

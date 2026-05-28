@@ -12,7 +12,7 @@ import { useAuth } from "../../../context/AuthContext.jsx";
 import { useCart } from "../../../hooks/useCart.js";
 import { useCompare } from "../../../hooks/useCompare.js";
 import { getProductReviews } from "../../../services/reviewService.js";
-import { formatPrice } from "../../../utils/formatPrice.js";
+import { formatPrice, getProductDiscountAmount, hasProductDiscount } from "../../../utils/formatPrice.js";
 import { openAuthModal } from "../../../utils/authModalEvents.js";
 import { getAnchorRect, showCompareRemovedToast } from "../../../utils/notifications.js";
 import WishlistPickerModal from "../../common/WishlistPickerModal/WishlistPickerModal.jsx";
@@ -52,6 +52,8 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
 
   const productId = product._id || product.id;
   const imgSrc = product.image || product.imageUrl || null;
+  const hasDiscount = hasProductDiscount(product);
+  const discountAmount = getProductDiscountAmount(product);
   const isInCart = state?.items?.some(
     (item) => item.id === productId || item._id === productId
   );
@@ -218,6 +220,12 @@ const ProductCard = memo(({ product, onWishlistChange }) => {
 
         <div className="card-footer">
           <div className="price-block">
+            {hasDiscount && (
+              <div className="card-discount-row">
+                <span className="card-old-price">{formatPrice(product.compareAtPrice)}</span>
+                <span className="card-discount-badge">-{formatPrice(discountAmount)}</span>
+              </div>
+            )}
             <span className="card-price">
               {formatPrice(product.price)}
             </span>

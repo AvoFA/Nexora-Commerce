@@ -12,3 +12,16 @@
  */
 export const formatPrice = (value) =>
   `${Number(value || 0).toLocaleString("uk-UA")} ₴`;
+
+export const hasProductDiscount = (product) => {
+  const price = Number(product?.price || 0);
+  const compareAtPrice = Number(product?.compareAtPrice || 0);
+
+  return price > 0 && compareAtPrice > price;
+};
+
+export const getProductDiscountAmount = (product) => {
+  if (!hasProductDiscount(product)) return 0;
+
+  return Number(product.compareAtPrice) - Number(product.price);
+};

@@ -15,6 +15,37 @@
       justify-content: space-between;
       margin-bottom: 24px;
 
+      .product-price-stack {
+        min-width: 0;
+      }
+
+      .product-discount-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+
+      .product-old-price {
+        color: rgba($text-secondary, 0.78);
+        font-size: 1rem;
+        font-weight: 650;
+        text-decoration: line-through;
+      }
+
+      .product-discount-badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        color: $danger-color;
+        background: rgba($danger-color, 0.12);
+        font-size: 0.78rem;
+        font-weight: 800;
+        line-height: 1;
+      }
+
       .price {
         font-size: 2.5rem;
         font-weight: 700;

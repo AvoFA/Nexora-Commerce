@@ -10,7 +10,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useState, useEffect, useRef } from "react";
-import { formatPrice } from "../../utils/formatPrice.js";
+import { formatPrice, getProductDiscountAmount, hasProductDiscount } from "../../utils/formatPrice.js";
 import EmptyState from "../../components/common/EmptyState/EmptyState.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import WishlistPickerModal from "../../components/common/WishlistPickerModal/WishlistPickerModal.jsx";
@@ -129,6 +129,14 @@ const CartPage = () => {
     return total + item.price * item.quantity;
   }, 0);
 
+  const selectedItemsOriginalPrice = items.reduce((total, item) => {
+    if (item.selected === false) return total;
+    const unitPrice = hasProductDiscount(item) ? Number(item.compareAtPrice) : Number(item.price || 0);
+    return total + unitPrice * item.quantity;
+  }, 0);
+
+  const selectedItemsDiscount = selectedItemsOriginalPrice - totalPrice;
+
   // Calculate selected items total quantity
   const selectedItemsCount = items.reduce((total, item) => {
     if (item.selected === false) return total;
@@ -235,7 +243,15 @@ const CartPage = () => {
                 </div>
 
                 <div className="cart-item-right-block">
-                  <p className="cart-item-price">{formatPrice(item.price)}</p>
+                  <div className="cart-item-price-stack">
+                    {hasProductDiscount(item) && (
+                      <div className="cart-item-discount-row">
+                        <span className="cart-item-old-price">{formatPrice(item.compareAtPrice)}</span>
+                        <span className="cart-item-discount">-{formatPrice(getProductDiscountAmount(item))}</span>
+                      </div>
+                    )}
+                    <p className="cart-item-price">{formatPrice(item.price)}</p>
+                  </div>
 
                   <div className="cart-item-quantity">
                     <button
@@ -263,8 +279,20 @@ const CartPage = () => {
           <div className="card-content">
             <div className="summary-row">
               <span>{selectedItemsCount} {getPlural(selectedItemsCount, "товар", "товари", "товарів")} на суму:</span>
-              <span>{formatPrice(totalPrice)}</span>
+              <span>
+                {selectedItemsDiscount > 0 && (
+                  <span className="summary-old-price">{formatPrice(selectedItemsOriginalPrice)}</span>
+                )}
+                <strong>{formatPrice(totalPrice)}</strong>
+              </span>
             </div>
+
+            {selectedItemsDiscount > 0 && (
+              <div className="summary-row summary-discount-row">
+                <span>Знижка</span>
+                <strong>- {formatPrice(selectedItemsDiscount)}</strong>
+              </div>
+            )}
 
             <div className="summary-total">
               <strong>Всього до сплати:</strong>
