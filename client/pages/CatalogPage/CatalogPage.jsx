@@ -41,8 +41,15 @@ const CatalogPage = () => {
     useCatalogData();
   const { performIntelligentSearch, shouldAutoSwitchCategory } =
     useCatalogSearch();
-  const { applySidebarFilters, calculateAvailableBrands } = useCatalogFilters();
+  const {
+    applySidebarFilters,
+    calculateAvailableBrands,
+    calculateAvailableMemoryOptions,
+    calculateAvailableRamOptions,
+  } = useCatalogFilters();
   const [availableBrands, setAvailableBrands] = useState([]);
+  const [availableMemoryOptions, setAvailableMemoryOptions] = useState([]);
+  const [availableRamOptions, setAvailableRamOptions] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [activeSidebarFilters, setActiveSidebarFilters] = useState(null);
@@ -143,8 +150,12 @@ const CatalogPage = () => {
     );
 
     const brands = calculateAvailableBrands(allProducts, selectedCategory);
+    const memoryOptions = calculateAvailableMemoryOptions(allProducts, selectedCategory);
+    const ramOptions = calculateAvailableRamOptions(allProducts, selectedCategory);
 
     setAvailableBrands(brands);
+    setAvailableMemoryOptions(memoryOptions);
+    setAvailableRamOptions(ramOptions);
     setFilteredProducts(filtered.products);
 
     // Auto-switch category if search results belong to a single category
@@ -428,6 +439,8 @@ const CatalogPage = () => {
               )}
               <FilterSidebar
                 brands={availableBrands}
+                memoryOptions={availableMemoryOptions}
+                ramOptions={availableRamOptions}
                 categories={availableCategories.filter(
                   (category) => category.value !== "all",
                 )}

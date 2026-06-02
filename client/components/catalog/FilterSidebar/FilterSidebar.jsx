@@ -12,24 +12,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import SearchIcon from '@mui/icons-material/Search';
 import './FilterSidebar.scss';
 
-// Static count mock for memory options
-const MEMORY_OPTIONS = [
-  { label: '64 ГБ',  count: 7  },
-  { label: '128 ГБ', count: 29 },
-  { label: '256 ГБ', count: 58 },
-  { label: '512 ГБ', count: 35 },
-  { label: '1 ТБ',   count: 12 },
-];
-
-const RAM_OPTIONS = [
-  { label: '4 ГБ',  count: 14 },
-  { label: '6 ГБ',  count: 8  },
-  { label: '8 ГБ',  count: 24 },
-  { label: '12 ГБ', count: 18 },
-  { label: '16 ГБ', count: 32 },
-  { label: '32 ГБ', count: 10 },
-];
-
 const PRICE_MAX = 100000;
 const BRAND_SEARCH_THRESHOLD = 5; // Show search input if brands count > 5
 
@@ -54,7 +36,14 @@ const FilterSection = ({ title, children, defaultOpen = true }) => {
   );
 };
 
-const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
+const FilterSidebar = ({
+  brands = [],
+  memoryOptions = [],
+  ramOptions = [],
+  activeFilters,
+  onApply,
+  onReset,
+}) => {
   const [priceRange, setPriceRange] = useState([0, PRICE_MAX]);
   const [localSelectedBrands, setLocalSelectedBrands] = useState([]);
   const [localMemory, setLocalMemory] = useState([]);
@@ -261,35 +250,39 @@ const FilterSidebar = ({ brands = [], activeFilters, onApply, onReset }) => {
         </FilterSection>
       )}
 
-      <FilterSection title="Вбудована пам'ять" defaultOpen={false}>
-        <div className="memory-grid">
-          {MEMORY_OPTIONS.map(({ label, count }) => (
-            <button
-              key={label}
-              className={`memory-tag ${localMemory.includes(label) ? 'active' : ''}`}
-              onClick={() => handleMemoryToggle(label)}
-            >
-              <span className="memory-tag-label">{label}</span>
-              <span className="memory-tag-count">{count}</span>
-            </button>
-          ))}
-        </div>
-      </FilterSection>
+      {memoryOptions.length > 0 && (
+        <FilterSection title="Вбудована пам'ять" defaultOpen={false}>
+          <div className="memory-grid">
+            {memoryOptions.map(({ label, count }) => (
+              <button
+                key={label}
+                className={`memory-tag ${localMemory.includes(label) ? 'active' : ''}`}
+                onClick={() => handleMemoryToggle(label)}
+              >
+                <span className="memory-tag-label">{label}</span>
+                <span className="memory-tag-count">{count}</span>
+              </button>
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
-      <FilterSection title="Оперативна пам'ять" defaultOpen={false}>
-        <div className="memory-grid">
-          {RAM_OPTIONS.map(({ label, count }) => (
-            <button
-              key={label}
-              className={`memory-tag ${localRam.includes(label) ? 'active' : ''}`}
-              onClick={() => handleRamToggle(label)}
-            >
-              <span className="memory-tag-label">{label}</span>
-              <span className="memory-tag-count">{count}</span>
-            </button>
-          ))}
-        </div>
-      </FilterSection>
+      {ramOptions.length > 0 && (
+        <FilterSection title="Оперативна пам'ять" defaultOpen={false}>
+          <div className="memory-grid">
+            {ramOptions.map(({ label, count }) => (
+              <button
+                key={label}
+                className={`memory-tag ${localRam.includes(label) ? 'active' : ''}`}
+                onClick={() => handleRamToggle(label)}
+              >
+                <span className="memory-tag-label">{label}</span>
+                <span className="memory-tag-count">{count}</span>
+              </button>
+            ))}
+          </div>
+        </FilterSection>
+      )}
 
       <div className="filter-reset-block">
         <button className="filter-reset-btn" onClick={handleReset}>
