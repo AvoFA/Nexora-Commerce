@@ -7,7 +7,7 @@
   overflow: visible;
 
   .section-header {
-    padding: 0 16px; // Keeping title aligned with container
+    padding: 0 16px;
     margin-bottom: 24px;
     display: flex;
     justify-content: flex-start;
@@ -44,29 +44,29 @@
     overflow-x: auto;
     overflow-y: hidden;
     width: 100%;
-    padding: 0 16px; // Adding padding inside so cards don't stick to edge on start
+    padding: 0 16px;
 
-    // 🎭 Mask effect for scrolling hint
+    // 🎭 Softened mask effect for scrolling hint
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0%,
-      black 40px,
-      black calc(100% - 40px),
+      black 20px,
+      black calc(100% - 20px),
       transparent 100%
     );
     mask-image: linear-gradient(
       to right,
       transparent 0%,
-      black 40px,
-      black calc(100% - 40px),
+      black 20px,
+      black calc(100% - 20px),
       transparent 100%
     );
 
     scroll-behavior: auto;
     scroll-snap-type: none;
-
     scrollbar-width: none;
     -ms-overflow-style: none;
+
     &::-webkit-scrollbar {
       display: none;
     }
@@ -74,37 +74,38 @@
 
   .recently-viewed-inner {
     display: flex;
-    gap: 12px;
+    align-items: stretch; // Ensures equal heights
+    gap: 16px;
     width: max-content;
-    padding-right: 32px; // Extra space at the end
+    padding-right: 32px;
   }
 
-  // ... rest of items
   .carousel-item {
     flex: 0 0 auto;
-    width: 160px;
+    width: 220px; // Increased width to fit all elements
+    display: flex;
+    flex-direction: column;
     scroll-snap-align: none;
 
     @media (max-width: 768px) {
-      flex: 0 0 140px;
-      width: 140px;
+      flex: 0 0 180px;
+      width: 180px;
 
       .product-card-link {
         .product-card-image {
-          height: 148px;
+          height: 160px;
         }
       }
     }
 
-    // ProductCard overrides
+    // ProductCard consistency adjustments
     .product-card-link {
-      height: auto;
-      min-height: 0;
       background: rgba($surface-color, 0.4);
       border-radius: 12px;
+      height: 100%;
 
       .product-card-image {
-        height: 176px;
+        height: 180px;
 
         a {
           padding: 10px;
@@ -112,40 +113,36 @@
       }
 
       .card-content {
-        padding: 10px;
-        gap: 4px;
-        min-height: 0;
+        padding: 12px;
+        gap: 6px;
       }
 
       .card-name {
-        font-size: 0.78rem;
-        height: 2.2rem;
-        -webkit-line-clamp: 2;
+        font-size: 0.85rem;
+        height: 2.3rem;
         font-weight: 500;
       }
 
+      // Restore rating for consistency
       .card-rating {
-        display: none;
-      }
+        display: flex;
 
-      .card-footer {
-        margin-top: 8px;
-        padding-top: 6px;
-        border-top: none;
-      }
-
-      .card-price {
-        font-size: 1rem;
+        .rating-star {
+          font-size: 14px;
+        }
+        .rating-value, .rating-count {
+          font-size: 0.8rem;
+        }
+        .review-icon {
+          font-size: 12px;
+        }
       }
 
       .footer-actions {
-        .btn-details {
-          display: none;
-        }
         .btn-cart-round {
-          width: 32px;
-          height: 32px;
-          min-width: 32px;
+          width: 34px;
+          height: 34px;
+          min-width: 34px;
           .MuiSvgIcon-root {
             font-size: 1.1rem;
           }
@@ -154,7 +151,6 @@
     }
   }
 
-  // 🏹 Premium carousel controls
   .carousel-control {
     position: absolute;
     top: 50%;
