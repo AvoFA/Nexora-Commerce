@@ -3,43 +3,58 @@
 .app-notification {
   position: fixed;
   z-index: 2200;
-  width: min(360px, calc(100vw - 32px));
-  min-height: 86px;
+  width: fit-content;
+  min-width: 300px;
+  max-width: min(420px, calc(100vw - 32px));
+  min-height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  padding: 16px 17px 16px 18px;
+  gap: 14px;
+  padding: 12px 42px 12px 16px;
   color: $text-color;
-  background: linear-gradient(135deg, rgba($card-bg, 0.98), rgba($bg-color, 0.98));
-  border: 1px solid rgba($primary-color, 0.3);
-  border-radius: 12px;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  background: rgba($surface-color, 0.98);
+  border: 1px solid rgba($primary-color, 0.28);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
   animation: app-notification-in 0.18s ease-out;
+}
+
+.app-notification--compare-added {
+  border-color: rgba($success-color, 0.34);
+
+  .app-notification__timer-progress {
+    stroke: $success-color;
+  }
+}
+
+.app-notification--compare-info {
+  border-color: rgba($primary-color, 0.28);
 }
 
 .app-notification__content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
 .app-notification__text {
   color: $text-color;
   font-size: 0.92rem;
-  line-height: 1.35;
+  line-height: 1.32;
   font-weight: 700;
 }
 
 .app-notification__action {
   width: fit-content;
   color: $primary-color;
-  font-size: 1rem;
+  font-size: 0.78rem;
   line-height: 1.2;
   font-weight: 800;
   text-decoration: none;
   text-transform: uppercase;
+  letter-spacing: 0;
 
   &:hover,
   &:focus-visible {
@@ -50,22 +65,27 @@
 }
 
 .app-notification__close {
-  position: relative;
-  width: 42px;
-  min-width: 42px;
-  height: 42px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  min-width: 26px;
+  height: 26px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: $text-color;
-  background: transparent;
-  border: 0;
-  border-radius: 50%;
+  color: rgba($text-secondary, 0.82);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 7px;
   cursor: pointer;
+  transition: all 0.2s ease;
 
   &:hover,
   &:focus-visible {
-    color: #ffffff;
+    color: $text-color;
+    background: rgba($primary-color, 0.14);
+    border-color: rgba($primary-color, 0.26);
     outline: none;
 
     .app-notification__timer-progress {
@@ -76,9 +96,9 @@
 
 .app-notification__timer {
   position: absolute;
-  inset: 4px;
-  width: 34px;
-  height: 34px;
+  inset: 2px;
+  width: 22px;
+  height: 22px;
   transform: rotate(-90deg);
 }
 
@@ -95,7 +115,7 @@
 .app-notification__timer-progress {
   stroke: $primary-color;
   stroke-linecap: round;
-  stroke-dasharray: 94;
+  stroke-dasharray: 75;
   stroke-dashoffset: 0;
   animation: app-notification-timer var(--notification-duration) linear forwards;
 }
@@ -103,7 +123,7 @@
 .app-notification__close-icon {
   position: relative;
   z-index: 1;
-  font-size: 19px !important;
+  font-size: 15px !important;
 }
 
 @keyframes app-notification-in {
@@ -120,14 +140,17 @@
 
 @keyframes app-notification-timer {
   to {
-    stroke-dashoffset: 94;
+    stroke-dashoffset: 75;
   }
 }
 
 @media (max-width: 480px) {
   .app-notification {
+    top: 76px !important;
     left: 12px !important;
     right: 12px !important;
     width: auto;
+    min-width: 0;
+    max-width: none;
   }
 }

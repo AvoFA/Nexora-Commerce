@@ -7,14 +7,14 @@ import "./AppNotifications.scss";
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
 const getPosition = (notification) => {
-  const width = 360;
-  const gap = 10;
+  const width = 380;
+  const gap = 12;
   const margin = 16;
   const anchor = notification?.anchor;
 
   if (!anchor) {
     return {
-      top: 92,
+      top: 88,
       right: 24
     };
   }
@@ -94,9 +94,9 @@ const AppNotifications = () => {
         onClick={() => setNotification(null)}
         aria-label="Закрити сповіщення"
       >
-        <svg className="app-notification__timer" width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
-          <circle className="app-notification__timer-track" cx="17" cy="17" r="15" />
-          <circle className="app-notification__timer-progress" cx="17" cy="17" r="15" />
+        <svg className="app-notification__timer" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
+          <circle className="app-notification__timer-track" cx="14" cy="14" r="12" />
+          <circle className="app-notification__timer-progress" cx="14" cy="14" r="12" />
         </svg>
         <Close className="app-notification__close-icon" />
       </button>

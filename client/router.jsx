@@ -75,11 +75,14 @@ const SiteLayout = () => {
       }}
     >
       <Toaster
-        position="top-right"
+        className="nexora-toaster"
+        position="top-center"
         expand={false}
         theme="dark"
         closeButton
         unstyled={true}
+        offset={{ top: 92 }}
+        mobileOffset={{ top: 76, right: 12, left: 12 }}
         toastOptions={{
           classNames: {
             toast: 'sonner-toast-premium',
@@ -88,10 +91,6 @@ const SiteLayout = () => {
             icon: 'sonner-toast-icon',
             closeButton: 'sonner-toast-close',
             content: 'sonner-toast-content'
-          },
-          style: {
-            top: "85px",
-            right: "12px"
           }
         }}
       />
@@ -117,9 +116,12 @@ const AdminLayoutWithToaster = () => {
   return (
     <>
       <Toaster
+        className="nexora-toaster nexora-toaster--admin"
         position="top-right"
         closeButton
         unstyled={true}
+        offset={{ top: 18, right: 18 }}
+        mobileOffset={{ top: 12, right: 12, left: 12 }}
         toastOptions={{
           classNames: {
             toast: 'sonner-toast-premium',

@@ -207,25 +207,55 @@
 }
 
 // ─── Calm & Premium Sonner Toasts ───────────────────────────────────────────
-// We use a clean approach without !important by relying on Sonner's 'unstyled' prop.
+.nexora-toaster[data-sonner-toaster] {
+  width: min(380px, calc(100vw - 32px)) !important;
+}
+
+.nexora-toaster[data-sonner-toaster][data-x-position="right"] {
+  right: var(--offset-right) !important;
+  left: auto !important;
+}
+
+.nexora-toaster[data-sonner-toaster][data-x-position="center"] {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%);
+}
+
+.nexora-toaster[data-sonner-toaster] [data-sonner-toast] {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.nexora-toaster[data-sonner-toaster] [data-sonner-toast][data-x-position="right"] {
+  right: 0 !important;
+  left: auto !important;
+}
+
+.nexora-toaster[data-sonner-toaster] [data-sonner-toast][data-x-position="center"] {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) var(--y);
+}
 
 [data-sonner-toast].sonner-toast-premium {
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
   width: fit-content;
-  max-width: min(480px, calc(100vw - 32px));
-  padding: 14px;
+  min-width: 300px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 42px 12px 14px;
 
-  background: $surface-color;
+  background: rgba($surface-color, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
 
   color: $text-color;
-  transition: all 0.3s ease;
-  animation: sonner-premium-in 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  animation: sonner-premium-in 0.2s ease-out;
 
   &[data-type="success"] {
     border-color: rgba($success-color, 0.35);
@@ -250,11 +280,19 @@
       color: $warning-color;
     }
   }
+
+  &[data-type="info"] {
+    border-color: rgba($primary-color, 0.3);
+    .sonner-toast-icon {
+      background: rgba($primary-color, 0.15);
+      color: $primary-color;
+    }
+  }
 }
 
 // Override theme specificity without !important
 [data-theme] [data-sonner-toast].sonner-toast-premium {
-  background: $surface-color;
+  background: rgba($surface-color, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: $text-color;
 
@@ -267,6 +305,9 @@
   &[data-type="warning"] {
     border-color: rgba($warning-color, 0.35);
   }
+  &[data-type="info"] {
+    border-color: rgba($primary-color, 0.3);
+  }
 }
 
 .sonner-toast-content {
@@ -274,7 +315,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
-  padding-right: 20px;
+  min-width: 0;
 }
 
 .sonner-toast-title {
@@ -310,38 +351,72 @@
 
 .sonner-toast-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
+  left: auto;
+  transform: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
-  border: none;
-  background: transparent;
-  color: rgba($text-secondary, 0.5);
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba($text-secondary, 0.82);
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba($primary-color, 0.14);
+    border-color: rgba($primary-color, 0.26);
     color: $text-color;
   }
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
   }
+}
+
+[data-sonner-toast].sonner-toast-premium [data-close-button].sonner-toast-close {
+  left: auto;
+  right: 8px;
+  top: 8px;
+  transform: none;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba($text-secondary, 0.82);
 }
 
 @keyframes sonner-premium-in {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(-4px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 480px) {
+  .nexora-toaster[data-sonner-toaster] {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+  }
+
+  .nexora-toaster[data-sonner-toaster] [data-sonner-toast],
+  .nexora-toaster[data-sonner-toaster] [data-sonner-toast][data-x-position="right"] {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100%;
+    max-width: none;
+  }
+
+  [data-sonner-toast].sonner-toast-premium {
+    width: auto;
+    min-width: 0;
+    max-width: none;
   }
 }
