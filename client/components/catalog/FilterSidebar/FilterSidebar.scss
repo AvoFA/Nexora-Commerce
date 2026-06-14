@@ -7,7 +7,7 @@
   background: rgba($surface-color, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: $border-radius;
-  padding: 8px 0;
+  padding: 8px 0 0 0;
   height: fit-content;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
@@ -332,7 +332,16 @@
 
 // ─── Кнопка скидання ──────────────────────────────────────────────────────
 .filter-reset-block {
-  padding: 14px 20px;
+  position: sticky;
+  bottom: 0;
+  background: rgba(18, 24, 37, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  z-index: 10;
+  border-bottom-left-radius: $border-radius;
+  border-bottom-right-radius: $border-radius;
 }
 
 .filter-reset-btn {
