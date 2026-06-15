@@ -9,6 +9,7 @@ const ReviewForm = ({
   formErrors,
   setFormErrors,
   handleSubmitReview,
+  isEditing,
   className = "",
 }) => {
   return (
@@ -147,7 +148,7 @@ const ReviewForm = ({
       </div>
 
       <button type="submit" className="btn-primary btn-with-icon review-submit-button">
-        Додати відгук
+        {isEditing ? "Зберегти зміни" : "Додати відгук"}
       </button>
     </div>
   );
