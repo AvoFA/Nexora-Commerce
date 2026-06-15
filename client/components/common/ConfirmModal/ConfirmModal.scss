@@ -66,6 +66,17 @@
       color: #f87171;
       text-align: left;
     }
+
+    .confirm-modal-info {
+      font-size: 0.8rem;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: rgba($primary-color, 0.06);
+      border: 1px solid rgba($primary-color, 0.15);
+      color: lighten($primary-color, 15%);
+      text-align: left;
+    }
   }
 
   .confirm-modal-actions {
