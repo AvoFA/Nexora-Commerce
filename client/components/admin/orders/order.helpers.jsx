@@ -23,8 +23,8 @@ export const statusLabelMap = {
 export const statusBadgeClassMap = {
   new: "badge-new",
   confirmed: "badge-confirmed",
-  packing: "badge-confirmed",
-  ready_for_pickup: "badge-confirmed",
+  packing: "badge-packing",
+  ready_for_pickup: "badge-ready",
   received: "badge-received",
   cancelled: "badge-cancelled",
 };

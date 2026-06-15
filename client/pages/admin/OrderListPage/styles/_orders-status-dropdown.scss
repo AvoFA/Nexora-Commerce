@@ -5,7 +5,7 @@
   text-align: left;
   min-width: 124px;
   width: max-content;
-  max-width: 170px;
+  max-width: 210px;
 
   .status-dropdown-trigger {
     display: inline-flex;
@@ -84,9 +84,12 @@
       box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
     }
 
-    &:disabled:not(.is-terminal) {
-      opacity: 0.6;
+    &:disabled {
       cursor: not-allowed;
+
+      .status-dropdown:not(.is-terminal) & {
+        opacity: 0.6;
+      }
     }
 
     .trigger-label {
@@ -112,12 +115,8 @@
   &.is-terminal {
     .status-dropdown-trigger {
       cursor: default;
-      filter: saturate(0.55) opacity(0.75);
-      
-      &:hover {
-        background-color: inherit;
-        border-color: inherit;
-      }
+      opacity: 1;
+      pointer-events: none;
     }
   }
 
