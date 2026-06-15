@@ -474,7 +474,7 @@ const ProfileTab = () => {
                             setCurrentPassword(event.target.value);
                             setErrors((prev) => ({ ...prev, currentPassword: "" }));
                           }}
-                          placeholder="••••••••"
+                          placeholder="Введіть поточний пароль"
                           className={errors.currentPassword ? "has-error" : ""}
                         />
                         <button
@@ -500,7 +500,7 @@ const ProfileTab = () => {
                             setNewPassword(event.target.value);
                             setErrors((prev) => ({ ...prev, newPassword: "" }));
                           }}
-                          placeholder="••••••••"
+                          placeholder="Введіть новий пароль"
                           className={errors.newPassword ? "has-error" : ""}
                         />
                         <button
@@ -526,7 +526,7 @@ const ProfileTab = () => {
                             setConfirmPassword(event.target.value);
                             setErrors((prev) => ({ ...prev, confirmPassword: "" }));
                           }}
-                          placeholder="••••••••"
+                          placeholder="Повторіть новий пароль"
                           className={errors.confirmPassword ? "has-error" : ""}
                         />
                         <button
