@@ -31,6 +31,24 @@ const normalizeItems = (items = []) => {
   });
 };
 
+/**
+ * Повертає зарезервований товар назад на склад при скасуванні замовлення.
+ * Збільшує значення поля stock кожного товару на кількість одиниць із замовлення.
+ * 
+ * @param {Object} order - Документ замовлення, яке скасовується
+ */
+const restoreOrderStock = async (order) => {
+  if (!order || !order.items) return;
+
+  for (const item of order.items) {
+    if (item.product) {
+      await Product.findByIdAndUpdate(item.product, {
+        $inc: { stock: item.quantity }
+      });
+    }
+  }
+};
+
 router.post('/', authenticateToken, async (req, res) => {
   try {
     const {
@@ -56,6 +74,31 @@ router.post('/', authenticateToken, async (req, res) => {
         success: false,
         message: 'Дані доставки обовʼязкові'
       });
+    }
+
+    // Попередня перевірка наявності всіх позицій замовлення на складі перед списанням
+    const productUpdates = [];
+    for (const item of normalizedItems) {
+      const product = await Product.findById(item.product);
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: `Товар не знайдено`
+        });
+      }
+      if (product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Недостатньо товару "${product.name}" на складі. Залишилось: ${product.stock} шт.`
+        });
+      }
+      productUpdates.push({ product, quantity: item.quantity });
+    }
+
+    // Списання зарезервованого товару зі складу
+    for (const update of productUpdates) {
+      update.product.stock -= update.quantity;
+      await update.product.save();
     }
 
     const calculatedTotal = normalizedItems.reduce(
@@ -157,6 +200,9 @@ router.patch('/:id/cancel', authenticateToken, async (req, res) => {
       reason: reason,
       comment: comment || ''
     });
+
+    // Повернення товарів на склад при скасуванні замовлення
+    await restoreOrderStock(order);
 
     await order.save();
 
@@ -471,6 +517,9 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
         };
       }
       historyEntry.changedBy = 'admin';
+
+      // Повернення товарів на склад при скасуванні замовлення
+      await restoreOrderStock(order);
     }
 
     order.history.push(historyEntry);
