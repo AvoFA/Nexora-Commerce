@@ -11,7 +11,7 @@ const LogoutConfirmModal = ({ isOpen, onClose, onConfirm }) => {
       icon={ErrorOutlineIcon}
       title="Підтвердження виходу"
       message="Ви впевнені, що хочете вийти з акаунта?"
-      warning="Ваші списки бажань буде збережено."
+      info="Ваші списки бажань буде збережено."
       confirmText="Вийти"
       cancelText="Скасувати"
       type="danger"

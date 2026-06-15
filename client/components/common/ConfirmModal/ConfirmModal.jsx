@@ -11,6 +11,7 @@ const ConfirmModal = ({
   title,
   message,
   warning = null,
+  info = null,
   count = null,
   confirmText = 'Підтвердити',
   cancelText = 'Скасувати',
@@ -60,6 +61,11 @@ const ConfirmModal = ({
           {warning && (
             <p className="confirm-modal-warning">
               {replaceCount(warning)}
+            </p>
+          )}
+          {info && (
+            <p className="confirm-modal-info">
+              {replaceCount(info)}
             </p>
           )}
           {children}

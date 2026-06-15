@@ -1,21 +1,27 @@
 // client/components/common/ScrollToTop/ScrollToTopButton.scss
 @import '../../../styles/_variables';
 
-// Стилізація самої кнопки
 .MuiFab-root.scroll-to-top-btn {
-    // Градієнт від білого до синього (як у заголовках сайту)
-    background: linear-gradient(180deg, #FFFFFF 20%, #3658F3 110%);
+    // Полупрозрачное стекло с размытием
+    background: rgba($card-bg, 0.72) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba($primary-color, 0.25) !important;
 
-    // Колір іконки - темно-синій для контрасту
-    color: #1a2a6c;
+    // Мягкий синий цвет бренда для иконки
+    color: $primary-color !important;
 
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36),
+                0 0 10px rgba($primary-color, 0.1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 
     &:hover {
-        transform: scale(1.1) translateY(-3px);
-        background: linear-gradient(180deg, #FFFFFF 0%, #3658F3 100%);
-        box-shadow: 0 8px 30px rgba($primary-color, 0.5);
+        transform: scale(1.1) translateY(-3px) !important;
+        background: linear-gradient(135deg, #60a5fa, $primary-color) !important;
+        color: #ffffff !important;
+        border-color: rgba($primary-color, 0.5) !important;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45),
+                    0 0 20px rgba($primary-color, 0.45) !important;
     }
 
     .MuiSvgIcon-root {
