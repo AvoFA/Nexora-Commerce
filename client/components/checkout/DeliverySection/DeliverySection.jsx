@@ -159,7 +159,7 @@ const DeliverySection = ({
                       type="text"
                       value={npBranch}
                       onChange={(e) => onMeestBranchChange(e.target.value)}
-                      placeholder="Відділення №1, вул. Шевченка, 10"
+                      placeholder="Вкажіть номер або адресу відділення"
                       className={getInputClassName(npBranch, "npBranch")}
                       required
                     />
@@ -199,7 +199,7 @@ const DeliverySection = ({
                       type="text"
                       value={address}
                       onChange={(e) => onAddressChange(e.target.value)}
-                      placeholder="вул. Хрещатик, буд. 12, кв. 4"
+                      placeholder="Введіть вулицю, будинок, квартиру"
                       className={getInputClassName(address, "address")}
                       required
                     />
@@ -237,7 +237,7 @@ const DeliverySection = ({
                       type="text"
                       value={address}
                       onChange={(e) => onAddressChange(e.target.value)}
-                      placeholder="вул. Хрещатик, буд. 12, кв. 4"
+                      placeholder="Введіть вулицю, будинок, квартиру"
                       className={getInputClassName(address, "address")}
                       required
                     />

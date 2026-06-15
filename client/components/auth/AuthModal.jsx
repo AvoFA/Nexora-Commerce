@@ -308,7 +308,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       id="login-email"
                       type="email"
                       name="email"
-                      placeholder="ivanenko@example.com"
+                      placeholder="example@mail.com"
                       value={loginData.email}
                       onChange={handleLoginChange}
                       autoComplete="email"
@@ -330,7 +330,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       name="password"
-                      placeholder="••••••••"
+                      placeholder="Введіть пароль"
                       value={loginData.password}
                       onChange={handleLoginChange}
                       autoComplete="current-password"
@@ -385,7 +385,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       id="register-name"
                       type="text"
                       name="name"
-                      placeholder="Іван Петренко"
+                      placeholder="Введіть ім'я"
                       value={registerData.name}
                       onChange={handleRegisterChange}
                       autoComplete="name"
@@ -407,7 +407,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       id="register-email"
                       type="email"
                       name="email"
-                      placeholder="ivanenko@example.com"
+                      placeholder="example@mail.com"
                       value={registerData.email}
                       onChange={handleRegisterChange}
                       autoComplete="email"
@@ -429,7 +429,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       id="register-password"
                       type={showPassword ? 'text' : 'password'}
                       name="password"
-                      placeholder="••••••••"
+                      placeholder="Введіть пароль"
                       value={registerData.password}
                       onChange={handleRegisterChange}
                       autoComplete="new-password"
@@ -457,7 +457,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       id="register-confirm-password"
                       type={showConfirmPassword ? 'text' : 'password'}
                       name="confirmPassword"
-                      placeholder="••••••••"
+                      placeholder="Повторіть пароль"
                       value={registerData.confirmPassword}
                       onChange={handleRegisterChange}
                       autoComplete="new-password"
@@ -515,7 +515,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <input
                         id="forgot-email"
                         type="email"
-                        placeholder="ivanenko@example.com"
+                        placeholder="example@mail.com"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                         required
@@ -539,7 +539,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <input
                         id="forgot-code"
                         type="text"
-                        placeholder="1234"
+                        placeholder="Введіть код"
                         value={forgotCode}
                         onChange={(e) => setForgotCode(e.target.value)}
                         aria-invalid={Boolean(fieldErrors.forgotCode)}
@@ -559,7 +559,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <input
                         id="forgot-password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="Введіть новий пароль"
                         value={forgotPassword}
                         onChange={(e) => setForgotPassword(e.target.value)}
                         aria-invalid={Boolean(fieldErrors.forgotPassword)}
@@ -576,7 +576,7 @@ const AuthModal = ({ isOpen, onClose }) => {
                       <input
                         id="forgot-confirm-password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="Повторіть новий пароль"
                         value={forgotConfirmPassword}
                         onChange={(e) => setForgotConfirmPassword(e.target.value)}
                         aria-invalid={Boolean(fieldErrors.forgotConfirmPassword)}

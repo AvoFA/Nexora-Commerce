@@ -87,7 +87,7 @@ const AdminLoginPage = () => {
                   name="username"
                   value={credentials.username}
                   onChange={handleChange}
-                  placeholder="username"
+                  placeholder="Введіть логін"
                   required
                   disabled={loading}
                 />
@@ -103,7 +103,7 @@ const AdminLoginPage = () => {
                   name="password"
                   value={credentials.password}
                   onChange={handleChange}
-                  placeholder="••••••••"
+                  placeholder="Введіть пароль"
                   required
                   disabled={loading}
                 />
@@ -132,7 +132,7 @@ const AdminLoginPage = () => {
           {/* Development credentials */}
           <div className="login-footer">
             <p>
-              Admin: admin / admin123<br />
+              Admin: admin@nexora.test / Admin123!<br />
               Moderator: moderator@nexora.test / Moderator123!
             </p>
           </div>

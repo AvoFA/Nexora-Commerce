@@ -104,7 +104,7 @@ const RecipientSection = ({
                   type="tel"
                   value={phone}
                   onChange={(e) => onPhoneChange(e.target.value)}
-                  placeholder="+380 99 123 4567"
+                  placeholder="+380 (__) ___-__-__"
                   className={getInputClassName(phone, "phone")}
                   required
                 />
@@ -119,7 +119,7 @@ const RecipientSection = ({
                   type="text"
                   value={name}
                   onChange={(e) => onNameChange(e.target.value)}
-                  placeholder="Іван (кирилицею)"
+                  placeholder="Введіть ім'я"
                   className={getInputClassName(name, "name")}
                   required
                 />
@@ -134,7 +134,7 @@ const RecipientSection = ({
                   type="text"
                   value={surname}
                   onChange={(e) => onSurnameChange(e.target.value)}
-                  placeholder="Петренко (кирилицею)"
+                  placeholder="Введіть прізвище"
                   className={getInputClassName(surname, "surname")}
                   required={isIdentityRequired}
                 />
@@ -149,7 +149,7 @@ const RecipientSection = ({
                   type="text"
                   value={patronymic}
                   onChange={(e) => onPatronymicChange(e.target.value)}
-                  placeholder="Петрович (кирилицею)"
+                  placeholder="Введіть по батькові"
                   className={getInputClassName(patronymic, "patronymic")}
                   required={isIdentityRequired}
                 />
@@ -164,7 +164,7 @@ const RecipientSection = ({
                   type="email"
                   value={email}
                   onChange={(e) => onEmailChange(e.target.value)}
-                  placeholder="example@gmail.com"
+                  placeholder="Введіть email"
                   className={getInputClassName(email, "email")}
                   required
                   disabled={recipientType === "self"}

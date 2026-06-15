@@ -182,6 +182,11 @@
     min-height: 46px;
     padding-left: 44px;
 
+    &::placeholder {
+      color: hsla(0, 0%, 100%, 0.32) !important;
+      opacity: 1;
+    }
+
     &:focus-visible {
       outline: none;
     }
