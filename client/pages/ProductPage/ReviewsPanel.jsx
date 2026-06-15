@@ -34,6 +34,7 @@ const ReviewsPanel = ({
   setRatingFilter,
   handleSubmitReview,
   userReview,
+  isEditing,
   setIsEditing,
   showSuccess,
   setShowSuccess,
@@ -113,10 +114,19 @@ const ReviewsPanel = ({
             <Close />
           </button>
         </div>
-      ) : userReview?.status === "pending" ? (
-        <div className="review-pending-banner">
-          <InfoOutlined className="pending-icon" />
-          <span>Ваш відгук вже очікує модерації та скоро з'явиться на сайті.</span>
+      ) : userReview?.status === "pending" && !showForm ? (
+        <div className="review-pending-banner" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <InfoOutlined className="pending-icon" />
+            <span>Ваш відгук вже очікує модерації та скоро з'явиться на сайті.</span>
+          </div>
+          <button
+            type="button"
+            className="feedback-action-button"
+            onClick={handleEditClick}
+          >
+            Редагувати відгук
+          </button>
         </div>
       ) : (
         <form
@@ -124,7 +134,9 @@ const ReviewsPanel = ({
           onSubmit={handleSubmitReview}
         >
           <div className="card-header-row">
-            <h3 className="card-title">Залиште свій відгук про цей товар</h3>
+            <h3 className="card-title">
+              {isEditing ? "Редагування відгуку" : "Залиште свій відгук про цей товар"}
+            </h3>
 
             {showForm ? (
               <button
@@ -185,6 +197,7 @@ const ReviewsPanel = ({
                 formErrors={formErrors}
                 setFormErrors={setFormErrors}
                 handleSubmitReview={handleSubmitReview}
+                isEditing={isEditing}
                 className="product-review-form"
               />
             </div>
