@@ -24,6 +24,15 @@ export const getActivityLogs = async (filters = {}) => {
     if (filters.targetModel && filters.targetModel !== 'all') {
       params.append('targetModel', filters.targetModel);
     }
+    if (filters.search) {
+      params.append('search', filters.search);
+    }
+    if (filters.startDate) {
+      params.append('startDate', filters.startDate);
+    }
+    if (filters.endDate) {
+      params.append('endDate', filters.endDate);
+    }
     if (filters.page) {
       params.append('page', filters.page);
     }

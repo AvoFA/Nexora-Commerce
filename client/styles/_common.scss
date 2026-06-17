@@ -359,32 +359,55 @@
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 7px;
+  border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
   color: rgba($text-secondary, 0.82);
   cursor: pointer;
   transition: all 0.2s ease;
 
+  svg {
+    width: 12px;
+    height: 12px;
+    stroke: currentColor;
+    fill: none;
+  }
+
   &:hover {
     background: rgba($primary-color, 0.14);
     border-color: rgba($primary-color, 0.26);
-    color: $text-color;
-  }
-
-  svg {
-    width: 15px;
-    height: 15px;
+    color: $primary-color;
   }
 }
 
-[data-sonner-toast].sonner-toast-premium [data-close-button].sonner-toast-close {
-  left: auto;
-  right: 8px;
-  top: 8px;
-  transform: none;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba($text-secondary, 0.82);
+.nexora-toaster {
+  [data-sonner-toast].sonner-toast-premium {
+    [data-close-button].sonner-toast-close {
+      left: auto;
+      right: 8px;
+      top: 8px;
+      transform: none;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: rgba($text-secondary, 0.82);
+      border-radius: 50%;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        stroke: currentColor;
+        fill: none;
+      }
+
+      &:hover {
+        background: rgba($primary-color, 0.14);
+        border-color: rgba($primary-color, 0.26);
+        color: $primary-color;
+      }
+    }
+  }
 }
 
 @keyframes sonner-premium-in {

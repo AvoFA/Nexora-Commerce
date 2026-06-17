@@ -370,7 +370,11 @@ const ReviewListPage = () => {
   const handleTypeChange = (type) => {
     setSearchParams(
       (prev) => {
-        prev.set("type", type);
+        if (type === "reviews") {
+          prev.delete("type");
+        } else {
+          prev.set("type", type);
+        }
         prev.delete("status"); // Reset to default (pending)
         prev.delete("q");
         prev.delete("page");

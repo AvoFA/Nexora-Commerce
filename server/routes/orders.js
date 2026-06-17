@@ -228,6 +228,10 @@ router.get('/admin/dashboard-data', authenticateToken, adminOnly, async (req, re
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
     const [
       ordersTodayCount,
       todayTurnoverAggregation,
@@ -236,10 +240,14 @@ router.get('/admin/dashboard-data', authenticateToken, adminOnly, async (req, re
       unansweredQuestionsCount,
       pendingReviewsCount,
       lowStockProductsCount,
+      outOfStockProductsCount,
+      totalProductsCount,
       recentOrders,
       pendingReviews,
       unansweredQuestions,
-      lowStockProducts
+      lowStockProducts,
+      salesTrendRaw,
+      statusDistributionRaw
     ] = await Promise.all([
       // 1. Stats
       Order.countDocuments({ createdAt: { $gte: startOfToday } }),
@@ -259,22 +267,24 @@ router.get('/admin/dashboard-data', authenticateToken, adminOnly, async (req, re
         ]
       }),
       Review.countDocuments({ status: 'pending' }),
-      Product.countDocuments({ stock: { $lte: 5 } }),
-
+      Product.countDocuments({ stock: { $gt: 0, $lte: 5 } }),
+      Product.countDocuments({ stock: 0 }),
+      Product.countDocuments(),
+ 
       // 2. Recent Orders (7)
       Order.find()
         .populate('user', 'name surname patronymic email')
         .sort({ createdAt: -1 })
         .limit(10)
         .lean(),
-
+ 
       // 3. Pending Reviews (5)
       Review.find({ status: 'pending' })
         .populate('product', 'name image')
         .sort({ createdAt: -1 })
         .limit(7)
         .lean(),
-
+ 
       // 4. Unanswered Questions (5)
       Question.find({
         $or: [
@@ -286,14 +296,37 @@ router.get('/admin/dashboard-data', authenticateToken, adminOnly, async (req, re
         .sort({ createdAt: -1 })
         .limit(5)
         .lean(),
-
+ 
       // 5. Low Stock Products (7)
       Product.find({ stock: { $lte: 5 } })
         .sort({ stock: 1, name: 1 })
         .limit(7)
-        .lean()
-    ]);
+        .lean(),
 
+      // 6. Sales Trend (last 7 days)
+      Order.aggregate([
+        { $match: { createdAt: { $gte: sevenDaysAgo }, status: { $ne: 'cancelled' } } },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            revenue: { $sum: "$totalPrice" },
+            ordersCount: { $sum: 1 }
+          }
+        },
+        { $sort: { _id: 1 } }
+      ]),
+
+      // 7. Status Distribution
+      Order.aggregate([
+        {
+          $group: {
+            _id: "$status",
+            count: { $sum: 1 }
+          }
+        }
+      ])
+    ]);
+ 
     const stats = {
       ordersToday: ordersTodayCount,
       turnoverToday: todayTurnoverAggregation[0]?.total || 0,
@@ -301,16 +334,43 @@ router.get('/admin/dashboard-data', authenticateToken, adminOnly, async (req, re
       newOrders: newOrdersCount,
       unansweredQuestions: unansweredQuestionsCount,
       pendingReviews: pendingReviewsCount,
-      lowStock: lowStockProductsCount
+      lowStock: lowStockProductsCount,
+      outOfStock: outOfStockProductsCount,
+      totalProducts: totalProductsCount
     };
 
+    // Fill missing dates in sales trend
+    const salesTrend = [];
+    const trendMap = new Map(salesTrendRaw.map((item) => [item._id, item]));
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sevenDaysAgo);
+      d.setDate(d.getDate() + i);
+      const dateString = d.toISOString().split('T')[0];
+      
+      const existing = trendMap.get(dateString);
+      salesTrend.push({
+        date: dateString,
+        revenue: existing ? existing.revenue : 0,
+        ordersCount: existing ? existing.ordersCount : 0
+      });
+    }
+
+    // Format status distribution
+    const statusDistribution = statusDistributionRaw.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+ 
     res.json({
       success: true,
       stats,
       recentOrders,
       pendingReviews,
       unansweredQuestions,
-      lowStockProducts
+      lowStockProducts,
+      salesTrend,
+      statusDistribution
     });
   } catch (error) {
     console.error('Помилка отримання даних дашборду:', error.message);

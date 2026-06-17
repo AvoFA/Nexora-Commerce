@@ -8,6 +8,7 @@ import {
   Comment as CommentIcon,
   HelpOutline as HelpOutlineIcon
 } from '@mui/icons-material';
+import { highlightMatch } from '@/utils/searchHighlight';
 
 const actionTypeConfig = {
   auth: {
@@ -72,16 +73,7 @@ const statusLabelsMap = {
   cancelled: 'Скасовано'
 };
 
-const statusColorsMap = {
-  new: { color: '#f59e0b', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.22)' },
-  confirmed: { color: '#3b82f6', background: 'rgba(59, 130, 246, 0.12)', border: '1px solid rgba(59, 130, 246, 0.22)' },
-  packing: { color: '#a855f7', background: 'rgba(168, 85, 247, 0.12)', border: '1px solid rgba(168, 85, 247, 0.22)' },
-  ready_for_pickup: { color: '#06b6d4', background: 'rgba(6, 182, 212, 0.12)', border: '1px solid rgba(6, 182, 212, 0.22)' },
-  received: { color: '#10b981', background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.22)' },
-  cancelled: { color: '#ef4444', background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.22)' }
-};
-
-const LogItem = ({ log, onOrderClick }) => {
+const LogItem = ({ log, onOrderClick, searchQuery }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   let config = actionTypeConfig[log.actionType] || {
@@ -137,11 +129,11 @@ const LogItem = ({ log, onOrderClick }) => {
               className="log-interactive-link"
               style={{ display: 'inline' }}
             >
-              {part}
+              {highlightMatch(part, searchQuery)}
             </a>
           );
         }
-        return <strong key={index}>{part}</strong>;
+        return <strong key={index}>{highlightMatch(part, searchQuery)}</strong>;
       }
       if (isOrderNum) {
         if (log.targetModel === 'Order' && log.targetId) {
@@ -151,13 +143,13 @@ const LogItem = ({ log, onOrderClick }) => {
               onClick={handleActionClick}
               className="log-interactive-link"
             >
-              {part.trim()}
+              {highlightMatch(part.trim(), searchQuery)}
             </button>
           );
         }
-        return <strong key={index}>{part}</strong>;
+        return <strong key={index}>{highlightMatch(part, searchQuery)}</strong>;
       }
-      return part;
+      return <React.Fragment key={index}>{highlightMatch(part, searchQuery)}</React.Fragment>;
     });
   };
 
@@ -201,19 +193,17 @@ const LogItem = ({ log, onOrderClick }) => {
             <div className={`log-user-avatar role-avatar-${role}`}>
               {initial}
             </div>
-            <span className="log-username">{username}</span>
+            <span className="log-username">{highlightMatch(username, searchQuery)}</span>
+            {log.user?.email && (
+              <span className="log-user-email">({highlightMatch(log.user.email, searchQuery)})</span>
+            )}
             {role && (
               <span className={`log-user-role role-${role}`}>
                 {role === 'admin' ? 'Адмін' : 'Модератор'}
               </span>
             )}
             {log.actionType === 'moderation' && (
-              <span className="log-user-role" style={{
-                color: log.targetModel === 'Review' ? '#38bdf8' : '#fb923c',
-                background: log.targetModel === 'Review' ? 'rgba(56, 189, 248, 0.12)' : 'rgba(251, 146, 60, 0.12)',
-                border: log.targetModel === 'Review' ? '1px solid rgba(56, 189, 248, 0.22)' : '1px solid rgba(251, 146, 60, 0.22)',
-                marginLeft: '4px'
-              }}>
+              <span className={`log-user-role moderation-badge-${log.targetModel === 'Review' ? 'review' : 'question'}`}>
                 {log.targetModel === 'Review' ? 'Відгук' : 'Питання'}
               </span>
             )}
@@ -222,107 +212,90 @@ const LogItem = ({ log, onOrderClick }) => {
             {formatRelativeTime(log.createdAt)}
           </span>
         </div>
-
+ 
         <div className="log-item-body">
           <span className="log-desc">
             {renderFormattedDescription(log.description)}
           </span>
         </div>
-
+ 
         {hasMetadata && (
-          <div className="log-metadata-section">
+          <div className={`log-metadata-section theme-${themeKey}`}>
             <button 
               onClick={() => setIsExpanded(!isExpanded)} 
               className="log-metadata-toggle"
-              style={{ color: theme.color }}
             >
               {getToggleText()}
             </button>
             
             {isExpanded && (
-              <div className="log-metadata-box" style={{ border: theme.border, background: theme.background }}>
+              <div className="log-metadata-box">
                 {/* Product context for questions or reviews */}
                 {log.metadata.productName && (
                   <div className="metadata-product-name">
-                    Товар: <span>{log.metadata.productName}</span>
+                    Товар: <span>{highlightMatch(log.metadata.productName, searchQuery)}</span>
                   </div>
                 )}
-
+ 
                 {/* 1. Question Moderation details */}
                 {log.metadata.questionText && (
                   <>
                     <div className="metadata-qa-item">
-                      <div className="metadata-qa-label" style={{ color: theme.labelColor }}>Запитання:</div>
-                      <div className="metadata-qa-value" style={{ borderLeftColor: theme.color }}>«{log.metadata.questionText}»</div>
+                      <div className="metadata-qa-label">Запитання:</div>
+                      <div className="metadata-qa-value">«{highlightMatch(log.metadata.questionText, searchQuery)}»</div>
                     </div>
                     <div className="metadata-qa-item">
-                      <div className="metadata-qa-label" style={{ color: theme.labelColor }}>Відповідь:</div>
-                      <div className="metadata-qa-value" style={{ borderLeftColor: theme.color }}>«{log.metadata.answerText}»</div>
+                      <div className="metadata-qa-label">Відповідь:</div>
+                      <div className="metadata-qa-value">«{highlightMatch(log.metadata.answerText, searchQuery)}»</div>
                     </div>
                   </>
                 )}
-
+ 
                 {/* 2. Review Moderation details */}
                 {log.metadata.reviewText && (
                   <>
                     <div className="metadata-qa-item">
-                      <div className="metadata-qa-label" style={{ color: theme.labelColor }}>Оцінка:</div>
-                      <div className="metadata-qa-value" style={{ fontStyle: 'normal', letterSpacing: '2px', color: '#fb923c', borderLeftColor: theme.color }}>
+                      <div className="metadata-qa-label">Оцінка:</div>
+                      <div className="metadata-qa-value rating-stars-value">
                         {'★'.repeat(log.metadata.rating || 5)}{'☆'.repeat(5 - (log.metadata.rating || 5))}
                       </div>
                     </div>
                     <div className="metadata-qa-item">
-                      <div className="metadata-qa-label" style={{ color: theme.labelColor }}>Відгук:</div>
-                      <div className="metadata-qa-value" style={{ borderLeftColor: theme.color }}>«{log.metadata.reviewText}»</div>
+                      <div className="metadata-qa-label">Відгук:</div>
+                      <div className="metadata-qa-value">«{highlightMatch(log.metadata.reviewText, searchQuery)}»</div>
                     </div>
                     {log.metadata.pros && (
                       <div className="metadata-qa-item">
-                        <div className="metadata-qa-label" style={{ color: '#10b981' }}>Переваги:</div>
-                        <div className="metadata-qa-value" style={{ borderLeftColor: '#10b981' }}>«{log.metadata.pros}»</div>
+                        <div className="metadata-qa-label pros-label">Переваги:</div>
+                        <div className="metadata-qa-value pros-value">«{highlightMatch(log.metadata.pros, searchQuery)}»</div>
                       </div>
                     )}
                     {log.metadata.cons && (
                       <div className="metadata-qa-item">
-                        <div className="metadata-qa-label" style={{ color: '#ef4444' }}>Недоліки:</div>
-                        <div className="metadata-qa-value" style={{ borderLeftColor: '#ef4444' }}>«{log.metadata.cons}»</div>
+                        <div className="metadata-qa-label cons-label">Недоліки:</div>
+                        <div className="metadata-qa-value cons-value">«{highlightMatch(log.metadata.cons, searchQuery)}»</div>
                       </div>
                     )}
                   </>
                 )}
-
+ 
                 {/* 3. Order Status changes details */}
                 {log.metadata.oldStatus && (
                   <div className="metadata-order-details">
                     <div className="metadata-qa-item">
-                      <div className="metadata-qa-label" style={{ color: theme.labelColor }}>Дані замовлення:</div>
-                      <div className="metadata-qa-value" style={{ fontStyle: 'normal', borderLeftColor: theme.color }}>
+                      <div className="metadata-qa-label">Дані замовлення:</div>
+                      <div className="metadata-qa-value order-summary-value">
                         Сума: <strong>{log.metadata.totalPrice} ₴</strong> | Кількість: <strong>{log.metadata.itemCount} шт.</strong>
                       </div>
                     </div>
                     <div className="metadata-qa-item">
-                      <div className="metadata-qa-label" style={{ color: theme.labelColor }}>Зміна статусу:</div>
-                      <div className="metadata-qa-value" style={{ fontStyle: 'normal', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', borderLeftColor: theme.color }}>
-                        <span className="log-status-badge" style={{ 
-                          padding: '2px 8px', 
-                          borderRadius: '4px', 
-                          fontSize: '0.72rem', 
-                          fontWeight: '700', 
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                          ...(statusColorsMap[log.metadata.oldStatus] || { color: '#ef4444', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.15)' })
-                        }}>
+                      <div className="metadata-qa-label">Зміна статусу:</div>
+                      <div className="metadata-qa-value status-change-flow-value">
+                        <span className={`log-status-badge status-${log.metadata.oldStatus}`}>
                           {statusLabelsMap[log.metadata.oldStatus] || log.metadata.oldStatus}
                         </span>
-                        <span style={{ color: '#64748b' }}>➔</span>
-                        <span className="log-status-badge" style={{ 
-                          padding: '2px 8px', 
-                          borderRadius: '4px', 
-                          fontSize: '0.72rem', 
-                          fontWeight: '700', 
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.04em',
-                          ...(statusColorsMap[log.metadata.newStatus] || { color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.15)' })
-                        }}>
+                        <span className="flow-arrow">➔</span>
+                        <span className={`log-status-badge status-${log.metadata.newStatus}`}>
                           {statusLabelsMap[log.metadata.newStatus] || log.metadata.newStatus}
                         </span>
                       </div>
@@ -337,6 +310,6 @@ const LogItem = ({ log, onOrderClick }) => {
     </div>
   );
 };
-
-
+ 
+ 
 export default LogItem;

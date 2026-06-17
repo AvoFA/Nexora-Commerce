@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 import { toast } from 'sonner';
 import { getActivityLogs } from '../../../services/activityLogService';
@@ -9,6 +10,7 @@ import OrderDetailsModal from '../../../components/admin/orders/OrderDetailsModa
 import AdminRefreshButton from '../../../components/admin/common/AdminRefreshButton';
 import AdminFilterTabs from '../../../components/admin/common/AdminFilterTabs.jsx';
 import Pagination from '../../../components/common/Pagination/Pagination.jsx';
+import AdminSearchInput from '../../../components/admin/common/AdminSearchInput.jsx';
 
 import '../../../styles/_common.scss';
 import '../../../styles/_mui-theme.scss';
@@ -25,10 +27,6 @@ const logTabs = [
 
 const ActivityLogPage = () => {
   const [logs, setLogs] = useState([]);
-  const [activeTab, setActiveTab] = useState('all');
-  const [activeSubTab, setActiveSubTab] = useState('all');
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(15);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
   const [counts, setCounts] = useState({});
@@ -36,14 +34,28 @@ const ActivityLogPage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isFetchingOrder, setIsFetchingOrder] = useState(false);
 
-  const fetchLogs = async (currentPage = page, tab = activeTab, subTab = activeSubTab, currentLimit = limit) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'all';
+  const activeSubTab = searchParams.get('subTab') || 'all';
+  const searchQuery = searchParams.get('q') || '';
+  const startDate = searchParams.get('startDate') || '';
+  const endDate = searchParams.get('endDate') || '';
+  const page = parseInt(searchParams.get('page'), 10) || 1;
+  const limit = parseInt(searchParams.get('limit'), 10) || 15;
+
+  const [localSearchInput, setLocalSearchInput] = useState(searchQuery);
+
+  const fetchLogs = async () => {
     setIsLoading(true);
     try {
       const result = await getActivityLogs({
-        actionType: tab,
-        targetModel: tab === 'moderation' ? subTab : 'all',
-        page: currentPage,
-        limit: currentLimit
+        actionType: activeTab,
+        targetModel: activeTab === 'moderation' ? activeSubTab : 'all',
+        search: searchQuery,
+        startDate,
+        endDate,
+        page,
+        limit
       });
       if (result.success) {
         setLogs(result.logs || []);
@@ -61,27 +73,118 @@ const ActivityLogPage = () => {
     }
   };
 
+  // Синхронізація локального інпуту пошуку з URL параметром
   useEffect(() => {
-    fetchLogs(page, activeTab, activeSubTab, limit);
-  }, [page, activeTab, activeSubTab, limit]);
+    setLocalSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  // Дебаунс синхронізація пошукового запиту
+  useEffect(() => {
+    if (localSearchInput === searchQuery) return;
+
+    const timer = setTimeout(() => {
+      setSearchParams(
+        (prev) => {
+          if (!localSearchInput.trim()) {
+            prev.delete('q');
+          } else {
+            prev.set('q', localSearchInput.trim());
+          }
+          prev.delete('page'); // Скидання сторінки на 1 при пошуку
+          return prev;
+        },
+        { replace: true }
+      );
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [localSearchInput, searchQuery, setSearchParams]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [page, activeTab, activeSubTab, limit, searchQuery, startDate, endDate]);
 
   const handleTabChange = (tabValue) => {
-    setActiveTab(tabValue);
-    setActiveSubTab('all');
-    setPage(1);
+    setSearchParams(
+      (prev) => {
+        if (tabValue === 'all') {
+          prev.delete('tab');
+        } else {
+          prev.set('tab', tabValue);
+        }
+        prev.delete('subTab');
+        prev.delete('page');
+        return prev;
+      },
+      { replace: true }
+    );
+  };
+
+  const handleSubTabChange = (subTabValue) => {
+    setSearchParams(
+      (prev) => {
+        if (subTabValue === 'all') {
+          prev.delete('subTab');
+        } else {
+          prev.set('subTab', subTabValue);
+        }
+        prev.delete('page');
+        return prev;
+      },
+      { replace: true }
+    );
   };
 
   const handleRefresh = () => {
-    fetchLogs(page, activeTab, activeSubTab, limit);
+    fetchLogs();
   };
 
   const handlePageChange = (newPage) => {
-    setPage(newPage);
+    setSearchParams(
+      (prev) => {
+        prev.set('page', newPage);
+        return prev;
+      },
+      { replace: true }
+    );
   };
 
   const handleLimitChange = (newLimit) => {
-    setLimit(newLimit);
-    setPage(1);
+    setSearchParams(
+      (prev) => {
+        prev.set('limit', newLimit);
+        prev.delete('page');
+        return prev;
+      },
+      { replace: true }
+    );
+  };
+
+  const handleDateChange = (type, value) => {
+    setSearchParams(
+      (prev) => {
+        if (!value) {
+          prev.delete(type);
+        } else {
+          prev.set(type, value);
+        }
+        prev.delete('page');
+        return prev;
+      },
+      { replace: true }
+    );
+  };
+
+  const handleClearDates = () => {
+    setSearchParams(
+      (prev) => {
+        prev.delete('startDate');
+        prev.delete('endDate');
+        prev.delete('page');
+        return prev;
+      },
+      { replace: true }
+    );
   };
 
   const handleOrderClick = async (orderId) => {
@@ -113,7 +216,7 @@ const ActivityLogPage = () => {
         </div>
       </div>
 
-      <div className="admin-solid-card moderation-toolbar-card" style={{ marginBottom: '16px', padding: '20px' }}>
+      <div className="admin-solid-card moderation-toolbar-card log-toolbar-card">
         <div className="toolbar-header-row">
           <AdminFilterTabs
             activeTab={activeTab}
@@ -126,27 +229,27 @@ const ActivityLogPage = () => {
 
         {activeTab === 'moderation' && (
           <>
-            <div className="toolbar-divider" style={{ margin: '2px 0' }} />
-            <div className="toolbar-header-row" style={{ justifyContent: 'flex-start' }}>
+            <div className="toolbar-divider log-divider" />
+            <div className="toolbar-header-row row-start">
               <div className="moderation-type-toggle">
                 <button
                   type="button"
                   className={`toggle-btn ${activeSubTab === 'all' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('all'); setPage(1); }}
+                  onClick={() => handleSubTabChange('all')}
                 >
                   Всі події
                 </button>
                 <button
                   type="button"
                   className={`toggle-btn ${activeSubTab === 'Review' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('Review'); setPage(1); }}
+                  onClick={() => handleSubTabChange('Review')}
                 >
                   Відгуки
                 </button>
                 <button
                   type="button"
                   className={`toggle-btn ${activeSubTab === 'Question' ? 'active' : ''}`}
-                  onClick={() => { setActiveSubTab('Question'); setPage(1); }}
+                  onClick={() => handleSubTabChange('Question')}
                 >
                   Питання
                 </button>
@@ -154,9 +257,68 @@ const ActivityLogPage = () => {
             </div>
           </>
         )}
+
+        <div className="toolbar-divider log-divider" />
+
+        <div className="review-filters-toolbar log-filters-toolbar">
+          <AdminSearchInput
+            value={localSearchInput}
+            onChange={setLocalSearchInput}
+            onClear={() => setLocalSearchInput('')}
+            placeholder={
+              activeTab === 'all'
+                ? 'Пошук за дією, адміністратором, товаром чи замовленням...'
+                : activeTab === 'orders'
+                ? 'Пошук за ID замовлення, сумою чи email...'
+                : activeTab === 'products'
+                ? 'Пошук за назвою товару, артикулом чи email...'
+                : activeTab === 'moderation'
+                ? 'Пошук за текстом відгуку, питання чи email...'
+                : activeTab === 'auth'
+                ? 'Пошук за IP, типом входу чи email...'
+                : 'Пошук за журналом дій...'
+            }
+            disabled={isLoading}
+          />
+
+          <div className="toolbar-selects log-date-filters">
+            <div className="date-input-group">
+              <span className="date-label">З:</span>
+              <input
+                type="date"
+                className="admin-date-picker"
+                value={startDate}
+                onChange={(e) => handleDateChange('startDate', e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="date-input-group">
+              <span className="date-label">По:</span>
+              <input
+                type="date"
+                className="admin-date-picker"
+                value={endDate}
+                onChange={(e) => handleDateChange('endDate', e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+
+            {(startDate || endDate) && (
+              <button
+                type="button"
+                className="clear-dates-btn"
+                onClick={handleClearDates}
+                disabled={isLoading}
+              >
+                Очистити період
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="admin-solid-card log-timeline-card-wrapper" style={{ padding: '24px' }}>
+      <div className="admin-solid-card log-timeline-card-wrapper">
         {isLoading ? (
           <div className="log-loading-container">
             <CircularProgress size={40} className="spinner" />
@@ -164,10 +326,10 @@ const ActivityLogPage = () => {
           </div>
         ) : (
           <>
-            <LogTimeline logs={logs} onOrderClick={handleOrderClick} />
+            <LogTimeline logs={logs} onOrderClick={handleOrderClick} searchQuery={searchQuery} />
             
             {totalPages > 1 && (
-              <div style={{ marginTop: '24px' }}>
+              <div className="log-pagination-wrapper">
                 <Pagination
                   page={page}
                   totalPages={totalPages}

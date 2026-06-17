@@ -58,7 +58,7 @@ const groupLogs = (logs) => {
   return result;
 };
 
-const LogTimeline = ({ logs, onOrderClick }) => {
+const LogTimeline = ({ logs, onOrderClick, searchQuery }) => {
   if (!logs || logs.length === 0) {
     return (
       <div className="log-timeline-empty">
@@ -93,6 +93,7 @@ const LogTimeline = ({ logs, onOrderClick }) => {
                 key={log._id} 
                 log={log} 
                 onOrderClick={onOrderClick} 
+                searchQuery={searchQuery}
               />
             ))}
           </div>
