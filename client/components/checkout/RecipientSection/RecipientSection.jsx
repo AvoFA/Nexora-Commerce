@@ -37,8 +37,12 @@ const RecipientSection = ({
       <div className="card-content" style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
         <div className={`info-preview-card city-preview-card ${errors.city ? "has-error" : ""}`} onClick={onOpenCityModal} style={{ cursor: "pointer" }}>
           <div className="preview-content">
-            <span className="preview-title">{city}</span>
-            <span className="preview-subtext">{cityArea || "Доставка у вказане місто"}</span>
+            <span className="preview-title" style={{ color: city ? "inherit" : "rgba(255, 255, 255, 0.4)" }}>
+              {city || "Оберіть місто доставки"}
+            </span>
+            <span className="preview-subtext">
+              {city ? (cityArea || "Доставка у вказане місто") : "Для розрахунку доставки та вибору відділень"}
+            </span>
           </div>
           <button
             type="button"

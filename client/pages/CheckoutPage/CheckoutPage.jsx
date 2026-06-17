@@ -80,13 +80,13 @@ const CheckoutPage = () => {
   const [patronymic, setPatronymic] = useState(user?.patronymic || "");
   const [email, setEmail] = useState(user?.email || "");
   const [phone, setPhone] = useState(user?.phone || "");
-  const [city, setCity] = useState(DEFAULT_CITY);
-  const [cityArea, setCityArea] = useState(DEFAULT_CITY_AREA);
-  const [zip] = useState(DEFAULT_ZIP);
+  const [city, setCity] = useState("");
+  const [cityArea, setCityArea] = useState("");
+  const [zip, setZip] = useState("");
 
   const [address, setAddress] = useState("");
   const [chosenStore, setChosenStore] = useState(STORES[0].name + ", " + STORES[0].address);
-  const [npBranch, setNpBranch] = useState(DEFAULT_NOVA_POSHTA_BRANCH);
+  const [npBranch, setNpBranch] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHODS.CASH);
   const [comment, setComment] = useState("");
@@ -120,7 +120,7 @@ const CheckoutPage = () => {
 
   // Edit state for collapsible recipient section
   const [isEditingRecipient, setIsEditingRecipient] = useState(!isAuthenticated);
-  const [cityRef, setCityRef] = useState(DEFAULT_CITY_REF);
+  const [cityRef, setCityRef] = useState("");
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
   const [isWarehouseModalOpen, setIsWarehouseModalOpen] = useState(false);
 

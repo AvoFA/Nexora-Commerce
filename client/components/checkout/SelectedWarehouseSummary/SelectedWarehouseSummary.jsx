@@ -16,7 +16,9 @@ const SelectedWarehouseSummary = ({
         className={`warehouse-select-trigger is-empty ${hasError ? "has-error" : ""}`}
         onClick={onOpen}
       >
-        <span>Обрати відділення для: {city}</span>
+        <span>
+          {city ? `Обрати відділення для: ${city}` : "Оберіть відділення (спочатку виберіть місто)"}
+        </span>
         <ChevronRight className="warehouse-trigger-arrow" />
       </button>
     );
