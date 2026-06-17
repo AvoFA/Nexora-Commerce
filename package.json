@@ -22,7 +22,8 @@
     "preview": "vite preview",
     "server": "cd server && npm start",
     "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
-    "seed": "npm run seed --prefix server"
+    "seed": "npm run seed --prefix server",
+    "refresh-dates": "node server/scripts/refreshOrderDates.js"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",
