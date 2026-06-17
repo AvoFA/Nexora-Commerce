@@ -21,7 +21,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "cd server && npm start",
-    "dev:full": "concurrently \"npm run dev\" \"npm run server\""
+    "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
+    "seed": "npm run seed --prefix server"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.1",

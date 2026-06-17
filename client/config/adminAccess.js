@@ -21,6 +21,7 @@ const ADMIN_ROUTE_ACCESS = [
     path: "/admin/customers",
     roles: [ADMIN_ROLES.ADMIN, ADMIN_ROLES.MODERATOR],
   },
+  { path: "/admin/logs", roles: [ADMIN_ROLES.ADMIN] },
 ];
 
 const parseStoredJson = (value) => {
