@@ -2,6 +2,7 @@ const express = require('express');
 const Question = require('../models/Question');
 const { QUESTION_STATUSES } = require('../models/Question');
 const { authenticateToken, requireRole } = require('../middleware/auth');
+const { logActivity } = require('../utils/activityLogger');
 
 const router = express.Router();
 const moderationAccess = requireRole('admin', 'moderator');
@@ -249,6 +250,8 @@ router.patch('/:id/status', authenticateToken, moderationAccess, async (req, res
       });
     }
 
+    await logActivity(req, 'moderation', `Змінено статус запитання на "${status}"`, question._id, 'Question');
+
     res.json({
       success: true,
       question,
@@ -283,7 +286,7 @@ router.patch('/:id/answer', authenticateToken, moderationAccess, async (req, res
         status: 'approved' // Automatically approve on reply
       },
       { new: true, runValidators: true }
-    );
+    ).populate('product', 'name');
 
     if (!question) {
       return res.status(404).json({
@@ -291,6 +294,12 @@ router.patch('/:id/answer', authenticateToken, moderationAccess, async (req, res
         message: 'Запитання не знайдено'
       });
     }
+
+    await logActivity(req, 'moderation', 'Надано відповідь на запитання', question._id, 'Question', {
+      questionText: question.text,
+      answerText: question.answer,
+      productName: question.product?.name
+    });
 
     res.json({
       success: true,
@@ -317,6 +326,8 @@ router.delete('/:id', authenticateToken, moderationAccess, async (req, res) => {
         message: 'Запитання не знайдено'
       });
     }
+
+    await logActivity(req, 'moderation', 'Видалено запитання', question._id, 'Question');
 
     res.json({
       success: true,
