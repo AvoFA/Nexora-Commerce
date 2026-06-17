@@ -24,7 +24,9 @@ const AdminFilterTabs = ({
             }`}
           >
             <span>{tab.label}</span>
-            <Chip label={count} size="small" />
+            {counts && counts[tab.countKey || tab.value] !== undefined && (
+              <Chip label={count} size="small" />
+            )}
           </button>
         );
       })}
