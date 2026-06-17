@@ -2,6 +2,7 @@
 
 const Product = require('../models/Product');
 const recommendationService = require('../services/recommendations/similarProductsService');
+const { logActivity } = require('../utils/activityLogger');
 
 // ... (rest of imports)
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -126,6 +127,9 @@ const createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
 
+    // Реєстрація створення товару
+    await logActivity(req, 'products', `Створено новий товар "${product.name}"`, product._id, 'Product');
+
     res.status(201).json({
       success: true,
       data: product,
@@ -152,10 +156,30 @@ const updateProduct = async (req, res) => {
       });
     }
 
+    const oldPrice = product.price;
+    const oldStock = product.stock;
+    const newPrice = req.body.price !== undefined ? Number(req.body.price) : oldPrice;
+    const newStock = req.body.stock !== undefined ? Number(req.body.stock) : oldStock;
+
     product = await Product.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     });
+
+    // Формування детального опису змін для журналу аудиту
+    let logMsg = `Оновлено товар "${product.name}"`;
+    const details = [];
+    if (oldPrice !== newPrice) {
+      details.push(`ціну змінено з ${oldPrice} ₴ на ${newPrice} ₴`);
+    }
+    if (oldStock !== newStock) {
+      details.push(`залишок змінено з ${oldStock} шт на ${newStock} шт`);
+    }
+    if (details.length > 0) {
+      logMsg += ` (${details.join(', ')})`;
+    }
+
+    await logActivity(req, 'products', logMsg, product._id, 'Product');
 
     res.json({
       success: true,
@@ -183,7 +207,13 @@ const deleteProduct = async (req, res) => {
       });
     }
 
+    const productName = product.name;
+    const productId = product._id;
+
     await product.deleteOne();
+
+    // Реєстрація видалення товару
+    await logActivity(req, 'products', `Видалено товар "${productName}"`, productId, 'Product');
 
     res.json({
       success: true,
@@ -198,6 +228,7 @@ const deleteProduct = async (req, res) => {
     });
   }
 };
+
 
 const importProducts = async (req, res) => {
   try {

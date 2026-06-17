@@ -2,6 +2,7 @@ const express = require('express');
 const Review = require('../models/Review');
 const { REVIEW_STATUSES } = require('../models/Review');
 const { authenticateToken, requireRole } = require('../middleware/auth');
+const { logActivity } = require('../utils/activityLogger');
 
 const router = express.Router();
 const moderationAccess = requireRole('admin', 'moderator');
@@ -289,7 +290,7 @@ router.patch('/:id/status', authenticateToken, moderationAccess, async (req, res
       req.params.id,
       { status },
       { new: true, runValidators: true }
-    );
+    ).populate('product', 'name');
 
     if (!review) {
       return res.status(404).json({
@@ -297,6 +298,15 @@ router.patch('/:id/status', authenticateToken, moderationAccess, async (req, res
         message: 'Відгук не знайдено'
       });
     }
+
+    await logActivity(req, 'moderation', `Змінено статус відгуку на "${status}"`, review._id, 'Review', {
+      reviewText: review.text,
+      rating: review.rating,
+      pros: review.pros || '',
+      cons: review.cons || '',
+      productName: review.product?.name || '—',
+      status
+    });
 
     res.json({
       success: true,

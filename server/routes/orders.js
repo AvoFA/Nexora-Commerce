@@ -6,6 +6,7 @@ const Product = require('../models/Product');
 const Review = require('../models/Review');
 const Question = require('../models/Question');
 const { authenticateToken, requireRole } = require('../middleware/auth');
+const { logActivity } = require('../utils/activityLogger');
 
 const router = express.Router();
 const adminOnly = requireRole('admin');
@@ -47,6 +48,11 @@ const restoreOrderStock = async (order) => {
       });
     }
   }
+};
+
+const getOrderNumber = (order) => {
+  const raw = order?._id?.toString() || "";
+  return raw ? `#${raw.slice(-6).toUpperCase()}` : "—";
 };
 
 router.post('/', authenticateToken, async (req, res) => {
@@ -506,6 +512,7 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
       });
     }
 
+    const oldStatus = order.status;
     order.status = status;
     const historyEntry = { status, timestamp: new Date() };
 
@@ -524,6 +531,32 @@ router.patch('/:id/status', authenticateToken, adminOnly, async (req, res) => {
 
     order.history.push(historyEntry);
     await order.save();
+
+    // Реєстрація події зміни статусу замовлення в журналі дій
+    const orderNumber = getOrderNumber(order);
+    const statusLabels = {
+      new: "Нове",
+      confirmed: "Підтверджено",
+      packing: "Комплектується",
+      ready_for_pickup: "Готово до отримання",
+      received: "Отримано",
+      cancelled: "Скасовано"
+    };
+    const statusLabel = statusLabels[status] || status;
+    await logActivity(
+      req,
+      'orders',
+      `Змінено статус замовлення ${orderNumber} на "${statusLabel}"`,
+      order._id,
+      'Order',
+      {
+        orderNumber,
+        totalPrice: order.totalPrice,
+        itemCount: order.items.reduce((sum, item) => sum + item.quantity, 0),
+        oldStatus,
+        newStatus: status
+      }
+    );
 
     res.json({
       success: true,
