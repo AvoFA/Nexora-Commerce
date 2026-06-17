@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useCart } from "../../hooks/useCart.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useBlocker } from "react-router-dom";
+import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal.jsx";
 import { toast } from "sonner";
 import { createOrder } from "../../services/orderService.js";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -16,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   CalendarMonthOutlined,
+  WarningAmber,
 } from "@mui/icons-material";
 import {
   DEFAULT_CITY,
@@ -57,6 +59,10 @@ const CheckoutPage = () => {
   const { isAuthenticated, user, updateUserData } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOrderCompleted, setIsOrderCompleted] = useState(false);
+
+  // ── Leave-page warning state ──────────────────────────────────────────────
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const blockerProceedRef = useRef(null);
 
   // checkout steps (1: Delivery, 2: Payment, 3: Confirmation)
   const [activeStep, setActiveStep] = useState(1);
@@ -201,6 +207,50 @@ const CheckoutPage = () => {
       navigate("/cart");
     }
   }, [items, navigate, isOrderCompleted]);
+
+  // ── Block in-app navigation when checkout is active ──────────────────────
+  const shouldBlock = useCallback(
+    ({ currentLocation, nextLocation }) => {
+      // Allow navigation if order is complete or cart is empty (redirect to cart)
+      if (isOrderCompleted || items.length === 0) return false;
+      // Block if navigating away from checkout to a different path
+      return currentLocation.pathname !== nextLocation.pathname &&
+        currentLocation.pathname.startsWith("/checkout");
+    },
+    [isOrderCompleted, items.length]
+  );
+
+  const blocker = useBlocker(shouldBlock);
+
+  // Show our custom modal when blocker fires
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      blockerProceedRef.current = blocker.proceed;
+      setShowLeaveModal(true);
+    }
+  }, [blocker.state]);
+
+  // ── Warn on tab close / page reload ──────────────────────────────────────
+  useEffect(() => {
+    if (isOrderCompleted) return;
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isOrderCompleted]);
+
+  const handleLeaveConfirm = () => {
+    setShowLeaveModal(false);
+    blockerProceedRef.current?.();
+    blockerProceedRef.current = null;
+  };
+
+  const handleLeaveCancel = () => {
+    setShowLeaveModal(false);
+    blocker.reset?.();
+  };
 
   // Use IntersectionObserver to toggle sticky mobile checkout action bar
   useEffect(() => {
@@ -797,6 +847,19 @@ const CheckoutPage = () => {
         city={city}
         cityRef={cityRef}
         selectedWarehouse={npBranch}
+      />
+
+      {/* ── Leave-page warning modal (shared ConfirmModal) ──────────── */}
+      <ConfirmModal
+        isOpen={showLeaveModal}
+        onClose={handleLeaveCancel}
+        onConfirm={handleLeaveConfirm}
+        icon={WarningAmber}
+        type="danger"
+        title="Перервати оформлення?"
+        message="Ви залишаєте сторінку оформлення замовлення. Всі введені дані збережуться у кошику, але замовлення не буде оформлено."
+        cancelText="Залишитись"
+        confirmText="Вийти"
       />
     </div>
   );
