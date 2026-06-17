@@ -6,36 +6,6 @@
 .admin-dashboard-page {
   padding-bottom: 24px;
 
-  .refresh-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 40px;
-    padding: 0;
-    color: $text-secondary;
-    background: rgba($surface-color, 0.28);
-    border: 1px solid rgba($border-color, 0.5);
-    border-radius: 9px;
-    cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
-
-    &:hover:not(:disabled) {
-      color: $primary-color;
-      border-color: rgba($primary-color, 0.45);
-      background: rgba($primary-color, 0.08);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    &.is-loading svg {
-      animation: adminRefreshSpin 0.8s linear infinite;
-    }
-  }
-
   .dashboard-bento-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);

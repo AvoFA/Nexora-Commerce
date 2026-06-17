@@ -20,7 +20,7 @@
   }
 
   .admin-sidebar-logo {
-    padding: 24px;
+    padding: 16px 24px;
     border-bottom: 1px solid $border-color;
     display: flex;
     align-items: center;
@@ -136,6 +136,20 @@
 
       .admin-sidebar-footer {
         padding: 24px 12px;
+
+        .admin-sidebar-footer-nav {
+          padding-bottom: 12px;
+          margin-bottom: 4px;
+          align-items: center;
+
+          a {
+            padding: 14px;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+          }
+        }
+
         .admin-logout-btn {
           padding: 14px;
           justify-content: center;
@@ -150,7 +164,7 @@
 
   .admin-sidebar-nav {
     flex-grow: 1;
-    padding: 24px;
+    padding: 16px 20px;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -173,7 +187,7 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 14px 16px;
+      padding: 10px 14px;
       border-radius: $border-radius;
       text-decoration: none;
       color: $text-secondary;
@@ -222,11 +236,70 @@
   }
 
   .admin-sidebar-footer {
-    padding: 24px;
+    padding: 16px 20px;
     border-top: 1px solid $border-color;
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    .admin-sidebar-footer-nav {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 10px 14px;
+        border-radius: $border-radius;
+        text-decoration: none;
+        color: $text-secondary;
+        font-weight: 500;
+        font-size: 1rem;
+        border: 1px solid transparent;
+        white-space: nowrap;
+
+        .nav-icon-wrapper {
+          padding: 8px;
+          border-radius: $border-radius / 1.5;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba($text-color, 0.05);
+          flex-shrink: 0;
+
+          .MuiSvgIcon-root {
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        &:hover {
+          background-color: rgba($text-color, 0.05);
+          color: $text-color;
+
+          .nav-icon-wrapper {
+            background-color: rgba($text-color, 0.1);
+          }
+        }
+
+        &.active {
+          background: rgba($primary-color, 0.12);
+          color: white;
+          border-color: rgba($primary-color, 0.25);
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba($primary-color, 0.1);
+
+          .nav-icon-wrapper {
+            background: linear-gradient(135deg, #60a5fa, $primary-color);
+            color: white;
+            box-shadow: 0 0 12px rgba($primary-color, 0.4);
+          }
+        }
+      }
+    }
 
     .admin-user-profile {
       display: flex;
@@ -380,7 +453,7 @@
       align-items: center;
       justify-content: center; // Центруємо текст і іконку
       gap: 12px;
-      padding: 14px 16px;
+      padding: 10px 14px;
       border-radius: $border-radius;
       text-decoration: none;
       color: #e74c3c;

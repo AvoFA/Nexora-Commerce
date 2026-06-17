@@ -239,74 +239,73 @@
 }
 
 [data-sonner-toast].sonner-toast-premium {
-  position: relative;
   display: flex;
   align-items: flex-start;
   gap: 12px;
   width: fit-content;
   min-width: 300px;
   max-width: min(420px, calc(100vw - 32px));
-  padding: 12px 42px 12px 14px;
+  font-family: inherit;
 
-  background: rgba($surface-color, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
-
-  color: $text-color;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  animation: sonner-premium-in 0.2s ease-out;
+  // Let Sonner handle layout, we just apply colors, borders, padding and background
+  background: rgba($surface-color, 0.98) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34) !important;
+  color: $text-color !important;
+  padding: 12px 42px 12px 14px !important;
 
   &[data-type="success"] {
-    border-color: rgba($success-color, 0.35);
+    border-color: rgba($success-color, 0.35) !important;
     .sonner-toast-icon {
-      background: rgba($success-color, 0.15);
-      color: $success-color;
+      background: rgba($success-color, 0.15) !important;
+      color: $success-color !important;
     }
   }
 
   &[data-type="error"] {
-    border-color: rgba($danger-color, 0.35);
+    border-color: rgba($danger-color, 0.35) !important;
     .sonner-toast-icon {
-      background: rgba($danger-color, 0.15);
-      color: $danger-color;
+      background: rgba($danger-color, 0.15) !important;
+      color: $danger-color !important;
     }
   }
 
   &[data-type="warning"] {
-    border-color: rgba($warning-color, 0.35);
+    border-color: rgba($warning-color, 0.35) !important;
     .sonner-toast-icon {
-      background: rgba($warning-color, 0.15);
-      color: $warning-color;
+      background: rgba($warning-color, 0.15) !important;
+      color: $warning-color !important;
     }
   }
 
   &[data-type="info"] {
-    border-color: rgba($primary-color, 0.3);
+    border-color: rgba($primary-color, 0.3) !important;
     .sonner-toast-icon {
-      background: rgba($primary-color, 0.15);
-      color: $primary-color;
+      background: rgba($primary-color, 0.15) !important;
+      color: $primary-color !important;
     }
   }
 }
 
-// Override theme specificity without !important
+// Override theme specificity
 [data-theme] [data-sonner-toast].sonner-toast-premium {
-  background: rgba($surface-color, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: $text-color;
+  background: rgba($surface-color, 0.98) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 10px !important;
+  color: $text-color !important;
 
   &[data-type="success"] {
-    border-color: rgba($success-color, 0.35);
+    border-color: rgba($success-color, 0.35) !important;
   }
   &[data-type="error"] {
-    border-color: rgba($danger-color, 0.35);
+    border-color: rgba($danger-color, 0.35) !important;
   }
   &[data-type="warning"] {
-    border-color: rgba($warning-color, 0.35);
+    border-color: rgba($warning-color, 0.35) !important;
   }
   &[data-type="info"] {
-    border-color: rgba($primary-color, 0.3);
+    border-color: rgba($primary-color, 0.3) !important;
   }
 }
 
