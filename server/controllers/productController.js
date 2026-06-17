@@ -46,8 +46,12 @@ const getProducts = async (req, res) => {
     let total;
 
     if (search) {
-      // Fetch all matching products to perform a relevance sort in memory
-      const allMatchingProducts = await Product.find(query).sort({ createdAt: -1 });
+      // Fetch only essential fields for in-memory relevance sorting to keep memory footprint extremely small
+      const allMatchingProducts = await Product.find(query)
+        .select('_id name description')
+        .sort({ createdAt: -1 })
+        .lean();
+      
       total = allMatchingProducts.length;
 
       const safeSearchLower = search.trim().toLowerCase();
@@ -69,7 +73,14 @@ const getProducts = async (req, res) => {
         return 0;
       });
 
-      products = allMatchingProducts.slice(skip, skip + limit);
+      // Slice the IDs for the current page and retrieve full Mongoose documents only for the slice
+      const pagedSlice = allMatchingProducts.slice(skip, skip + limit);
+      const pagedIds = pagedSlice.map((p) => p._id);
+      
+      const docs = await Product.find({ _id: { $in: pagedIds } });
+      
+      // Re-sort the documents back into the correct sorted sequence
+      products = pagedIds.map((id) => docs.find((doc) => doc._id.equals(id))).filter(Boolean);
     } else {
       products = await Product.find(query)
         .sort({ createdAt: -1 })

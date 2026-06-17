@@ -11,6 +11,76 @@ import { formatPrice } from '../../../../utils/formatPrice.js';
 
 const LOW_STOCK_THRESHOLD = 5;
 
+const StatsPopover = ({
+  products,
+  onEditProduct,
+  title,
+  emptyText,
+  badgeClassName,
+  getBadgeText,
+  isDanger = false
+}) => {
+  if (products.length === 0) {
+    return (
+      <div className={`low-stock-popover ${isDanger ? 'out-of-stock-popover' : ''}`}>
+        <p className="low-stock-popover__empty">{emptyText}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`low-stock-popover ${isDanger ? 'out-of-stock-popover' : ''}`}
+      style={isDanger ? { borderColor: 'rgba(239, 68, 68, 0.25)' } : undefined}
+    >
+      <div className="low-stock-popover__header">
+        <span className="low-stock-popover__title" style={isDanger ? { color: '#ef4444' } : undefined}>
+          {title}
+        </span>
+        <span
+          className="low-stock-popover__count"
+          style={isDanger ? { background: 'rgba(239, 68, 68, 0.18)', color: '#ef4444' } : undefined}
+        >
+          {products.length}
+        </span>
+      </div>
+      <ul className="low-stock-popover__list">
+        {products.map((product) => (
+          <li key={product.id} className="low-stock-popover__item">
+            <img
+              src={product.image || product.imageUrl}
+              alt={product.name}
+              className="low-stock-popover__img"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://placehold.co/36x36?text=?';
+              }}
+            />
+            <div className="low-stock-popover__info">
+              <span className="low-stock-popover__name">{product.name}</span>
+              <span className="low-stock-popover__price">{formatPrice(product.price)}</span>
+            </div>
+            <span className={`low-stock-popover__badge ${badgeClassName}`}>
+              {getBadgeText(product)}
+            </span>
+            <button
+              type="button"
+              className="low-stock-popover__edit-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEditProduct(product);
+              }}
+              title="Редагувати товар"
+            >
+              <Edit style={{ fontSize: 14 }} />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
 const LowStockPopover = ({ products, onEditProduct }) => {
   const lowStockProducts = products
     .filter((p) => {
@@ -20,57 +90,15 @@ const LowStockPopover = ({ products, onEditProduct }) => {
     .sort((a, b) => Number(a.stock || 0) - Number(b.stock || 0))
     .slice(0, 8);
 
-  if (lowStockProducts.length === 0) {
-    return (
-      <div className="low-stock-popover">
-        <p className="low-stock-popover__empty">Усі товари мають достатній залишок</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="low-stock-popover">
-      <div className="low-stock-popover__header">
-        <span className="low-stock-popover__title">Критичний залишок</span>
-        <span className="low-stock-popover__count">{lowStockProducts.length}</span>
-      </div>
-      <ul className="low-stock-popover__list">
-        {lowStockProducts.map((product) => {
-          const stock = Number(product.stock || 0);
-          return (
-            <li key={product.id} className="low-stock-popover__item">
-              <img
-                src={product.image || product.imageUrl}
-                alt={product.name}
-                className="low-stock-popover__img"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://placehold.co/36x36?text=?';
-                }}
-              />
-              <div className="low-stock-popover__info">
-                <span className="low-stock-popover__name">{product.name}</span>
-                <span className="low-stock-popover__price">{formatPrice(product.price)}</span>
-              </div>
-              <span className="low-stock-popover__badge low-stock-popover__badge--low">
-                {stock} шт
-              </span>
-              <button
-                type="button"
-                className="low-stock-popover__edit-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditProduct(product);
-                }}
-                title="Редагувати товар"
-              >
-                <Edit style={{ fontSize: 14 }} />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <StatsPopover
+      products={lowStockProducts}
+      onEditProduct={onEditProduct}
+      title="Критичний залишок"
+      emptyText="Усі товари мають достатній залишок"
+      badgeClassName="low-stock-popover__badge--low"
+      getBadgeText={(p) => `${p.stock} шт`}
+    />
   );
 };
 
@@ -79,58 +107,19 @@ const OutOfStockPopover = ({ products, onEditProduct }) => {
     .filter((p) => Number(p.stock || 0) <= 0)
     .slice(0, 8);
 
-  if (outOfStockProducts.length === 0) {
-    return (
-      <div className="low-stock-popover out-of-stock-popover">
-        <p className="low-stock-popover__empty">Усі товари є в наявності</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="low-stock-popover out-of-stock-popover" style={{ borderColor: 'rgba(239, 68, 68, 0.25)' }}>
-      <div className="low-stock-popover__header">
-        <span className="low-stock-popover__title" style={{ color: '#ef4444' }}>Відсутні на складі</span>
-        <span className="low-stock-popover__count" style={{ background: 'rgba(239, 68, 68, 0.18)', color: '#ef4444' }}>{outOfStockProducts.length}</span>
-      </div>
-      <ul className="low-stock-popover__list">
-        {outOfStockProducts.map((product) => {
-          return (
-            <li key={product.id} className="low-stock-popover__item">
-              <img
-                src={product.image || product.imageUrl}
-                alt={product.name}
-                className="low-stock-popover__img"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://placehold.co/36x36?text=?';
-                }}
-              />
-              <div className="low-stock-popover__info">
-                <span className="low-stock-popover__name">{product.name}</span>
-                <span className="low-stock-popover__price">{formatPrice(product.price)}</span>
-              </div>
-              <span className="low-stock-popover__badge low-stock-popover__badge--out">
-                Немає
-              </span>
-              <button
-                type="button"
-                className="low-stock-popover__edit-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEditProduct(product);
-                }}
-                title="Редагувати товар"
-              >
-                <Edit style={{ fontSize: 14 }} />
-              </button>
-            </li>
-          );
-        })}
-      </ul>
-    </div>
+    <StatsPopover
+      products={outOfStockProducts}
+      onEditProduct={onEditProduct}
+      title="Відсутні на складі"
+      emptyText="Усі товари є в наявності"
+      badgeClassName="low-stock-popover__badge--out"
+      getBadgeText={() => 'Немає'}
+      isDanger
+    />
   );
 };
+
 
 const ProductStats = ({
   products,
