@@ -14,6 +14,7 @@ import {
   Store,
   MenuOpen,
   History,
+  SupervisorAccount,
 } from "@mui/icons-material";
 import {
   clearAdminSession,
@@ -54,6 +55,11 @@ const navigationMeta = {
     href: "/admin/logs",
     icon: History,
   },
+  "/admin/staff": {
+    name: "Співробітники",
+    href: "/admin/staff",
+    icon: SupervisorAccount,
+  },
 };
 
 export const AdminLayout = () => {
@@ -67,7 +73,7 @@ export const AdminLayout = () => {
   const adminUser = getStoredAdminUser();
   const navigation = getAdminNavigationItems(role)
     .map(({ path }) => navigationMeta[path])
-    .filter((item) => item && item.href !== "/admin/logs");
+    .filter((item) => item && item.href !== "/admin/logs" && item.href !== "/admin/staff");
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -153,6 +159,17 @@ export const AdminLayout = () => {
       <div className="admin-sidebar-footer">
         {role === "admin" && (
           <div className="admin-sidebar-footer-nav">
+            <NavLink
+              to="/admin/staff"
+              className={isActive("/admin/staff") ? "active" : ""}
+              onClick={() => setSidebarOpen(false)}
+              title={isCollapsed ? "Співробітники" : ""}
+            >
+              <div className="nav-icon-wrapper">
+                <SupervisorAccount sx={{ width: "20px", height: "20px" }} />
+              </div>
+              <span className="nav-text">Співробітники</span>
+            </NavLink>
             <NavLink
               to="/admin/logs"
               className={isActive("/admin/logs") ? "active" : ""}

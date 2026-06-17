@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 const UserController = require('../controllers/userController');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { logActivity } = require('../utils/activityLogger');
@@ -260,6 +261,209 @@ router.get('/users', authenticateToken, adminOnly, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Помилка отримання користувачів'
+    });
+  }
+});
+
+// GET /api/auth/staff - Get all staff members (admin & moderator)
+router.get('/staff', authenticateToken, adminOnly, async (req, res) => {
+  try {
+    const staff = await User.find({ role: { $in: ['admin', 'moderator'] } }, { password: 0 }).sort({ createdAt: -1 }).lean();
+    
+    // Fetch last activity logs for each staff member
+    const ActivityLog = require('../models/ActivityLog');
+    const staffWithActivity = await Promise.all(
+      staff.map(async (member) => {
+        const lastLog = await ActivityLog.findOne({ user: member._id })
+          .sort({ createdAt: -1 })
+          .select('createdAt')
+          .lean();
+        return {
+          ...member,
+          lastActivity: lastLog ? lastLog.createdAt : null
+        };
+      })
+    );
+
+    res.json({
+      success: true,
+      staff: staffWithActivity
+    });
+  } catch (error) {
+    console.error('Помилка отримання списку співробітників:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка отримання списку співробітників'
+    });
+  }
+});
+
+// POST /api/auth/staff - Create a new staff member
+router.post('/staff', authenticateToken, adminOnly, async (req, res) => {
+  try {
+    const { username, password, email, role } = req.body;
+    if (!username || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Логін, пароль та роль обов'язкові"
+      });
+    }
+    if (!['admin', 'moderator'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Недійсна роль співробітника'
+      });
+    }
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Співробітник з таким ім'ям вже існує"
+      });
+    }
+
+    if (email) {
+      const existingEmail = await User.findOne({ email: email.toLowerCase() });
+      if (existingEmail) {
+        return res.status(400).json({
+          success: false,
+          message: 'Співробітник з таким email вже існує'
+        });
+      }
+    }
+
+    const hashedPassword = await UserController.hashPassword(password);
+    const newUser = new User({
+      username,
+      email: email ? email.toLowerCase() : undefined,
+      password: hashedPassword,
+      role,
+      status: 'active'
+    });
+
+    await newUser.save();
+    res.status(201).json({
+      success: true,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+        createdAt: newUser.createdAt
+      },
+      message: 'Співробітника успішно додано'
+    });
+  } catch (error) {
+    console.error('Помилка додавання співробітника:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка додавання співробітника'
+    });
+  }
+});
+
+// DELETE /api/auth/staff/:id - Delete a staff member
+router.delete('/staff/:id', authenticateToken, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (id === req.user.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ви не можете видалити самого себе'
+      });
+    }
+
+    const user = await User.findOne({ _id: id, role: { $in: ['admin', 'moderator'] } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Співробітника не знайдено'
+      });
+    }
+
+    await User.deleteOne({ _id: id });
+    res.json({
+      success: true,
+      message: 'Співробітника успішно видалено'
+    });
+  } catch (error) {
+    console.error('Помилка видалення співробітника:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка видалення співробітника'
+    });
+  }
+});
+
+// PATCH /api/auth/staff/:id/toggle-block - Toggle block status for a staff member
+router.patch('/staff/:id/toggle-block', authenticateToken, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (id === req.user.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ви не можете заблокувати самого себе'
+      });
+    }
+
+    const user = await User.findOne({ _id: id, role: { $in: ['admin', 'moderator'] } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Співробітника не знайдено'
+      });
+    }
+
+    user.status = user.status === 'blocked' ? 'active' : 'blocked';
+    await user.save();
+
+    res.json({
+      success: true,
+      status: user.status,
+      message: user.status === 'blocked' ? 'Співробітника успішно заблоковано' : 'Співробітника успішно розблоковано'
+    });
+  } catch (error) {
+    console.error('Помилка зміни статусу блокування співробітника:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка зміни статусу блокування співробітника'
+    });
+  }
+});
+
+// PATCH /api/auth/staff/:id/change-password - Change a staff member's password
+router.patch('/staff/:id/change-password', authenticateToken, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Пароль має бути не менше 6 символів'
+      });
+    }
+
+    const user = await User.findOne({ _id: id, role: { $in: ['admin', 'moderator'] } });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'Співробітника не знайдено'
+      });
+    }
+
+    user.password = await UserController.hashPassword(newPassword);
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Пароль співробітника успішно змінено'
+    });
+  } catch (error) {
+    console.error('Помилка зміни паролю співробітника:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Помилка зміни паролю співробітника'
     });
   }
 });

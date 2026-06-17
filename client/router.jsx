@@ -36,6 +36,7 @@ import OrderListPage from "./pages/admin/OrderListPage/OrderListPage.jsx";
 import AdminLoginPage from "./components/admin/auth/AdminLoginPage/AdminLoginPage.jsx";
 import CustomersPage from "./pages/admin/CustomersPage/CustomersPage.jsx";
 import ActivityLogPage from "./pages/admin/ActivityLogPage/ActivityLogPage.jsx";
+import StaffPage from "./pages/admin/StaffPage/StaffPage.jsx";
 
 import AdminProtectedRoute from "./components/common/AdminProtectedRoute/AdminProtectedRoute.jsx";
 import AdminIndexRedirect from "./components/common/AdminProtectedRoute/AdminIndexRedirect.jsx";
@@ -199,6 +200,7 @@ export const router = createBrowserRouter([
       { path: "/admin/orders", element: <OrderListPage /> },
       { path: "/admin/customers", element: <CustomersPage /> },
       { path: "/admin/logs", element: <ActivityLogPage /> },
+      { path: "/admin/staff", element: <StaffPage /> },
     ],
   },
 ]);
