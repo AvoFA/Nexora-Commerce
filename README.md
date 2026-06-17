@@ -98,9 +98,9 @@
 * Керування role-based доступом
 * Керування акційними цінами
 
-## 🚚 Інтеграція доставки
+## 🚚 Інтеграція Nova Poshta API
 
-* Інтеграція Nova Poshta API
+* Інтеграція API Нової Пошти для вибору міст і відділень
 * Динамічне завантаження міст та відділень
 * Синхронізація даних доставки під час checkout
 
@@ -295,18 +295,21 @@ node server/scripts/export.js
 
 # ⚙ Environment Variables
 
-Приклад frontend `.env`
+> [!TIP]
+> **Швидкий старт:** Для демонстраційного запуску ви можете просто скопіювати готовий файл `.env.demo` з кореня проєкту до теки бекенду `server/.env`.
+
+Приклад frontend `.env` (створюється в корені проєкту):
 
 ```env
 VITE_API_URL=http://localhost:5000
 ```
 
-Приклад backend `.env`
+Приклад backend `.env` (створюється в `server/.env`):
 
 ```env
-MONGO_URI=
-JWT_SECRET=
-NOVA_POSHTA_API_KEY=
+MONGO_URI=mongodb://localhost:27017/eshop-admin
+JWT_SECRET=super-secret-key-for-course-work
+NOVA_POSHTA_API_KEY=your_nova_poshta_api_key
 ```
 
 ---
