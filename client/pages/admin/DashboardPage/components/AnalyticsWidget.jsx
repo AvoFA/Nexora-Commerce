@@ -22,7 +22,7 @@ const formatDateLabel = (dateStr) => {
   return date.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
 };
 
-const AnalyticsWidget = ({ salesTrend = [], statusDistribution = {} , stockStats = {} }) => {
+const AnalyticsWidget = ({ salesTrend = [], statusDistribution = {}, stockStats = {} }) => {
   const [hoveredPoint, setHoveredPoint] = useState(null);
   const [hoveredSliceKey, setHoveredSliceKey] = useState(null);
   const [trendMetric, setTrendMetric] = useState('revenue'); // 'revenue' | 'orders'
@@ -40,8 +40,8 @@ const AnalyticsWidget = ({ salesTrend = [], statusDistribution = {} , stockStats
   const maxVal = trendMetric === 'revenue' ? maxRevenue : maxOrders;
   const chartWidth = 500;
   const chartHeight = 200;
-  const paddingX = 48; // Increased padding to prevent collision of Y axis label and X axis date
-  const paddingY = 30;
+  const paddingX = 80; // Increased padding to prevent rightmost point overflow and Y-axis label overlap
+  const paddingY = 40; // Increased padding to shrink chart vertically and add vertical space
   
   const widthArea = chartWidth - paddingX * 2;
   const heightArea = chartHeight - paddingY * 2;
@@ -469,7 +469,7 @@ const AnalyticsWidget = ({ salesTrend = [], statusDistribution = {} , stockStats
                 className="chart-tooltip animate-fade-in"
                 style={{ 
                   left: `${(hoveredPoint.x / chartWidth) * 100}%`,
-                  top: `${(hoveredPoint.y / chartHeight) * 100 - 32}%` 
+                  top: `${(hoveredPoint.y / chartHeight) * 100}%` 
                 }}
               >
                 <div className="tooltip-date">{formatDateLabel(hoveredPoint.date)}</div>
