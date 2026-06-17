@@ -35,6 +35,7 @@ import ReviewListPage from "./pages/admin/ReviewListPage/ReviewListPage.jsx";
 import OrderListPage from "./pages/admin/OrderListPage/OrderListPage.jsx";
 import AdminLoginPage from "./components/admin/auth/AdminLoginPage/AdminLoginPage.jsx";
 import CustomersPage from "./pages/admin/CustomersPage/CustomersPage.jsx";
+import ActivityLogPage from "./pages/admin/ActivityLogPage/ActivityLogPage.jsx";
 
 import AdminProtectedRoute from "./components/common/AdminProtectedRoute/AdminProtectedRoute.jsx";
 import AdminIndexRedirect from "./components/common/AdminProtectedRoute/AdminIndexRedirect.jsx";
@@ -80,7 +81,6 @@ const SiteLayout = () => {
         expand={false}
         theme="dark"
         closeButton
-        unstyled={true}
         offset={{ top: 92 }}
         mobileOffset={{ top: 76, right: 12, left: 12 }}
         toastOptions={{
@@ -119,7 +119,6 @@ const AdminLayoutWithToaster = () => {
         className="nexora-toaster nexora-toaster--admin"
         position="top-right"
         closeButton
-        unstyled={true}
         offset={{ top: 18, right: 18 }}
         mobileOffset={{ top: 12, right: 12, left: 12 }}
         toastOptions={{
@@ -199,6 +198,7 @@ export const router = createBrowserRouter([
       { path: "/admin/reviews", element: <ReviewListPage /> },
       { path: "/admin/orders", element: <OrderListPage /> },
       { path: "/admin/customers", element: <CustomersPage /> },
+      { path: "/admin/logs", element: <ActivityLogPage /> },
     ],
   },
 ]);
