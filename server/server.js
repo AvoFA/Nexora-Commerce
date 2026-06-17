@@ -75,6 +75,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/questions', questionRoutes);
 app.use('/api/delivery', deliveryRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/activity-logs', require('./routes/activityLogs'));
 
 // Basic route
 app.get('/', (req, res) => {

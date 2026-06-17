@@ -1,0 +1,2321 @@
+[
+  {
+    "_id": "691e57782f950f94b902c3f0",
+    "name": "iPhone 15 Pro",
+    "price": 45000,
+    "stock": 30,
+    "description": "Новий флагман від Apple з чіпом A17 Pro.",
+    "image": "https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/i/p/iphone_15_black_pdp_image_position-1__ww-en_1__2.jpg/w_600",
+    "category": "phones",
+    "brand": "Apple",
+    "isFeatured": true,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.1\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Natural Titanium"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c3f4",
+    "name": "MacBook Pro 14\" M3",
+    "price": 85000,
+    "stock": 15,
+    "description": "Потужний ноутбук на базі чіпа M3 Pro.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/m/a/macbook_pro_14_in_m3_pro_max_space_black_pdp_image_position-1__en-us_1_.jpg",
+    "category": "laptops",
+    "brand": "Apple",
+    "isFeatured": true,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Apple M3 Pro"
+          },
+          {
+            "key": "RAM",
+            "value": "18 ГБ"
+          },
+          {
+            "key": "SSD",
+            "value": "512 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14.2\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c3f9",
+    "name": "iPad Air (5-gen) M1",
+    "price": 31000,
+    "stock": 25,
+    "description": "Легкий планшет із чіпом M1.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/cache/4/image/600x/9df78eab33525d08d6e5fb8d27136e95/e/5/e56u467_1.jpg",
+    "category": "tablets",
+    "brand": "Apple",
+    "isFeatured": true,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Apple M1"
+          },
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Starlight"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c3fd",
+    "name": "Samsung Galaxy S24 Ultra",
+    "price": 52000,
+    "stock": 40,
+    "description": "Преміальний Android флагман з S Pen.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/s/m/sm-s928_galaxys24ultra_front_titaniumblack_231109_1__2.jpg",
+    "category": "phones",
+    "brand": "Samsung",
+    "isFeatured": true,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.8\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "512 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Phantom Black"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c401",
+    "name": "Dell XPS 15 (9530)",
+    "price": 78000,
+    "stock": 12,
+    "description": "Ноутбук бізнес-класу з InfinityEdge дисплеєм.",
+    "image": "https://img.mta.ua/image/cache/data/foto/z859/859622/photos/Dell-XPS95309565SLVPUS-53-Picture-04-600x600.jpg",
+    "category": "laptops",
+    "brand": "Dell",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i7-13700H",
+            "_id": "6a3083cdc8f473513d436542"
+          },
+          {
+            "key": "RAM",
+            "value": "16 ГБ",
+            "_id": "6a3083cdc8f473513d436543"
+          },
+          {
+            "key": "SSD",
+            "value": "512 ГБ",
+            "_id": "6a3083cdc8f473513d436544"
+          }
+        ],
+        "_id": "6a3083cdc8f473513d436541"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "15.6\"",
+            "_id": "6a3083cdc8f473513d436546"
+          }
+        ],
+        "_id": "6a3083cdc8f473513d436545"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T22:59:25.839Z"
+  },
+  {
+    "_id": "691e57782f950f94b902c406",
+    "name": "ASUS ROG Strix G15",
+    "price": 65000,
+    "stock": 8,
+    "description": "Ігровий ноутбук з RTX 4070 для геймерів.",
+    "image": "https://content2.rozetka.com.ua/goods/images/big/348265448.jpg",
+    "category": "laptops",
+    "brand": "ASUS",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "AMD Ryzen 7 6800H"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "RTX 4070"
+          },
+          {
+            "key": "RAM",
+            "value": "16 ГБ"
+          },
+          {
+            "key": "SSD",
+            "value": "1 ТБ"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c40b",
+    "name": "Apple iPhone 15 128GB",
+    "price": 34999,
+    "stock": 50,
+    "description": "Сучасний iPhone 15 з дисплеєм 6.1\" та потужною камерою 48MP.",
+    "image": "https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/i/p/iphone_15_black_pdp_image_position-1__ww-en_1__2.jpg/w_600",
+    "category": "phones",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "128GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "A17 Bionic"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Чорний"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.1\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "48MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c411",
+    "name": "Apple iPhone 15 Pro 256GB",
+    "price": 44999,
+    "stock": 40,
+    "description": "Преміальний iPhone 15 Pro з титановим корпусом та камерою Pro 48MP.",
+    "image": "https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/i/p/iphone_15_black_pdp_image_position-1__ww-en_1__2.jpg/w_600",
+    "category": "phones",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "A17 Pro"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Natural Titanium"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.1\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "48MP Pro"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c417",
+    "name": "Apple iPhone 15 Pro Max 512GB",
+    "price": 57999,
+    "stock": 30,
+    "description": "Максимальний iPhone з екраном 6.7\" та камерою Pro Max 48MP.",
+    "image": "https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/i/p/iphone_15_black_pdp_image_position-1__ww-en_1__2.jpg/w_600",
+    "category": "phones",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "512GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "A17 Pro"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Natural Titanium"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.7\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "48MP Pro Max"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c41d",
+    "name": "Samsung Galaxy S24 Ultra 12/512GB",
+    "price": 41999,
+    "stock": 35,
+    "description": "Флагман Samsung з екраном 6.8\" AMOLED та камерою 200MP.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/s/m/sm-s928_galaxys24ultra_front_titaniumblack_231109_1__2.jpg",
+    "category": "phones",
+    "brand": "Samsung",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "512GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 3"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Black Titanium"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.8\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "200MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c423",
+    "name": "Samsung Galaxy S24 8/256GB",
+    "price": 27999,
+    "stock": 55,
+    "description": "Стильний смартфон з екраном 6.1\" AMOLED та камерою 50MP.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/s/m/sm-s921_galaxys24_front_onyxblack_231110_2__1.jpg",
+    "category": "phones",
+    "brand": "Samsung",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Exynos 2400"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Phantom Black"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.1\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c429",
+    "name": "Xiaomi Redmi Note 14 Pro 8/256GB",
+    "price": 10999,
+    "stock": 80,
+    "description": "<p>Зустрічайте новий Xiaomi Redmi Note 14 Pro – смартфон, який встановлює нові стандарти у своєму класі...</p>",
+    "image": "https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/o/6/o6_black_back_1_.jpg/f_auto",
+    "category": "phones",
+    "brand": "Xiaomi",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 7 Gen 2"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Ocean Blue"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.67\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "200MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c42f",
+    "name": "Google Pixel 8 128GB",
+    "price": 29999,
+    "stock": 45,
+    "description": "Флагман Google з OLED екраном та процесором Google Tensor G3.",
+    "image": "https://content2.rozetka.com.ua/goods/images/big/565053468.png",
+    "category": "phones",
+    "brand": "Google",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "128GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Google Tensor G3"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Sorta Seafoam"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.2\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c435",
+    "name": "Apple iPad 10.9\" 256GB",
+    "price": 24999,
+    "stock": 40,
+    "description": "Сучасний iPad з яскравим екраном та потужним процесором A14 Bionic.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/i/p/ipad-2022-hero-silver-wifi-select_2.jpg",
+    "category": "tablets",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "A14 Bionic"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Сріблястий"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "10.9\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c43b",
+    "name": "Samsung Galaxy Tab S9 12/256GB",
+    "price": 49999,
+    "stock": 25,
+    "description": "Флагманський планшет Samsung з AMOLED екраном та потужним процесором Snapdragon 8 Gen 2.",
+    "image": "https://a.allegroimg.com/s1080/11ce26/0611f5064c85bfec7d41f8a006a1/Tablet-SAMSUNG-Galaxy-Tab-S9-12-256-GB-Grafitowy",
+    "category": "tablets",
+    "brand": "Samsung",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB",
+            "_id": "6a3083ebc8f473513d4366c5"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 2",
+            "_id": "6a3083ebc8f473513d4366c6"
+          }
+        ],
+        "_id": "6a3083ebc8f473513d4366c4"
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Графітовий",
+            "_id": "6a3083ebc8f473513d4366c8"
+          }
+        ],
+        "_id": "6a3083ebc8f473513d4366c7"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "11.5\"",
+            "_id": "6a3083ebc8f473513d4366ca"
+          }
+        ],
+        "_id": "6a3083ebc8f473513d4366c9"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T22:59:55.755Z"
+  },
+  {
+    "_id": "691e57782f950f94b902c441",
+    "name": "Xiaomi Pad 6 128GB",
+    "price": 12499,
+    "stock": 50,
+    "description": "Потужний планшет з великим екраном 11\" та ємною батареєю 8720 mAh.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/cache/4/image/600x/9df78eab33525d08d6e5fb8d27136e95/1/2/123123123_1_15_1_1.jpg",
+    "category": "tablets",
+    "brand": "Xiaomi",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "128GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 870"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Чорний"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "11\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c447",
+    "name": "Lenovo Tab P12 Pro 256GB",
+    "price": 18999,
+    "stock": 40,
+    "description": "Планшет з OLED екраном та потужним процесором Snapdragon 870.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/t/a/tab_p12_pro_ct2_05_1_.jpg",
+    "category": "tablets",
+    "brand": "Lenovo",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 870"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Сірий"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "12.6\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c44d",
+    "name": "Apple MacBook Air M2 256GB",
+    "price": 39999,
+    "stock": 30,
+    "description": "Легкий MacBook Air з потужним чіпом M2 та тривалою автономністю.",
+    "image": "https://yabloki.ua/media/cache/sylius_shop_product_original/72/8f/macbook-air-13-apple-m2-256gb-starlight-2022-mly23-1.png.webp",
+    "category": "laptops",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Apple M2"
+          },
+          {
+            "key": "RAM",
+            "value": "8GB"
+          },
+          {
+            "key": "SSD",
+            "value": "256GB"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "13.6\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c452",
+    "name": "Apple MacBook Pro M2 512GB",
+    "price": 59999,
+    "stock": 20,
+    "description": "Професійний MacBook Pro з чіпом M2 Pro та SSD 512GB.",
+    "image": "https://yellow.ua/media/catalog/product/cache/8/image/600x600/9df78eab33525d08d6e5fb8d27136e95/1/6/1654598160_img_1768048_3.jpg",
+    "category": "laptops",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Apple M2 Pro"
+          },
+          {
+            "key": "RAM",
+            "value": "16GB"
+          },
+          {
+            "key": "SSD",
+            "value": "512GB"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14.2\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c457",
+    "name": "ASUS ROG Zephyrus G14",
+    "price": 54999,
+    "stock": 25,
+    "description": "Ігровий ноутбук з потужним процесором AMD Ryzen 9 та відеокартою RTX 4060.",
+    "image": "https://i.citrus.world/uploads/shop/a/e/ae1a870fef0f34750b32cd85dd244c3d.jpg",
+    "category": "laptops",
+    "brand": "ASUS",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "AMD Ryzen 9 7940HS"
+          },
+          {
+            "key": "RAM",
+            "value": "32GB"
+          },
+          {
+            "key": "SSD",
+            "value": "1TB"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "NVIDIA RTX 4060"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c45d",
+    "name": "ASUS ZenBook 14 OLED",
+    "price": 42999,
+    "stock": 30,
+    "description": "Стильний легкий ноутбук з OLED екраном та потужним Intel Core i7.",
+    "image": "https://dlcdnwebimgs.asus.com/gain/428cc0dd-7ac1-49c7-84ee-0314e5c993c9/",
+    "category": "laptops",
+    "brand": "ASUS",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i7-13620H"
+          },
+          {
+            "key": "RAM",
+            "value": "16GB"
+          },
+          {
+            "key": "SSD",
+            "value": "512GB"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c463",
+    "name": "Lenovo Legion 5 16\" Ryzen 7",
+    "price": 37999,
+    "stock": 40,
+    "description": "Ігровий ноутбук з процесором AMD Ryzen 7 та відеокартою RTX 3060.",
+    "image": "https://content1.rozetka.com.ua/goods/images/big/661466787.jpg",
+    "category": "laptops",
+    "brand": "Lenovo",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "AMD Ryzen 7 7730H",
+            "_id": "6a308416c8f473513d43684a"
+          },
+          {
+            "key": "RAM",
+            "value": "16GB",
+            "_id": "6a308416c8f473513d43684b"
+          },
+          {
+            "key": "SSD",
+            "value": "512GB",
+            "_id": "6a308416c8f473513d43684c"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "NVIDIA RTX 3060",
+            "_id": "6a308416c8f473513d43684d"
+          }
+        ],
+        "_id": "6a308416c8f473513d436849"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "16\"",
+            "_id": "6a308416c8f473513d43684f"
+          }
+        ],
+        "_id": "6a308416c8f473513d43684e"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T23:00:38.397Z"
+  },
+  {
+    "_id": "691e57782f950f94b902c469",
+    "name": "Lenovo Yoga Slim 7i 14\" i5",
+    "price": 29999,
+    "stock": 35,
+    "description": "Легкий бізнес-ноутбук з Intel Core i5 та 16GB RAM.",
+    "image": "https://cdn.comfy.ua/media/catalog/product/g/r/group_40.jpg",
+    "category": "laptops",
+    "brand": "Lenovo",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i5-1340P"
+          },
+          {
+            "key": "RAM",
+            "value": "16GB"
+          },
+          {
+            "key": "SSD",
+            "value": "512GB"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c474",
+    "name": "Acer Nitro 5 15 i5",
+    "price": 27999,
+    "stock": 50,
+    "description": "Ігровий ноутбук з Intel i5 та відеокартою GTX 1650.",
+    "image": "https://scdn.comfy.ua/89fc351a-22e7-41ee-8321-f8a9356ca351/https://cdn.comfy.ua/media/catalog/product/0/-/0-etailer-hero-acer-nitro-v-15-anv15-51-with-fingerprint-with-backlit-on-wp-logo-black-01.tif-custom.jpg/w_600",
+    "category": "laptops",
+    "brand": "Acer",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i5-11400H"
+          },
+          {
+            "key": "RAM",
+            "value": "16GB"
+          },
+          {
+            "key": "SSD",
+            "value": "512GB"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "NVIDIA GTX 1650"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "15.6\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c47a",
+    "name": "MSI GF63 Thin 15 i7",
+    "price": 32999,
+    "stock": 20,
+    "description": "Легкий ігровий ноутбук з Intel i7 та відеокартою RTX 3050.",
+    "image": "https://content1.rozetka.com.ua/goods/images/big/462566289.jpg",
+    "category": "laptops",
+    "brand": "MSI",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i7-11800H"
+          },
+          {
+            "key": "RAM",
+            "value": "16GB"
+          },
+          {
+            "key": "SSD",
+            "value": "512GB"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "NVIDIA RTX 3050"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "15.6\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c485",
+    "name": "ASUS ROG Strix G15 Special Edition",
+    "price": 65000,
+    "stock": 8,
+    "description": "Ігровий ноутбук з RTX 4070 для геймерів.",
+    "image": "https://dlcdnwebimgs.asus.com/gain/3E266260-8939-41ED-A42D-1CEEC7CA410D",
+    "category": "laptops",
+    "brand": "ASUS",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "AMD Ryzen 7 6800H"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "RTX 4070"
+          },
+          {
+            "key": "RAM",
+            "value": "16 ГБ"
+          },
+          {
+            "key": "SSD",
+            "value": "1 ТБ"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c48a",
+    "name": "Sony Xperia 1 IV",
+    "price": 79999,
+    "stock": 25,
+    "description": "Преміальний смартфон Sony з OLED екраном та камерою 12MP.",
+    "image": "https://yellow.ua/media/catalog/product/cache/8/image/600x600/9df78eab33525d08d6e5fb8d27136e95/2/3/2376709505.jpg",
+    "category": "phones",
+    "brand": "Sony",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 2"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Black"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.5\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "12MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c490",
+    "name": "Oppo Find N2",
+    "price": 69999,
+    "stock": 20,
+    "description": "Складаний смартфон Oppo з міцним шарніром та камерою 50MP.",
+    "image": "https://content.rozetka.com.ua/goods/images/big/361500430.png",
+    "category": "phones",
+    "brand": "Oppo",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 2"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Black"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "7.1\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c496",
+    "name": "Nokia XR20",
+    "price": 25999,
+    "stock": 30,
+    "description": "Витривалий смартфон Nokia із захистом MIL-STD-810 та батареєю 4630 mAh.",
+    "image": "https://hotline.ua/img/tx/374/3749876645.jpg",
+    "category": "phones",
+    "brand": "Nokia",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "128GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 480+"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Granite"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.67\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "48MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c49c",
+    "name": "Vivo V27 Pro",
+    "price": 30000,
+    "stock": 0,
+    "description": "Красивий смартфон Vivo з камерой 50MP та OLED екраном.",
+    "image": "https://content2.rozetka.com.ua/goods/images/big/603248123.jpg",
+    "category": "phones",
+    "brand": "Vivo",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "MediaTek Dimensity 8200"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Noble Black"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.78\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c4a2",
+    "name": "Motorola Edge 40 Pro",
+    "price": 39999,
+    "stock": 2,
+    "description": "Флагман Motorola з екраном 165Hz та камерою 50MP.",
+    "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS26DFyeyiANikHQ0EacBG2Imgva98CZ6yX2Q&s",
+    "category": "phones",
+    "brand": "Motorola",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256GB",
+            "_id": "6a30842fc8f473513d4369d1"
+          },
+          {
+            "key": "Процесор",
+            "value": "Google Tensor G3",
+            "_id": "6a30842fc8f473513d4369d2"
+          }
+        ],
+        "_id": "6a30842fc8f473513d4369d0"
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Lunar Black",
+            "_id": "6a30842fc8f473513d4369d4"
+          }
+        ],
+        "_id": "6a30842fc8f473513d4369d3"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.67\"",
+            "_id": "6a30842fc8f473513d4369d6"
+          }
+        ],
+        "_id": "6a30842fc8f473513d4369d5"
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50MP",
+            "_id": "6a30842fc8f473513d4369d8"
+          }
+        ],
+        "_id": "6a30842fc8f473513d4369d7"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T23:01:03.081Z"
+  },
+  {
+    "_id": "691e57782f950f94b902c4a8",
+    "name": "Huawei Mate 50 Pro",
+    "price": 35999,
+    "stock": 40,
+    "description": "Флагман Huawei з камерою XMAGE та HarmonyOS.",
+    "image": "https://i.allo.ua/media/catalog/product/cache/1/image/710x600/602f0fa2c1f0d1ba5e241f914e856ff9/import/7190818113293423.webp",
+    "category": "phones",
+    "brand": "Huawei",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "512GB"
+          },
+          {
+            "key": "Процесор",
+            "value": "Kirin 9000"
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": "Black"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.74\""
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50MP"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66905",
+    "name": "Samsung Galaxy Z Fold6 256GB",
+    "price": 74999,
+    "stock": 10,
+    "description": "<p>Інноваційний складаний смартфон Samsung Galaxy Z Fold6 — ідеальний баланс між смартфоном та планшетом.</p><ul><li>Великий внутрішній Dynamic AMOLED 2X дисплей</li><li>Потужний Snapdragon 8 Gen 3</li><li>Покращена система камер</li><li>Тонкий та міцний корпус</li></ul>",
+    "image": "data:image/jpeg;base64,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",
+    "category": "phones",
+    "brand": "Samsung",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "7.6\"",
+            "_id": "6a3089e626f9493e9a1d94d8"
+          }
+        ],
+        "_id": "6a3089e626f9493e9a1d94d7"
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 3",
+            "_id": "6a3089e626f9493e9a1d94da"
+          },
+          {
+            "key": "Пам'ять",
+            "value": "12/256 ГБ",
+            "_id": "6a3089e626f9493e9a1d94db"
+          }
+        ],
+        "_id": "6a3089e626f9493e9a1d94d9"
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "50 МП",
+            "_id": "6a3089e626f9493e9a1d94dd"
+          }
+        ],
+        "_id": "6a3089e626f9493e9a1d94dc"
+      },
+      {
+        "groupName": "Інші характеристики",
+        "items": [
+          {
+            "key": "Батарея",
+            "value": "4400 мАг",
+            "_id": "6a3089e626f9493e9a1d94df"
+          }
+        ],
+        "_id": "6a3089e626f9493e9a1d94de"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T23:25:26.093Z"
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66906",
+    "name": "Apple MacBook Air M3 13\"",
+    "price": 45999,
+    "stock": 25,
+    "description": "Новий MacBook Air з чіпом M3 — ще тонший, швидший та ефективніший. Ідеальний вибір для студентів та професіоналів.",
+    "image": "data:image/jpeg;base64,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u4vCthsqWQa6/V13rMndxeFQ+k9Tw8caok6mRj/6rd35KPqjdBy6s1Div9dMTzcH4FbGpzQLcLKByARD9mLoMsSxJYVdp0tAqdSI37ZZegCMDsDEi1LaBZtTUAcgcy36cNlvTaQuPFF1kxaMaCOEdmdjGC7im06XPKfyewhwIlnPMCy/UQy46luWjNXBEwfYaPtSPc9563EnquFtVHot/wBloiHK7jPPVu6z1KSp9FxtNyC933n59g2DqCbOiNeodFA5xRl/4kmTeob+oFTMOhQc5nF/8o4rOwZnrKllRTbUkjzFG1os0BoG4Cw7AvSIooiIgIiICIiAiIgIiICIiAiIgLy+QBelE1uipHH5ubC25Niwki5va4cLjkyQZz5j0K0SsFmiJx/iB3R8ar8VT+sDuj4lUZipdYvxVP6wO6PiVfiuf07e6PiQZQC9gWWD8VT+nHdHxK3S6CkjxYZWcZxcbxOOZ2/bQSaqsE6Ll9KzuT41QaKl3TNHREfEgkEWD8Wzenb3R8SfFs3px3R8SDOJXglYnxdP6dvdHxLy7Rk/px3R8SDJkCxJGrw7Q05/xA7o+NW49ATBwd8J2buCNv8AkgszAbLhWoow82jaZDzfRHS7Z7VLwaBjBxSEyHkdk39I/vdSjGgCwAAGwAWHYoqHp9DuP1r8I+5H/dx/sFJ01KyMWY0DlO89J2lXkQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQf/2Q==",
+    "category": "laptops",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Apple M3",
+            "_id": "6a3089fd26f9493e9a1d9660"
+          },
+          {
+            "key": "RAM",
+            "value": "16 ГБ",
+            "_id": "6a3089fd26f9493e9a1d9661"
+          },
+          {
+            "key": "SSD",
+            "value": "256 ГБ",
+            "_id": "6a3089fd26f9493e9a1d9662"
+          }
+        ],
+        "_id": "6a3089fd26f9493e9a1d965f"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "13.6\"",
+            "_id": "6a3089fd26f9493e9a1d9664"
+          }
+        ],
+        "_id": "6a3089fd26f9493e9a1d9663"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T23:25:49.257Z"
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66908",
+    "name": "Lenovo Legion Pro 7i 16\"",
+    "price": 89999,
+    "stock": 8,
+    "description": "Топовий ігровий ноутбук з найкращими компонентами 2025 року. Для тих, хто хоче максимальну продуктивність.",
+    "image": "data:image/jpeg;base64,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",
+    "category": "laptops",
+    "brand": "Lenovo",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i9-14900HX",
+            "_id": "6a308a1d26f9493e9a1d97e2"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "RTX 4070",
+            "_id": "6a308a1d26f9493e9a1d97e3"
+          },
+          {
+            "key": "RAM",
+            "value": "32 ГБ",
+            "_id": "6a308a1d26f9493e9a1d97e4"
+          }
+        ],
+        "_id": "6a308a1d26f9493e9a1d97e1"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "16\"",
+            "_id": "6a308a1d26f9493e9a1d97e6"
+          }
+        ],
+        "_id": "6a308a1d26f9493e9a1d97e5"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T23:26:21.136Z"
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66909",
+    "name": "Samsung Galaxy Tab S10 Ultra",
+    "price": 59999,
+    "stock": 12,
+    "description": "Найпотужніший планшет Samsung з величезним 14.6\" дисплеєм. Замінює ноутбук для багатьох завдань.",
+    "image": "data:image/jpeg;base64,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",
+    "category": "tablets",
+    "brand": "Samsung",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14.6\"",
+            "_id": "6a308a3126f9493e9a1d9963"
+          }
+        ],
+        "_id": "6a308a3126f9493e9a1d9962"
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ",
+            "_id": "6a308a3126f9493e9a1d9965"
+          },
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 3",
+            "_id": "6a308a3126f9493e9a1d9966"
+          }
+        ],
+        "_id": "6a308a3126f9493e9a1d9964"
+      }
+    ],
+    "compareAtPrice": null,
+    "updatedAt": "2026-06-15T23:26:41.215Z"
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e6690a",
+    "name": "Google Pixel 9 Pro XL",
+    "price": 39999,
+    "stock": 22,
+    "description": "Найрозумніший смартфон 2025 року з найкращою камерою та чистим Android.",
+    "image": "https://store.google.com/images/catalog/2024/pixel-9-pro-xl-1.jpg",
+    "category": "phones",
+    "brand": "Google",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.8\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Google Tensor G4"
+          },
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e6690b",
+    "name": "Dell XPS 14 9440",
+    "price": 67999,
+    "stock": 15,
+    "description": "Стильний та потужний ультрабук преміум класу з OLED дисплеєм.",
+    "image": "https://i.dell.com/is/image/DellContent//content/dam/ssg/product-images/dell/laptops/xps/14-9440/xps-14-9440-hero.png",
+    "category": "laptops",
+    "brand": "Dell",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core Ultra 7"
+          },
+          {
+            "key": "RAM",
+            "value": "32 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "14.5\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e6690c",
+    "name": "OnePlus 13 16/512GB",
+    "price": 31999,
+    "stock": 28,
+    "description": "<p>Швидкий як блискавка OnePlus 13. Найкраще співвідношення ціна/якість у флагманському сегменті.</p>",
+    "image": "https://www.oneplus.com/content/dam/oneplus/en/products/phones/oneplus-13/oneplus-13-black.png",
+    "category": "phones",
+    "brand": "OnePlus",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.82\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Elite"
+          }
+        ]
+      },
+      {
+        "groupName": "Інші характеристики",
+        "items": [
+          {
+            "key": "Зарядка",
+            "value": "100 Вт"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e6690d",
+    "name": "Apple iPad Pro 13\" M4",
+    "price": 59999,
+    "stock": 18,
+    "description": "Найпотужніший iPad в історії з чіпом M4 та ультратонким корпусом.",
+    "image": "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/ipad-pro-13-finish-select-202405?wid=2000",
+    "category": "tablets",
+    "brand": "Apple",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "13\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Apple M4"
+          },
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e6690e",
+    "name": "Sony Xperia 1 VI",
+    "price": 52999,
+    "stock": 14,
+    "description": "Преміальний смартфон Sony з 4K OLED дисплеєм та професійною камерою.",
+    "image": "https://www.sony.ua/image/8f8f8f8f8f8f8f8f8f8f8f8f",
+    "category": "phones",
+    "brand": "Sony",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "6.5\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Snapdragon 8 Gen 3"
+          },
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Камера",
+            "value": "48 МП"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e6690f",
+    "name": "MSI Raider GE78 HX",
+    "price": 94999,
+    "stock": 7,
+    "description": "Монстр серед ігрових ноутбуків з топовим залізом для максимальних налаштувань у 2025 році.",
+    "image": "https://asset.msi.com/resize/image/global/product/product_1789_20240222101147_1.png",
+    "category": "laptops",
+    "brand": "MSI",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i9-14900HX"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "RTX 4080"
+          },
+          {
+            "key": "RAM",
+            "value": "32 ГБ"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "17\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66910",
+    "name": "Huawei MatePad Pro 12.2\"",
+    "price": 34999,
+    "stock": 20,
+    "description": "Стильний та продуктивний планшет Huawei з PaperMatte дисплеем та підтримкою стилуса.",
+    "image": "https://consumer.huawei.com/content/dam/huawei-cms/ua/matepad-pro-12-2.png",
+    "category": "tablets",
+    "brand": "Huawei",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "12.2\""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": "256 ГБ"
+          },
+          {
+            "key": "Процесор",
+            "value": "Kirin 9000S"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66911",
+    "name": "Nothing Phone (3a) Pro",
+    "price": 18999,
+    "stock": 40,
+    "description": "<p>Смартфон з унікальним дизайном Glyph Interface, чистим Android та відмінною камерою.</p>",
+    "image": "\thttps://hotline.ua/img/tx/563/5630547115.jpg",
+    "category": "phones",
+    "brand": "Nothing",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "_id": "6a171ea0028933f5cd24301a"
+      },
+      {
+        "_id": "6a171ea0028933f5cd24301b"
+      }
+    ],
+    "updatedAt": "2026-05-27T16:41:04.302Z"
+  },
+  {
+    "_id": "6a11fc517fdd3c1927e66912",
+    "name": "Acer Predator Helios 16",
+    "price": 57999,
+    "stock": 12,
+    "description": "Потужний ігровий ноутбук з відмінним охолодженням та високою частотою оновлення екрану.",
+    "image": "https://static.acer.com/images/2024/acer-predator-helios-16.png",
+    "category": "laptops",
+    "brand": "Acer",
+    "isFeatured": false,
+    "attributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": "Intel Core i7-14700HX"
+          },
+          {
+            "key": "Відеокарта",
+            "value": "RTX 4060"
+          }
+        ]
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": "16\""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "6a14c51ba88315f60adf3786",
+    "name": "Apple iPhone 17 Pro 256GB Deep Blue",
+    "price": 46980,
+    "stock": 25,
+    "description": "Очікуваний флагман від Apple нового покоління. Оснащений революційним чіпом Apple A19 Pro, надтонким титановим корпусом та інтелектуальною потрійною камерою з підтримкою просторового запису відео.",
+    "image": "https://hotline.ua/img/tx/540/5400342265.jpg",
+    "category": "phones",
+    "brand": "Apple",
+    "isFeatured": true,
+    "attributes": [
+      {
+        "groupName": "Основні характеристики",
+        "items": [
+          {
+            "key": "Стан",
+            "value": "Новий",
+            "_id": "6a1806a17a020ac409cabfb2"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfb1"
+      },
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ дисплея",
+            "value": "6,9\"",
+            "_id": "6a1806a17a020ac409cabfb4"
+          },
+          {
+            "key": "Роздільна здатність екрану",
+            "value": "2868х1320",
+            "_id": "6a1806a17a020ac409cabfb5"
+          },
+          {
+            "key": "Тип екрану",
+            "value": "OLED",
+            "_id": "6a1806a17a020ac409cabfb6"
+          },
+          {
+            "key": "Частота оновлення екрану",
+            "value": "120 Гц",
+            "_id": "6a1806a17a020ac409cabfb7"
+          },
+          {
+            "key": "Технологія захисного скла",
+            "value": "Ceramic Shield",
+            "_id": "6a1806a17a020ac409cabfb8"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfb3"
+      },
+      {
+        "groupName": "Зв'язок",
+        "items": [
+          {
+            "key": "Стандарти зв'язку",
+            "value": "3G, 4G, 5G",
+            "_id": "6a1806a17a020ac409cabfba"
+          },
+          {
+            "key": "Кількість SIM-карт",
+            "value": "1 SIM + e-SIM",
+            "_id": "6a1806a17a020ac409cabfbb"
+          },
+          {
+            "key": "Розмір SIM-карти",
+            "value": "Nano-SIM",
+            "_id": "6a1806a17a020ac409cabfbc"
+          },
+          {
+            "key": "Підтримка e-SIM",
+            "value": "Є",
+            "_id": "6a1806a17a020ac409cabfbd"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfb9"
+      },
+      {
+        "groupName": "ОС",
+        "items": [
+          {
+            "key": "Операційна система",
+            "value": "Apple iOS 26",
+            "_id": "6a1806a17a020ac409cabfbf"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfbe"
+      },
+      {
+        "groupName": "Процесор/Відеоприскорювач",
+        "items": [
+          {
+            "key": "Модель процесора",
+            "value": "Apple A19 Pro",
+            "_id": "6a1806a17a020ac409cabfc1"
+          },
+          {
+            "key": "Кількість ядер",
+            "value": "6 ядер",
+            "_id": "6a1806a17a020ac409cabfc2"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfc0"
+      },
+      {
+        "groupName": "Пам'ять",
+        "items": [
+          {
+            "key": "Вбудована пам'ять",
+            "value": "256 ГБ",
+            "_id": "6a1806a17a020ac409cabfc4"
+          },
+          {
+            "key": "Розширення пам'яті",
+            "value": "Ні",
+            "_id": "6a1806a17a020ac409cabfc5"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfc3"
+      },
+      {
+        "groupName": "Камера",
+        "items": [
+          {
+            "key": "Основна камера",
+            "value": "48+48+48 Мп",
+            "_id": "6a1806a17a020ac409cabfc7"
+          },
+          {
+            "key": "Максимальна роздільна здатність відео",
+            "value": "3840 x 2160 4K UHD",
+            "_id": "6a1806a17a020ac409cabfc8"
+          },
+          {
+            "key": "Фронтальна камера",
+            "value": "18 Мп",
+            "_id": "6a1806a17a020ac409cabfc9"
+          },
+          {
+            "key": "Спалах",
+            "value": "Так",
+            "_id": "6a1806a17a020ac409cabfca"
+          },
+          {
+            "key": "Стабілізація",
+            "value": "Оптична",
+            "_id": "6a1806a17a020ac409cabfcb"
+          },
+          {
+            "key": "Зум",
+            "value": "8х оптичний / 40х цифровий",
+            "_id": "6a1806a17a020ac409cabfcc"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfc6"
+      },
+      {
+        "groupName": "Інтерфейси/роз'єми",
+        "items": [
+          {
+            "key": "Стандарти Wi-Fi",
+            "value": "802.11be (Wi-Fi 7)",
+            "_id": "6a1806a17a020ac409cabfce"
+          },
+          {
+            "key": "Bluetooth",
+            "value": "Версія 6.0",
+            "_id": "6a1806a17a020ac409cabfcf"
+          },
+          {
+            "key": "Навігаційна система",
+            "value": "GPS, Beidou, Galileo, QZSS, ГЛОНАСС",
+            "_id": "6a1806a17a020ac409cabfd0"
+          },
+          {
+            "key": "Інтерфейс USB",
+            "value": "USB Type-C",
+            "_id": "6a1806a17a020ac409cabfd1"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfcd"
+      },
+      {
+        "groupName": "Бездротові технології",
+        "items": [
+          {
+            "key": "NFC",
+            "value": "Є",
+            "_id": "6a1806a17a020ac409cabfd3"
+          },
+          {
+            "key": "Бездротова зарядка",
+            "value": "Є",
+            "_id": "6a1806a17a020ac409cabfd4"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfd2"
+      },
+      {
+        "groupName": "Акумулятор",
+        "items": [
+          {
+            "key": "Швидка зарядка",
+            "value": "Є",
+            "_id": "6a1806a17a020ac409cabfd6"
+          },
+          {
+            "key": "Потужність зарядки",
+            "value": "40 Вт",
+            "_id": "6a1806a17a020ac409cabfd7"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfd5"
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Захист корпусу",
+            "value": "Захист від пилу та вологи",
+            "_id": "6a1806a17a020ac409cabfd9"
+          },
+          {
+            "key": "Клас захисту",
+            "value": "IP68",
+            "_id": "6a1806a17a020ac409cabfda"
+          },
+          {
+            "key": "Біометричний захист",
+            "value": "Розпізнавання обличчя",
+            "_id": "6a1806a17a020ac409cabfdb"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfd8"
+      },
+      {
+        "groupName": "Комплектація",
+        "items": [
+          {
+            "key": "Комплектація",
+            "value": "Смартфон, Кабель Type-C, Інструкція, Гарантійний талон",
+            "_id": "6a1806a17a020ac409cabfdd"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfdc"
+      },
+      {
+        "groupName": "Фізичні характеристики",
+        "items": [
+          {
+            "key": "Матеріал корпусу",
+            "value": "Алюміній, Кераміка",
+            "_id": "6a1806a17a020ac409cabfdf"
+          },
+          {
+            "key": "Висота",
+            "value": "163,4 мм",
+            "_id": "6a1806a17a020ac409cabfe0"
+          },
+          {
+            "key": "Ширина",
+            "value": "78 мм",
+            "_id": "6a1806a17a020ac409cabfe1"
+          },
+          {
+            "key": "Глибина",
+            "value": "8,75 мм",
+            "_id": "6a1806a17a020ac409cabfe2"
+          },
+          {
+            "key": "Вага",
+            "value": "233 г",
+            "_id": "6a1806a17a020ac409cabfe3"
+          },
+          {
+            "key": "Колір виробника",
+            "value": "Синій",
+            "_id": "6a1806a17a020ac409cabfe4"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfde"
+      },
+      {
+        "groupName": "Гарантія та походження",
+        "items": [
+          {
+            "key": "Гарантійний термін",
+            "value": "1 рік",
+            "_id": "6a1806a17a020ac409cabfe6"
+          },
+          {
+            "key": "Країна виробництва",
+            "value": "Китай",
+            "_id": "6a1806a17a020ac409cabfe7"
+          },
+          {
+            "key": "Бренд",
+            "value": "Apple",
+            "_id": "6a1806a17a020ac409cabfe8"
+          }
+        ],
+        "_id": "6a1806a17a020ac409cabfe5"
+      }
+    ],
+    "updatedAt": "2026-05-28T09:10:57.663Z",
+    "__v": 1,
+    "compareAtPrice": 52200
+  }
+]

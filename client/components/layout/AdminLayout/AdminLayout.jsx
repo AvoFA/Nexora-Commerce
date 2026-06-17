@@ -13,6 +13,7 @@ import {
   Reviews as ReviewsIcon,
   Store,
   MenuOpen,
+  History,
 } from "@mui/icons-material";
 import {
   clearAdminSession,
@@ -48,6 +49,11 @@ const navigationMeta = {
     href: "/admin/customers",
     icon: PeopleIcon,
   },
+  "/admin/logs": {
+    name: "Журнал дій",
+    href: "/admin/logs",
+    icon: History,
+  },
 };
 
 export const AdminLayout = () => {
@@ -61,7 +67,7 @@ export const AdminLayout = () => {
   const adminUser = getStoredAdminUser();
   const navigation = getAdminNavigationItems(role)
     .map(({ path }) => navigationMeta[path])
-    .filter(Boolean);
+    .filter((item) => item && item.href !== "/admin/logs");
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -145,6 +151,21 @@ export const AdminLayout = () => {
       </nav>
 
       <div className="admin-sidebar-footer">
+        {role === "admin" && (
+          <div className="admin-sidebar-footer-nav">
+            <NavLink
+              to="/admin/logs"
+              className={isActive("/admin/logs") ? "active" : ""}
+              onClick={() => setSidebarOpen(false)}
+              title={isCollapsed ? "Журнал дій" : ""}
+            >
+              <div className="nav-icon-wrapper">
+                <History sx={{ width: "20px", height: "20px" }} />
+              </div>
+              <span className="nav-text">Журнал дій</span>
+            </NavLink>
+          </div>
+        )}
         {!isCollapsed && adminUser && (
           <div className="admin-user-profile">
             <div className="avatar-wrapper">

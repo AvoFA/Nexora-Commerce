@@ -1,0 +1,116 @@
+[
+  {
+    "_id": "691e57782f950f94b902c3ec",
+    "name": "phones",
+    "description": "Смартфони",
+    "icon": "Smartphone",
+    "image": "/assets/images/categories/phones-category.jpg",
+    "color": "linear-gradient(135deg, #FF9A9E, #FECFEF)",
+    "__v": 0,
+    "createdAt": "2025-11-19T23:49:12.910Z",
+    "updatedAt": "2025-11-29T22:50:18.052Z",
+    "defaultAttributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c3ed",
+    "name": "laptops",
+    "description": "Ноутбуки",
+    "icon": "Laptop",
+    "image": "/assets/images/categories/laptop-category.jpg",
+    "color": "linear-gradient(135deg, #a18cd1, #fbc2eb)",
+    "__v": 0,
+    "createdAt": "2025-11-19T23:49:12.911Z",
+    "updatedAt": "2025-11-29T22:50:18.052Z",
+    "defaultAttributes": [
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Процесор",
+            "value": ""
+          },
+          {
+            "key": "RAM",
+            "value": ""
+          },
+          {
+            "key": "SSD",
+            "value": ""
+          },
+          {
+            "key": "Відеокарта",
+            "value": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "_id": "691e57782f950f94b902c3ee",
+    "name": "tablets",
+    "description": "Планшети",
+    "icon": "Tablet",
+    "image": "/assets/images/categories/tablet-category.jpg",
+    "color": "linear-gradient(135deg, #84fab0, #8fd3f4)",
+    "__v": 0,
+    "createdAt": "2025-11-19T23:49:12.911Z",
+    "updatedAt": "2025-11-29T22:50:18.053Z",
+    "defaultAttributes": [
+      {
+        "groupName": "Екран",
+        "items": [
+          {
+            "key": "Діагональ",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "groupName": "Процесор та Пам'ять",
+        "items": [
+          {
+            "key": "Пам'ять",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "groupName": "Корпус",
+        "items": [
+          {
+            "key": "Колір",
+            "value": ""
+          }
+        ]
+      }
+    ]
+  }
+]

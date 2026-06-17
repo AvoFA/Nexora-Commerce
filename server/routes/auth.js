@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const UserController = require('../controllers/userController');
 const { authenticateToken, requireRole } = require('../middleware/auth');
+const { logActivity } = require('../utils/activityLogger');
 
 const adminOnly = requireRole('admin');
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-key-for-course-work';
@@ -49,6 +50,10 @@ router.post('/admin/login', async (req, res) => {
         JWT_SECRET,
         { expiresIn: '24h' }
       );
+
+      // Реєстрація події входу адміністратора
+      const reqWithUser = { ...req, user: { id: user.id } };
+      await logActivity(reqWithUser, 'auth', 'Успішний вхід в систему');
 
       return res.json({
         success: true,
