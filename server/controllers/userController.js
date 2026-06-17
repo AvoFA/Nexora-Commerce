@@ -62,6 +62,10 @@ class UserController {
         throw new Error("Невірне ім'я користувача або пароль");
       }
 
+      if (user.status === 'blocked') {
+        throw new Error('Ваш акаунт заблоковано. Будь ласка, зверніться до адміністратора.');
+      }
+
       const isPasswordValid = await this.comparePassword(password, user.password);
       if (!isPasswordValid) {
         throw new Error("Невірне ім'я користувача або пароль");
