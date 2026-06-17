@@ -430,6 +430,15 @@
     margin-top: 16px;
     border-top: 2px solid $border-color;
 
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-color;
+    padding-top: 16px;
+    margin-top: 16px;
+    border-top: 2px solid $border-color;
+
     strong:last-child {
       color: $primary-color;
     }
@@ -454,6 +463,7 @@
     width: 100%;
     margin-top: 12px;
     text-align: center;
+    border-color: rgba(255, 255, 255, 0.15);
   }
 }
 
