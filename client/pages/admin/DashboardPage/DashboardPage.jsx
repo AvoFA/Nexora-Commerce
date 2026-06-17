@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { useDashboardData } from './hooks/useDashboardData';
 import DashboardStats from './components/DashboardStats';
@@ -8,7 +9,7 @@ import LowStockWidget from './components/LowStockWidget';
 import ModeratorDashboard from './components/ModeratorDashboard';
 import AdminRefreshButton from '../../../components/admin/common/AdminRefreshButton';
 import { toast } from 'sonner';
-import { ReportProblemOutlined } from '@mui/icons-material';
+import { ReportProblemOutlined, DashboardOutlined, BarChartOutlined } from '@mui/icons-material';
 import { ADMIN_ROLES, getStoredAdminRole } from '../../../config/adminAccess';
 
 // Modals & Drawers
@@ -24,6 +25,7 @@ import { updateOrderStatus } from '../../../services/orderService';
 import { updateReviewStatus } from '../../../services/reviewService';
 import { updateQuestionStatus, answerQuestion, deleteQuestion } from '../../../services/questionService';
 import { getAnyAuthToken } from '../../../utils/authStorage';
+import AnalyticsWidget from './components/AnalyticsWidget';
 
 import './DashboardPage.scss';
 
@@ -33,6 +35,17 @@ const DashboardPage = () => {
   const { data, isLoading, error, refresh } = useDashboardData({
     enabled: !isModeratorDashboard,
   });
+
+  // Active Dashboard View Tab synced with URL query parameters (?view=operations|analytics)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('view') === 'analytics' ? 'analytics' : 'operations';
+  const setActiveTab = (tab) => {
+    setSearchParams(prev => {
+      const params = new URLSearchParams(prev);
+      params.set('view', tab);
+      return params;
+    });
+  };
 
   // Modals & Drawers States
   const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
@@ -264,28 +277,54 @@ const DashboardPage = () => {
       {/* Top 6 Interactive Stats Grid */}
       <DashboardStats stats={stats} />
 
-      {/* Bento Grid layout for Operational Control */}
-      <div className="dashboard-bento-grid">
-        {/* Recent Orders (7) - left widget (span 7) */}
-        <RecentOrdersWidget
-          orders={recentOrders}
-          onViewOrder={setSelectedOrderForModal}
-        />
-
-        {/* Moderation Center (pending reviews & unanswered questions) - right widget (span 5) */}
-        <ModerationWidget
-          pendingReviews={pendingReviews}
-          unansweredQuestions={unansweredQuestions}
-          onViewReview={setSelectedReviewForModal}
-          onViewQuestion={setSelectedQuestionForModal}
-        />
-
-        {/* Low Stock (stock <= 5) with inline correction - bottom widget (span 12) */}
-        <LowStockWidget
-          products={lowStockProducts}
-          onRefresh={refresh}
-        />
+      {/* Modern Dashboard Tab Switcher */}
+      <div className="dashboard-view-switcher">
+        <button 
+          className={`switcher-btn ${activeTab === 'operations' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('operations')}
+        >
+          <DashboardOutlined className="btn-icon" />
+          <span className="btn-text">Операційне управління</span>
+        </button>
+        <button 
+          className={`switcher-btn ${activeTab === 'analytics' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('analytics')}
+        >
+          <BarChartOutlined className="btn-icon" />
+          <span className="btn-text">Аналітичні звіти</span>
+        </button>
       </div>
+
+      {activeTab === 'operations' ? (
+        /* Bento Grid layout for Operational Control */
+        <div className="dashboard-bento-grid">
+          {/* Recent Orders (7) - left widget (span 7) */}
+          <RecentOrdersWidget
+            orders={recentOrders}
+            onViewOrder={setSelectedOrderForModal}
+          />
+
+          {/* Moderation Center (pending reviews & unanswered questions) - right widget (span 5) */}
+          <ModerationWidget
+            pendingReviews={pendingReviews}
+            unansweredQuestions={unansweredQuestions}
+            onViewReview={setSelectedReviewForModal}
+            onViewQuestion={setSelectedQuestionForModal}
+          />
+
+          {/* Low Stock (stock <= 5) with inline correction - bottom widget (span 12) */}
+          <LowStockWidget
+            products={lowStockProducts}
+            onRefresh={refresh}
+          />
+        </div>
+      ) : (
+        <AnalyticsWidget 
+          salesTrend={data?.salesTrend || []} 
+          statusDistribution={data?.statusDistribution || {}} 
+          stockStats={stats}
+        />
+      )}
 
       {/* Order Details Modal */}
       <OrderDetailsModal

@@ -5,3 +5,96 @@
   border-radius: $border-radius;
   overflow: hidden;
 }
+
+// Спільна панель модерації та фільтрів
+.moderation-toolbar-card {
+  position: relative;
+  overflow: visible;
+  padding: 20px;
+  background:
+    linear-gradient(135deg, rgba($card-bg, 0.74), rgba($bg-color, 0.32)),
+    $card-bg;
+  border: 1px solid rgba($border-color, 0.58);
+  border-radius: 12px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px; // Зменшений відступ між рядами відповідно до запиту користувача
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 44%);
+  }
+
+  .moderation-type-toggle {
+    display: inline-flex;
+    background-color: $bg-color;
+    border: 1px solid $border-color;
+    padding: 2px;
+    border-radius: 8px;
+    height: 38px; // Вирівняно з висотою основних табів
+    box-sizing: border-box;
+
+    @media (max-width: 768px) {
+      align-self: flex-start;
+    }
+
+    .toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: $text-secondary;
+      font-family: inherit;
+      font-size: 0.85rem; // Вирівняно розмір шрифту
+      font-weight: 600;
+      padding: 0 16px; // Зменшений паддінг для акуратності
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      height: 100%;
+      box-sizing: border-box;
+
+      .toggle-icon {
+        font-size: 0.95rem;
+        opacity: 0.7;
+        transition: opacity 0.2s ease, color 0.2s ease;
+      }
+
+      &:hover:not(.active) {
+        color: $text-color;
+        background-color: rgba(255, 255, 255, 0.03);
+        .toggle-icon {
+          opacity: 0.9;
+        }
+      }
+
+      &.active {
+        color: #ffffff;
+        background-color: rgba($primary-color, 0.15);
+        border-color: rgba($primary-color, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+        .toggle-icon {
+          opacity: 1;
+          color: $primary-color;
+        }
+      }
+    }
+  }
+
+  .toolbar-divider {
+    position: relative;
+    z-index: 1;
+    height: 1px;
+    background-color: $border-color;
+    width: 100%;
+  }
+}
+

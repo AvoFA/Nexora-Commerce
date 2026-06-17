@@ -220,6 +220,13 @@
             color: white;
           }
 
+          .log-user-email {
+            font-size: 0.8rem;
+            color: $text-secondary;
+            margin-left: 2px;
+            font-weight: 500;
+          }
+
           .log-user-role {
             font-size: 0.65rem;
             font-weight: 700;
@@ -384,6 +391,299 @@
       }
     }
   }
+
+  .log-toolbar-card {
+    margin-bottom: 16px;
+  }
+
+  .log-divider {
+    margin: 6px 0;
+  }
+
+  .row-start {
+    justify-content: flex-start;
+  }
+
+  .log-timeline-card-wrapper {
+    padding: 24px;
+    background: rgba($card-bg, 0.95);
+    border: 1px solid rgba($border-color, 0.65);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  }
+
+  .log-pagination-wrapper {
+    margin-top: 24px;
+  }
+
+  .moderation-badge-review {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.22);
+    margin-left: 4px;
+  }
+
+  .moderation-badge-question {
+    color: #fb923c;
+    background: rgba(251, 146, 60, 0.12);
+    border: 1px solid rgba(251, 146, 60, 0.22);
+    margin-left: 4px;
+  }
+
+  .log-metadata-section {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    margin-top: 4px;
+
+    // Default variable tokens
+    --theme-color: #fb923c;
+    --theme-bg: rgba(251, 146, 60, 0.03);
+    --theme-border: rgba(251, 146, 60, 0.1);
+    --theme-label: #fdba74;
+
+    &.theme-auth {
+      --theme-color: #3b82f6;
+      --theme-bg: rgba(59, 130, 246, 0.03);
+      --theme-border: rgba(59, 130, 246, 0.1);
+      --theme-label: #60a5fa;
+    }
+    &.theme-orders {
+      --theme-color: #10b981;
+      --theme-bg: rgba(16, 185, 129, 0.03);
+      --theme-border: rgba(16, 185, 129, 0.1);
+      --theme-label: #34d399;
+    }
+    &.theme-products {
+      --theme-color: #8b5cf6;
+      --theme-bg: rgba(139, 92, 246, 0.03);
+      --theme-border: rgba(139, 92, 246, 0.1);
+      --theme-label: #a78bfa;
+    }
+    &.theme-moderation_review {
+      --theme-color: #38bdf8;
+      --theme-bg: rgba(56, 189, 248, 0.03);
+      --theme-border: rgba(56, 189, 248, 0.1);
+      --theme-label: #7dd3fc;
+    }
+
+    .log-metadata-toggle {
+      background: none;
+      border: none;
+      color: var(--theme-color);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        opacity: 0.85;
+        text-decoration: underline;
+      }
+    }
+
+    .log-metadata-box {
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: var(--theme-bg);
+      border: 1px solid var(--theme-border);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      box-sizing: border-box;
+
+      .metadata-product-name {
+        font-size: 0.8rem;
+        color: $text-secondary;
+        font-weight: 500;
+
+        span {
+          color: white;
+          font-weight: 600;
+        }
+      }
+
+      .metadata-qa-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .metadata-qa-label {
+          font-size: 0.7rem;
+          color: var(--theme-label);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+
+          &.pros-label {
+            color: #10b981;
+          }
+          &.cons-label {
+            color: #ef4444;
+          }
+        }
+
+        .metadata-qa-value {
+          font-size: 0.85rem;
+          color: rgba(255, 255, 255, 0.9);
+          line-height: 1.45;
+          font-style: italic;
+          background: rgba(0, 0, 0, 0.15);
+          padding: 8px 12px;
+          border-radius: 4px;
+          border-left: 2px solid var(--theme-color);
+
+          &.pros-value {
+            border-left-color: #10b981;
+          }
+          &.cons-value {
+            border-left-color: #ef4444;
+          }
+
+          &.rating-stars-value {
+            font-style: normal;
+            letter-spacing: 2px;
+            color: #fb923c;
+            border-left-color: var(--theme-color);
+          }
+
+          &.order-summary-value {
+            font-style: normal;
+            border-left-color: var(--theme-color);
+          }
+
+          &.status-change-flow-value {
+            font-style: normal;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 4px;
+            border-left-color: var(--theme-color);
+
+            .flow-arrow {
+              color: #64748b;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .log-status-badge {
+    padding: 2px 8px; 
+    border-radius: 4px; 
+    font-size: 0.72rem; 
+    font-weight: 700; 
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    &.status-new {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.22);
+    }
+    &.status-confirmed {
+      color: #3b82f6;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.22);
+    }
+    &.status-packing {
+      color: #a855f7;
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.22);
+    }
+    &.status-ready_for_pickup {
+      color: #06b6d4;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.22);
+    }
+    &.status-received {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.22);
+    }
+    &.status-cancelled {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.22);
+    }
+  }
+
+  .log-date-filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: flex-start;
+      gap: 10px;
+    }
+
+    .date-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .date-label {
+        font-size: 0.8rem;
+        color: $text-secondary;
+        font-weight: 600;
+      }
+
+      .admin-date-picker {
+        background-color: $bg-color;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        color: $text-color;
+        font-size: 0.82rem;
+        padding: 6px 12px;
+        height: 38px;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+        font-family: inherit;
+        color-scheme: dark; // Дозволяє браузеру показувати календар у темній темі
+        cursor: pointer;
+
+        &:hover {
+          background-color: lighten($bg-color, 3%);
+          border-color: rgba($text-secondary, 0.35);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: rgba($primary-color, 0.3);
+          box-shadow: 0 0 12px rgba($primary-color, 0.1);
+        }
+      }
+    }
+
+    .clear-dates-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: $text-secondary;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      height: 38px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.18);
+        color: white;
+      }
+    }
+  }
 }
 
 /* Modal overlay loader */
@@ -400,53 +700,4 @@
   gap: 16px;
   color: white;
   font-weight: 500;
-}
-
-.review-list-page {
-  .moderation-type-toggle {
-    display: inline-flex;
-    background-color: $bg-color;
-    border: 1px solid $border-color;
-    padding: 2px;
-    border-radius: 8px;
-    height: 40px;
-    box-sizing: border-box;
-
-    .toggle-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: transparent;
-      border: 1px solid transparent;
-      color: $text-secondary;
-      font-family: inherit;
-      font-size: 0.88rem;
-      font-weight: 600;
-      padding: 0 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: none;
-      height: 100%;
-      box-sizing: border-box;
-
-      &:hover:not(.active) {
-        color: $text-color;
-        background-color: rgba(255, 255, 255, 0.03);
-      }
-
-      &.active {
-        color: #ffffff;
-        background-color: rgba($primary-color, 0.15);
-        border-color: rgba($primary-color, 0.3);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      }
-    }
-  }
-
-  .toolbar-divider {
-    height: 1px;
-    background-color: $border-color;
-    width: 100%;
-  }
 }
