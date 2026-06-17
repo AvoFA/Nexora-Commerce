@@ -46,6 +46,7 @@ const ProductListPage = () => {
   const [showImportModal, setShowImportModal] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const lowStockFilterActive = searchParams.get('lowStock') === 'true';
+  const outOfStockFilterActive = searchParams.get('outOfStock') === 'true';
 
   const handleDeleteClick = (product) => {
     setProductToDelete(product);
@@ -92,6 +93,23 @@ const ProductListPage = () => {
           next.delete('lowStock');
         } else {
           next.set('lowStock', 'true');
+          next.delete('outOfStock');
+        }
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  const handleToggleOutOfStockFilter = () => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (next.get('outOfStock') === 'true') {
+          next.delete('outOfStock');
+        } else {
+          next.set('outOfStock', 'true');
+          next.delete('lowStock');
         }
         return next;
       },
@@ -137,6 +155,8 @@ const ProductListPage = () => {
         products={products}
         lowStockFilterActive={lowStockFilterActive}
         onToggleLowStockFilter={handleToggleLowStockFilter}
+        outOfStockFilterActive={outOfStockFilterActive}
+        onToggleOutOfStockFilter={handleToggleOutOfStockFilter}
         onEditProduct={productForm.openEditModal}
       />
 

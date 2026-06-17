@@ -7,6 +7,7 @@ export const useProductTableState = (products = []) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const querySearch = searchParams.get('search') || '';
   const lowStock = searchParams.get('lowStock') === 'true';
+  const outOfStock = searchParams.get('outOfStock') === 'true';
 
   const [searchTerm, setSearchTerm] = useState(querySearch);
 
@@ -90,10 +91,11 @@ export const useProductTableState = (products = []) => {
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesLowStock = !lowStock || Number(product.stock || 0) <= 5;
-      return matchesCategory && matchesBrand && matchesSearch && matchesLowStock;
+      const matchesLowStock = !lowStock || (Number(product.stock || 0) > 0 && Number(product.stock || 0) <= 5);
+      const matchesOutOfStock = !outOfStock || Number(product.stock || 0) <= 0;
+      return matchesCategory && matchesBrand && matchesSearch && matchesLowStock && matchesOutOfStock;
     });
-  }, [sortedProducts, searchTerm, category, brand, lowStock]);
+  }, [sortedProducts, searchTerm, category, brand, lowStock, outOfStock]);
 
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const startIndex = (page - 1) * perPage;
@@ -102,7 +104,7 @@ export const useProductTableState = (products = []) => {
   // Reset to page 1 when any filter or page size changes
   useEffect(() => {
     if (page !== 1) setPage(1);
-  }, [searchTerm, category, brand, sortValue, perPage, lowStock]);
+  }, [searchTerm, category, brand, sortValue, perPage, lowStock, outOfStock]);
 
   return {
     searchTerm,

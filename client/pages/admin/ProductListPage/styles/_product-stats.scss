@@ -177,6 +177,88 @@
     }
   }
 
+  // ─── Out of Stock clickable card ────────────────────────────────────
+  .stat-out-of-stock-card {
+    position: relative;
+    overflow: visible;
+    cursor: pointer;
+    user-select: none;
+    background:
+      linear-gradient(135deg, rgba($danger-color, 0.075), rgba($bg-color, 0.34)),
+      rgba($card-bg, 0.5);
+    border-color: rgba($danger-color, 0.42);
+    box-shadow:
+      0 14px 30px rgba(0, 0, 0, 0.16),
+      inset 0 0 0 1px rgba($danger-color, 0.08);
+
+    &::before {
+      top: 7px;
+      height: 4px;
+      opacity: 0.9;
+    }
+
+    &::after {
+      border-radius: inherit;
+      opacity: 0.14;
+    }
+
+    .stat-icon-wrapper {
+      background: rgba($danger-color, 0.14);
+      border-color: rgba($danger-color, 0.24);
+      transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                  background 0.22s ease,
+                  border-color 0.22s ease;
+    }
+
+    &:hover {
+      z-index: 30;
+      transform: translateY(-4px);
+      background:
+        linear-gradient(135deg, rgba($danger-color, 0.18), rgba($bg-color, 0.4)),
+        rgba($card-bg, 0.5);
+      border-color: rgba($danger-color, 0.72);
+      box-shadow:
+        0 16px 32px rgba($danger-color, 0.2),
+        inset 0 0 0 1px rgba($danger-color, 0.16);
+
+      .stat-icon-wrapper {
+        background: rgba($danger-color, 0.2);
+        border-color: rgba($danger-color, 0.42);
+        transform: rotate(-4deg) scale(1.05);
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      border-color: rgba($danger-color, 0.82);
+      box-shadow:
+        0 0 0 3px rgba($danger-color, 0.18),
+        0 16px 32px rgba($danger-color, 0.2);
+    }
+
+    // Active state — filter is on
+    &--active {
+      background:
+        linear-gradient(135deg, rgba($danger-color, 0.16), rgba($bg-color, 0.42)),
+        rgba($card-bg, 0.5);
+      border-color: rgba($danger-color, 0.65);
+      box-shadow: 0 4px 16px rgba($danger-color, 0.12);
+
+      .stat-value,
+      .stat-label {
+        color: $danger-color;
+      }
+
+      &:hover {
+        background:
+          linear-gradient(135deg, rgba($danger-color, 0.2), rgba($bg-color, 0.44)),
+          rgba($card-bg, 0.5);
+        border-color: rgba($danger-color, 0.85);
+        box-shadow: 0 8px 28px rgba($danger-color, 0.3);
+      }
+    }
+  }
+
   // Small pill showing the filter is active
   .stat-filter-badge {
     position: absolute;
