@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useCart } from "../../hooks/useCart.js";
 import { useNavigate, useBlocker } from "react-router-dom";
 import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal.jsx";
@@ -51,7 +51,7 @@ const CheckoutPage = () => {
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
   const allItems = state.items;
   // Filter selected items only
-  const items = allItems.filter(item => item.selected !== false);
+  const items = useMemo(() => allItems.filter(item => item.selected !== false), [allItems]);
 
   const totalPrice = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const totalItemCount = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -206,7 +206,7 @@ const CheckoutPage = () => {
     if (items.length === 0 && !isOrderCompleted) {
       navigate("/cart");
     }
-  }, [items, navigate, isOrderCompleted]);
+  }, [items.length, navigate, isOrderCompleted]);
 
   // ── Block in-app navigation when checkout is active ──────────────────────
   const shouldBlock = useCallback(
