@@ -1,3 +1,5 @@
+<p align="center"><b>English</b> | <a href="README.uk.md">Українська</a></p>
+
 # <p align="center"><img src="public/assets/logo/nexora-full.svg" alt="Nexora Logo" width="320"></p>
 
 <p align="center">
